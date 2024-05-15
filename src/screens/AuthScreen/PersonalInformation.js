@@ -311,7 +311,7 @@ const PersonalInformation = ({ navigation, route }) => {
         <View style={styles.buttonwrapper}>
         <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#746868',marginBottom: responsiveHeight(2)}}>By signing in you agree to our Terms & Condition and Privacy Policy</Text>
           <CustomButton label={"Submit"}
-            onPress={() => { navigation.navigate('Thankyou') }}
+            onPress={() => { login() }}
           //onPress={() => { submitForm() }}
           />
         </View>

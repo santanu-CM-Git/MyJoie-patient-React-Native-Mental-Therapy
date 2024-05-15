@@ -87,28 +87,18 @@ export default function CustomHeader({
                                 style={{ height: responsiveHeight(5), width: responsiveWidth(35), resizeMode: 'contain', marginLeft: responsiveWidth(2) }}
                             />
                         </View>
-                        {/* <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity onPress={onPress}>
-                                <Ionicons name="search-outline" size={28} color="#F4F4F4" />
+                        <View style={{ flexDirection: 'row' }}>
+                            <TouchableOpacity onPress={onPress} style={{marginRight:responsiveWidth(5)}}>
+                                <Ionicons name="search-outline" size={28} color="#444343" />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={onPress}>
-                                <Ionicons name="notifications-outline" size={28} color="#F4F4F4" />
+                                <Ionicons name="wallet-outline" size={28} color="#444343" />
                                 <View style={styles.notificationdotView}>
                                     <Text style={styles.notificationdot}>{'\u2B24'}</Text>
                                 </View>
                             </TouchableOpacity>
-                        </View> */}
-                        <View style={{ height: responsiveHeight(6), width: responsiveWidth(30), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 2, }}>
-                            <Text style={{ fontSize: responsiveFontSize(1.5), fontFamily: 'DMSans-SemiBold',marginRight: responsiveWidth(3) }}>Current Availability</Text>
-                            <Switch
-                                trackColor={{ false: '#767577', true: '#000' }}
-                                thumbColor={isEnabled ? '#fff' : '#000'}
-                                ios_backgroundColor="#3e3e3e"
-                                onValueChange={toggleSwitch}
-                                value={isEnabled}
-                                style={styles.switchStyle}
-                            />
                         </View>
+                       
                     </LinearGradient>
                     <View style={styles.headerBottomMargin} />
                 </>
@@ -197,7 +187,7 @@ const styles = StyleSheet.create({
     notificationdotView: {
         position: 'absolute',
         top: -2,
-        right: 3
+        right: 0
     },
     notificationdot: {
         color: '#EB0000',
