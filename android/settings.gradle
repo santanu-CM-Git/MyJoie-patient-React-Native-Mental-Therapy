@@ -1,0 +1,6 @@
+rootProject.name = 'patientapp'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':react-native-android-location-services-dialog-box'
+project(':react-native-android-location-services-dialog-box').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-android-location-services-dialog-box/android')// add this line for location dialog box
+include ':app'
+includeBuild('../node_modules/@react-native/gradle-plugin')
