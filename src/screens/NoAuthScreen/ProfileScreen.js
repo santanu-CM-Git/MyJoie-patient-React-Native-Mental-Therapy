@@ -27,40 +27,15 @@ import CustomHeader from '../../components/CustomHeader';
 import MultiSelect from 'react-native-multiple-select';
 import { Dropdown } from 'react-native-element-dropdown';
 import Modal from "react-native-modal";
-import Icon from 'react-native-vector-icons/Entypo';
-const items = [
-  { id: '92iijs7yta', name: 'Ondo' },
-  { id: 'a0s0a8ssbsd', name: 'Ogun' },
-  { id: '16hbajsabsd', name: 'Calabar' },
-  { id: 'nahs75a5sg', name: 'Lagos' },
-  { id: '667atsas', name: 'Maiduguri' },
-  { id: 'hsyasajs', name: 'Anambra' },
-  { id: 'djsjudksjd', name: 'Benue' },
-  { id: 'sdhyaysdj', name: 'Kaduna' },
-  { id: 'suudydjsjd', name: 'Abuja' }
-];
-const qualificationitemsType = [
-  { id: '1', name: 'Individual' },
-  { id: '2', name: 'Couple' },
-  { id: '3', name: 'Child' },
+import Entypo from 'react-native-vector-icons/Entypo';
 
+
+const dataGender = [
+  { label: 'Male', value: 'Male' },
+  { label: 'Female', value: 'Female' },
+  { label: 'Others', value: 'Others' }
 ];
-const qualificationitemsLanguage = [
-  { id: '1', name: 'Hindi' },
-  { id: '2', name: 'English' },
-  { id: '3', name: 'Gujrati' },
-];
-const data = [
-  { label: 'Absa Bank Ghana Limited', value: 'Absa Bank Ghana Limited' },
-  { label: 'Access Bank (Ghana) Plc', value: 'Access Bank (Ghana) Plc' },
-  { label: 'Agricultural Development Bank Plc', value: 'Agricultural Development Bank Plc' },
-];
-const dataYear = [
-  { label: '01', value: '01' },
-  { label: '02', value: '02' },
-  { label: '03', value: '03' },
-];
-const dataMonth = [
+const dataMarital = [
   { label: '01', value: '01' },
   { label: '02', value: '02' },
   { label: '03', value: '03' },
@@ -98,6 +73,8 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const [monthvalue, setMonthValue] = useState(null);
   const [isMonthFocus, setMonthIsFocus] = useState(false);
+  const [date, setDate] = useState('DD - MM  - YYYY')
+  const [open, setOpen] = useState(false)
 
   // Qualification dropdown
   const [selectedItems, setSelectedItems] = useState([]);
@@ -169,7 +146,7 @@ const ProfileScreen = ({ navigation, route }) => {
   }
 
   const submitForm = () => {
-    console.log(selectedItemsType," type off therapist")
+    console.log(selectedItemsType, " type off therapist")
   }
 
   // const submitForm = () => {
@@ -262,11 +239,25 @@ const ProfileScreen = ({ navigation, route }) => {
             {firstNameError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{firstNameError}</Text> : <></>}
             <View style={styles.inputView}>
               <InputField
-                label={'Name'}
+                label={'First name'}
                 keyboardType=" "
                 value={firstname}
                 //helperText={'Please enter lastname'}
-                inputType={'nonedit'}
+                inputType={'others'}
+                onChangeText={(text) => changeFirstname(text)}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.header}>Mobile Number</Text>
+            </View>
+            {firstNameError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{firstNameError}</Text> : <></>}
+            <View style={styles.inputView}>
+              <InputField
+                label={'Mobile Number'}
+                keyboardType=" "
+                value={firstname}
+                //helperText={'Please enter lastname'}
+                inputType={'others'}
                 onChangeText={(text) => changeFirstname(text)}
               />
             </View>
@@ -279,251 +270,19 @@ const ProfileScreen = ({ navigation, route }) => {
                 keyboardType=" "
                 value={email}
                 //helperText={'Please enter lastname'}
-                inputType={'nonedit'}
+                inputType={'others'}
                 onChangeText={(text) => setEmail(text)}
               />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.header}>Mobile Number</Text>
-            </View>
-            <View style={styles.inputView}>
-              <InputField
-                label={'Mobile number'}
-                keyboardType=" "
-                value={phoneno}
-                helperText={firstNameError}
-                inputType={'nonedit'}
-              //onChangeText={(text) => changeFirstname(text)}
-              />
-            </View>
-
-            {/* <Text
-              style={styles.header}>
-              Last Name
-            </Text>
-            {lastNameError?<Text style={{color:'red',fontFamily:'Outfit-Regular'}}>{lastNameError}</Text>:<></>}
-            <View style={styles.inputView}>
-              <InputField
-                label={'Last Name'}
-                keyboardType=" "
-                value={lastname}
-                //helperText={'Please enter lastname'}
-                inputType={'others'}
-                onChangeText={(text) => changeLastname(text)}
-              />
-            </View> */}
-
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Date of Birth</Text>
             </View>
-            {passwordError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{passwordError}</Text> : <></>}
-            <View style={styles.inputView}>
-              <InputField
-                label={'Date of Birth'}
-                keyboardType=" "
-                value={Password}
-                //helperText={'Please enter lastname'}
-                inputType={'nonedit'}
-                onChangeText={(text) => changePassword(text)}
-              />
+            <View style={{ height: responsiveHeight(7), width: responsiveWidth(88), borderRadius: 10, borderWidth: 1, borderColor: '#E0E0E0', marginBottom: responsiveHeight(2), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+              <Text style={styles.dayname}>  {date}</Text>
+              <Entypo name="calendar" size={22} color="#000" />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Gender</Text>
-            </View>
-            {passwordError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{passwordError}</Text> : <></>}
-            <View style={styles.inputView}>
-              <InputField
-                label={'Gender'}
-                keyboardType=" "
-                value={Password}
-                //helperText={'Please enter lastname'}
-                inputType={'nonedit'}
-                onChangeText={(text) => changePassword(text)}
-              />
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.header}>Pan Number</Text>
-            </View>
-            {passwordError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{passwordError}</Text> : <></>}
-            <View style={styles.inputView}>
-              <InputField
-                label={'Pan Number'}
-                keyboardType=" "
-                value={Password}
-                //helperText={'Please enter lastname'}
-                inputType={'nonedit'}
-                onChangeText={(text) => changePassword(text)}
-              />
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.header}>Aadhar No</Text>
-            </View>
-            {passwordError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{passwordError}</Text> : <></>}
-            <View style={styles.inputView}>
-              <InputField
-                label={'Aadhar No'}
-                keyboardType=" "
-                value={Password}
-                //helperText={'Please enter lastname'}
-                inputType={'nonedit'}
-                onChangeText={(text) => changePassword(text)}
-              />
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.header}>Type of Therapies</Text>
-             
-            </View>
-            <View style={{ flex: 1, marginVertical: responsiveHeight(1) }}>
-              <View style={{ paddingHorizontal: 5, borderColor: '#E0E0E0', borderWidth: 1, borderRadius: 8, width: responsiveWidth(88) }}>
-                <MultiSelect
-                  hideTags
-                  items={qualificationitemsType}
-                  uniqueKey="id"
-                  ref={multiSelectRefType}
-                  onSelectedItemsChange={onSelectedItemsChangeType}
-                  selectedItems={selectedItemsType}
-                  selectText="Pick Type"
-                  searchInputPlaceholderText="Search Type..."
-                  onChangeInput={(text) => console.log(text)}
-                  altFontFamily="DMSans-Regular"
-                  tagRemoveIconColor="#000000"
-                  tagBorderColor="#87ADA8"
-                  tagTextColor="#2D2D2D"
-                  selectedItemTextColor="#000"
-                  selectedItemIconColor="#000"
-                  itemTextColor="#746868"
-                  displayKey="name"
-                  searchInputStyle={styles.searchInput}
-                  styleDropdownMenu={styles.dropdownMenu}
-                  styleDropdownMenuSubsection={styles.dropdownMenuSubsection}
-                  styleMainWrapper={styles.mainWrapper}
-                  submitButtonColor="#87ADA8"
-                  submitButtonText="Submit"
-                  styleIndicator={{ marginTop: -6,marginRight: - responsiveWidth(6) }}
-                //hideSubmitButton
-                />
-              </View>
-              <View style={{ marginVertical: responsiveHeight(2) }}>
-                {multiSelectRefType.current && multiSelectRefType.current.getSelectedItemsExt(selectedItemsType)}
-              </View>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.header}>Language</Text>
-              
-            </View>
-            <View style={{ flex: 1, marginVertical: responsiveHeight(1) }}>
-              <View style={{ paddingHorizontal: 5, borderColor: '#E0E0E0', borderWidth: 1, borderRadius: 8, width: responsiveWidth(88) }}>
-                <MultiSelect
-                  hideTags
-                  items={qualificationitemsLanguage}
-                  uniqueKey="id"
-                  ref={multiSelectRefLanguage}
-                  onSelectedItemsChange={onSelectedItemsChangeLanguage}
-                  selectedItems={selectedItemsLanguage}
-                  selectText="Pick Language"
-                  searchInputPlaceholderText="Search Language..."
-                  onChangeInput={(text) => console.log(text)}
-                  altFontFamily="DMSans-Regular"
-                  tagRemoveIconColor="#000000"
-                  tagBorderColor="#87ADA8"
-                  tagTextColor="#2D2D2D"
-                  selectedItemTextColor="#000"
-                  selectedItemIconColor="#000"
-                  itemTextColor="#746868"
-                  displayKey="name"
-                  searchInputStyle={styles.searchInput}
-                  styleDropdownMenu={styles.dropdownMenu}
-                  styleDropdownMenuSubsection={styles.dropdownMenuSubsection}
-                  styleMainWrapper={styles.mainWrapper}
-                  submitButtonColor="#87ADA8"
-                  submitButtonText="Submit"
-                  styleIndicator={{ marginTop: -6,marginRight: - responsiveWidth(6) }}
-                //hideSubmitButton
-                />
-              </View>
-              <View style={{ marginVertical: responsiveHeight(2) }}>
-                {multiSelectRefLanguage.current && multiSelectRefLanguage.current.getSelectedItemsExt(selectedItemsLanguage)}
-              </View>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.header}>Qualification</Text>
-            </View>
-            <View style={{ flex: 1, marginVertical: responsiveHeight(1) }}>
-              <View style={{
-                fontFamily: 'Outfit-Regular', paddingHorizontal: 5, borderColor: '#E0E0E0', borderWidth: 1, borderRadius: 8, width: responsiveWidth(88)
-              }}>
-                <MultiSelect
-                  hideTags
-                  items={items}
-                  uniqueKey="id"
-                  ref={multiSelectRef}
-                  onSelectedItemsChange={onSelectedItemsChange}
-                  selectedItems={selectedItems}
-                  selectText="Pick Qualification"
-                  searchInputPlaceholderText="Search Qualification..."
-                  onChangeInput={(text) => console.log(text)}
-                  altFontFamily="DMSans-Regular"
-                  tagRemoveIconColor="#000000"
-                  tagBorderColor="#87ADA8"
-                  tagTextColor="#2D2D2D"
-                  selectedItemTextColor="#000"
-                  selectedItemIconColor="#000"
-                  itemTextColor="#746868"
-                  displayKey="name"
-                  searchInputStyle={styles.searchInput}
-                  styleDropdownMenu={styles.dropdownMenu}
-                  styleDropdownMenuSubsection={styles.dropdownMenuSubsection}
-                  styleMainWrapper={styles.mainWrapper}
-                  submitButtonColor="#87ADA8"
-                  submitButtonText="Submit"
-                  styleIndicator={{marginTop: -6,marginRight: - responsiveWidth(6) }}
-                //hideSubmitButton
-                />
-              </View>
-              <View style={{ marginVertical: responsiveHeight(2) }}>
-                {multiSelectRef.current && multiSelectRef.current.getSelectedItemsExt(selectedItems)}
-              </View>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.header}>City</Text>
-            </View>
-            {passwordError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{passwordError}</Text> : <></>}
-            <View style={styles.inputView}>
-              <InputField
-                label={'City'}
-                keyboardType=" "
-                value={Password}
-                //helperText={'Please enter lastname'}
-                inputType={'others'}
-                onChangeText={(text) => changePassword(text)}
-              />
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.header}>State</Text>
-            </View>
-            <Dropdown
-              style={[styles.dropdown, isStateFocus && { borderColor: '#DDD' }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              itemTextStyle={styles.selectedTextStyle}
-              data={data}
-              //search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isStateFocus ? 'Select item' : '...'}
-              searchPlaceholder="Search..."
-              value={statevalue}
-              onFocus={() => setStateIsFocus(true)}
-              onBlur={() => setStateIsFocus(false)}
-              onChange={item => {
-                setStateValue(item.value);
-                setStateIsFocus(false);
-              }}
-            />
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.header}>Experience</Text>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Dropdown
@@ -532,12 +291,12 @@ const ProfileScreen = ({ navigation, route }) => {
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 itemTextStyle={styles.selectedTextStyle}
-                data={dataYear}
+                data={dataGender}
                 //search
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isYearFocus ? 'Select year' : '...'}
+                placeholder={!isYearFocus ? 'Select Gender' : '...'}
                 searchPlaceholder="Search..."
                 value={yearvalue}
                 onFocus={() => setYearIsFocus(true)}
@@ -547,205 +306,20 @@ const ProfileScreen = ({ navigation, route }) => {
                   setYearIsFocus(false);
                 }}
               />
-              <Dropdown
-                style={[styles.dropdownHalf, isMonthFocus && { borderColor: '#DDD' }]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                itemTextStyle={styles.selectedTextStyle}
-                data={dataMonth}
-                //search
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={!isStateFocus ? 'Select month' : '...'}
-                searchPlaceholder="Search..."
-                value={monthvalue}
-                onFocus={() => setMonthIsFocus(true)}
-                onBlur={() => setMonthIsFocus(false)}
-                onChange={item => {
-                  setMonthValue(item.value);
-                  setMonthIsFocus(false);
-                }}
-              />
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={styles.header}>Bank Account</Text>
-              <TouchableOpacity onPress={() => toggleModal()}>
-                <Text style={{ fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), color: '#444343', marginBottom: responsiveHeight(1), }}>Change</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.inputView}>
-              <InputField
-                label={'Aadhar No'}
-                keyboardType=" "
-                value={'56897 85698 78965 96636'}
-                //helperText={'Please enter lastname'}
-                inputType={'nonedit'}
-                onChangeText={(text) => changePassword(text)}
-              />
-            </View>
-            <Text
-              style={styles.header}>
-              Upload Supporting Documents
-            </Text>
-            {DrivingLicenseFrontError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{DrivingLicenseFrontError}</Text> : <></>}
-            {DrivingLicenseBackError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{DrivingLicenseBackError}</Text> : <></>}
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: responsiveHeight(2) }}>
-              <View style={{ height: responsiveHeight(18), width: responsiveWidth(40), borderColor: '#E0E0E0', borderWidth: 1, borderRadius: 10, borderStyle: 'dashed', backgroundColor: '#FAFAFA' }}>
-                <View style={{ flexDirection: 'column', alignItems: 'center', marginVertical: 40 }}>
-
-                  <TouchableOpacity onPress={() => pickDocument('DrivingLicenseFront')}>
-                    <Image
-                      source={uploadImg}
-                      style={{ height: 25, width: 25, resizeMode: 'contain', marginBottom: 5 }}
-                    />
-                  </TouchableOpacity>
-
-                  {!pickedDrivingLicenseFront ?
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', }}>Upload Degree</Text>
-                    :
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', paddingHorizontal: 5 }}>{pickedDrivingLicenseFront.name}</Text>
-                  }
-                </View>
-              </View>
-              <View style={{ height: responsiveHeight(18), width: responsiveWidth(40), borderColor: '#E0E0E0', borderWidth: 1, borderRadius: 10, borderStyle: 'dashed', backgroundColor: '#FAFAFA' }}>
-                <View style={{ flexDirection: 'column', alignItems: 'center', marginVertical: 40 }}>
-
-                  <TouchableOpacity onPress={() => pickDocument('DrivingLicenseBack')}>
-                    <Image
-                      source={uploadImg}
-                      style={{ height: 25, width: 25, resizeMode: 'contain', marginBottom: 5 }}
-                    />
-                  </TouchableOpacity>
-
-                  {!pickedDrivingLicenseBack ?
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', }}>Upload Marksheets</Text>
-                    :
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', paddingHorizontal: 5 }}>{pickedDrivingLicenseBack.name}</Text>
-                  }
-                </View>
-              </View>
-
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
-              <View style={{ height: responsiveHeight(18), width: responsiveWidth(40), borderColor: '#E0E0E0', borderWidth: 1, borderRadius: 10, borderStyle: 'dashed', backgroundColor: '#FAFAFA' }}>
-                <View style={{ flexDirection: 'column', alignItems: 'center', marginVertical: 40 }}>
-
-                  <TouchableOpacity onPress={() => pickDocument('DrivingLicenseFront')}>
-                    <Image
-                      source={uploadImg}
-                      style={{ height: 25, width: 25, resizeMode: 'contain', marginBottom: 5 }}
-                    />
-                  </TouchableOpacity>
-
-                  {!pickedDrivingLicenseFront ?
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', }}>Upload Degree</Text>
-                    :
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', paddingHorizontal: 5 }}>{pickedDrivingLicenseFront.name}</Text>
-                  }
-                </View>
-              </View>
-              <View style={{ height: responsiveHeight(18), width: responsiveWidth(40), borderColor: '#E0E0E0', borderWidth: 1, borderRadius: 10, borderStyle: 'dashed', backgroundColor: '#FAFAFA' }}>
-                <View style={{ flexDirection: 'column', alignItems: 'center', marginVertical: 40 }}>
-
-                  <TouchableOpacity onPress={() => pickDocument('DrivingLicenseBack')}>
-                    <Image
-                      source={uploadImg}
-                      style={{ height: 25, width: 25, resizeMode: 'contain', marginBottom: 5 }}
-                    />
-                  </TouchableOpacity>
-
-                  {!pickedDrivingLicenseBack ?
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', }}>Upload Marksheets</Text>
-                    :
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', paddingHorizontal: 5 }}>{pickedDrivingLicenseBack.name}</Text>
-                  }
-                </View>
-              </View>
-            </View>
-            <Text
-              style={styles.header}>
-              Upload Picture
-            </Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: responsiveHeight(2), marginTop: responsiveHeight(1) }}>
-              <View style={{ height: responsiveHeight(18), width: responsiveWidth(40), borderColor: '#E0E0E0', borderWidth: 1, borderRadius: 10, borderStyle: 'dashed', backgroundColor: '#FAFAFA' }}>
-                <View style={{ flexDirection: 'column', alignItems: 'center', marginVertical: 40 }}>
-
-                  <TouchableOpacity onPress={() => pickDocument('DrivingLicenseFront')}>
-                    <Image
-                      source={uploadPicImg}
-                      style={{ height: 25, width: 25, resizeMode: 'contain', marginBottom: 5 }}
-                    />
-                  </TouchableOpacity>
-
-                  {!pickedDrivingLicenseFront ?
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', }}>Upload Photo</Text>
-                    :
-                    <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', paddingHorizontal: 5 }}>{pickedDrivingLicenseFront.name}</Text>
-                  }
-                </View>
-              </View>
-            </View>
           </View>
 
         </View>
-        <View style={styles.buttonwrapper}>
+       
+      </KeyboardAwareScrollView>
+      <View style={styles.buttonwrapper}>
           <CustomButton label={"Submit For Review"}
             // onPress={() => { login() }}
             onPress={() => { submitForm() }}
           />
         </View>
-      </KeyboardAwareScrollView>
-      <Modal
-        isVisible={isModalVisible}
-        style={{
-          margin: 0, // Add this line to remove the default margin
-          justifyContent: 'flex-end',
-        }}>
-        <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff', height: 50, width: 50, borderRadius: 25, position: 'absolute', bottom: '45%', left: '45%', right: '45%' }}>
-          <Icon name="cross" size={30} color="#000" onPress={toggleModal} />
-        </View>
-        <View style={{ height: '39%', backgroundColor: '#fff', position: 'absolute', bottom: 0, width: '100%' }}>
-          <View style={{ padding: 25 }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
-              <Text style={styles.header}>Bank Account</Text>
-              <TouchableOpacity onPress={() => toggleModal()}>
-                <Text style={{ fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), color: '#444343', marginBottom: responsiveHeight(1), }}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.inputView}>
-              <InputField
-                label={'Aadhar No'}
-                keyboardType=" "
-                value={'56897 85698 78965 96636'}
-                //helperText={'Please enter lastname'}
-                inputType={'others'}
-                onChangeText={(text) => changePassword(text)}
-              />
-            </View>
-            <View style={{ height: responsiveHeight(18), width: responsiveWidth(88), borderColor: '#E0E0E0', borderWidth: 1, borderRadius: 10, borderStyle: 'dashed', backgroundColor: '#FAFAFA' }}>
-              <View style={{ flexDirection: 'column', alignItems: 'center', marginVertical: 40 }}>
 
-                <TouchableOpacity onPress={() => pickDocument('DrivingLicenseBack')}>
-                  <Image
-                    source={uploadImg}
-                    style={{ height: 25, width: 25, resizeMode: 'contain', marginBottom: 5 }}
-                  />
-                </TouchableOpacity>
-
-                {!pickedDrivingLicenseBack ?
-                  <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', }}>Upload Cancel Cheque</Text>
-                  :
-                  <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#808080', paddingHorizontal: 5 }}>{pickedDrivingLicenseBack.name}</Text>
-                }
-              </View>
-            </View>
-          </View>
-
-        </View>
-      </Modal>
     </SafeAreaView >
   );
 };
@@ -867,7 +441,7 @@ const styles = StyleSheet.create({
   },
   dropdownHalf: {
     height: responsiveHeight(7.2),
-    width: responsiveWidth(40),
+    width: responsiveWidth(88),
     borderColor: '#DDD',
     borderWidth: 0.7,
     borderRadius: 5,

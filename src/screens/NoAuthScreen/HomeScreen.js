@@ -11,6 +11,7 @@ import {
   FlatList,
   StyleSheet,
   Alert,
+  Dimensions
 } from 'react-native';
 import Modal from "react-native-modal";
 import { AuthContext } from '../../context/AuthContext';
@@ -22,7 +23,7 @@ import CustomButton from '../../components/CustomButton'
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { add } from '../../store/cartSlice';
-import { dateIcon, timeIcon, ArrowGratter, documentImg, infoImg, requestImg, userPhoto, deleteImg, editImg, blockIcon, GreenTick, Payment, dotIcon } from '../../utils/Images';
+import { dateIcon, timeIcon, ArrowGratter, documentImg, infoImg, requestImg, userPhoto, deleteImg, editImg, blockIcon, GreenTick, Payment, dotIcon, yellowStarImg, qouteImg } from '../../utils/Images';
 import Loader from '../../utils/Loader';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import CustomHeader from '../../components/CustomHeader';
@@ -34,11 +35,17 @@ import { Dropdown } from 'react-native-element-dropdown';
 import messaging from '@react-native-firebase/messaging';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import LinearGradient from 'react-native-linear-gradient';
+import StarRating from 'react-native-star-rating';
 
 const data = [
   { label: 'Today', value: '1' },
   { label: 'Date Wise', value: '2' },
 ];
+const BannerWidth = Dimensions.get('window').width;
+const { height, width } = Dimensions.get('screen')
+const sliderWidth = Dimensions.get('window').width;
+const itemWidth = Math.round(sliderWidth * 0.7);
+const itemHeight = Dimensions.get('window').height;
 
 export default function HomeScreen({ navigation }) {
 
@@ -60,8 +67,41 @@ export default function HomeScreen({ navigation }) {
   const [noofDeliverd, setNoofDeliverd] = useState(0)
   const [todaysDate, setTodaysDate] = useState('')
   const [notificationStatus, setNotificationStatus] = useState(false)
+  const [starCount, setStarCount] = useState(4)
+  const [bannerData, setBannerData] = useState([{
+    title: "Aenean leo",
+    description: "Ut tincidunt tincidunt erat. Sed cursus Donec quam felis, ultricieum quis, sem.",
+    imgUrl: "https://picsum.photos/id/11/200/300",
+  },
+  {
+    title: "In turpis",
+    description: "Aenean ut eros et nisl sagittis vestibulum ante. Curabitur at lacus ac velit ornare lobortis. ",
+    imgUrl: "https://picsum.photos/id/10/200/300",
+  },
+  {
+    title: "Lorem Ipsum",
+    description: "Phasellus ullamcorper ipsum rutrum nunc. etus, bibendum sed, posuere ac, mattis non, nunc.",
+    imgUrl: "https://picsum.photos/id/12/200/300",
+  },])
 
-
+  const CarouselCardItem = ({item, index}) => {
+    console.log(item, 'banner itemmm')
+    return (
+      <View style={styles.bannaerContainer}>
+        <Image
+          source={{ uri: item.imgUrl }}
+          style={styles.bannerBg}
+        />
+        <View style={styles.textWrap}>
+          {item?.title && <Text style={styles.bannerText}>Looking For Specialist Therapist?</Text>}
+          {item?.description && <Text style={styles.bannerSubText} numberOfLines={4}>Schedule an appointment with our top Therapist</Text>}
+          <View style={{height: responsiveHeight(5),width: responsiveWidth(25),backgroundColor:'#FFFFFF',marginLeft: 20,borderRadius:20,justifyContent:'center',alignItems:'center'}}>
+            <Text style={{color:'#E88036',fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.5)}}>Call Us Today!</Text>
+          </View>
+        </View>
+      </View>
+    )
+  }
 
   const getFCMToken = async () => {
     try {
@@ -192,11 +232,44 @@ export default function HomeScreen({ navigation }) {
       <CustomHeader commingFrom={'Home'} onPress={() => navigation.navigate('Notification')} onPressProfile={() => navigation.navigate('Profile')} />
       <ScrollView>
         <View style={{ marginBottom: 10 }}>
-          <View style={{ height: responsiveHeight(15), width: '92%', backgroundColor: '#F4F5F5', marginHorizontal: 15, padding: 20, borderRadius: 20, marginTop: responsiveHeight(2) }}>
-            <Text style={{ color: '#746868', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(2) }}>Earned this month</Text>
-            <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(3), fontFamily: 'DMSans-Bold', }}>₹ 5,00,000</Text>
+          <View style={{ marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2), marginHorizontal: 20, }}>
+            {/* <Carousel
+              autoplay
+              autoplayTimeout={5000}
+              loop
+              index={0}
+              pageSize={BannerWidth}
+              showsPageIndicator={true}
+              sliderWidth={sliderWidth}
+              itemWidth={sliderWidth}
+              // itemHeight={itemHeight}
+              activePageIndicatorStyle={{ backgroundColor: '#00B2EB' }}
+            >
+              {bannerData.map((datab, index) =>
+                CarouselCardItem(datab, index)
+
+              )}
+            </Carousel> */}
+            <Carousel
+              data={bannerData}
+              renderItem={CarouselCardItem}
+              showsPageIndicator={true}
+              pageSize={BannerWidth}
+              sliderWidth={sliderWidth}
+              itemWidth={sliderWidth}
+              autoplay={true}
+              autoplayTimeout={5000}
+              autoplayInterval={5000}
+              loop={true}
+              index={0}
+              //enableSnap={true}
+              activePageIndicatorStyle={{ backgroundColor: '#00B2EB' }}
+            />
           </View>
-          <Text style={{ marginHorizontal: 20, marginTop: responsiveHeight(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Upcoming Appointment</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2), }}>
+            <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Upcoming Appointment</Text>
+            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2) }}>See All</Text>
+          </View>
           <View style={{ height: responsiveHeight(20), width: '92%', backgroundColor: '#FFF', marginHorizontal: 15, padding: 20, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
@@ -224,7 +297,7 @@ export default function HomeScreen({ navigation }) {
                   Patient
                 </Text>
               </View>
-              <TouchableOpacity style={{ marginLeft: responsiveWidth(10), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, padding: 10, borderRadius: 20, flexDirection: 'row', justifyContent: 'center' }} onPress={()=> navigation.navigate('ChatScreen')}>
+              <TouchableOpacity style={{ marginLeft: responsiveWidth(10), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, padding: 10, borderRadius: 20, flexDirection: 'row', justifyContent: 'center' }} onPress={() => navigation.navigate('ChatScreen')}>
                 <Text style={{ fontFamily: 'DMSans-Bold', color: '#2D2D2D', fontSize: responsiveFontSize(1.7) }}>Join Now</Text>
               </TouchableOpacity>
             </View>
@@ -245,133 +318,238 @@ export default function HomeScreen({ navigation }) {
               </View>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 15, marginTop: responsiveHeight(2) }}>
-            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Calender</Text>
-            <TouchableOpacity onPress={() => toggleCalendarModal()}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
+            <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Therapist</Text>
+            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2) }}>See All</Text>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={{ paddingVertical: 10, flexDirection: 'row' }}>
+              <View style={{ width: responsiveWidth(70), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
+                <View style={{ flexDirection: 'row', padding: 20, }}>
+
+                  <Image
+                    source={userPhoto}
+                    style={{ height: 50, width: 50, borderRadius: 25 }}
+                  />
+                  <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
+                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}>
+                      Jennifer Kourtney
+                    </Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                      Therapist
+                    </Text>
+                    <View style={{ marginBottom: 5, marginLeft: -responsiveWidth(2) }}>
+                      <StarRating
+                        disabled={true}
+                        maxStars={5}
+                        rating={starCount}
+                        selectedStar={(rating) => setStarCount(rating)}
+                        fullStarColor={'#FFCB45'}
+                        starSize={20}
+                        starStyle={{ marginHorizontal: responsiveWidth(2) }}
+                      />
+                    </View>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                      M.PHIL ( Clinical Psycology)
+                    </Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                      1 Year Experience
+                    </Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: 'row', height: responsiveHeight(6), backgroundColor: '#FFF', borderTopColor: '#E3E3E3', borderTopWidth: 1, borderBottomRightRadius: 20, borderBottomLeftRadius: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                  <Image
+                    source={dateIcon}
+                    style={{ height: 20, width: 20, }}
+                  />
+                  <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), textAlign: 'center', marginLeft: responsiveWidth(2) }}>Book Appointment</Text>
+                </View>
+              </View>
+              <View style={{ width: responsiveWidth(70), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
+                <View style={{ flexDirection: 'row', padding: 20, }}>
+
+                  <Image
+                    source={userPhoto}
+                    style={{ height: 50, width: 50, borderRadius: 25 }}
+                  />
+                  <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
+                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}>
+                      Jennifer Kourtney
+                    </Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                      Therapist
+                    </Text>
+                    <View style={{ marginBottom: 5, marginLeft: -responsiveWidth(2) }}>
+                      <StarRating
+                        disabled={true}
+                        maxStars={5}
+                        rating={starCount}
+                        selectedStar={(rating) => setStarCount(rating)}
+                        fullStarColor={'#FFCB45'}
+                        starSize={20}
+                        starStyle={{ marginHorizontal: responsiveWidth(2) }}
+                      />
+                    </View>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                      M.PHIL ( Clinical Psycology)
+                    </Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                      1 Year Experience
+                    </Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: 'row', height: responsiveHeight(6), backgroundColor: '#FFF', borderTopColor: '#E3E3E3', borderTopWidth: 1, borderBottomRightRadius: 20, borderBottomLeftRadius: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                  <Image
+                    source={dateIcon}
+                    style={{ height: 20, width: 20, }}
+                  />
+                  <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), textAlign: 'center', marginLeft: responsiveWidth(2) }}>Book Appointment</Text>
+                </View>
+              </View>
+            </View>
+          </ScrollView>
+          <View style={{ marginTop: responsiveHeight(3) }}>
+            <Image
+              source={require('../../assets/images/freeconsultation.png')}
+              style={{ height: responsiveHeight(20), width: '92%', alignSelf: 'center', borderRadius: 10, resizeMode: 'cover' }}
+            />
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2), }}>
+            <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Previous Therapists</Text>
+            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2) }}>See All</Text>
+          </View>
+          <View style={{ height: responsiveHeight(30), width: '92%', backgroundColor: '#FFF', marginHorizontal: 15, padding: 20, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
               <Image
-                source={dateIcon}
-                style={{ height: 20, width: 20, resizeMode: 'contain', }}
+                source={userPhoto}
+                style={{ height: 50, width: 50, borderRadius: 25 }}
               />
-            </TouchableOpacity>
-          </View>
+              <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
+                <Text
+                  style={{
+                    color: '#2D2D2D',
+                    fontSize: responsiveFontSize(2),
+                    fontFamily: 'DMSans-Bold',
+                    marginBottom: 5,
+                  }}>
+                  Diptamoy Saha
+                </Text>
+                <Text
+                  style={{
+                    color: '#746868',
+                    fontFamily: 'DMSans-Regular',
+                    marginRight: 5,
+                    fontSize: responsiveFontSize(1.5)
+                  }}>
+                  Patient
+                </Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(65) }}>
+                  <Text
+                    style={{
+                      color: '#746868',
+                      fontFamily: 'DMSans-Regular',
+                      marginRight: 5,
+                      fontSize: responsiveFontSize(1.5)
+                    }}>
+                    MBBS
+                  </Text>
+                  <StarRating
+                    disabled={true}
+                    maxStars={5}
+                    rating={starCount}
+                    selectedStar={(rating) => setStarCount(rating)}
+                    fullStarColor={'#FFCB45'}
+                    starSize={15}
+                    starStyle={{ marginHorizontal: responsiveWidth(1) }}
+                  />
+                </View>
+              </View>
 
-          <View style={{ width: '92%', backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
-            <View style={{ flexDirection: 'row', height: responsiveHeight(7), backgroundColor: '#DEDEDE', borderTopRightRadius: 10, borderTopLeftRadius: 10, alignItems: 'center', }}>
-              <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), fontWeight: 'bold', textAlign: 'center', marginLeft: responsiveWidth(2) }}>Today (02-05-2024)</Text>
             </View>
-            <TouchableOpacity onPress={() => toggleModal()}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5, marginTop: 5 }}>
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Shubham Halder</Text>
+            <View
+              style={{
+                borderBottomColor: '#E3E3E3',
+                borderBottomWidth: 1,
+                marginHorizontal: 10,
+                marginTop: responsiveHeight(2)
+
+              }}
+            />
+            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), marginTop: responsiveHeight(2) }}>Booking Date</Text>
+            <View style={{ height: responsiveHeight(5), width: responsiveWidth(80), marginTop: responsiveHeight(1), flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
                 <Image
-                  source={ArrowGratter}
-                  style={{ height: 20, width: 20, resizeMode: 'contain' }}
+                  source={dateIcon}
+                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
                 />
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5, }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={{ color: '#969696', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>06:00 PM - 06:15 PM</Text>
-                  <View style={{ paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FF9E45', borderRadius: 15, marginLeft: responsiveWidth(2) }}>
-                    <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>New</Text>
-                  </View>
-                </View>
-                <Text style={{ color: '#5C9ECF', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Free</Text>
+                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>Monday, 26 April</Text>
               </View>
               <View
                 style={{
-                  borderBottomColor: '#E3E3E3',
-                  borderBottomWidth: 1,
-                  marginHorizontal: 10,
-                  marginTop: 5
-
+                  height: '100%',
+                  width: 1,
+                  backgroundColor: '#E3E3E3',
+                  marginLeft: 5,
+                  marginRight: 5
                 }}
               />
-            </TouchableOpacity>
-            <>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5, marginTop: 5 }}>
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Shubham Halder</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
                 <Image
-                  source={ArrowGratter}
-                  style={{ height: 20, width: 20, resizeMode: 'contain' }}
+                  source={timeIcon}
+                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
                 />
+                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>09:00 PM</Text>
               </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5, }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={{ color: '#969696', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>06:00 PM - 06:15 PM</Text>
-                  <View style={{ paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#128807', borderRadius: 15, marginLeft: responsiveWidth(2) }}>
-                    <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>New</Text>
-                  </View>
-                </View>
-                <Text style={{ color: '#5C9ECF', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Free</Text>
-              </View>
-              <View
-                style={{
-                  borderBottomColor: '#E3E3E3',
-                  borderBottomWidth: 1,
-                  marginHorizontal: 10,
-                  marginTop: 5
-
-                }}
-              />
-            </>
-          </View>
-          <View style={{ width: '92%', backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
-            <View style={{ flexDirection: 'row', height: responsiveHeight(7), backgroundColor: '#DEDEDE', borderTopRightRadius: 10, borderTopLeftRadius: 10, alignItems: 'center', }}>
-              <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), fontWeight: 'bold', textAlign: 'center', marginLeft: responsiveWidth(2) }}>03-05-2024</Text>
             </View>
-            <>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5, marginTop: 5 }}>
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Shubham Halder</Text>
-                <Image
-                  source={ArrowGratter}
-                  style={{ height: 20, width: 20, resizeMode: 'contain' }}
-                />
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5, }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={{ color: '#969696', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>06:00 PM - 06:15 PM</Text>
-                  <View style={{ paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FF9E45', borderRadius: 15, marginLeft: responsiveWidth(2) }}>
-                    <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>New</Text>
-                  </View>
-                </View>
-                <Text style={{ color: '#5C9ECF', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Free</Text>
-              </View>
+            <View style={{ marginTop: responsiveHeight(1) }}>
+              <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { }} />
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(2), }}>
+            <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Customer Speaks</Text>
+            <Image
+              source={yellowStarImg}
+              style={{ height: 20, width: 20 }}
+            />
+          </View>
+          <View style={{ padding: 20, width: responsiveWidth(80), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(3), elevation: 5 }}>
+            <View style={{ position: 'absolute', top: -15, left: 10, height: 40, width: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF', elevation: 5 }}>
+              <Image
+                source={qouteImg}
+                style={{ height: 20, width: 20, }}
+              />
+            </View>
+            <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2), }}>
+              <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7), }}>
+                Reliable and trustworthy. They have earned my trust and loyalty. This company has consistently demonstrated reliability and trustworthiness.
+              </Text>
+            </View>
+            <View style={{ width: responsiveWidth(70), borderColor: '#E3E3E3', borderWidth: 1, borderRadius: 25, flexDirection: 'row', alignItems: 'center', padding: 5 }}>
+              <Image
+                source={userPhoto}
+                style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
+              />
+              <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginLeft: 5 }}>Darcel Ballentine</Text>
               <View
                 style={{
-                  borderBottomColor: '#E3E3E3',
-                  borderBottomWidth: 1,
-                  marginHorizontal: 10,
-                  marginTop: 5
-
+                  height: '100%',
+                  width: 1,
+                  backgroundColor: '#E3E3E3',
+                  marginLeft: 5,
+                  marginRight: 5
                 }}
               />
-            </>
-            <>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5, marginTop: 5 }}>
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Shubham Halder</Text>
-                <Image
-                  source={ArrowGratter}
-                  style={{ height: 20, width: 20, resizeMode: 'contain' }}
-                />
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5, }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={{ color: '#969696', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>06:00 PM - 06:15 PM</Text>
-                  <View style={{ paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#128807', borderRadius: 15, marginLeft: responsiveWidth(2) }}>
-                    <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>New</Text>
-                  </View>
-                </View>
-                <Text style={{ color: '#5C9ECF', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Free</Text>
-              </View>
-              <View
-                style={{
-                  borderBottomColor: '#E3E3E3',
-                  borderBottomWidth: 1,
-                  marginHorizontal: 10,
-                  marginTop: 5
-
-                }}
+              <StarRating
+                disabled={true}
+                maxStars={5}
+                rating={starCount}
+                selectedStar={(rating) => setStarCount(rating)}
+                fullStarColor={'#FFCB45'}
+                starSize={15}
+                starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
               />
-            </>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -386,126 +564,126 @@ export default function HomeScreen({ navigation }) {
           <Icon name="cross" size={30} color="#B0B0B0" onPress={toggleModal} />
         </View>
         {/* <TouchableWithoutFeedback onPress={() => setIsFocus(false)} style={{  }}> */}
-          <View style={{ height: '75%', backgroundColor: '#fff', position: 'absolute', bottom: 0, width: '100%' }}>
-            <View style={{ padding: 20 }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Patient Details</Text>
-                <TouchableOpacity onPress={(e) => {
-                  e.stopPropagation();
-                  setIsFocus(!isFocus)
-                }}>
-                  {!isFocus?
+        <View style={{ height: '75%', backgroundColor: '#fff', position: 'absolute', bottom: 0, width: '100%' }}>
+          <View style={{ padding: 20 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Patient Details</Text>
+              <TouchableOpacity onPress={(e) => {
+                e.stopPropagation();
+                setIsFocus(!isFocus)
+              }}>
+                {!isFocus ?
                   <Image
                     source={dotIcon}
                     style={{ height: 25, width: 25, resizeMode: 'contain', }}
-                  />:
-                  <Icon name="cross" size={25} color="#B0B0B0" onPress={()=>setIsFocus(!isFocus)} />
-}
-                </TouchableOpacity>
-                {isFocus ?
-                  <View style={{ width: responsiveWidth(40), backgroundColor: '#fff', height: responsiveHeight(15), position: 'absolute', right: 0, top: 30, zIndex: 10, padding: 10, borderRadius: 15, justifyContent: 'center', elevation: 5 }}>
-                    <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Cancel</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Report & Block</Text>
-                    </View>
-                  </View>
-                  : <></>}
-
-              </View>
-              <View style={{ width: responsiveWidth(90), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2) }}>
-                <View style={{ padding: 15 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10 }}>
-
-                    <Text style={{ color: '#969696', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>03-04-2024</Text>
-                    <Text style={{ color: '#969696', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>08:00 PM - 08:30 PM</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <View style={{ flexDirection: 'column' }}>
-                      <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), marginVertical: 10 }}>Shubham Halder</Text>
-                      <View style={{ paddingHorizontal: 15, paddingVertical: 5, backgroundColor: '#FF9E45', borderRadius: 15, width: responsiveWidth(20), justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>New</Text>
-                      </View>
-                    </View>
-                    <View style={styles.inActiveButtonInsideView}>
-                      <Text style={styles.activeButtonInsideText}>Join Now</Text>
-                    </View>
-                  </View>
-
-                </View>
-              </View>
-              <ScrollView horizontal={true}>
-                <View style={{ width: responsiveWidth(89), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2), marginRight: 5 }}>
-                  <View style={{ padding: 15 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Rohit Sharma</Text>
-                      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <Image
-                          source={GreenTick}
-                          style={{ height: 20, width: 20, resizeMode: 'contain' }}
-                        />
-                        <Text style={{ color: '#444343', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-SemiBold', marginLeft: responsiveWidth(1) }}>Completed</Text>
-                      </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Order ID :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>1923659</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Date :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>24-02-2024, 09:30 PM</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Appointment Time :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>60 Min</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Rate :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Rs 1100 for 30 Min</Text>
-                    </View>
-                    <View style={{ marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Session Summary :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginTop: 5 }}>The consultation session focused on exploring and addressing the patient's mental health concerns. The patient expressed their struggles with anxiety and depressive symptoms, impacting various aspects of their daily life. The therapist employed a person-centered approach, providing a safe and non-judgmental space for the patient to share their experiences.</Text>
-                    </View>
+                  /> :
+                  <Icon name="cross" size={25} color="#B0B0B0" onPress={() => setIsFocus(!isFocus)} />
+                }
+              </TouchableOpacity>
+              {isFocus ?
+                <View style={{ width: responsiveWidth(40), backgroundColor: '#fff', height: responsiveHeight(15), position: 'absolute', right: 0, top: 30, zIndex: 10, padding: 10, borderRadius: 15, justifyContent: 'center', elevation: 5 }}>
+                  <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Cancel</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Report & Block</Text>
                   </View>
                 </View>
-                <View style={{ width: responsiveWidth(89), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2), marginRight: 5 }}>
-                  <View style={{ padding: 15 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Rohit Sharma</Text>
-                      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <Image
-                          source={GreenTick}
-                          style={{ height: 20, width: 20, resizeMode: 'contain' }}
-                        />
-                        <Text style={{ color: '#444343', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-SemiBold', marginLeft: responsiveWidth(1) }}>Completed</Text>
-                      </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Order ID :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>1923659</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Date :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>24-02-2024, 09:30 PM</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Appointment Time :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>60 Min</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Rate :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Rs 1100 for 30 Min</Text>
-                    </View>
-                    <View style={{ marginTop: responsiveHeight(1.5) }}>
-                      <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Session Summary :</Text>
-                      <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginTop: 5 }}>The consultation session focused on exploring and addressing the patient's mental health concerns. The patient expressed their struggles with anxiety and depressive symptoms, impacting various aspects of their daily life. The therapist employed a person-centered approach, providing a safe and non-judgmental space for the patient to share their experiences.</Text>
-                    </View>
-                  </View>
-                </View>
-              </ScrollView>
+                : <></>}
 
             </View>
+            <View style={{ width: responsiveWidth(90), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2) }}>
+              <View style={{ padding: 15 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10 }}>
+
+                  <Text style={{ color: '#969696', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>03-04-2024</Text>
+                  <Text style={{ color: '#969696', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>08:00 PM - 08:30 PM</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View style={{ flexDirection: 'column' }}>
+                    <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), marginVertical: 10 }}>Shubham Halder</Text>
+                    <View style={{ paddingHorizontal: 15, paddingVertical: 5, backgroundColor: '#FF9E45', borderRadius: 15, width: responsiveWidth(20), justifyContent: 'center', alignItems: 'center' }}>
+                      <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>New</Text>
+                    </View>
+                  </View>
+                  <View style={styles.inActiveButtonInsideView}>
+                    <Text style={styles.activeButtonInsideText}>Join Now</Text>
+                  </View>
+                </View>
+
+              </View>
+            </View>
+            <ScrollView horizontal={true}>
+              <View style={{ width: responsiveWidth(89), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2), marginRight: 5 }}>
+                <View style={{ padding: 15 }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Rohit Sharma</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                      <Image
+                        source={GreenTick}
+                        style={{ height: 20, width: 20, resizeMode: 'contain' }}
+                      />
+                      <Text style={{ color: '#444343', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-SemiBold', marginLeft: responsiveWidth(1) }}>Completed</Text>
+                    </View>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Order ID :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>1923659</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Date :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>24-02-2024, 09:30 PM</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Appointment Time :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>60 Min</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Rate :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Rs 1100 for 30 Min</Text>
+                  </View>
+                  <View style={{ marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Session Summary :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginTop: 5 }}>The consultation session focused on exploring and addressing the patient's mental health concerns. The patient expressed their struggles with anxiety and depressive symptoms, impacting various aspects of their daily life. The therapist employed a person-centered approach, providing a safe and non-judgmental space for the patient to share their experiences.</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={{ width: responsiveWidth(89), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2), marginRight: 5 }}>
+                <View style={{ padding: 15 }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Rohit Sharma</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                      <Image
+                        source={GreenTick}
+                        style={{ height: 20, width: 20, resizeMode: 'contain' }}
+                      />
+                      <Text style={{ color: '#444343', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-SemiBold', marginLeft: responsiveWidth(1) }}>Completed</Text>
+                    </View>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Order ID :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>1923659</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Date :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>24-02-2024, 09:30 PM</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Appointment Time :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>60 Min</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Rate :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Rs 1100 for 30 Min</Text>
+                  </View>
+                  <View style={{ marginTop: responsiveHeight(1.5) }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Session Summary :</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginTop: 5 }}>The consultation session focused on exploring and addressing the patient's mental health concerns. The patient expressed their struggles with anxiety and depressive symptoms, impacting various aspects of their daily life. The therapist employed a person-centered approach, providing a safe and non-judgmental space for the patient to share their experiences.</Text>
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
+
           </View>
+        </View>
         {/* </TouchableWithoutFeedback> */}
       </Modal>
       <Modal
@@ -626,6 +804,56 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#746868',
     fontFamily: 'DMSans-Regular'
+  },
+  bannerBg: {
+    flex: 1,
+    position: 'absolute',
+    right: 0,
+    // bottom: 20,
+    height: '100%',
+    width: '100%',
+    resizeMode: 'cover',
+    borderRadius: 10
+  },
+  textWrap: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  bannerText: {
+    fontSize: responsiveFontSize(2),
+    color: '#000',
+    fontFamily: 'DMSans-Bold',
+    position: 'relative',
+    zIndex: 1,
+    width: width * 0.5,
+    marginBottom: responsiveHeight(1),
+    paddingLeft: 20,
+  },
+  bannerSubText: {
+    fontSize: 14,
+    color: '#746868',
+    fontFamily: 'DMSans-Regular',
+    position: 'relative',
+    zIndex: 1,
+    width: width * 0.7,
+    marginBottom: 15,
+    paddingLeft: 20,
+  },
+  bannaerContainer: {
+    width: responsiveWidth(89),
+    height: responsiveHeight(20),
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 3,
+    // },
+    // shadowOpacity: 0.29,
+    // //shadowRadius: 4.65,
+    // elevation: 7,
   },
 
 });

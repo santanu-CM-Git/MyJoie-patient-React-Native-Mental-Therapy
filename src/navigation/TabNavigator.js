@@ -21,6 +21,8 @@ import OrderSummary from '../screens/NoAuthScreen/OrderSummary';
 import ChatScreen from '../screens/NoAuthScreen/ChatScreen';
 import EarningScreen from '../screens/NoAuthScreen/EarningScreen';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
+import { talkImg } from '../utils/Images';
+import WalletScreen from '../screens/NoAuthScreen/WalletScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -46,6 +48,11 @@ const HomeStack = () => {
       <Stack.Screen
         name='ChatScreen'
         component={ChatScreen}
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="WalletScreen"
+        component={WalletScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
@@ -86,6 +93,7 @@ const ProfileStack = () => {
         component={ProfileScreen}
         options={{ headerShown: false }}
       />
+      
       <Stack.Screen
         name="PrivacyPolicy"
         component={PrivacyPolicy}
@@ -156,11 +164,15 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
-              <FontAwesome name="rupee-sign" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }} />
+              {/* <FontAwesome name="rupee-sign" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }} /> */}
+              <Image
+                source={talkImg}
+                style={{ height: 22, width: 22, resizeMode: 'contain', color: color, marginTop: responsiveHeight(1.6) }}
+              />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
-            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: responsiveHeight(1) }}>Earning</Text>
+            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: responsiveHeight(1) }}>Talk</Text>
           ),
         })}
       />
@@ -207,11 +219,14 @@ const TabNavigator = () => {
             //borderWidth: 1,
             //borderColor: '#CACCCE'
           },
-          tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="user" color={color} size={size} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center', justifyContent: 'center', }}>
+              {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
+              <FontAwesome name="user" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }}/>
+            </View>
           ),
           tabBarLabel: ({ color, focused }) => (
-            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: 5 }}>Profile</Text>
+            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: responsiveHeight(1) }}>Profile</Text>
           ),
         })}
       />

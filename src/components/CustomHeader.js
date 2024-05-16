@@ -91,11 +91,11 @@ export default function CustomHeader({
                             <TouchableOpacity onPress={onPress} style={{marginRight:responsiveWidth(5)}}>
                                 <Ionicons name="search-outline" size={28} color="#444343" />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={onPress}>
+                            <TouchableOpacity onPress={()=> navigation.navigate('WalletScreen')}>
                                 <Ionicons name="wallet-outline" size={28} color="#444343" />
-                                <View style={styles.notificationdotView}>
+                                {/* <View style={styles.notificationdotView}>
                                     <Text style={styles.notificationdot}>{'\u2B24'}</Text>
-                                </View>
+                                </View> */}
                             </TouchableOpacity>
                         </View>
                        

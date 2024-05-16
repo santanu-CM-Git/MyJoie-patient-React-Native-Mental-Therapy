@@ -16,6 +16,7 @@ import NoNotification from '../screens/NoAuthScreen/NoNotification';
 import UploadSessionSummary from '../screens/NoAuthScreen/UploadSessionSummary';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
 import EarningScreen from '../screens/NoAuthScreen/EarningScreen';
+import WalletScreen from '../screens/NoAuthScreen/WalletScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -78,6 +79,16 @@ const AuthStack = () => {
        <Drawer.Screen
         name="  Customer Support"
         component={CustomerSupport}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
+          ),
+        }}
+      />
+       <Drawer.Screen
+        name="  Wallet"
+        component={WalletScreen}
         options={{
           drawerIcon: ({color}) => (
             // <Ionicons name="settings-outline" size={22} color={color} />
