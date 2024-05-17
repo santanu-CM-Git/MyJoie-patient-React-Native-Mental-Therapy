@@ -17,6 +17,11 @@ import UploadSessionSummary from '../screens/NoAuthScreen/UploadSessionSummary';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
 import EarningScreen from '../screens/NoAuthScreen/EarningScreen';
 import WalletScreen from '../screens/NoAuthScreen/WalletScreen';
+import ReviewScreen from '../screens/NoAuthScreen/ReviewScreen';
+import Bookmarked from '../screens/NoAuthScreen/Bookmarked';
+import ThankYouBookingScreen from '../screens/NoAuthScreen/ThankYouBookingScreen';
+import BookingSummary from '../screens/NoAuthScreen/BookingSummary';
+import TherapistList from '../screens/NoAuthScreen/TherapistList';
 
 const Drawer = createDrawerNavigator();
 
@@ -87,8 +92,48 @@ const AuthStack = () => {
         }}
       />
        <Drawer.Screen
-        name="  Wallet"
-        component={WalletScreen}
+        name="  Review"
+        component={ReviewScreen}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
+          ),
+        }}
+      />
+       <Drawer.Screen
+        name="  Bookmarked Therapist"
+        component={Bookmarked}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="  Thankyou"
+        component={ThankYouBookingScreen}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
+          ),
+        }}
+      />
+       <Drawer.Screen
+        name="  Summary"
+        component={BookingSummary}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
+          ),
+        }}
+      />
+        <Drawer.Screen
+        name="  Therapist"
+        component={TherapistList}
         options={{
           drawerIcon: ({color}) => (
             // <Ionicons name="settings-outline" size={22} color={color} />

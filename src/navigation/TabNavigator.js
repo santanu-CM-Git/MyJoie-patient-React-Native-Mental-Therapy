@@ -23,6 +23,10 @@ import EarningScreen from '../screens/NoAuthScreen/EarningScreen';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
 import { talkImg } from '../utils/Images';
 import WalletScreen from '../screens/NoAuthScreen/WalletScreen';
+import ReviewScreen from '../screens/NoAuthScreen/ReviewScreen';
+import ThankYouBookingScreen from '../screens/NoAuthScreen/ThankYouBookingScreen';
+import BookingSummary from '../screens/NoAuthScreen/BookingSummary';
+import TherapistList from '../screens/NoAuthScreen/TherapistList';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -53,6 +57,26 @@ const HomeStack = () => {
        <Stack.Screen
         name="WalletScreen"
         component={WalletScreen}
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="ReviewScreen"
+        component={ReviewScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ThankYouBookingScreen"
+        component={ThankYouBookingScreen}
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="Summary"
+        component={BookingSummary}
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="TherapistList"
+        component={TherapistList}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

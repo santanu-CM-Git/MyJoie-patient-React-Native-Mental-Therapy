@@ -4,7 +4,7 @@ import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State } from 'react-native-gesture-handler'
-import { deleteImg, editImg, milkImg, phoneImg, searchImg, userPhoto, walletCredit } from '../../utils/Images'
+import { deleteImg, editImg, milkImg, phoneImg, searchImg, userPhoto, wallet, walletCredit } from '../../utils/Images'
 import { API_URL } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -96,24 +96,26 @@ const WalletScreen = ({ navigation }) => {
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Wallet'} onPress={() => navigation.goBack()} title={'Wallet'} />
             <ScrollView style={styles.wrapper}>
-                <View style={{ marginBottom: responsiveHeight(5),alignSelf:'center',marginTop: responsiveHeight(2) }}>
+                <View style={{ marginBottom: responsiveHeight(5), alignSelf: 'center', marginTop: responsiveHeight(2) }}>
                     <View style={styles.totalValue}>
-                        <View style={{ height: 40, width: 40, borderRadius: 40 / 2, backgroundColor: '#F4F5F5', justifyContent: 'center', alignItems: 'center' }}>
+                       
+                        <View style={{ height: 40, width: 40, borderRadius: 40 / 2, backgroundColor: '#FFF',borderColor:'#E3E3E3',borderWidth:1, justifyContent: 'center', alignItems: 'center' }}>
                             <Image
-                                source={walletCredit}
+                                source={wallet}
                                 style={{ height: 20, width: 20, resizeMode: 'contain' }}
                             />
                         </View>
-                        <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(50), }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), }}>Refund Booking Fees</Text>
-                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7), }}>29 March, 2024</Text>
+                        <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(40),height: responsiveHeight(5),justifyContent:'space-between' }}>
+                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), }}>Wallet Balance</Text>
+                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), }}>Available Amount</Text>
                         </View>
                         <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                            <Text style={{ color: '#19BF1F', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), fontWeight: '700', textAlign: 'right' }}>+ ₹1500</Text>
+                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2.5), textAlign: 'right' }}>₹500</Text>
                         </View>
                     </View>
                 </View>
-                <View style={{ marginBottom: responsiveHeight(10) }}>
+                <Text style={{color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2),marginLeft: responsiveWidth(3)}}>Recent Transaction</Text>
+                <View style={{ marginBottom: responsiveHeight(10),alignSelf:'center' }}>
                     <View style={styles.singleValue}>
                         <View style={{ height: 40, width: 40, borderRadius: 40 / 2, backgroundColor: '#F4F5F5', justifyContent: 'center', alignItems: 'center' }}>
                             <Image
@@ -121,8 +123,8 @@ const WalletScreen = ({ navigation }) => {
                                 style={{ height: 20, width: 20, resizeMode: 'contain' }}
                             />
                         </View>
-                        <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(50), }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), }}>Refund Booking Fees</Text>
+                        <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(45), }}>
+                            <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2), }}>Refund Booking Fees</Text>
                             <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7), }}>29 March, 2024</Text>
                         </View>
                         <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
@@ -143,11 +145,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     wrapper: {
-        padding: responsiveWidth(5),
+        padding: responsiveWidth(2),
 
     },
     singleValue: {
-        width: responsiveWidth(89),
+        width: responsiveWidth(90),
         height: responsiveHeight(10),
         padding: 5,
         borderBottomColor: '#E4E4E4',
@@ -160,11 +162,11 @@ const styles = StyleSheet.create({
         height: responsiveHeight(10),
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor:'#FFF',
-        elevation:5,
-        justifyContent:'center',
-        paddingHorizontal:30,
-        paddingLeft:20
+        backgroundColor: '#FFF',
+        elevation: 5,
+        //justifyContent: 'center',
+        padding: 20,
+        borderRadius: 15
     }
 
 });

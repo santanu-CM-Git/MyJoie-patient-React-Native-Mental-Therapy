@@ -27,7 +27,7 @@ import { dateIcon, timeIcon, ArrowGratter, documentImg, infoImg, requestImg, use
 import Loader from '../../utils/Loader';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import CustomHeader from '../../components/CustomHeader';
-import Carousel from 'react-native-snap-carousel';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from '@env'
 import { useFocusEffect } from '@react-navigation/native';
@@ -68,6 +68,7 @@ export default function HomeScreen({ navigation }) {
   const [todaysDate, setTodaysDate] = useState('')
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [starCount, setStarCount] = useState(4)
+  const [activeSlide, setActiveSlide] = React.useState(0);
   const [bannerData, setBannerData] = useState([{
     title: "Aenean leo",
     description: "Ut tincidunt tincidunt erat. Sed cursus Donec quam felis, ultricieum quis, sem.",
@@ -84,7 +85,7 @@ export default function HomeScreen({ navigation }) {
     imgUrl: "https://picsum.photos/id/12/200/300",
   },])
 
-  const CarouselCardItem = ({item, index}) => {
+  const CarouselCardItem = ({ item, index }) => {
     console.log(item, 'banner itemmm')
     return (
       <View style={styles.bannaerContainer}>
@@ -95,8 +96,8 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.textWrap}>
           {item?.title && <Text style={styles.bannerText}>Looking For Specialist Therapist?</Text>}
           {item?.description && <Text style={styles.bannerSubText} numberOfLines={4}>Schedule an appointment with our top Therapist</Text>}
-          <View style={{height: responsiveHeight(5),width: responsiveWidth(25),backgroundColor:'#FFFFFF',marginLeft: 20,borderRadius:20,justifyContent:'center',alignItems:'center'}}>
-            <Text style={{color:'#E88036',fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.5)}}>Call Us Today!</Text>
+          <View style={{ height: responsiveHeight(4), width: responsiveWidth(25), backgroundColor: '#FFFFFF', marginLeft: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ color: '#E88036', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.5) }}>Call Us Today!</Text>
           </View>
         </View>
       </View>
@@ -263,12 +264,13 @@ export default function HomeScreen({ navigation }) {
               loop={true}
               index={0}
               //enableSnap={true}
-              activePageIndicatorStyle={{ backgroundColor: '#00B2EB' }}
+              onSnapToItem={(index) => setActiveSlide(index)}
+              activePageIndicatorStyle={{ backgroundColor: 'red' }}
             />
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2), }}>
             <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Upcoming Appointment</Text>
-            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2) }}>See All</Text>
+            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>See All</Text>
           </View>
           <View style={{ height: responsiveHeight(20), width: '92%', backgroundColor: '#FFF', marginHorizontal: 15, padding: 20, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -320,7 +322,7 @@ export default function HomeScreen({ navigation }) {
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
             <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Therapist</Text>
-            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2) }}>See All</Text>
+            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>See All</Text>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={{ paddingVertical: 10, flexDirection: 'row' }}>
@@ -416,7 +418,7 @@ export default function HomeScreen({ navigation }) {
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2), }}>
             <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Previous Therapists</Text>
-            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2) }}>See All</Text>
+            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>See All</Text>
           </View>
           <View style={{ height: responsiveHeight(30), width: '92%', backgroundColor: '#FFF', marginHorizontal: 15, padding: 20, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
