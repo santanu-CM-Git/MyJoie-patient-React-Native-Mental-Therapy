@@ -89,3 +89,5 @@ export const cameraColor = require("../assets/images/camera-color.png");
 export const chatColor = require("../assets/images/chat-color.png");
 export const phoneColor = require("../assets/images/phone-color.png");
 export const filterImg = require("../assets/images/filter.png");
+export const checkedImg = require("../assets/images/checked.png");
+export const uncheckedImg = require("../assets/images/unchecked.png");

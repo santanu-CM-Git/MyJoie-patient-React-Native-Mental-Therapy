@@ -280,24 +280,8 @@ export default function HomeScreen({ navigation }) {
                 style={{ height: 50, width: 50, borderRadius: 25 }}
               />
               <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                <Text
-                  style={{
-                    color: '#2D2D2D',
-                    fontSize: responsiveFontSize(2),
-                    fontFamily: 'DMSans-Bold',
-                    marginBottom: 5,
-                  }}>
-                  Diptamoy Saha
-                </Text>
-                <Text
-                  style={{
-                    color: '#746868',
-                    fontFamily: 'DMSans-Regular',
-                    marginRight: 5,
-                    fontSize: responsiveFontSize(1.5)
-                  }}>
-                  Patient
-                </Text>
+                <Text style={{color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}> Diptamoy Saha </Text>
+                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5,fontSize: responsiveFontSize(1.5) }}> Patient</Text>
               </View>
               <TouchableOpacity style={{ marginLeft: responsiveWidth(10), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, padding: 10, borderRadius: 20, flexDirection: 'row', justifyContent: 'center' }} onPress={() => navigation.navigate('ChatScreen')}>
                 <Text style={{ fontFamily: 'DMSans-Bold', color: '#2D2D2D', fontSize: responsiveFontSize(1.7) }}>Join Now</Text>
@@ -311,6 +295,15 @@ export default function HomeScreen({ navigation }) {
                 />
                 <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>Monday, 26 April</Text>
               </View>
+              <View
+                style={{
+                  height: '80%',
+                  width: 1,
+                  backgroundColor: '#E3E3E3',
+                  marginLeft: 5,
+                  marginRight: 5
+                }}
+              />
               <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
                 <Image
                   source={timeIcon}
@@ -340,7 +333,7 @@ export default function HomeScreen({ navigation }) {
                     <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
                       Therapist
                     </Text>
-                    <View style={{ marginBottom: 5, marginLeft: -responsiveWidth(2) }}>
+                    <View style={{ marginBottom: 5,width:responsiveWidth(30), }}>
                       <StarRating
                         disabled={true}
                         maxStars={5}
@@ -348,7 +341,7 @@ export default function HomeScreen({ navigation }) {
                         selectedStar={(rating) => setStarCount(rating)}
                         fullStarColor={'#FFCB45'}
                         starSize={20}
-                        starStyle={{ marginHorizontal: responsiveWidth(2) }}
+                        //starStyle={{ marginHorizontal: responsiveWidth(2) }}
                       />
                     </View>
                     <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
@@ -381,7 +374,7 @@ export default function HomeScreen({ navigation }) {
                     <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
                       Therapist
                     </Text>
-                    <View style={{ marginBottom: 5, marginLeft: -responsiveWidth(2) }}>
+                    <View style={{ marginBottom: 5, width:responsiveWidth(30), }}>
                       <StarRating
                         disabled={true}
                         maxStars={5}
@@ -389,7 +382,7 @@ export default function HomeScreen({ navigation }) {
                         selectedStar={(rating) => setStarCount(rating)}
                         fullStarColor={'#FFCB45'}
                         starSize={20}
-                        starStyle={{ marginHorizontal: responsiveWidth(2) }}
+                        //starStyle={{ marginHorizontal: responsiveWidth(2) }}
                       />
                     </View>
                     <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
@@ -428,34 +421,10 @@ export default function HomeScreen({ navigation }) {
                 style={{ height: 50, width: 50, borderRadius: 25 }}
               />
               <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                <Text
-                  style={{
-                    color: '#2D2D2D',
-                    fontSize: responsiveFontSize(2),
-                    fontFamily: 'DMSans-Bold',
-                    marginBottom: 5,
-                  }}>
-                  Diptamoy Saha
-                </Text>
-                <Text
-                  style={{
-                    color: '#746868',
-                    fontFamily: 'DMSans-Regular',
-                    marginRight: 5,
-                    fontSize: responsiveFontSize(1.5)
-                  }}>
-                  Patient
-                </Text>
+                <Text style={{color: '#2D2D2D', fontSize: responsiveFontSize(2),fontFamily: 'DMSans-Bold', marginBottom: 5, }}> Diptamoy Saha</Text>
+                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5) }}>Patient</Text>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(65) }}>
-                  <Text
-                    style={{
-                      color: '#746868',
-                      fontFamily: 'DMSans-Regular',
-                      marginRight: 5,
-                      fontSize: responsiveFontSize(1.5)
-                    }}>
-                    MBBS
-                  </Text>
+                  <Text style={{color: '#746868',fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5) }}>MBBS</Text>
                   <StarRating
                     disabled={true}
                     maxStars={5}

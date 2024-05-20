@@ -22,6 +22,7 @@ import Bookmarked from '../screens/NoAuthScreen/Bookmarked';
 import ThankYouBookingScreen from '../screens/NoAuthScreen/ThankYouBookingScreen';
 import BookingSummary from '../screens/NoAuthScreen/BookingSummary';
 import TherapistList from '../screens/NoAuthScreen/TherapistList';
+import TherapistProfile from '../screens/NoAuthScreen/TherapistProfile';
 
 const Drawer = createDrawerNavigator();
 
@@ -134,6 +135,16 @@ const AuthStack = () => {
         <Drawer.Screen
         name="  Therapist"
         component={TherapistList}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
+          ),
+        }}
+      />
+       <Drawer.Screen
+        name="  Therapist Profile"
+        component={TherapistProfile}
         options={{
           drawerIcon: ({color}) => (
             // <Ionicons name="settings-outline" size={22} color={color} />

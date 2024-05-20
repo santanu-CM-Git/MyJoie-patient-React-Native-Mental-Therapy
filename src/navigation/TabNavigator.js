@@ -27,6 +27,7 @@ import ReviewScreen from '../screens/NoAuthScreen/ReviewScreen';
 import ThankYouBookingScreen from '../screens/NoAuthScreen/ThankYouBookingScreen';
 import BookingSummary from '../screens/NoAuthScreen/BookingSummary';
 import TherapistList from '../screens/NoAuthScreen/TherapistList';
+import TherapistProfile from '../screens/NoAuthScreen/TherapistProfile';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -77,6 +78,11 @@ const HomeStack = () => {
        <Stack.Screen
         name="TherapistList"
         component={TherapistList}
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="TherapistProfile"
+        component={TherapistProfile}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
