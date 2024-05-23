@@ -34,7 +34,6 @@ const { height, width } = Dimensions.get('screen')
 
 const LoginScreen = ({ navigation }) => {
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
   const [deviceId, setDeviceId] = useState('')
   const [mobileError, setMobileError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -78,13 +77,16 @@ const LoginScreen = ({ navigation }) => {
     }
   }
 
-  const onChangeEmail = (text) => {
-    setEmail(text)
-  }
-
   const handleSubmit = () => {
-    navigation.navigate('Otp')
-    // const phoneRegex = /^\d{10}$/;
+
+    const phoneRegex = /^\d{10}$/;
+    if (!phone) {
+      setMobileError('Please enter Mobile no')
+    } else if (!phoneRegex.test(phone)) {
+      setMobileError('Please enter a 10-digit number.')
+    } else {
+      navigation.navigate('Otp')
+    }
     // if (!phone) {
     //   setMobileError('Please enter Mobile no')
     // } else if (!phoneRegex.test(phone)) {
@@ -155,7 +157,7 @@ const LoginScreen = ({ navigation }) => {
 
         <View style={styles.wrapper}>
           <View style={{ marginBottom: responsiveHeight(2) }}>
-            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2.5), marginBottom: responsiveHeight(1) }}>Let’s get started! Enter your mobile number</Text>
+            <Text style={styles.headerText}>Let’s get started! Enter your mobile number</Text>
           </View>
           <View style={styles.textinputview}>
             {/* <InputField
@@ -208,12 +210,12 @@ const LoginScreen = ({ navigation }) => {
         //onPress={() => { navigation.push('Otp', { phoneno: phone }) }}
         />
       </View>
-      <View style={{ marginBottom: responsiveHeight(0), paddingHorizontal: 20, alignSelf: 'center' }}>
-        <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), textAlign: 'center' }}>By signing in you agree to our Terms & Condition and Privacy Policy</Text>
+      <View style={styles.termsView}>
+        <Text style={styles.termsText}>By signing in you agree to our Terms & Condition and Privacy Policy</Text>
       </View>
       <Image
         source={orImg}
-        style={{ height: responsiveHeight(4), width: responsiveWidth(25), resizeMode: 'contain', alignSelf: "center" }}
+        style={styles.orImg}
       />
       <View style={[styles.buttonwrapper, { marginTop: 10 }]}>
         <CustomButton label={"Login With Truecaller"}
@@ -242,19 +244,6 @@ const styles = StyleSheet.create({
     paddingTop: responsiveHeight(5),
     //position:'absolute',
     bottom: 0
-  },
-  header: {
-    fontFamily: 'DMSans-SemiBold',
-    fontSize: responsiveFontSize(2),
-    color: '#2F2F2F',
-    marginBottom: responsiveHeight(1),
-  },
-  subheader: {
-    fontFamily: 'Outfit-Medium',
-    fontSize: responsiveFontSize(1.8),
-    fontWeight: '400',
-    color: '#808080',
-    marginBottom: responsiveHeight(3),
   },
   textinputview: {
     flexDirection: 'row',
@@ -287,35 +276,29 @@ const styles = StyleSheet.create({
     width: '100%',
     resizeMode: 'cover',
   },
-  textWrap: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
+  headerText: {
+    color: '#2D2D2D',
+    fontFamily: 'DMSans-SemiBold',
+    fontSize: responsiveFontSize(2.5),
+    marginBottom: responsiveHeight(1)
   },
-  bannerText: {
-    fontSize: responsiveFontSize(2),
-    color: '#FFFFFF',
-    fontWeight: '300',
-    fontFamily: 'Outfit-Medium',
-    position: 'relative',
-    zIndex: 1,
-    width: width * 0.8,
-    marginBottom: 10,
-    paddingLeft: 20,
+  termsView: {
+    marginBottom: responsiveHeight(0),
+    paddingHorizontal: 20,
+    alignSelf: 'center'
   },
-
-  bannerSubText: {
-    fontSize: responsiveFontSize(3),
-    color: '#FFFFFF',
-    fontWeight: '700',
-    fontFamily: 'Outfit-Medium',
-    position: 'relative',
-    zIndex: 1,
-    width: width * 0.8,
-    marginBottom: 30,
-    paddingLeft: 20,
+  termsText: {
+    color: '#746868',
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.5),
+    textAlign: 'center'
   },
+  orImg: {
+    height: responsiveHeight(4),
+    width: responsiveWidth(25),
+    resizeMode: 'contain',
+    alignSelf: "center"
+  }
 });
 
 

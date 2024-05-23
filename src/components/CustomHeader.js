@@ -87,18 +87,18 @@ export default function CustomHeader({
                                 style={{ height: responsiveHeight(5), width: responsiveWidth(35), resizeMode: 'contain', marginLeft: responsiveWidth(2) }}
                             />
                         </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity onPress={onPress} style={{marginRight:responsiveWidth(5)}}>
+                        <View style={styles.secondSection}>
+                            <TouchableOpacity onPress={onPress} style={{ marginRight: responsiveWidth(5) }}>
                                 <Ionicons name="search-outline" size={28} color="#444343" />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={()=> navigation.navigate('WalletScreen')}>
+                            <TouchableOpacity onPress={() => navigation.navigate('WalletScreen')}>
                                 <Ionicons name="wallet-outline" size={28} color="#444343" />
                                 {/* <View style={styles.notificationdotView}>
                                     <Text style={styles.notificationdot}>{'\u2B24'}</Text>
                                 </View> */}
                             </TouchableOpacity>
                         </View>
-                       
+
                     </LinearGradient>
                     <View style={styles.headerBottomMargin} />
                 </>
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#377172',
         marginTop: -responsiveHeight(1),
-        paddingRight: responsiveWidth(10)
+        //paddingRight: responsiveWidth(10)
     },
     innerPageheaderView: {
         flexDirection: 'row',
@@ -166,7 +166,14 @@ const styles = StyleSheet.create({
     },
     firstSection: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        //width: responsiveWidth(60),
+        //backgroundColor: 'red'
+    },
+    secondSection: {
+        flexDirection: 'row',
+        //width: responsiveWidth(20),
+        //backgroundColor: 'red'
     },
     headerImage: {
         width: 35,
@@ -196,7 +203,7 @@ const styles = StyleSheet.create({
     headerBottomMargin: {
         borderBottomColor: '#FFFFFF',
         borderBottomWidth: StyleSheet.hairlineWidth,
-        elevation:2
+        elevation: 2
     },
     imageStyle: {
         height: 40,
@@ -206,5 +213,5 @@ const styles = StyleSheet.create({
     },
     switchStyle: {
         transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]  // Adjust scale values as needed
-      }
+    }
 })

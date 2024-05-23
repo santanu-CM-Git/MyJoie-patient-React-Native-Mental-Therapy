@@ -76,7 +76,7 @@ const BookingSummary = ({ navigation }) => {
                                     selectedStar={(rating) => setStarCount(rating)}
                                     fullStarColor={'#FFCB45'}
                                     starSize={12}
-                                    starStyle={{ marginHorizontal: responsiveWidth(0.5), marginBottom: responsiveHeight(1) }}
+                                    starStyle={{ marginHorizontal: responsiveWidth(0.3), marginBottom: responsiveHeight(1),marginLeft: responsiveWidth(1.5) }}
                                 />
                                 <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>100+ Reviews</Text>
                             </View>
@@ -109,15 +109,15 @@ const BookingSummary = ({ navigation }) => {
                             </View>
                         </View>
                     </View>
-                    <View style={{ width: responsiveWidth(89), backgroundColor: '#FFFFFF', height: responsiveHeight(8), marginTop: responsiveHeight(2), borderRadius: 10, padding: 10, borderColor: '#E3E3E3', borderWidth: 1, flexDirection: 'row', alignItems: 'center' }}>
-                        <Image
-                            source={walletBlack}
-                            style={{ height: 20, width: 20, marginRight: responsiveWidth(2) }}
-                        />
-                        <View style={{ width: responsiveWidth(35), }}>
+                    <View style={{ width: responsiveWidth(89), backgroundColor: '#FFFFFF', height: responsiveHeight(8), marginTop: responsiveHeight(2), borderRadius: 10, padding: 10, borderColor: '#E3E3E3', borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={{ width: responsiveWidth(40), flexDirection: 'row'}}>
+                            <Image
+                                source={walletBlack}
+                                style={{ height: 20, width: 20, marginRight: responsiveWidth(2) }}
+                            />
                             <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2), }}>Wallet Balance</Text>
                         </View>
-                        <View style={{ width: responsiveWidth(40), justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                        <View style={{ width: responsiveWidth(30), justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                             <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2), marginRight: responsiveWidth(5) }}>₹500</Text>
 
                             <Switch
@@ -161,7 +161,7 @@ const BookingSummary = ({ navigation }) => {
                     <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-Medium', }}>Consult Fees</Text>
                     <Text style={{ color: '#444343', fontSize: responsiveFontSize(2.5), fontFamily: 'DMSans-Bold', marginTop: 10 }}>₹ 1500</Text>
                 </View>
-                <View style={{marginTop: responsiveHeight(1)}}>
+                <View style={{ marginTop: responsiveHeight(1) }}>
                     <CustomButton label={"Pay & Consult"}
                         onPress={() => navigation.navigate('PersonalInformation')}
                     />

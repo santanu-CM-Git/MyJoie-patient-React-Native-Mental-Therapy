@@ -60,12 +60,6 @@ export default function HomeScreen({ navigation }) {
   const [startDay, setStartDay] = useState(null);
   const [endDay, setEndDay] = useState(null);
   const [markedDates, setMarkedDates] = useState({});
-  const [completed, setCompleted] = useState(0);
-  const [accepted, setAccepted] = useState(0);
-  const [declined, setDeclined] = useState(0);
-  const [todayEarning, setTodayearning] = useState(0);
-  const [noofDeliverd, setNoofDeliverd] = useState(0)
-  const [todaysDate, setTodaysDate] = useState('')
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [starCount, setStarCount] = useState(4)
   const [activeSlide, setActiveSlide] = React.useState(0);
@@ -86,7 +80,7 @@ export default function HomeScreen({ navigation }) {
   },])
 
   const CarouselCardItem = ({ item, index }) => {
-    console.log(item, 'banner itemmm')
+    //console.log(item, 'banner itemmm')
     return (
       <View style={styles.bannaerContainer}>
         <Image
@@ -96,8 +90,8 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.textWrap}>
           {item?.title && <Text style={styles.bannerText}>Looking For Specialist Therapist?</Text>}
           {item?.description && <Text style={styles.bannerSubText} numberOfLines={4}>Schedule an appointment with our top Therapist</Text>}
-          <View style={{ height: responsiveHeight(4), width: responsiveWidth(25), backgroundColor: '#FFFFFF', marginLeft: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ color: '#E88036', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.5) }}>Call Us Today!</Text>
+          <View style={styles.bannerButtonView}>
+            <Text style={styles.bannerButtonText}>Call Us Today!</Text>
           </View>
         </View>
       </View>
@@ -233,7 +227,7 @@ export default function HomeScreen({ navigation }) {
       <CustomHeader commingFrom={'Home'} onPress={() => navigation.navigate('Notification')} onPressProfile={() => navigation.navigate('Profile')} />
       <ScrollView>
         <View style={{ marginBottom: 10 }}>
-          <View style={{ marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2), marginHorizontal: 20, }}>
+          <View style={styles.carouselView}>
             {/* <Carousel
               autoplay
               autoplayTimeout={5000}
@@ -268,72 +262,68 @@ export default function HomeScreen({ navigation }) {
               activePageIndicatorStyle={{ backgroundColor: 'red' }}
             />
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2), }}>
-            <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Upcoming Appointment</Text>
-            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>See All</Text>
+          <View style={styles.sectionHeaderView}>
+            <Text style={styles.sectionHeaderText}>Upcoming Appointment</Text>
+            <TouchableOpacity onPress={()=> navigation.navigate('ScheduleScreen')}>
+            <Text style={styles.seeallText}>See All</Text>
+            </TouchableOpacity>
           </View>
-          <View style={{ height: responsiveHeight(20), width: '92%', backgroundColor: '#FFF', marginHorizontal: 15, padding: 20, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
+          <View style={styles.upcommingAppointmentView}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
               <Image
                 source={userPhoto}
-                style={{ height: 50, width: 50, borderRadius: 25 }}
+                style={styles.cardImg}
               />
               <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                <Text style={{color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}> Diptamoy Saha </Text>
-                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5,fontSize: responsiveFontSize(1.5) }}> Patient</Text>
+                <Text style={styles.nameText}> Diptamoy Saha </Text>
+                <Text style={styles.namesubText}> Patient</Text>
               </View>
-              <TouchableOpacity style={{ marginLeft: responsiveWidth(10), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, padding: 10, borderRadius: 20, flexDirection: 'row', justifyContent: 'center' }} onPress={() => navigation.navigate('ChatScreen')}>
-                <Text style={{ fontFamily: 'DMSans-Bold', color: '#2D2D2D', fontSize: responsiveFontSize(1.7) }}>Join Now</Text>
+              <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen')}>
+                <Text style={styles.joinButtonText}>Join Now</Text>
               </TouchableOpacity>
             </View>
-            <View style={{ height: responsiveHeight(5), width: responsiveWidth(80), marginTop: responsiveHeight(2), borderColor: '#E3E3E3', borderWidth: 1, borderRadius: 20, padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
+            <View style={styles.dateTimeView}>
+              <View style={styles.dateView}>
                 <Image
                   source={dateIcon}
-                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
+                  style={styles.datetimeIcon}
                 />
-                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>Monday, 26 April</Text>
+                <Text style={styles.dateTimeText}>Monday, 26 April</Text>
               </View>
-              <View
-                style={{
-                  height: '80%',
-                  width: 1,
-                  backgroundColor: '#E3E3E3',
-                  marginLeft: 5,
-                  marginRight: 5
-                }}
-              />
-              <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
+              <View style={styles.dividerLine} />
+              <View style={styles.dateView}>
                 <Image
                   source={timeIcon}
-                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
+                  style={styles.datetimeIcon}
                 />
-                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>09:00 PM</Text>
+                <Text style={styles.dateTimeText}>09:00 PM</Text>
               </View>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
-            <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Therapist</Text>
-            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>See All</Text>
+          <View style={styles.sectionHeaderView}>
+            <Text style={styles.sectionHeaderText}>Therapist</Text>
+            <TouchableOpacity onPress={()=> navigation.navigate('TherapistList')}>
+            <Text style={styles.seeallText}>See All</Text>
+            </TouchableOpacity>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={{ paddingVertical: 10, flexDirection: 'row' }}>
-              <View style={{ width: responsiveWidth(70), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
+              <View style={styles.therapistCardView}>
                 <View style={{ flexDirection: 'row', padding: 20, }}>
 
                   <Image
                     source={userPhoto}
-                    style={{ height: 50, width: 50, borderRadius: 25 }}
+                    style={styles.cardImg}
                   />
                   <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}>
+                    <Text style={styles.nameText}>
                       Jennifer Kourtney
                     </Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                    <Text style={styles.nameSubText2}>
                       Therapist
                     </Text>
-                    <View style={{ marginBottom: 5,width:responsiveWidth(30), }}>
+                    <View style={{ marginBottom: 5, width: responsiveWidth(30), }}>
                       <StarRating
                         disabled={true}
                         maxStars={5}
@@ -341,40 +331,40 @@ export default function HomeScreen({ navigation }) {
                         selectedStar={(rating) => setStarCount(rating)}
                         fullStarColor={'#FFCB45'}
                         starSize={20}
-                        //starStyle={{ marginHorizontal: responsiveWidth(2) }}
+                      //starStyle={{ marginHorizontal: responsiveWidth(2) }}
                       />
                     </View>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                    <Text style={styles.nameSubText3}>
                       M.PHIL ( Clinical Psycology)
                     </Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                    <Text style={styles.nameSubText2}>
                       1 Year Experience
                     </Text>
                   </View>
                 </View>
-                <View style={{ flexDirection: 'row', height: responsiveHeight(6), backgroundColor: '#FFF', borderTopColor: '#E3E3E3', borderTopWidth: 1, borderBottomRightRadius: 20, borderBottomLeftRadius: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                <View style={styles.bookapointView}>
                   <Image
                     source={dateIcon}
                     style={{ height: 20, width: 20, }}
                   />
-                  <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), textAlign: 'center', marginLeft: responsiveWidth(2) }}>Book Appointment</Text>
+                  <Text style={styles.bookapointText}>Book Appointment</Text>
                 </View>
               </View>
-              <View style={{ width: responsiveWidth(70), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
+              <View style={styles.therapistCardView}>
                 <View style={{ flexDirection: 'row', padding: 20, }}>
 
                   <Image
                     source={userPhoto}
-                    style={{ height: 50, width: 50, borderRadius: 25 }}
+                    style={styles.cardImg}
                   />
                   <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}>
+                    <Text style={styles.nameText}>
                       Jennifer Kourtney
                     </Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                    <Text style={styles.nameSubText2}>
                       Therapist
                     </Text>
-                    <View style={{ marginBottom: 5, width:responsiveWidth(30), }}>
+                    <View style={{ marginBottom: 5, width: responsiveWidth(30), }}>
                       <StarRating
                         disabled={true}
                         maxStars={5}
@@ -382,23 +372,23 @@ export default function HomeScreen({ navigation }) {
                         selectedStar={(rating) => setStarCount(rating)}
                         fullStarColor={'#FFCB45'}
                         starSize={20}
-                        //starStyle={{ marginHorizontal: responsiveWidth(2) }}
+                      //starStyle={{ marginHorizontal: responsiveWidth(2) }}
                       />
                     </View>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                    <Text style={styles.nameSubText3}>
                       M.PHIL ( Clinical Psycology)
                     </Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5), marginBottom: 5, }}>
+                    <Text style={styles.nameSubText2}>
                       1 Year Experience
                     </Text>
                   </View>
                 </View>
-                <View style={{ flexDirection: 'row', height: responsiveHeight(6), backgroundColor: '#FFF', borderTopColor: '#E3E3E3', borderTopWidth: 1, borderBottomRightRadius: 20, borderBottomLeftRadius: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                <View style={styles.bookapointView}>
                   <Image
                     source={dateIcon}
                     style={{ height: 20, width: 20, }}
                   />
-                  <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), textAlign: 'center', marginLeft: responsiveWidth(2) }}>Book Appointment</Text>
+                  <Text style={styles.bookapointText}>Book Appointment</Text>
                 </View>
               </View>
             </View>
@@ -406,25 +396,24 @@ export default function HomeScreen({ navigation }) {
           <View style={{ marginTop: responsiveHeight(3) }}>
             <Image
               source={require('../../assets/images/freeconsultation.png')}
-              style={{ height: responsiveHeight(20), width: '92%', alignSelf: 'center', borderRadius: 10, resizeMode: 'cover' }}
+              style={styles.freebannerImg}
             />
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2), }}>
-            <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Previous Therapists</Text>
-            <Text style={{ marginHorizontal: 20, color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>See All</Text>
+          <View style={styles.sectionHeaderView}>
+            <Text style={styles.sectionHeaderText}>Previous Therapists</Text>
+            <Text style={styles.seeallText}>See All</Text>
           </View>
-          <View style={{ height: responsiveHeight(30), width: '92%', backgroundColor: '#FFF', marginHorizontal: 15, padding: 20, borderRadius: 20, marginTop: responsiveHeight(2), elevation: 5 }}>
+          <View style={styles.previousTherapistView}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
               <Image
                 source={userPhoto}
-                style={{ height: 50, width: 50, borderRadius: 25 }}
+                style={styles.cardImg}
               />
               <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                <Text style={{color: '#2D2D2D', fontSize: responsiveFontSize(2),fontFamily: 'DMSans-Bold', marginBottom: 5, }}> Diptamoy Saha</Text>
-                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5) }}>Patient</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(65) }}>
-                  <Text style={{color: '#746868',fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5) }}>MBBS</Text>
+                <Text style={styles.nameText}> Diptamoy Saha</Text>
+                <Text style={styles.namesubText}>Patient</Text>
+                <View style={styles.ratingView}>
+                  <Text style={styles.namesubText}>MBBS</Text>
                   <StarRating
                     disabled={true}
                     maxStars={5}
@@ -439,38 +428,26 @@ export default function HomeScreen({ navigation }) {
 
             </View>
             <View
-              style={{
-                borderBottomColor: '#E3E3E3',
-                borderBottomWidth: 1,
-                marginHorizontal: 10,
-                marginTop: responsiveHeight(2)
-
-              }}
+              style={styles.horizontalLine}
             />
-            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), marginTop: responsiveHeight(2) }}>Booking Date</Text>
-            <View style={{ height: responsiveHeight(5), width: responsiveWidth(80), marginTop: responsiveHeight(1), flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
+            <Text style={styles.bookingDateText}>Booking Date</Text>
+            <View style={styles.dateTimeSection2}>
+              <View style={styles.dateTimeHalfSection}>
                 <Image
                   source={dateIcon}
-                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
+                  style={styles.datetimeIcon}
                 />
-                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>Monday, 26 April</Text>
+                <Text style={styles.dateTimeText}>Monday, 26 April</Text>
               </View>
               <View
-                style={{
-                  height: '100%',
-                  width: 1,
-                  backgroundColor: '#E3E3E3',
-                  marginLeft: 5,
-                  marginRight: 5
-                }}
+                style={styles.verticalLine}
               />
-              <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
+              <View style={styles.dateTimeHalfSection}>
                 <Image
                   source={timeIcon}
-                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
+                  style={styles.datetimeIcon}
                 />
-                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>09:00 PM</Text>
+                <Text style={styles.dateTimeText}>09:00 PM</Text>
               </View>
             </View>
             <View style={{ marginTop: responsiveHeight(1) }}>
@@ -478,38 +455,32 @@ export default function HomeScreen({ navigation }) {
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(2), }}>
-            <Text style={{ marginHorizontal: 20, color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>Customer Speaks</Text>
+            <Text style={styles.sectionHeaderText}>Customer Speaks</Text>
             <Image
               source={yellowStarImg}
               style={{ height: 20, width: 20 }}
             />
           </View>
-          <View style={{ padding: 20, width: responsiveWidth(80), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(3), elevation: 5 }}>
-            <View style={{ position: 'absolute', top: -15, left: 10, height: 40, width: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF', elevation: 5 }}>
+          <View style={styles.customerSpeaksView}>
+            <View style={styles.qouteImgView}>
               <Image
                 source={qouteImg}
                 style={{ height: 20, width: 20, }}
               />
             </View>
             <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2), }}>
-              <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7), }}>
+              <Text style={styles.quoteText}>
                 Reliable and trustworthy. They have earned my trust and loyalty. This company has consistently demonstrated reliability and trustworthiness.
               </Text>
             </View>
-            <View style={{ width: responsiveWidth(70), borderColor: '#E3E3E3', borderWidth: 1, borderRadius: 25, flexDirection: 'row', alignItems: 'center', padding: 5 }}>
+            <View style={styles.quotepersonView}>
               <Image
                 source={userPhoto}
                 style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
               />
-              <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginLeft: 5 }}>Darcel Ballentine</Text>
+              <Text style={styles.quotepersonName}>Darcel Ballentine</Text>
               <View
-                style={{
-                  height: '100%',
-                  width: 1,
-                  backgroundColor: '#E3E3E3',
-                  marginLeft: 5,
-                  marginRight: 5
-                }}
+                style={styles.verticalLine}
               />
               <StarRating
                 disabled={true}
@@ -812,6 +783,20 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingLeft: 20,
   },
+  bannerButtonView: {
+    height: responsiveHeight(4),
+    width: responsiveWidth(25),
+    backgroundColor: '#FFFFFF',
+    marginLeft: 20,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  bannerButtonText: {
+    color: '#E88036',
+    fontFamily: 'DMSans-Bold',
+    fontSize: responsiveFontSize(1.5)
+  },
   bannaerContainer: {
     width: responsiveWidth(89),
     height: responsiveHeight(20),
@@ -826,5 +811,243 @@ const styles = StyleSheet.create({
     // //shadowRadius: 4.65,
     // elevation: 7,
   },
+  carouselView: {
+    marginBottom: responsiveHeight(2),
+    marginTop: responsiveHeight(2),
+    marginHorizontal: 20,
+  },
+  sectionHeaderView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: responsiveHeight(2),
+  },
+  sectionHeaderText: {
+    marginHorizontal: 20,
+    color: '#2D2D2D',
+    fontFamily: 'DMSans-Bold',
+    fontSize: responsiveFontSize(2)
+  },
+  seeallText: {
+    marginHorizontal: 20,
+    color: '#746868',
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.7)
+  },
+  upcommingAppointmentView: {
+    height: responsiveHeight(20),
+    width: '92%',
+    backgroundColor: '#FFF',
+    marginHorizontal: 15,
+    padding: 20,
+    borderRadius: 20,
+    marginTop: responsiveHeight(2),
+    elevation: 5
+  },
+  nameText: {
+    color: '#2D2D2D',
+    fontSize: responsiveFontSize(2),
+    fontFamily: 'DMSans-Bold',
+    marginBottom: 5,
+  },
+  namesubText: {
+    color: '#746868',
+    fontFamily: 'DMSans-Regular',
+    marginRight: 5,
+    fontSize: responsiveFontSize(1.5)
+  },
+  joinNowButton: {
+    marginLeft: responsiveWidth(10),
+    backgroundColor: '#ECFCFA',
+    borderColor: '#87ADA8',
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 20,
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  joinButtonText: {
+    fontFamily: 'DMSans-Bold',
+    color: '#2D2D2D',
+    fontSize: responsiveFontSize(1.7)
+  },
+  dateTimeView: {
+    height: responsiveHeight(5),
+    width: responsiveWidth(80),
+    marginTop: responsiveHeight(2),
+    borderColor: '#E3E3E3',
+    borderWidth: 1,
+    borderRadius: 20,
+    padding: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  dateView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: responsiveWidth(35)
+  },
+  datetimeIcon: {
+    height: 20,
+    width: 20,
+    resizeMode: 'contain',
+    marginRight: responsiveWidth(2)
+  },
+  dateTimeText: {
+    color: '#444343',
+    fontFamily: 'DMSans-SemiBold',
+    fontSize: responsiveFontSize(1.5)
+  },
+  dividerLine: {
+    height: '80%',
+    width: 1,
+    backgroundColor: '#E3E3E3',
+    marginLeft: 5,
+    marginRight: 5
+  },
+  therapistCardView: {
+    width: responsiveWidth(70),
+    backgroundColor: '#FFF',
+    marginHorizontal: 15,
+    borderRadius: 20,
+    marginTop: responsiveHeight(2),
+    elevation: 5
+  },
+  cardImg: {
+    height: 50,
+    width: 50,
+    borderRadius: 25
+  },
+  nameSubText2: {
+    color: '#746868',
+    fontFamily: 'DMSans-Regular',
+    marginRight: 5,
+    fontSize: responsiveFontSize(1.5),
+    marginBottom: 5,
+  },
+  nameSubText3: {
+    color: '#444343',
+    fontFamily: 'DMSans-Medium',
+    marginRight: 5,
+    fontSize: responsiveFontSize(1.5),
+    marginBottom: 5,
+  },
+  bookapointView: {
+    flexDirection: 'row',
+    height: responsiveHeight(6),
+    backgroundColor: '#FFF',
+    borderTopColor: '#E3E3E3',
+    borderTopWidth: 1,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bookapointText: {
+    color: '#444343',
+    fontFamily: 'DMSans-Bold',
+    fontSize: responsiveFontSize(2),
+    textAlign: 'center',
+    marginLeft: responsiveWidth(2)
+  },
+  freebannerImg: {
+    height: responsiveHeight(20),
+    width: '92%',
+    alignSelf: 'center',
+    borderRadius: 10,
+    resizeMode: 'cover'
+  },
+  previousTherapistView: {
+    height: responsiveHeight(30),
+    width: '92%',
+    backgroundColor: '#FFF',
+    marginHorizontal: 15,
+    padding: 20,
+    borderRadius: 20,
+    marginTop: responsiveHeight(2),
+    elevation: 5
+  },
+  ratingView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: responsiveWidth(65)
+  },
+  horizontalLine: {
+    borderBottomColor: '#E3E3E3',
+    borderBottomWidth: 1,
+    marginHorizontal: 10,
+    marginTop: responsiveHeight(2)
+
+  },
+  bookingDateText: {
+    color: '#746868',
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.5),
+    marginTop: responsiveHeight(2)
+  },
+  verticalLine: {
+    height: '100%',
+    width: 1,
+    backgroundColor: '#E3E3E3',
+    marginLeft: 5,
+    marginRight: 5
+  },
+  dateTimeSection2: {
+    height: responsiveHeight(5),
+    width: responsiveWidth(80),
+    marginTop: responsiveHeight(1),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  dateTimeHalfSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: responsiveWidth(35)
+  },
+  customerSpeaksView: {
+    padding: 20,
+    width: responsiveWidth(80),
+    backgroundColor: '#FFF',
+    marginHorizontal: 15,
+    borderRadius: 20,
+    marginTop: responsiveHeight(3),
+    elevation: 5
+  },
+  qouteImgView: {
+    position: 'absolute',
+    top: -15,
+    left: 10,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    elevation: 5
+  },
+  quoteText: {
+    color: '#746868',
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.7),
+  },
+  quotepersonView: {
+    width: responsiveWidth(70),
+    borderColor: '#E3E3E3',
+    borderWidth: 1,
+    borderRadius: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5
+  },
+  quotepersonName: {
+    color: '#444343',
+    fontFamily: 'DMSans-Medium',
+    fontSize: responsiveFontSize(1.7),
+    marginLeft: 5
+  }
 
 });

@@ -28,6 +28,8 @@ import MultiSelect from 'react-native-multiple-select';
 import { Dropdown } from 'react-native-element-dropdown';
 import Modal from "react-native-modal";
 import Entypo from 'react-native-vector-icons/Entypo';
+import RNDateTimePicker from '@react-native-community/datetimepicker'
+import moment from "moment"
 
 
 const dataGender = [
@@ -43,23 +45,13 @@ const dataMarital = [
 
 const ProfileScreen = ({ navigation, route }) => {
   const concatNo = route?.params?.countrycode + '-' + route?.params?.phoneno;
-  const [phoneno, setPhoneno] = useState('');
   const [firstname, setFirstname] = useState('Jennifer Kourtney');
   const [firstNameError, setFirstNameError] = useState('')
-  const [lastname, setLastname] = useState('');
-  const [lastNameError, setLastNameError] = useState('')
+  const [phoneno, setPhoneno] = useState('');
+  const [phonenoError, setphonenoError] = useState('')
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('')
-  const [Password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('')
-  const [city, setCity] = useState('');
-  const [cityError, setCityError] = useState('')
-  const [postaddress, setPostaddress] = useState('');
-  const [postaddressError, setPostaddressError] = useState('')
-  const [pickedDrivingLicenseFront, setPickedDrivingLicenseFront] = useState(null);
-  const [DrivingLicenseFrontError, setDrivingLicenseFrontError] = useState('')
-  const [pickedDrivingLicenseBack, setPickedDrivingLicenseback] = useState(null);
-  const [DrivingLicenseBackError, setDrivingLicenseBackError] = useState('')
+
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
@@ -73,8 +65,13 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const [monthvalue, setMonthValue] = useState(null);
   const [isMonthFocus, setMonthIsFocus] = useState(false);
+
+  const MIN_DATE = new Date(1930, 0, 1)
+  const MAX_DATE = new Date()
   const [date, setDate] = useState('DD - MM  - YYYY')
+  const [selectedDOB, setSelectedDOB] = useState(MAX_DATE)
   const [open, setOpen] = useState(false)
+  const [dobError, setdobError] = useState('')
 
   // Qualification dropdown
   const [selectedItems, setSelectedItems] = useState([]);
@@ -111,42 +108,45 @@ const ProfileScreen = ({ navigation, route }) => {
     }
   }
 
-  const changeLastname = (text) => {
-    setLastname(text)
-    if (text) {
-      setLastNameError('')
+  const changePhone = (text) => {
+    const phoneRegex = /^\d{10}$/;
+    setPhoneno(text)
+    if (!phoneRegex.test(text)) {
+      setphonenoError('Please enter a 10-digit number.')
     } else {
-      setLastNameError('Please enter Last name')
+      setphonenoError('')
     }
   }
 
-  const changePassword = (text) => {
-    setPassword(text)
-    if (text) {
-      setPasswordError('')
-    } else {
-      setPasswordError('Please enter Address')
+  const changeEmail = (text) => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (reg.test(text) === false) {
+      console.log("Email is Not Correct");
+      setEmail(text)
+      setEmailError('Please enter correct Email Id')
+      return false;
+    }
+    else {
+      setEmailError('')
+      console.log("Email is Correct");
+      setEmail(text)
     }
   }
-  const changeCity = (text) => {
-    setCity(text)
-    if (text) {
-      setCityError('')
-    } else {
-      setCityError('Please enter City')
-    }
-  }
-  const changePostAddress = (text) => {
-    setPostaddress(text)
-    // if (text) {
-    //   setPostaddressError('')
-    // } else {
-    //   setPostaddressError('Please enter Ghana Post Address')
-    // }
-  }
+
 
   const submitForm = () => {
-    console.log(selectedItemsType, " type off therapist")
+    //console.log(selectedItemsType, " type off therapist")
+    if (!firstname) {
+      setFirstNameError('Please enter Name')
+    } else if (!phoneno) {
+      setphonenoError('Please enter Mobile No')
+    } else if (!email) {
+      setEmailError('Please enter Email Id')
+    } else if (date == 'DD - MM  - YYYY') {
+      setdobError('Please enter DOB')
+    } else {
+
+    }
   }
 
   // const submitForm = () => {
@@ -250,20 +250,21 @@ const ProfileScreen = ({ navigation, route }) => {
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Mobile Number</Text>
             </View>
-            {firstNameError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{firstNameError}</Text> : <></>}
+            {phonenoError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{phonenoError}</Text> : <></>}
             <View style={styles.inputView}>
               <InputField
                 label={'Mobile Number'}
                 keyboardType=" "
-                value={firstname}
+                value={phoneno}
                 //helperText={'Please enter lastname'}
                 inputType={'others'}
-                onChangeText={(text) => changeFirstname(text)}
+                onChangeText={(text) => changePhone(text)}
               />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Email Id</Text>
             </View>
+            {emailError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{emailError}</Text> : <></>}
             <View style={styles.inputView}>
               <InputField
                 label={'e.g. abc@gmail.com'}
@@ -271,16 +272,48 @@ const ProfileScreen = ({ navigation, route }) => {
                 value={email}
                 //helperText={'Please enter lastname'}
                 inputType={'others'}
-                onChangeText={(text) => setEmail(text)}
+                onChangeText={(text) => changeEmail(text)}
               />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Date of Birth</Text>
             </View>
-            <View style={{ height: responsiveHeight(7), width: responsiveWidth(88), borderRadius: 10, borderWidth: 1, borderColor: '#E0E0E0', marginBottom: responsiveHeight(2), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
-              <Text style={styles.dayname}>  {date}</Text>
-              <Entypo name="calendar" size={22} color="#000" />
-            </View>
+            {dobError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{dobError}</Text> : <></>}
+            <TouchableOpacity onPress={() => setOpen(true)}>
+              <View style={{ height: responsiveHeight(7), width: responsiveWidth(88), borderRadius: 10, borderWidth: 1, borderColor: '#E0E0E0', marginBottom: responsiveHeight(2), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+                <Text style={styles.dayname}>  {date}</Text>
+                <Entypo name="calendar" size={22} color="#000" />
+              </View>
+            </TouchableOpacity>
+            {open == true ?
+              <RNDateTimePicker
+                mode="date"
+                display='spinner'
+                value={selectedDOB}
+                textColor={'#000'}
+                minimumDate={MIN_DATE}
+                // maximumDate={MAX_DATE}
+                themeVariant="light"
+                onChange={(event, selectedDate) => {
+                  // console.log(moment(selectedDate).format('DD-MM-YYYY'),'jjjjj');
+                  // const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
+                  //   console.log(formattedDate,'nnnnnnnnnn');
+                  //   setSelectedDOB(selectedDate);
+                  //   setDate(formattedDate);
+                  if (selectedDate) {
+                    const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
+                    console.log(formattedDate);
+                    setOpen(false)
+                    setSelectedDOB(selectedDate);
+                    setDate(formattedDate);
+                    setdobError('')
+                  } else {
+                    // User canceled the picker
+                    setOpen(false)
+                  }
+
+                }}
+              /> : null}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Gender</Text>
             </View>
@@ -311,14 +344,14 @@ const ProfileScreen = ({ navigation, route }) => {
           </View>
 
         </View>
-       
+
       </KeyboardAwareScrollView>
       <View style={styles.buttonwrapper}>
-          <CustomButton label={"Submit For Review"}
-            // onPress={() => { login() }}
-            onPress={() => { submitForm() }}
-          />
-        </View>
+        <CustomButton label={"Submit For Review"}
+          // onPress={() => { login() }}
+          onPress={() => { submitForm() }}
+        />
+      </View>
 
     </SafeAreaView >
   );

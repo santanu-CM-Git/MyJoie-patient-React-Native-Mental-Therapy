@@ -26,12 +26,14 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import MultiSelect from 'react-native-multiple-select';
 import { Dropdown } from 'react-native-element-dropdown';
 import Entypo from 'react-native-vector-icons/Entypo';
+import RNDateTimePicker from '@react-native-community/datetimepicker'
+import moment from "moment"
 
 
 const dataGender = [
   { label: 'Male', value: 'Male' },
   { label: 'Female', value: 'Female' },
-  {label: 'Others', value: 'Others' }
+  { label: 'Others', value: 'Others' }
 ];
 const dataMarital = [
   { label: '01', value: '01' },
@@ -41,16 +43,20 @@ const dataMarital = [
 
 const PersonalInformation = ({ navigation, route }) => {
   const concatNo = route?.params?.countrycode + '-' + route?.params?.phoneno;
-  const [phoneno, setPhoneno] = useState('');
+
   const [firstname, setFirstname] = useState('');
   const [firstNameError, setFirstNameError] = useState('')
-  const [lastname, setLastname] = useState('');
-  const [lastNameError, setLastNameError] = useState('')
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+
   const [isLoading, setIsLoading] = useState(false)
   const { login, userToken } = useContext(AuthContext);
 
+  const MIN_DATE = new Date(1930, 0, 1)
+  const MAX_DATE = new Date()
   const [date, setDate] = useState('DD - MM  - YYYY')
+  const [selectedDOB, setSelectedDOB] = useState(MAX_DATE)
+  const [dobError, setdobError] = useState('');
   const [open, setOpen] = useState(false)
 
   // Qualification dropdown
@@ -78,6 +84,7 @@ const PersonalInformation = ({ navigation, route }) => {
   const [yearvalue, setYearValue] = useState(null);
   const [isYearFocus, setYearIsFocus] = useState(false);
 
+
   const [monthvalue, setMonthValue] = useState(null);
   const [isMonthFocus, setMonthIsFocus] = useState(false);
 
@@ -87,115 +94,164 @@ const PersonalInformation = ({ navigation, route }) => {
     if (text) {
       setFirstNameError('')
     } else {
-      setFirstNameError('Please enter First name')
+      setFirstNameError('Please enter Name')
     }
   }
 
-  const changeLastname = (text) => {
-    setLastname(text)
-    if (text) {
-      setLastNameError('')
-    } else {
-      setLastNameError('Please enter Last name')
+  const changeEmail = (text) => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (reg.test(text) === false) {
+      console.log("Email is Not Correct");
+      setEmail(text)
+      setEmailError('Please enter correct Email Id')
+      return false;
+    }
+    else {
+      setEmailError('')
+      console.log("Email is Correct");
+      setEmail(text)
     }
   }
 
-  const changePassword = (text) => {
-    setPassword(text)
-    if (text) {
-      setPasswordError('')
-    } else {
-      setPasswordError('Please enter Address')
+  const validateAge = (date) => {
+    console.log(date, 'given date');
+
+    // Ensure date string is split correctly
+    const dateParts = date.split('-');
+    if (dateParts.length !== 3) {
+      console.error('Date format is incorrect');
+      return false;
     }
-  }
-  const changeCity = (text) => {
-    setCity(text)
-    if (text) {
-      setCityError('')
-    } else {
-      setCityError('Please enter City')
+
+    const [day, month, year] = dateParts.map(part => {
+      const number = Number(part.trim());
+      if (isNaN(number)) {
+        console.error('Date part is not a number:', part);
+      }
+      return number;
+    });
+
+    if (isNaN(day) || isNaN(month) || isNaN(year)) {
+      console.error('One of the date parts is NaN');
+      return false;
     }
-  }
-  const changePostAddress = (text) => {
-    setPostaddress(text)
-    // if (text) {
-    //   setPostaddressError('')
+
+    const birthDate = new Date(year, month - 1, day); // JavaScript months are 0-11
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    const dayDifference = today.getDate() - birthDate.getDate();
+
+    // Adjust age if the birth date has not occurred yet this year
+    if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+      age--;
+    }
+
+    console.log(age, 'calculated age');
+
+    return age >= 18;
+  };
+
+
+  const submitForm = () => {
+    if (!firstname) {
+      setFirstNameError('Please enter Name');
+    } else {
+      setFirstNameError('');
+    }
+
+    if (!email) {
+      setEmailError('Please enter Email Id');
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('Please enter a valid Email Id');
+    } else {
+      setEmailError('');
+    }
+
+    if (date === 'DD - MM - YYYY') {
+      setdobError('Please enter DOB');
+    } else if (!validateAge(date)) {
+      setdobError('You must be at least 18 years old');
+    } else {
+      setdobError('');
+    }
+
+    if (firstname && email && /\S+@\S+\.\S+/.test(email) && date !== 'DD - MM - YYYY' && validateAge(date)) {
+      login()
+    } else {
+      // Optionally handle case where some fields are still invalid
+    }
+    //navigation.navigate('DocumentsUpload')
+    // if (!firstname) {
+    //   setFirstNameError('Please enter Name')
+    // } else if (!email) {
+    //   setEmailError('Please enter Email Id')
+    // } else if (date == 'DD - MM  - YYYY') {
+    //   setdobError('Please enter DOB')
     // } else {
-    //   setPostaddressError('Please enter Ghana Post Address')
+    //   login()
+    // setIsLoading(true)
+    // var option = {}
+    // if(email){
+    //   var option = {
+    //     "firstName": firstname,
+    //     "lastName": lastname,
+    //     "email": email,
+    //     "address": address,
+    //     "zipcode": postaddress,
+    //     "city" : city
+    //   }
+    // }else{
+    //   var option = {
+    //     "firstName": firstname,
+    //     "lastName": lastname,
+    //     "address": address,
+    //     "zipcode": postaddress,
+    //     "city" : city
+    //   }
     // }
+
+    // axios.post(`${API_URL}/api/driver/updateInformation`, option, {
+    //   headers: {
+    //     Accept: 'application/json',
+    //     "Authorization": 'Bearer ' + route?.params?.usertoken,
+    //   },
+    // })
+    //   .then(res => {
+    //     console.log(res.data)
+    //     if (res.data.response.status.code === 200) {
+    //       setIsLoading(false)
+    //       navigation.push('DocumentsUpload', { usertoken: route?.params?.usertoken })
+    //   } else {
+    //       Alert.alert('Oops..', "Something went wrong", [
+    //           {
+    //               text: 'Cancel',
+    //               onPress: () => console.log('Cancel Pressed'),
+    //               style: 'cancel',
+    //           },
+    //           { text: 'OK', onPress: () => console.log('OK Pressed') },
+    //       ]);
+    //   }
+    //   })
+    //   .catch(e => {
+    //     setIsLoading(false)
+    //     console.log(`user update error ${e}`)
+    //     console.log(e.response.data?.response.records)
+    //     Alert.alert('Oops..', "Something went wrong", [
+    //       {
+    //           text: 'Cancel',
+    //           onPress: () => console.log('Cancel Pressed'),
+    //           style: 'cancel',
+    //       },
+    //       { text: 'OK', onPress: () => console.log('OK Pressed') },
+    //   ]);
+    //   });
+
+    //}
+
+
   }
-
-  // const submitForm = () => {
-  //   //navigation.navigate('DocumentsUpload')
-  //   if (!firstname) {
-  //     setFirstNameError('Please enter First name')
-  //   }else if(!lastname){
-  //     setLastNameError('Please enter Last name')
-  //   }else if(!address){
-  //     setAddressError('Please enter Address')
-  //   }else if(!city){
-  //     setCityError('Please enter City')
-  //   } else {
-  //     setIsLoading(true)
-  //     var option = {}
-  //     if(email){
-  //       var option = {
-  //         "firstName": firstname,
-  //         "lastName": lastname,
-  //         "email": email,
-  //         "address": address,
-  //         "zipcode": postaddress,
-  //         "city" : city
-  //       }
-  //     }else{
-  //       var option = {
-  //         "firstName": firstname,
-  //         "lastName": lastname,
-  //         "address": address,
-  //         "zipcode": postaddress,
-  //         "city" : city
-  //       }
-  //     }
-
-  //     axios.post(`${API_URL}/api/driver/updateInformation`, option, {
-  //       headers: {
-  //         Accept: 'application/json',
-  //         "Authorization": 'Bearer ' + route?.params?.usertoken,
-  //       },
-  //     })
-  //       .then(res => {
-  //         console.log(res.data)
-  //         if (res.data.response.status.code === 200) {
-  //           setIsLoading(false)
-  //           navigation.push('DocumentsUpload', { usertoken: route?.params?.usertoken })
-  //       } else {
-  //           Alert.alert('Oops..', "Something went wrong", [
-  //               {
-  //                   text: 'Cancel',
-  //                   onPress: () => console.log('Cancel Pressed'),
-  //                   style: 'cancel',
-  //               },
-  //               { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //           ]);
-  //       }
-  //       })
-  //       .catch(e => {
-  //         setIsLoading(false)
-  //         console.log(`user update error ${e}`)
-  //         console.log(e.response.data?.response.records)
-  //         Alert.alert('Oops..', "Something went wrong", [
-  //           {
-  //               text: 'Cancel',
-  //               onPress: () => console.log('Cancel Pressed'),
-  //               style: 'cancel',
-  //           },
-  //           { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //       ]);
-  //       });
-  //   }
-
-
-  // }
 
   if (isLoading) {
     return (
@@ -219,10 +275,10 @@ const PersonalInformation = ({ navigation, route }) => {
               <Text style={styles.header}>Name</Text>
               <Text style={styles.requiredheader}>*</Text>
             </View>
-            {firstNameError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{firstNameError}</Text> : <></>}
+            {firstNameError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{firstNameError}</Text> : <></>}
             <View style={styles.inputView}>
               <InputField
-                label={'First name'}
+                label={'Name'}
                 keyboardType=" "
                 value={firstname}
                 //helperText={'Please enter lastname'}
@@ -234,6 +290,7 @@ const PersonalInformation = ({ navigation, route }) => {
               <Text style={styles.header}>Email Id</Text>
               <Text style={styles.requiredheader}>*</Text>
             </View>
+            {emailError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{emailError}</Text> : <></>}
             <View style={styles.inputView}>
               <InputField
                 label={'e.g. abc@gmail.com'}
@@ -241,17 +298,49 @@ const PersonalInformation = ({ navigation, route }) => {
                 value={email}
                 //helperText={'Please enter lastname'}
                 inputType={'others'}
-                onChangeText={(text) => setEmail(text)}
+                onChangeText={(text) => changeEmail(text)}
               />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Date of Birth</Text>
               <Text style={styles.requiredheader}>*</Text>
             </View>
-            <View style={{height: responsiveHeight(7), width: responsiveWidth(88),borderRadius: 10,borderWidth:1,borderColor: '#E0E0E0',marginBottom:responsiveHeight(2),flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingHorizontal:10}}>
-            <Text style={styles.dayname}>  {date}</Text>
-            <Entypo name="calendar" size={22} color="#000" />
-            </View>
+            {dobError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>{dobError}</Text> : <></>}
+            <TouchableOpacity onPress={() => setOpen(true)}>
+              <View style={styles.calenderInput}>
+                <Text style={styles.dayname}>  {date}</Text>
+                <Entypo name="calendar" size={22} color="#000" />
+              </View>
+            </TouchableOpacity>
+            {open == true ?
+              <RNDateTimePicker
+                mode="date"
+                display='spinner'
+                value={selectedDOB}
+                textColor={'#000'}
+                minimumDate={MIN_DATE}
+                // maximumDate={MAX_DATE}
+                themeVariant="light"
+                onChange={(event, selectedDate) => {
+                  // console.log(moment(selectedDate).format('DD-MM-YYYY'),'jjjjj');
+                  // const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
+                  //   console.log(formattedDate,'nnnnnnnnnn');
+                  //   setSelectedDOB(selectedDate);
+                  //   setDate(formattedDate);
+                  if (selectedDate) {
+                    const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
+                    console.log(formattedDate);
+                    setOpen(false)
+                    setSelectedDOB(selectedDate);
+                    setDate(formattedDate);
+                    setdobError('')
+                  } else {
+                    // User canceled the picker
+                    setOpen(false)
+                  }
+
+                }}
+              /> : null}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Gender</Text>
             </View>
@@ -305,14 +394,14 @@ const PersonalInformation = ({ navigation, route }) => {
               />
             </View>
           </View>
-          
+
         </View>
-       
+
         <View style={styles.buttonwrapper}>
-        <Text style={{ fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), color: '#746868',marginBottom: responsiveHeight(2)}}>By signing in you agree to our Terms & Condition and Privacy Policy</Text>
+          <Text style={styles.termsText}>By signing in you agree to our Terms & Condition and Privacy Policy</Text>
           <CustomButton label={"Submit"}
-            onPress={() => { login() }}
-          //onPress={() => { submitForm() }}
+            //onPress={() => { login() }}
+            onPress={() => { submitForm() }}
           />
         </View>
       </KeyboardAwareScrollView>
@@ -426,7 +515,7 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: responsiveFontSize(1.8),
     color: '#2F2F2F',
-    fontFamily:'DMSans-Regular'
+    fontFamily: 'DMSans-Regular'
   },
   selectedTextStyle: {
     fontSize: 16,
@@ -442,5 +531,23 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans-Regular',
     fontSize: responsiveFontSize(1.8),
     fontWeight: '500'
-},
+  },
+  calenderInput: {
+    height: responsiveHeight(7),
+    width: responsiveWidth(88),
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    marginBottom: responsiveHeight(2),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10
+  },
+  termsText: {
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.5),
+    color: '#746868',
+    marginBottom: responsiveHeight(2)
+  }
 });

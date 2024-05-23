@@ -85,16 +85,21 @@ const HomeStack = () => {
         component={TherapistProfile}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="ScheduleScreen"
+        component={ScheduleScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
 
-const EarningStack = () => {
+const TherapistStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="EarningScreen"
-        component={EarningScreen}
+     <Stack.Screen
+        name="TherapistList"
+        component={TherapistList}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
@@ -177,7 +182,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Earning"
-        component={EarningStack}
+        component={TherapistStack}
         options={({ route }) => ({
           tabBarStyle: {
             display: getTabBarVisibility(route),

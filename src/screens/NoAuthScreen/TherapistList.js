@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -147,6 +147,7 @@ const TherapistList = ({ navigation }) => {
                             <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Child</Text>
                         </View>
                     </View>
+                    <Pressable onPress={()=> navigation.navigate('TherapistProfile')}>
                     <View style={styles.totalValue}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                             <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), }}>
@@ -206,6 +207,7 @@ const TherapistList = ({ navigation }) => {
                             </View>
                         </View>
                     </View>
+                    </Pressable>
                 </View>
 
             </ScrollView>

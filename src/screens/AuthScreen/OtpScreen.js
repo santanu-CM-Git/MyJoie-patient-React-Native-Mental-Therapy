@@ -151,7 +151,7 @@ const OtpScreen = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ paddingHorizontal: 20, paddingVertical: 10,marginTop: responsiveHeight(5) }}>
+            <View style={{ paddingHorizontal: 20, paddingVertical: 10, marginTop: responsiveHeight(5) }}>
                 <MaterialIcons name="arrow-back-ios-new" size={25} color="#000" onPress={() => navigation.goBack()} />
             </View>
             <View style={styles.wrapper}>
@@ -188,20 +188,20 @@ const OtpScreen = ({ navigation, route }) => {
                     />
                 </View>
                 {errors &&
-                    <Text style={{ fontSize: responsiveFontSize(1.5), color: 'red', marginBottom: 20, marginTop: -25, alignSelf: 'center',fontFamily:'DMSans-Medium' }}>{errorText}</Text>
+                    <Text style={styles.errorText}>{errorText}</Text>
                 }
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={{ color: '#808080', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Didn’t receive OTP?</Text>
+                    <Text style={styles.otpText}>Didn’t receive OTP?</Text>
                     <TouchableOpacity onPress={() => resendOtp()}>
-                        <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7) }}>Resend OTP</Text>
+                        <Text style={styles.resendText}>Resend OTP</Text>
                     </TouchableOpacity>
-                    <Text style={{color: '#808080', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7)}}>{formatTime(timer)}</Text>
+                    <Text style={styles.timerText}>{formatTime(timer)}</Text>
                 </View>
 
             </View>
             <View style={styles.buttonwrapper}>
                 <CustomButton label={"Verify OTP "}
-                onPress={() => navigation.navigate('PersonalInformation')} 
+                    onPress={() => navigation.navigate('PersonalInformation')}
                 />
             </View>
         </SafeAreaView>
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     },
     buttonwrapper: {
         paddingHorizontal: 25,
-        bottom:15
+        bottom: 15
     },
     otpTextView: {
         width: '100%',
@@ -267,6 +267,29 @@ const styles = StyleSheet.create({
         borderColor: "#2F2F2F",
         borderRadius: 8
     },
+    errorText: {
+        fontSize: responsiveFontSize(1.5),
+        color: 'red',
+        marginBottom: 20,
+        marginTop: -25,
+        alignSelf: 'center',
+        fontFamily: 'DMSans-Medium'
+    },
+    timerText: {
+        color: '#808080',
+        fontFamily: 'DMSans-Medium',
+        fontSize: responsiveFontSize(1.7)
+    },
+    otpText: {
+        color: '#808080',
+        fontFamily: 'DMSans-Medium',
+        fontSize: responsiveFontSize(1.7)
+    },
+    resendText: {
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-SemiBold',
+        fontSize: responsiveFontSize(1.7)
+    }
 });
 
 

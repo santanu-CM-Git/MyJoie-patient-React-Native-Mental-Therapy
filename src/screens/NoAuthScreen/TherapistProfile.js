@@ -15,7 +15,11 @@ import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
 import CheckBox from '@react-native-community/checkbox';
 
-
+const items = [
+    { id: 1, icon: cameraColor },
+    { id: 2, icon: phoneColor },
+    { id: 3, icon: chatColor },
+];
 const TherapistProfile = ({ navigation }) => {
 
     const [walletHistory, setWalletHistory] = React.useState([])
@@ -26,6 +30,26 @@ const TherapistProfile = ({ navigation }) => {
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
+    const [selectedDay, setSelectedDay] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    const getNextSevenDays = () => {
+        const days = [];
+        for (let i = 0; i < 7; i++) {
+            days.push(moment().add(i, 'days'));
+        }
+        return days;
+    };
+
+    const nextSevenDays = getNextSevenDays();
+
+    const selectedDateChange = (index, day, date) => {
+        console.log(index)
+        console.log(day);
+        console.log(date);
+        setSelectedDay(index)
+    }
+
 
     useEffect(() => {
         //fetchWalletHistory();
@@ -123,7 +147,7 @@ const TherapistProfile = ({ navigation }) => {
                     </View>
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ padding: responsiveWidth(2), }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
                             <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Fri</Text>
                             <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>23</Text>
@@ -152,6 +176,25 @@ const TherapistProfile = ({ navigation }) => {
                             <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Thr</Text>
                             <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>29</Text>
                         </View>
+                    </View> */}
+                    <View style={styles.dateView}>
+                        {nextSevenDays.map((day, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={[
+                                    styles.dayContainer,
+                                    selectedDay === index ? styles.selectedDay : styles.defaultDay,
+                                ]}
+                                onPress={() => selectedDateChange(index, day.format('ddd'), day.format('YYYY-MM-DD'))}
+                            >
+                                <Text style={styles.weekDay}>
+                                    {day.format('ddd')}
+                                </Text>
+                                <Text style={styles.date}>
+                                    {day.format('D')}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
                     </View>
                 </ScrollView>
                 <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
@@ -200,7 +243,7 @@ const TherapistProfile = ({ navigation }) => {
                 <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
                     <View style={styles.totalValue}>
                         <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Select Mode</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
+                        {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
                             <View style={{ height: responsiveHeight(11), width: responsiveWidth(25), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, padding: 5 }}>
                                 <Image
                                     source={checkedImg}
@@ -231,6 +274,27 @@ const TherapistProfile = ({ navigation }) => {
                                     style={{ height: 30, width: 30, resizeMode: 'contain', alignSelf: 'center' }}
                                 />
                             </View>
+                        </View> */}
+                        <View style={styles.modeContainer}>
+                            {items.map(item => (
+                                <TouchableOpacity
+                                    key={item.id}
+                                    style={[
+                                        styles.itemContainer,
+                                        selectedItem === item.id ? styles.selectedItem : styles.defaultItem,
+                                    ]}
+                                    onPress={() => setSelectedItem(item.id)}
+                                >
+                                    <Image
+                                        source={selectedItem === item.id ? checkedImg : uncheckedImg}
+                                        style={styles.checkIcon}
+                                    />
+                                    <Image
+                                        source={item.icon}
+                                        style={styles.icon}
+                                    />
+                                </TouchableOpacity>
+                            ))}
                         </View>
                     </View>
                 </View>
@@ -306,11 +370,11 @@ const TherapistProfile = ({ navigation }) => {
                         </View>
                     </View>
                 </ScrollView>
-                <View style={{width: responsiveWidth(90),alignSelf:'center'}}>
-                <CustomButton label={"Book Appointment"}
-                    // onPress={() => { login() }}
-                    onPress={() => { submitForm() }}
-                />
+                <View style={{ width: responsiveWidth(90), alignSelf: 'center' }}>
+                    <CustomButton label={"Book Appointment"}
+                        // onPress={() => { login() }}
+                        onPress={() => { submitForm() }}
+                    />
                 </View>
             </ScrollView>
 
@@ -364,5 +428,71 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: responsiveWidth(100)
     },
+    //date loop
+    dateView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    dayContainer: {
+        height: responsiveHeight(10),
+        width: responsiveWidth(13.5),
+        borderRadius: 30,
+        marginRight: responsiveWidth(3),
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 10,
+    },
+    selectedDay: {
+        backgroundColor: '#ECFCFA',
+        borderColor: '#87ADA8',
+        borderWidth: 1,
+    },
+    defaultDay: {
+        backgroundColor: '#EEE',
+    },
+    weekDay: {
+        color: '#746868',
+        fontSize: responsiveFontSize(1.8),
+        fontFamily: 'DMSans-Regular',
+    },
+    date: {
+        color: '#2D2D2D',
+        fontSize: responsiveFontSize(2.3),
+        fontFamily: 'DMSans-Bold',
+    },
+    // mode loop
+    modeContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: responsiveHeight(2),
+      },
+      itemContainer: {
+        height: responsiveHeight(11),
+        width: responsiveWidth(25),
+        borderColor: '#87ADA8',
+        borderWidth: 1,
+        borderRadius: 10,
+        padding: 5,
+      },
+      selectedItem: {
+        backgroundColor: '#ECFCFA',
+      },
+      defaultItem: {
+        backgroundColor: '#FFF',
+      },
+      checkIcon: {
+        height: 25,
+        width: 25,
+        resizeMode: 'contain',
+        alignSelf: 'flex-end',
+      },
+      icon: {
+        height: 30,
+        width: 30,
+        resizeMode: 'contain',
+        alignSelf: 'center',
+      },
 
 });

@@ -62,7 +62,7 @@ const AuthStack = () => {
           ),
         }}
       />
-       <Drawer.Screen
+       {/* <Drawer.Screen
         name="  Earning"
         component={EarningScreen}
         options={{
@@ -71,7 +71,7 @@ const AuthStack = () => {
             <Image source={earningBlackImg} style={{ width: 25,height: 25,}} color={color}/>
           ),
         }}
-      />
+      /> */}
       <Drawer.Screen
         name="  Session History"
         component={SessionHistory}
@@ -142,7 +142,7 @@ const AuthStack = () => {
           ),
         }}
       />
-       <Drawer.Screen
+       {/* <Drawer.Screen
         name="  Therapist Profile"
         component={TherapistProfile}
         options={{
@@ -151,7 +151,7 @@ const AuthStack = () => {
             <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
           ),
         }}
-      />
+      /> */}
       <Drawer.Screen
         name="  Privacy Policy"
         component={PrivacyPolicy}
