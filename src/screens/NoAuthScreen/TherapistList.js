@@ -17,6 +17,15 @@ import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Entypo';
 import CheckBox from '@react-native-community/checkbox';
 import SelectMultiple from 'react-native-select-multiple'
+import { Dropdown } from 'react-native-element-dropdown';
+import { useFocusEffect } from '@react-navigation/native';
+
+const dropdowndata = [
+    { label: 'All therapist', value: '1' },
+    { label: 'Individual', value: '2' },
+    { label: 'Couple', value: '3' },
+    { label: 'Child', value: '4' },
+];
 const Experience = [
     { label: '0 - 2 Years', value: '1' },
     { label: '3 - 5 Years', value: '2' },
@@ -46,11 +55,11 @@ const Ages = [
 
 const TherapistList = ({ navigation }) => {
 
-    const [walletHistory, setWalletHistory] = React.useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [value, setValue] = useState('1');
+    const [isFocus, setIsFocus] = useState(false);
+    const [therapistData, setTherapistData] = React.useState([])
+    const [isLoading, setIsLoading] = useState(true)
     const [starCount, setStarCount] = useState(4)
-    const [address, setaddress] = useState('');
-    const [addressError, setaddressError] = useState('')
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
@@ -80,8 +89,13 @@ const TherapistList = ({ navigation }) => {
     };
 
     useEffect(() => {
-        //fetchWalletHistory();
+        fetchAllTherapist();
     }, [])
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchAllTherapist()
+        }, [])
+    )
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
@@ -89,25 +103,113 @@ const TherapistList = ({ navigation }) => {
         setFilterModalVisible(!isFilterModalVisible);
     };
 
-    const fetchWalletHistory = () => {
+    const fetchAllTherapist = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
-
-            axios.get(`${API_URL}/public/api/user/paydetails`, {
+            axios.post(`${API_URL}/patient/therapist-list`, {}, {
                 headers: {
+                    'Accept': 'application/json',
                     "Authorization": 'Bearer ' + usertoken,
-                    "Content-Type": 'application/json'
+                    //'Content-Type': 'multipart/form-data',
                 },
             })
                 .then(res => {
-                    console.log(res.data.paydetails, 'user details')
-                    setWalletHistory(res.data.paydetails)
-                    setIsLoading(false);
+                    console.log(JSON.stringify(res.data.data), 'fetch all therapist')
+                    if (res.data.response == true) {
+                        setTherapistData(res.data.data);
+                        setIsLoading(false);
+
+                    } else {
+                        console.log('not okk')
+                        setIsLoading(false)
+                        Alert.alert('Oops..', "Something went wrong", [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
                 })
                 .catch(e => {
-                    console.log(`Login error ${e}`)
+                    setIsLoading(false)
+                    console.log(`user register error ${e}`)
+                    console.log(e.response)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
                 });
         });
     }
+
+    const renderItem = ({ item }) => (
+        // <Pressable onPress={() => navigation.navigate('TherapistProfile')}>
+            <View style={styles.totalValue}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                    <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), }}>
+                        <Image
+                            source={userPhoto}
+                            style={{ height: 100, width: 90, borderRadius: 15, resizeMode: 'contain', marginBottom: responsiveHeight(1) }}
+                        />
+                        <StarRating
+                            disabled={true}
+                            maxStars={5}
+                            rating={starCount}
+                            selectedStar={(rating) => setStarCount(rating)}
+                            fullStarColor={'#FFCB45'}
+                            starSize={12}
+                            starStyle={{ marginHorizontal: responsiveWidth(0.5), marginBottom: responsiveHeight(1) }}
+                        />
+                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>100+ Reviews</Text>
+                    </View>
+                    <View style={{ flexDirection: 'column', width: responsiveWidth(47), height: responsiveHeight(10) }}>
+                        <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginBottom: responsiveHeight(1) }}>Jennifer Kourtney</Text>
+                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>M.PHIL ( Clinical Psycology)</Text>
+                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>1 Year Experience</Text>
+                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Language : <Text style={{ fontSize: responsiveFontSize(1.7), color: '#959595', fontFamily: 'DMSans-Regular', }}>Hindi, English</Text></Text>
+                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>₹1500 for 30 Min</Text>
+                        <Text style={{ fontSize: responsiveFontSize(1.5), color: '#444343', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Next Avl. Slot : Today 09:00 PM</Text>
+                    </View>
+                    <View style={{ width: responsiveWidth(6), }}>
+                        <Image
+                            source={bookmarkedFill}
+                            style={{ height: 25, width: 25 }}
+                        />
+                    </View>
+                </View>
+                <View style={{ marginTop: responsiveHeight(2), borderRadius: 10, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => toggleModal()}>
+                        <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: '#607875', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), textAlign: 'center' }}>Instant Connect</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Image
+                            source={cameraColor}
+                            style={{ height: 25, width: 25 }}
+                        />
+                    </View>
+                    <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Image
+                            source={phoneColor}
+                            style={{ height: 25, width: 25 }}
+                        />
+                    </View>
+                    <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Image
+                            source={chatColor}
+                            style={{ height: 25, width: 25 }}
+                        />
+                    </View>
+                </View>
+            </View>
+        // </Pressable>
+    );
 
     if (isLoading) {
         return (
@@ -123,8 +225,37 @@ const TherapistList = ({ navigation }) => {
             <ScrollView style={styles.wrapper}>
                 <View style={{ marginBottom: responsiveHeight(5), alignSelf: 'center', marginTop: responsiveHeight(2) }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
-                        <View style={{ width: responsiveWidth(65), }}>
-                            <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Type for therapy</Text>
+                        <View style={{ width: responsiveWidth(35), }}>
+                            <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                inputSearchStyle={styles.inputSearchStyle}
+                                itemTextStyle={styles.selectedTextStyle}
+                                data={dropdowndata}
+                                //search
+                                maxHeight={300}
+                                labelField="label"
+                                valueField="value"
+                                placeholder={!isFocus ? 'Select item' : '...'}
+                                searchPlaceholder="Search..."
+                                value={value}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item => {
+                                    setValue(item.value);
+                                    // if (item.value == '2') {
+                                    //     setValue('2');
+                                    //     toggleModal()
+                                    // } else if (item.value == '1') {
+                                    //     console.log(item.value, 'jjjjjj')
+                                    //     setValue('1');
+                                    //     fetchData(item.value)
+                                    // }
+                                    setIsFocus(false);
+                                }}
+                            />
+                            {/* <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Type for therapy</Text> */}
                         </View>
                         <TouchableWithoutFeedback onPress={() => toggleFilterModal()}>
                             <View style={{ width: responsiveWidth(20), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -136,7 +267,7 @@ const TherapistList = ({ navigation }) => {
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                    {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
                         <View style={{ height: responsiveHeight(5), width: responsiveWidth(27), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Individual</Text>
                         </View>
@@ -146,68 +277,73 @@ const TherapistList = ({ navigation }) => {
                         <View style={{ height: responsiveHeight(5), width: responsiveWidth(27), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Child</Text>
                         </View>
-                    </View>
-                    <Pressable onPress={()=> navigation.navigate('TherapistProfile')}>
-                    <View style={styles.totalValue}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                            <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), }}>
-                                <Image
-                                    source={userPhoto}
-                                    style={{ height: 100, width: 90, borderRadius: 15, resizeMode: 'contain', marginBottom: responsiveHeight(1) }}
-                                />
-                                <StarRating
-                                    disabled={true}
-                                    maxStars={5}
-                                    rating={starCount}
-                                    selectedStar={(rating) => setStarCount(rating)}
-                                    fullStarColor={'#FFCB45'}
-                                    starSize={12}
-                                    starStyle={{ marginHorizontal: responsiveWidth(0.5), marginBottom: responsiveHeight(1) }}
-                                />
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>100+ Reviews</Text>
-                            </View>
-                            <View style={{ flexDirection: 'column', width: responsiveWidth(47), height: responsiveHeight(10) }}>
-                                <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginBottom: responsiveHeight(1) }}>Jennifer Kourtney</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>M.PHIL ( Clinical Psycology)</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>1 Year Experience</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Language : <Text style={{ fontSize: responsiveFontSize(1.7), color: '#959595', fontFamily: 'DMSans-Regular', }}>Hindi, English</Text></Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>₹1500 for 30 Min</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.5), color: '#444343', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Next Avl. Slot : Today 09:00 PM</Text>
-                            </View>
-                            <View style={{ width: responsiveWidth(6), }}>
-                                <Image
-                                    source={bookmarkedFill}
-                                    style={{ height: 25, width: 25 }}
-                                />
-                            </View>
-                        </View>
-                        <View style={{ marginTop: responsiveHeight(2), borderRadius: 10, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <TouchableOpacity onPress={() => toggleModal()}>
-                                <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#607875', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), textAlign: 'center' }}>Instant Connect</Text>
+                    </View> */}
+                    {/* <Pressable onPress={() => navigation.navigate('TherapistProfile')}>
+                        <View style={styles.totalValue}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), }}>
+                                    <Image
+                                        source={userPhoto}
+                                        style={{ height: 100, width: 90, borderRadius: 15, resizeMode: 'contain', marginBottom: responsiveHeight(1) }}
+                                    />
+                                    <StarRating
+                                        disabled={true}
+                                        maxStars={5}
+                                        rating={starCount}
+                                        selectedStar={(rating) => setStarCount(rating)}
+                                        fullStarColor={'#FFCB45'}
+                                        starSize={12}
+                                        starStyle={{ marginHorizontal: responsiveWidth(0.5), marginBottom: responsiveHeight(1) }}
+                                    />
+                                    <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>100+ Reviews</Text>
                                 </View>
-                            </TouchableOpacity>
-                            <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
-                                <Image
-                                    source={cameraColor}
-                                    style={{ height: 25, width: 25 }}
-                                />
+                                <View style={{ flexDirection: 'column', width: responsiveWidth(47), height: responsiveHeight(10) }}>
+                                    <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginBottom: responsiveHeight(1) }}>Jennifer Kourtney</Text>
+                                    <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>M.PHIL ( Clinical Psycology)</Text>
+                                    <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>1 Year Experience</Text>
+                                    <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Language : <Text style={{ fontSize: responsiveFontSize(1.7), color: '#959595', fontFamily: 'DMSans-Regular', }}>Hindi, English</Text></Text>
+                                    <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>₹1500 for 30 Min</Text>
+                                    <Text style={{ fontSize: responsiveFontSize(1.5), color: '#444343', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Next Avl. Slot : Today 09:00 PM</Text>
+                                </View>
+                                <View style={{ width: responsiveWidth(6), }}>
+                                    <Image
+                                        source={bookmarkedFill}
+                                        style={{ height: 25, width: 25 }}
+                                    />
+                                </View>
                             </View>
-                            <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
-                                <Image
-                                    source={phoneColor}
-                                    style={{ height: 25, width: 25 }}
-                                />
-                            </View>
-                            <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
-                                <Image
-                                    source={chatColor}
-                                    style={{ height: 25, width: 25 }}
-                                />
+                            <View style={{ marginTop: responsiveHeight(2), borderRadius: 10, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <TouchableOpacity onPress={() => toggleModal()}>
+                                    <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#607875', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), textAlign: 'center' }}>Instant Connect</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Image
+                                        source={cameraColor}
+                                        style={{ height: 25, width: 25 }}
+                                    />
+                                </View>
+                                <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Image
+                                        source={phoneColor}
+                                        style={{ height: 25, width: 25 }}
+                                    />
+                                </View>
+                                <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Image
+                                        source={chatColor}
+                                        style={{ height: 25, width: 25 }}
+                                    />
+                                </View>
                             </View>
                         </View>
-                    </View>
-                    </Pressable>
+                    </Pressable> */}
+                    <FlatList
+                        data={therapistData}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id.toString()}
+                    />
                 </View>
 
             </ScrollView>
@@ -438,14 +574,14 @@ const TherapistList = ({ navigation }) => {
                             </View>
                         </View>
                     </ScrollView>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between',  bottom: 0, width: responsiveWidth(100), paddingHorizontal: 10,borderTopColor:'#E3E3E3',borderTopWidth:1 }}>
-                        <View style={{ width: responsiveWidth(45),marginTop: responsiveHeight(2) }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', bottom: 0, width: responsiveWidth(100), paddingHorizontal: 10, borderTopColor: '#E3E3E3', borderTopWidth: 1 }}>
+                        <View style={{ width: responsiveWidth(45), marginTop: responsiveHeight(2) }}>
                             <CustomButton label={"Cancel"}
                                 buttonColor={'gray'}
                                 onPress={() => submitReview()}
                             />
                         </View>
-                        <View style={{ width: responsiveWidth(45),marginTop: responsiveHeight(2) }}>
+                        <View style={{ width: responsiveWidth(45), marginTop: responsiveHeight(2) }}>
                             <CustomButton label={"Apply"}
                                 onPress={() => submitReview()}
                             />
@@ -470,12 +606,12 @@ const styles = StyleSheet.create({
 
     },
     totalValue: {
-        width: responsiveWidth(89),
-        height: responsiveHeight(36),
+        width: responsiveWidth(90),
+        //height: responsiveHeight(36),
         //alignItems: 'center',
         backgroundColor: '#FFF',
         //justifyContent: 'center',
-        padding: 15,
+        padding: 10,
         borderRadius: 15,
         elevation: 5
     },
@@ -516,6 +652,31 @@ const styles = StyleSheet.create({
     },
     item: {
         borderBottomWidth: 0
+    },
+    // dropdown
+    dropdown: {
+        //height: responsiveHeight(4),
+        //borderColor: 'gray',
+        //borderWidth: 0.7,
+        //borderRadius: 8,
+        //paddingHorizontal: 8,
+
+    },
+    placeholderStyle: {
+        fontSize: responsiveFontSize(2),
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold'
+    },
+    selectedTextStyle: {
+        fontSize: responsiveFontSize(2),
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold'
+    },
+    inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Regular'
     },
 
 });
