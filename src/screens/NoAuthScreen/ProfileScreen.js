@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -15,6 +15,7 @@ import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-nat
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
+import { useFocusEffect } from '@react-navigation/native';
 import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
 import { plus, uploadImg, uploadPicImg, userPhoto } from '../../utils/Images';
@@ -24,12 +25,13 @@ import axios from 'axios';
 import { API_URL } from '@env'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import CustomHeader from '../../components/CustomHeader';
-import MultiSelect from 'react-native-multiple-select';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from 'react-native-element-dropdown';
 import Modal from "react-native-modal";
 import Entypo from 'react-native-vector-icons/Entypo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import moment from "moment"
+import Toast from 'react-native-toast-message';
 
 
 const dataGender = [
@@ -38,9 +40,10 @@ const dataGender = [
   { label: 'Others', value: 'Others' }
 ];
 const dataMarital = [
-  { label: '01', value: '01' },
-  { label: '02', value: '02' },
-  { label: '03', value: '03' },
+  { label: 'Married', value: 'Married' },
+  { label: 'Single', value: 'Single' },
+  { label: 'Divorced', value: 'Divorced' },
+  { label: 'Widowed', value: 'Widowed' }
 ];
 
 const ProfileScreen = ({ navigation, route }) => {
@@ -57,9 +60,6 @@ const ProfileScreen = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false)
   const { login, userToken } = useContext(AuthContext);
 
-  const [statevalue, setStateValue] = useState(null);
-  const [isStateFocus, setStateIsFocus] = useState(false);
-
   const [yearvalue, setYearValue] = useState(null);
   const [isYearFocus, setYearIsFocus] = useState(false);
 
@@ -73,25 +73,43 @@ const ProfileScreen = ({ navigation, route }) => {
   const [open, setOpen] = useState(false)
   const [dobError, setdobError] = useState('')
 
-  // Qualification dropdown
-  const [selectedItems, setSelectedItems] = useState([]);
-  const multiSelectRef = useRef(null);
-  const onSelectedItemsChange = selectedItems => {
-    setSelectedItems(selectedItems);
-  };
-  // Type dropdown
-  const [selectedItemsType, setSelectedItemsType] = useState([]);
-  const multiSelectRefType = useRef(null);
-  const onSelectedItemsChangeType = selectedItems => {
-    setSelectedItemsType(selectedItems);
-  };
+  const fetchUserData = () => {
+    setIsLoading(true)
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+      console.log(usertoken, 'usertoken')
+      axios.post(`${API_URL}/patient/profile`, {}, {
+        headers: {
+          "Authorization": `Bearer ${usertoken}`,
+          "Content-Type": 'application/json'
+        },
+      })
+        .then(res => {
+          let userInfo = res.data.data;
+          console.log(userInfo, 'user data from profile api ')
+          setFirstname(userInfo?.name)
+          setEmail(userInfo?.email)
+          setPhoneno(userInfo?.mobile)
+          setDate(userInfo?.dob)
+          setYearValue(userInfo?.gender)
+          setMonthValue(userInfo?.marital_status)
+          
+          setIsLoading(false)
+        })
+        .catch(e => {
+          console.log(`Profile error ${e}`)
+          setIsLoading(false)
+        });
+    });
+  }
 
-  // Language dropdown
-  const [selectedItemsLanguage, setSelectedItemsLanguage] = useState([]);
-  const multiSelectRefLanguage = useRef(null);
-  const onSelectedItemsChangeLanguage = selectedItems => {
-    setSelectedItemsLanguage(selectedItems);
-  };
+  useEffect(() => {
+    fetchUserData();
+  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchUserData()
+    }, [])
+  )
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -145,81 +163,65 @@ const ProfileScreen = ({ navigation, route }) => {
     } else if (date == 'DD - MM  - YYYY') {
       setdobError('Please enter DOB')
     } else {
-
+      setIsLoading(true)
+      const option = {
+        "name": firstname,
+        "email": email,
+        "dob": moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+        "gender": yearvalue,
+        "marital_status" :  monthvalue,
+        //"mobile": "7797599595"
+      }
+      console.log(option, 'dhhhdhhd')
+      AsyncStorage.getItem('userToken', (err, usertoken) => {
+        axios.post(`${API_URL}/patient/registration`, option, {
+          headers: {
+            Accept: 'application/json',
+            "Authorization": 'Bearer ' + usertoken,
+          },
+        })
+          .then(res => {
+            console.log(res.data)
+            if (res.data.response == true) {
+              setIsLoading(false)
+              Toast.show({
+                type: 'success',
+                text1: 'Hello',
+                text2: "Profile data updated successfully",
+                position: 'top',
+                topOffset: Platform.OS == 'ios' ? 55 : 20
+              });
+            } else {
+              console.log('not okk')
+              setIsLoading(false)
+              Alert.alert('Oops..', "Something went wrong", [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+              ]);
+            }
+          })
+          .catch(e => {
+            setIsLoading(false)
+            console.log(`user update error ${e}`)
+            console.log(e.response.data?.response.records)
+            Alert.alert('Oops..', e.response?.data?.message, [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+          });
+      });
     }
   }
 
-  // const submitForm = () => {
-  //   //navigation.navigate('DocumentsUpload')
-  //   if (!firstname) {
-  //     setFirstNameError('Please enter First name')
-  //   }else if(!lastname){
-  //     setLastNameError('Please enter Last name')
-  //   }else if(!address){
-  //     setAddressError('Please enter Address')
-  //   }else if(!city){
-  //     setCityError('Please enter City')
-  //   } else {
-  //     setIsLoading(true)
-  //     var option = {}
-  //     if(email){
-  //       var option = {
-  //         "firstName": firstname,
-  //         "lastName": lastname,
-  //         "email": email,
-  //         "address": address,
-  //         "zipcode": postaddress,
-  //         "city" : city
-  //       }
-  //     }else{
-  //       var option = {
-  //         "firstName": firstname,
-  //         "lastName": lastname,
-  //         "address": address,
-  //         "zipcode": postaddress,
-  //         "city" : city
-  //       }
-  //     }
 
-  //     axios.post(`${API_URL}/api/driver/updateInformation`, option, {
-  //       headers: {
-  //         Accept: 'application/json',
-  //         "Authorization": 'Bearer ' + route?.params?.usertoken,
-  //       },
-  //     })
-  //       .then(res => {
-  //         console.log(res.data)
-  //         if (res.data.response.status.code === 200) {
-  //           setIsLoading(false)
-  //           navigation.push('DocumentsUpload', { usertoken: route?.params?.usertoken })
-  //       } else {
-  //           Alert.alert('Oops..', "Something went wrong", [
-  //               {
-  //                   text: 'Cancel',
-  //                   onPress: () => console.log('Cancel Pressed'),
-  //                   style: 'cancel',
-  //               },
-  //               { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //           ]);
-  //       }
-  //       })
-  //       .catch(e => {
-  //         setIsLoading(false)
-  //         console.log(`user update error ${e}`)
-  //         console.log(e.response.data?.response.records)
-  //         Alert.alert('Oops..', "Something went wrong", [
-  //           {
-  //               text: 'Cancel',
-  //               onPress: () => console.log('Cancel Pressed'),
-  //               style: 'cancel',
-  //           },
-  //           { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //       ]);
-  //       });
-  //   }
-
-
-  // }
 
   if (isLoading) {
     return (
@@ -257,7 +259,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 keyboardType=" "
                 value={phoneno}
                 //helperText={'Please enter lastname'}
-                inputType={'others'}
+                inputType={'nonedit'}
                 onChangeText={(text) => changePhone(text)}
               />
             </View>
@@ -340,7 +342,32 @@ const ProfileScreen = ({ navigation, route }) => {
                 }}
               />
             </View>
-
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.header}>Marital Status</Text>
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Dropdown
+                style={[styles.dropdownHalf, isMonthFocus && { borderColor: '#DDD' }]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                itemTextStyle={styles.selectedTextStyle}
+                data={dataMarital}
+                //search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isMonthFocus ? 'Marital Status' : '...'}
+                searchPlaceholder="Search..."
+                value={monthvalue}
+                onFocus={() => setMonthIsFocus(true)}
+                onBlur={() => setMonthIsFocus(false)}
+                onChange={item => {
+                  setMonthValue(item.value);
+                  setMonthIsFocus(false);
+                }}
+              />
+            </View>
           </View>
 
         </View>

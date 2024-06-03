@@ -27,6 +27,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { orImg } from '../../utils/Images';
+import Toast from 'react-native-toast-message';
 
 const BannerWidth = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(BannerWidth * 0.7)
@@ -85,56 +86,67 @@ const LoginScreen = ({ navigation }) => {
     } else if (!phoneRegex.test(phone)) {
       setMobileError('Please enter a 10-digit number.')
     } else {
-      navigation.navigate('Otp')
+      setIsLoading(true)
+      AsyncStorage.getItem('fcmToken', (err, fcmToken) => {
+        console.log(fcmToken, 'firebase token')
+        console.log(deviceId, 'device id')
+        const option = {
+          "mobile": phone,
+          "firebase_token": fcmToken,
+          //"deviceid": deviceId,
+        }
+        axios.post(`${API_URL}/patient/login`, option, {
+          headers: {
+            'Accept': 'application/json',
+            //'Content-Type': 'multipart/form-data',
+          },
+        })
+          .then(res => {
+            console.log(res.data)
+            if (res.data.response == true) {
+              setIsLoading(false)
+              Toast.show({
+                type: 'success',
+                text1: 'Hello',
+                text2: "OTP sent to your mobile no",
+                position: 'top',
+                topOffset: Platform.OS == 'ios' ? 55 : 20
+              });
+              // login(res.data.token)
+               navigation.navigate('Otp', {phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name})
+            } else {
+              console.log('not okk')
+              setIsLoading(false)
+              Alert.alert('Oops..', "Something went wrong", [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+              ]);
+            }
+          })
+          .catch(e => {
+            setIsLoading(false)
+            console.log(`user register error ${e}`)
+            console.log(e.response)
+            Alert.alert('Oops..', e.response?.data?.message, [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+          });
+      });
     }
-    // if (!phone) {
-    //   setMobileError('Please enter Mobile no')
-    // } else if (!phoneRegex.test(phone)) {
-    //   setMobileError('Please enter a 10-digit number.')
-    // } else {
-    //   setIsLoading(true)
-    //   AsyncStorage.getItem('fcmToken', (err, fcmToken) => {
-    //     const option = {
-    //       "code": countryCode,
-    //       "phone": phone,
-    //       "deviceid": deviceId,
-    //       "email": email,
-    //       "deviceToken": fcmToken
-    //     }
+    
+  }
 
-    //     console.log(option)
-    //     axios.post(`${API_URL}/api/driver/registration`, option)
-    //       .then(res => {
-    //         console.log(JSON.stringify(res.data))
-    //         if (res.data.response.status.code === 200) {
-    //           setIsLoading(false)
-    //           navigation.push('Otp', { counterycode: countryCode, phoneno: phone, userid: res.data?.response.records.userData.id })
-    //         } else {
-    //           setIsLoading(false)
-    //           Alert.alert('Oops..', "Something went wrong", [
-    //             {
-    //               text: 'Cancel',
-    //               onPress: () => console.log('Cancel Pressed'),
-    //               style: 'cancel',
-    //             },
-    //             { text: 'OK', onPress: () => console.log('OK Pressed') },
-    //           ]);
-    //         }
-    //       })
-    //       .catch(e => {
-    //         setIsLoading(false)
-    //         console.log(`user register error ${e}`)
-    //         Alert.alert('Oops..', e.response.data?.response.records.message, [
-    //           {
-    //             text: 'Cancel',
-    //             onPress: () => console.log('Cancel Pressed'),
-    //             style: 'cancel',
-    //           },
-    //           { text: 'OK', onPress: () => console.log('OK Pressed') },
-    //         ]);
-    //       });
-    //   });
-    // }
+  const handleTruecaller = () => {
+    
   }
 
   if (isLoading) {
@@ -219,7 +231,7 @@ const LoginScreen = ({ navigation }) => {
       />
       <View style={[styles.buttonwrapper, { marginTop: 10 }]}>
         <CustomButton label={"Login With Truecaller"}
-          onPress={() => handleSubmit()}
+          onPress={() => handleTruecaller()}
           buttonColor='gray'
         //onPress={() => { navigation.push('Otp', { phoneno: phone }) }}
         />

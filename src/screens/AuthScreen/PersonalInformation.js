@@ -28,6 +28,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import Entypo from 'react-native-vector-icons/Entypo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import moment from "moment"
+import Toast from 'react-native-toast-message';
 
 
 const dataGender = [
@@ -36,9 +37,10 @@ const dataGender = [
   { label: 'Others', value: 'Others' }
 ];
 const dataMarital = [
-  { label: '01', value: '01' },
-  { label: '02', value: '02' },
-  { label: '03', value: '03' },
+  { label: 'Married', value: 'Married' },
+  { label: 'Single', value: 'Single' },
+  { label: 'Divorced', value: 'Divorced' },
+  { label: 'Widowed', value: 'Widowed' }
 ];
 
 const PersonalInformation = ({ navigation, route }) => {
@@ -178,79 +180,64 @@ const PersonalInformation = ({ navigation, route }) => {
     }
 
     if (firstname && email && /\S+@\S+\.\S+/.test(email) && date !== 'DD - MM - YYYY' && validateAge(date)) {
-      login()
+      //login()
+      setIsLoading(true)
+      const option = {
+        "name" : firstname,
+        "email" : email,
+        "dob" : moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+        "gender" : yearvalue,
+        "marital_status" :  monthvalue,
+        //"mobile" : "7797599595"
+      }
+      console.log(option, 'dhhhdhhd')
+      axios.post(`${API_URL}/patient/registration`, option, {
+        headers: {
+          Accept: 'application/json',
+          "Authorization": 'Bearer ' + route?.params?.token,
+        },
+      })
+        .then(res => {
+          console.log(res.data)
+          if (res.data.response == true) {
+            setIsLoading(false)
+            Toast.show({
+              type: 'success',
+              text1: 'Hello',
+              text2: "Profile data updated successfully",
+              position: 'top',
+              topOffset: Platform.OS == 'ios' ? 55 : 20
+            });
+           login(route?.params?.token)
+          } else {
+            console.log('not okk')
+            setIsLoading(false)
+            Alert.alert('Oops..', "Something went wrong", [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+          }
+        })
+        .catch(e => {
+          setIsLoading(false)
+          console.log(`user update error ${e}`)
+          console.log(e.response.data?.response.records)
+          Alert.alert('Oops..', "Something went wrong", [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ]);
+        });
     } else {
       // Optionally handle case where some fields are still invalid
     }
-    //navigation.navigate('DocumentsUpload')
-    // if (!firstname) {
-    //   setFirstNameError('Please enter Name')
-    // } else if (!email) {
-    //   setEmailError('Please enter Email Id')
-    // } else if (date == 'DD - MM  - YYYY') {
-    //   setdobError('Please enter DOB')
-    // } else {
-    //   login()
-    // setIsLoading(true)
-    // var option = {}
-    // if(email){
-    //   var option = {
-    //     "firstName": firstname,
-    //     "lastName": lastname,
-    //     "email": email,
-    //     "address": address,
-    //     "zipcode": postaddress,
-    //     "city" : city
-    //   }
-    // }else{
-    //   var option = {
-    //     "firstName": firstname,
-    //     "lastName": lastname,
-    //     "address": address,
-    //     "zipcode": postaddress,
-    //     "city" : city
-    //   }
-    // }
-
-    // axios.post(`${API_URL}/api/driver/updateInformation`, option, {
-    //   headers: {
-    //     Accept: 'application/json',
-    //     "Authorization": 'Bearer ' + route?.params?.usertoken,
-    //   },
-    // })
-    //   .then(res => {
-    //     console.log(res.data)
-    //     if (res.data.response.status.code === 200) {
-    //       setIsLoading(false)
-    //       navigation.push('DocumentsUpload', { usertoken: route?.params?.usertoken })
-    //   } else {
-    //       Alert.alert('Oops..', "Something went wrong", [
-    //           {
-    //               text: 'Cancel',
-    //               onPress: () => console.log('Cancel Pressed'),
-    //               style: 'cancel',
-    //           },
-    //           { text: 'OK', onPress: () => console.log('OK Pressed') },
-    //       ]);
-    //   }
-    //   })
-    //   .catch(e => {
-    //     setIsLoading(false)
-    //     console.log(`user update error ${e}`)
-    //     console.log(e.response.data?.response.records)
-    //     Alert.alert('Oops..', "Something went wrong", [
-    //       {
-    //           text: 'Cancel',
-    //           onPress: () => console.log('Cancel Pressed'),
-    //           style: 'cancel',
-    //       },
-    //       { text: 'OK', onPress: () => console.log('OK Pressed') },
-    //   ]);
-    //   });
-
-    //}
-
-
   }
 
   if (isLoading) {
@@ -372,7 +359,7 @@ const PersonalInformation = ({ navigation, route }) => {
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Dropdown
-                style={[styles.dropdownHalf, isYearFocus && { borderColor: '#DDD' }]}
+                style={[styles.dropdownHalf, isMonthFocus && { borderColor: '#DDD' }]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
@@ -382,14 +369,14 @@ const PersonalInformation = ({ navigation, route }) => {
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isYearFocus ? 'Marital Status' : '...'}
+                placeholder={!isMonthFocus ? 'Marital Status' : '...'}
                 searchPlaceholder="Search..."
-                value={yearvalue}
-                onFocus={() => setYearIsFocus(true)}
-                onBlur={() => setYearIsFocus(false)}
+                value={monthvalue}
+                onFocus={() => setMonthIsFocus(true)}
+                onBlur={() => setMonthIsFocus(false)}
                 onChange={item => {
-                  setYearValue(item.value);
-                  setYearIsFocus(false);
+                  setMonthValue(item.value);
+                  setMonthIsFocus(false);
                 }}
               />
             </View>

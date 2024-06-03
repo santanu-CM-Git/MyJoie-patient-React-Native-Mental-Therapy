@@ -90,6 +90,11 @@ const HomeStack = () => {
         component={ScheduleScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
