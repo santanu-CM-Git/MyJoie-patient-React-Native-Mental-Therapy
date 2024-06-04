@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -16,13 +16,17 @@ import CustomButton from '../../components/CustomButton';
 import CheckBox from '@react-native-community/checkbox';
 
 const items = [
-    { id: 1, icon: cameraColor },
+    { id: 1, icon: chatColor },
     { id: 2, icon: phoneColor },
-    { id: 3, icon: chatColor },
+    { id: 3, icon: cameraColor },
 ];
-const TherapistProfile = ({ navigation }) => {
+const TherapistProfile = ({ navigation, route }) => {
 
-    const [walletHistory, setWalletHistory] = React.useState([])
+    const [allReview, setAllreview] = React.useState([])
+    const [profileDetails, setProfileDetails] = useState([])
+    const [therapistAvailability, setTherapistAvailability] = useState([])
+    const [selectedDate, setSelectedDate] = useState('')
+    const [selectedByUser, setSelectedByUser] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [starCount, setStarCount] = useState(4)
     const [address, setaddress] = useState('');
@@ -31,7 +35,7 @@ const TherapistProfile = ({ navigation }) => {
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const [selectedDay, setSelectedDay] = useState(null);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(1);
 
     const getNextSevenDays = () => {
         const days = [];
@@ -45,34 +49,184 @@ const TherapistProfile = ({ navigation }) => {
 
     const selectedDateChange = (index, day, date) => {
         console.log(index)
-        console.log(day);
-        console.log(date);
         setSelectedDay(index)
-    }
-
-
-    useEffect(() => {
-        //fetchWalletHistory();
-    }, [])
-
-    const fetchWalletHistory = () => {
+        setSelectedDate(date)
+        setIsLoading(true);
+        // console.log(day, 'day');
+        // console.log(date, 'date');
+        // console.log(profileDetails?.id, 'therapist_id');
+        // console.log('paid', 'paid')
+        var givendate = '';
+        if (day == 'Monday') {
+            givendate = 'monday'
+        } else if (day == 'Tuesday') {
+            givenday = 'tuesday'
+        } else if (day == 'Wednesday') {
+            givenday = 'wednessday'
+        } else if (day == 'Thursday') {
+            givenday = 'thursday'
+        } else if (day == 'Friday') {
+            givenday = 'friday'
+        } else if (day == 'Saturday') {
+            givenday = 'saturday'
+        } else if (day == 'Sunday') {
+            givenday = 'sunday'
+        }
+        const option = {
+            "day": givenday,
+            "date": date,
+            "therapist_id": profileDetails?.id,
+            "booking_type": "paid"
+        }
+        console.log(option)
         AsyncStorage.getItem('userToken', (err, usertoken) => {
-
-            axios.get(`${API_URL}/public/api/user/paydetails`, {
+            axios.post(`${API_URL}/patient/therapist-date-slots`, option, {
                 headers: {
+                    'Accept': 'application/json',
                     "Authorization": 'Bearer ' + usertoken,
-                    "Content-Type": 'application/json'
+                    //'Content-Type': 'multipart/form-data',
                 },
             })
                 .then(res => {
-                    console.log(res.data.paydetails, 'user details')
-                    setWalletHistory(res.data.paydetails)
-                    setIsLoading(false);
+                    console.log(JSON.stringify(res.data.data), 'fetch all therapist availibility')
+                    if (res.data.response == true) {
+                        setTherapistAvailability(res.data.data);
+                        setIsLoading(false);
+
+                    } else {
+                        console.log('not okk')
+                        setIsLoading(false)
+                        Alert.alert('Oops..', "Something went wrong", [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
                 })
                 .catch(e => {
-                    console.log(`Login error ${e}`)
+                    setIsLoading(false)
+                    console.log(`user register error ${e}`)
+                    console.log(e.response)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
                 });
         });
+    }
+
+    const handleSlotSelect = (slot) => {
+        setSelectedByUser((prevSelected) => {
+            if (prevSelected.includes(slot)) {
+                // Deselect if already selected
+                return prevSelected.filter(selectedSlot => selectedSlot !== slot);
+            } else {
+                // Select the slot
+                return [...prevSelected, slot];
+            }
+        });
+    };
+
+
+    useEffect(() => {
+        console.log(route?.params?.detailsData, 'vvvvvvv')
+        setProfileDetails(route?.params?.detailsData)
+        const formattedDate = moment().format('YYYY-MM-DD');
+        const dayOfWeek = moment().format('dddd');
+        const index = 0;
+        console.log(formattedDate);
+        console.log(dayOfWeek)
+        selectedDateChange(index, dayOfWeek, formattedDate)
+        getAllReviewForTherapist()
+    }, [])
+
+    const getAllReviewForTherapist = () => {
+        const option = {
+            "user_id": route?.params?.detailsData.id
+        }
+        console.log(option)
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            axios.post(`${API_URL}/patient/reviews`, option, {
+                headers: {
+                    'Accept': 'application/json',
+                    "Authorization": 'Bearer ' + usertoken,
+                    //'Content-Type': 'multipart/form-data',
+                },
+            })
+                .then(res => {
+                    console.log(JSON.stringify(res.data.data), 'fetch all reviews')
+                    if (res.data.response == true) {
+                        setAllreview(res.data.data);
+                        setIsLoading(false);
+
+                    } else {
+                        console.log('not okk')
+                        setIsLoading(false)
+                        Alert.alert('Oops..', "Something went wrong", [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(e => {
+                    setIsLoading(false)
+                    console.log(`all reviews error ${e}`)
+                    console.log(e.response)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
+                });
+        });
+    }
+
+    const submitForm = () => {
+        console.log(selectedByUser.length)
+        const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
+        var mode = ''
+        if (selectedItem == 1) {
+            mode = "chat"
+        } else if (selectedItem == 2) {
+            mode = "audio"
+        } else if (selectedItem == 3) {
+            mode = "video"
+        }
+        var prescription_checked = ''
+        if (toggleCheckBox) {
+            prescription_checked = 'yes'
+        } else {
+            prescription_checked = 'no'
+        }
+        const totalAmount = selectedByUser.length * profileDetails?.rate
+
+        console.log(profileDetails?.id, "therapist_id")
+        console.log(ids, 'slot_ids')
+        console.log(selectedDate, 'date')
+        console.log('purpose', 'purpose')
+        console.log(mode, 'mode_of_conversation')
+        console.log("online", 'payment_mode')
+        console.log("Razorpay", "gateway_name")
+        console.log(prescription_checked, "prescription_checked")
+        console.log(totalAmount, 'transaction_amount')
+
+
+
+
     }
 
     if (isLoading) {
@@ -93,13 +247,13 @@ const TherapistProfile = ({ navigation }) => {
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                             <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), }}>
                                 <Image
-                                    source={userPhoto}
+                                    source={{ uri: profileDetails?.user?.profile_pic }}
                                     style={{ height: 100, width: 90, borderRadius: 15, resizeMode: 'contain', marginBottom: responsiveHeight(1) }}
                                 />
                                 <StarRating
                                     disabled={true}
                                     maxStars={5}
-                                    rating={starCount}
+                                    rating={profileDetails?.display_rating}
                                     selectedStar={(rating) => setStarCount(rating)}
                                     fullStarColor={'#FFCB45'}
                                     starSize={12}
@@ -108,10 +262,10 @@ const TherapistProfile = ({ navigation }) => {
                                 <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>100+ Reviews</Text>
                             </View>
                             <View style={{ flexDirection: 'column', width: responsiveWidth(47), height: responsiveHeight(10) }}>
-                                <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginBottom: responsiveHeight(1) }}>Jennifer Kourtney</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>M.PHIL ( Clinical Psycology)</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>1 Year Experience</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Language : <Text style={{ fontSize: responsiveFontSize(1.7), color: '#959595', fontFamily: 'DMSans-Regular', }}>Hindi, English</Text></Text>
+                                <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginBottom: responsiveHeight(1) }}>{profileDetails?.user?.name}</Text>
+                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>{profileDetails?.qualification_list}</Text>
+                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>{profileDetails?.experience} Year Experience</Text>
+                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Language : <Text style={{ fontSize: responsiveFontSize(1.7), color: '#959595', fontFamily: 'DMSans-Regular', }}>{profileDetails?.languages_list}</Text></Text>
                             </View>
                             <View style={{ width: responsiveWidth(6), }}>
                                 <Image
@@ -120,19 +274,11 @@ const TherapistProfile = ({ navigation }) => {
                                 />
                             </View>
                         </View>
-                        <View style={{ height: responsiveHeight(5), width: responsiveWidth(80), marginTop: responsiveHeight(2), backgroundColor: '#F4F5F5', borderRadius: 10, padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={{ height: responsiveHeight(5), width: responsiveWidth(85), marginTop: responsiveHeight(2), backgroundColor: '#F4F5F5', borderRadius: 10, padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.5) }}>₹1500 for 30 Min Booking</Text>
+                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.5) }}>₹{profileDetails?.rate} for 30 Min Booking</Text>
                             </View>
-                            <View
-                                style={{
-                                    height: '80%',
-                                    width: 1,
-                                    backgroundColor: '#E3E3E3',
-                                    marginLeft: 5,
-                                    marginRight: 5
-                                }}
-                            />
+                            <View style={{ height: '80%', width: 1, backgroundColor: '#E3E3E3', marginLeft: 5, marginRight: 5 }} />
                             <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
 
                                 <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.5) }}>Session Done - 5000</Text>
@@ -142,7 +288,7 @@ const TherapistProfile = ({ navigation }) => {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2) }}>
                         <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Select Date</Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>View Full Calender</Text>
+                            {/* <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>View Full Calender</Text> */}
                         </View>
                     </View>
                 </View>
@@ -185,7 +331,7 @@ const TherapistProfile = ({ navigation }) => {
                                     styles.dayContainer,
                                     selectedDay === index ? styles.selectedDay : styles.defaultDay,
                                 ]}
-                                onPress={() => selectedDateChange(index, day.format('ddd'), day.format('YYYY-MM-DD'))}
+                                onPress={() => selectedDateChange(index, day.format('dddd'), day.format('YYYY-MM-DD'))}
                             >
                                 <Text style={styles.weekDay}>
                                     {day.format('ddd')}
@@ -205,21 +351,41 @@ const TherapistProfile = ({ navigation }) => {
                         <Text style={{ color: '#FFF', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(2) }}>We recommend booking one hour (two continuous slots)</Text>
                     </View>
                     <View style={{ width: responsiveWidth(90), marginTop: responsiveHeight(2), flexDirection: 'row', flexWrap: 'wrap' }}>
-                        <View style={{ height: responsiveHeight(5), padding: 10, backgroundColor: '#EAECF0', justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10 }}>
-                            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>07:00 - 07:30 PM</Text>
-                        </View>
-                        <View style={{ height: responsiveHeight(5), padding: 10, backgroundColor: '#EAECF0', justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10 }}>
-                            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>08:00 - 08:30 PM</Text>
-                        </View>
-                        <View style={{ height: responsiveHeight(5), padding: 10, backgroundColor: '#EAECF0', justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10 }}>
-                            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>10:45 - 11:15 AM</Text>
-                        </View>
-                        <View style={{ height: responsiveHeight(5), padding: 10, backgroundColor: '#EAECF0', justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10 }}>
-                            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>10:45 - 11:15 AM </Text>
-                        </View>
+                        {therapistAvailability.length === 0 ? (
+                            <View style={{ height: responsiveHeight(5), width: responsiveWidth(90), padding: 10, backgroundColor: '#FFFFFF', borderColor: '#E1293B', borderWidth: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10, alignSelf: 'center' }}>
+                                <Text style={{ color: '#E1293B', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>No slots available for this date</Text>
+                            </View>
+                        ) : (
+                            therapistAvailability.map((slot, index) => {
+                                const isSelected = selectedByUser.includes(slot);
+
+                                return (
+                                    <TouchableOpacity
+                                        key={index}
+                                        onPress={() => handleSlotSelect(slot)}
+                                        style={{
+                                            height: responsiveHeight(5),
+                                            padding: 10,
+                                            backgroundColor: isSelected ? '#ECFCFA' : '#EAECF0', // Change background color if selected
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            borderRadius: 20,
+                                            marginRight: 10,
+                                            marginBottom: 10,
+                                            borderColor: isSelected ? '#87ADA8' : '#EAECF0',
+                                            borderWidth: 1,
+                                        }}
+                                    >
+                                        <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>
+                                            {moment(slot.slot_start_time, 'HH:mm:ss').format('h:mm A')} - {moment(slot.slot_end_time, 'HH:mm:ss').format('h:mm A')}
+                                        </Text>
+                                    </TouchableOpacity>
+                                );
+                            })
+                        )}
                     </View>
                 </View>
-                <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
+                {/* <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
                     <View style={styles.totalValue}>
                         <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Appointment Time :</Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
@@ -239,7 +405,7 @@ const TherapistProfile = ({ navigation }) => {
                             </View>
                         </View>
                     </View>
-                </View>
+                </View> */}
                 <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
                     <View style={styles.totalValue}>
                         <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Select Mode</Text>
@@ -399,7 +565,7 @@ const styles = StyleSheet.create({
         //alignItems: 'center',
         backgroundColor: '#FFF',
         //justifyContent: 'center',
-        padding: 15,
+        padding: 10,
         borderRadius: 15,
         elevation: 5
     },
@@ -435,7 +601,7 @@ const styles = StyleSheet.create({
     },
     dayContainer: {
         height: responsiveHeight(10),
-        width: responsiveWidth(13.5),
+        width: responsiveWidth(14),
         borderRadius: 30,
         marginRight: responsiveWidth(3),
         flexDirection: 'column',
@@ -467,32 +633,32 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: responsiveHeight(2),
-      },
-      itemContainer: {
+    },
+    itemContainer: {
         height: responsiveHeight(11),
         width: responsiveWidth(25),
         borderColor: '#87ADA8',
         borderWidth: 1,
         borderRadius: 10,
         padding: 5,
-      },
-      selectedItem: {
+    },
+    selectedItem: {
         backgroundColor: '#ECFCFA',
-      },
-      defaultItem: {
+    },
+    defaultItem: {
         backgroundColor: '#FFF',
-      },
-      checkIcon: {
+    },
+    checkIcon: {
         height: 25,
         width: 25,
         resizeMode: 'contain',
         alignSelf: 'flex-end',
-      },
-      icon: {
+    },
+    icon: {
         height: 30,
         width: 30,
         resizeMode: 'contain',
         alignSelf: 'center',
-      },
+    },
 
 });
