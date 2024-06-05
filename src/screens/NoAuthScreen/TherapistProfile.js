@@ -4,8 +4,8 @@ import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State } from 'react-native-gesture-handler'
-import { bookmarkedFill, cameraColor, chatColor, checkedImg, dateIcon, deleteImg, editImg, filterImg, milkImg, phoneColor, phoneImg, searchImg, timeIcon, uncheckedImg, userPhoto, videoIcon, wallet, walletBlack, walletCredit } from '../../utils/Images'
-import { API_URL } from '@env'
+import { bookmarkedFill, bookmarkedNotFill, cameraColor, chatColor, checkedImg, dateIcon, deleteImg, editImg, filterImg, milkImg, phoneColor, phoneImg, searchImg, timeIcon, uncheckedImg, userPhoto, videoIcon, wallet, walletBlack, walletCredit } from '../../utils/Images'
+import { API_URL, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from '../../utils/Loader';
@@ -14,6 +14,8 @@ import StarRating from 'react-native-star-rating';
 import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
 import CheckBox from '@react-native-community/checkbox';
+import Toast from 'react-native-toast-message';
+import RazorpayCheckout from 'react-native-razorpay';
 
 const items = [
     { id: 1, icon: chatColor },
@@ -36,6 +38,8 @@ const TherapistProfile = ({ navigation, route }) => {
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedItem, setSelectedItem] = useState(1);
+    let razorpayKeyId = RAZORPAY_KEY_ID;
+    let razorpayKeySecret = RAZORPAY_KEY_SECRET;
 
     const getNextSevenDays = () => {
         const days = [];
@@ -48,7 +52,7 @@ const TherapistProfile = ({ navigation, route }) => {
     const nextSevenDays = getNextSevenDays();
 
     const selectedDateChange = (index, day, date) => {
-        console.log(index)
+        console.log(index, day, date)
         setSelectedDay(index)
         setSelectedDate(date)
         setIsLoading(true);
@@ -75,7 +79,7 @@ const TherapistProfile = ({ navigation, route }) => {
         const option = {
             "day": givenday,
             "date": date,
-            "therapist_id": profileDetails?.id,
+            "therapist_id": route?.params?.therapistId,
             "booking_type": "paid"
         }
         console.log(option)
@@ -90,7 +94,8 @@ const TherapistProfile = ({ navigation, route }) => {
                 .then(res => {
                     console.log(JSON.stringify(res.data.data), 'fetch all therapist availibility')
                     if (res.data.response == true) {
-                        setTherapistAvailability(res.data.data);
+                        const filteredData = res.data.data.filter(slot => slot.booked_status === 0);
+                        setTherapistAvailability(filteredData);
                         setIsLoading(false);
 
                     } else {
@@ -134,10 +139,59 @@ const TherapistProfile = ({ navigation, route }) => {
         });
     };
 
+    const fetchTherapistData = () => {
+        setIsLoading(true);
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            const option = {
+                "therapist_id": route?.params?.therapistId
+            }
+            axios.post(`${API_URL}/patient/therapist`, option, {
+                headers: {
+                    'Accept': 'application/json',
+                    "Authorization": 'Bearer ' + usertoken,
+                    //'Content-Type': 'multipart/form-data',
+                },
+            })
+                .then(res => {
+                    console.log(JSON.stringify(res.data.data), 'response from therapist data')
+                    if (res.data.response == true) {
+                        setProfileDetails(res.data.data)
+                        setIsLoading(false);
+                    } else {
+                        console.log('not okk')
+                        setIsLoading(false)
+                        Alert.alert('Oops..', "Something went wrong", [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(e => {
+                    setIsLoading(false)
+                    console.log(`user register error ${e}`)
+                    console.log(e.response)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
+                });
+
+        });
+    }
+
 
     useEffect(() => {
-        console.log(route?.params?.detailsData, 'vvvvvvv')
-        setProfileDetails(route?.params?.detailsData)
+        // console.log(route?.params?.detailsData, 'vvvvvvv')
+        // setProfileDetails(route?.params?.detailsData)
+        fetchTherapistData()
         const formattedDate = moment().format('YYYY-MM-DD');
         const dayOfWeek = moment().format('dddd');
         const index = 0;
@@ -149,7 +203,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
     const getAllReviewForTherapist = () => {
         const option = {
-            "user_id": route?.params?.detailsData.id
+            "user_id": route?.params?.therapistId
         }
         console.log(option)
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -195,8 +249,9 @@ const TherapistProfile = ({ navigation, route }) => {
         });
     }
 
-    const submitForm = () => {
-        console.log(selectedByUser.length)
+    const submitForm = (transactionId) => {
+        console.log(selectedByUser.length, 'no of selected slot')
+        console.log(profileDetails?.rate, 'rate of the therapist')
         const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
         var mode = ''
         if (selectedItem == 1) {
@@ -212,7 +267,7 @@ const TherapistProfile = ({ navigation, route }) => {
         } else {
             prescription_checked = 'no'
         }
-        const totalAmount = selectedByUser.length * profileDetails?.rate
+        const totalAmount = (selectedByUser.length * profileDetails?.rate)
 
         console.log(profileDetails?.id, "therapist_id")
         console.log(ids, 'slot_ids')
@@ -223,11 +278,205 @@ const TherapistProfile = ({ navigation, route }) => {
         console.log("Razorpay", "gateway_name")
         console.log(prescription_checked, "prescription_checked")
         console.log(totalAmount, 'transaction_amount')
+        const formData = new FormData();
+        formData.append("therapist_id", profileDetails?.id);
+        formData.append("slot_ids", JSON.stringify(ids));
+        formData.append("date", selectedDate);
+        formData.append("purpose", 'purpose');
+        formData.append("mode_of_conversation", mode);
+        formData.append("payment_mode", 'online');
+        formData.append("gateway_name", 'Razorpay');
+        formData.append("prescription_checked", prescription_checked);
+        formData.append("transaction_amount", totalAmount);
+        formData.append("payment_status", 'paid');
+        formData.append("order_id", '37866876');
+        formData.append("transaction_no", transactionId);
+        console.log(formData)
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            axios.post(`${API_URL}/patient/slot-book`, formData, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    "Authorization": `Bearer ${usertoken}`,
+                },
+            })
+                .then(res => {
+                    console.log(res.data)
+                    if (res.data.response == true) {
+                        setIsLoading(false)
+                        setSelectedByUser([])
+                        fetchTherapistData()
+                        const formattedDate = moment().format('YYYY-MM-DD');
+                        const dayOfWeek = moment().format('dddd');
+                        const index = 0;
+                        console.log(formattedDate);
+                        console.log(dayOfWeek)
+                        selectedDateChange(index, dayOfWeek, formattedDate)
+                        Alert.alert('Oops..', res.data.message, [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    } else {
+                        console.log('not okk')
+                        setSelectedByUser([])
+                        setIsLoading(false)
+                        Alert.alert('Oops..', "Something went wrong", [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(e => {
+                    setIsLoading(false)
+                    setSelectedByUser([])
+                    console.log(`user register error ${e}`)
+                    console.log(e.response)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
+                });
+        });
 
+    }
 
+    const handlePayment = () => {
+        const totalAmount = (selectedByUser.length * profileDetails?.rate)
+        if (selectedByUser.length != '0') {
+            var options = {
+                description: 'This is the description we need',
+                image: 'https://i.imgur.com/3g7nmJC.jpg',
+                currency: 'INR',
+                key: razorpayKeyId,
+                amount: totalAmount * 100,
+                name: 'Customer 1',
+                order_id: '',
+                prefill: {
+                    email: 'xyz@example.com',
+                    contact: '9191919191',
+                    name: 'Person Name'
+                },
+                theme: { color: '#ECFCFA' }
+            }
+            RazorpayCheckout.open(options).then((data) => {
+                // handle success
+                //alert(`Success: ${data.razorpay_payment_id}`);
+                console.log(data, 'data')
+                submitForm(data.razorpay_payment_id)
+            }).catch((error) => {
+                // handle failure
+                alert(`Error: ${error.code} | ${error.description}`);
+            });
+        } else {
+            Toast.show({
+                type: 'error',
+                text1: 'Hello',
+                text2: "Please choose time slot",
+                position: 'top',
+                topOffset: Platform.OS == 'ios' ? 55 : 20
+            });
+        }
 
 
     }
+
+    const bookmarkedToggle = (therapistId) => {
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            AsyncStorage.getItem('userInfo', (err, userInfo) => {
+                const userData = JSON.parse(userInfo)
+                const option = {
+                    "patient_id": userData.patient_details.user_id,
+                    "therapist_id": therapistId
+                }
+                axios.post(`${API_URL}/patient/wishlist-click`, option, {
+                    headers: {
+                        'Accept': 'application/json',
+                        "Authorization": 'Bearer ' + usertoken,
+                        //'Content-Type': 'multipart/form-data',
+                    },
+                })
+                    .then(res => {
+                        console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
+                        if (res.data.response == true) {
+                            setIsLoading(false);
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Hello',
+                                text2: "Successfully added to wishlist",
+                                position: 'top',
+                                topOffset: Platform.OS == 'ios' ? 55 : 20
+                            });
+                            fetchTherapistData()
+                        } else {
+                            console.log('not okk')
+                            setIsLoading(false)
+                            Alert.alert('Oops..', "Something went wrong", [
+                                {
+                                    text: 'Cancel',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                },
+                                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                            ]);
+                        }
+                    })
+                    .catch(e => {
+                        setIsLoading(false)
+                        console.log(`user register error ${e}`)
+                        console.log(e.response)
+                        Alert.alert('Oops..', e.response?.data?.message, [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    });
+            });
+        });
+    }
+
+    const renderItem = ({ item }) => (
+        <View style={{ padding: 20, width: responsiveWidth(80), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2), elevation: 5 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image
+                    source={{ uri: item?.patient?.profile_pic }}
+                    style={{ height: 50, width: 50, borderRadius: 25 }}
+                />
+                <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
+                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}>{item?.patient?.name}</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(65) }}>
+                        <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5) }}>{moment(item?.patient?.created_at).format('MMM D, YYYY')}</Text>
+                    </View>
+                </View>
+            </View>
+            <View style={{ width: responsiveWidth(25), marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
+                <StarRating
+                    disabled={true}
+                    maxStars={5}
+                    rating={item?.star}
+                    selectedStar={(rating) => setStarCount(rating)}
+                    fullStarColor={'#FFCB45'}
+                    starSize={15}
+                    starStyle={{ marginHorizontal: responsiveWidth(1) }}
+                />
+            </View>
+            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>{item?.review}</Text>
+        </View>
+    );
 
     if (isLoading) {
         return (
@@ -259,7 +508,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                     starSize={12}
                                     starStyle={{ marginHorizontal: responsiveWidth(0.5), marginBottom: responsiveHeight(1) }}
                                 />
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>100+ Reviews</Text>
+                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>{profileDetails?.review_counter} Reviews</Text>
                             </View>
                             <View style={{ flexDirection: 'column', width: responsiveWidth(47), height: responsiveHeight(10) }}>
                                 <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginBottom: responsiveHeight(1) }}>{profileDetails?.user?.name}</Text>
@@ -268,10 +517,21 @@ const TherapistProfile = ({ navigation, route }) => {
                                 <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Language : <Text style={{ fontSize: responsiveFontSize(1.7), color: '#959595', fontFamily: 'DMSans-Regular', }}>{profileDetails?.languages_list}</Text></Text>
                             </View>
                             <View style={{ width: responsiveWidth(6), }}>
-                                <Image
-                                    source={bookmarkedFill}
-                                    style={{ height: 25, width: 25 }}
-                                />
+                                {profileDetails?.wishlistcount == 'yes' ?
+                                    <TouchableOpacity onPress={() => bookmarkedToggle(profileDetails?.user_id)}>
+                                        <Image
+                                            source={bookmarkedFill}
+                                            style={{ height: 25, width: 25 }}
+                                        />
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity onPress={() => bookmarkedToggle(profileDetails?.user_id)}>
+                                        <Image
+                                            source={bookmarkedNotFill}
+                                            style={{ height: 25, width: 25 }}
+                                        />
+                                    </TouchableOpacity>
+                                }
                             </View>
                         </View>
                         <View style={{ height: responsiveHeight(5), width: responsiveWidth(85), marginTop: responsiveHeight(2), backgroundColor: '#F4F5F5', borderRadius: 10, padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -281,7 +541,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             <View style={{ height: '80%', width: 1, backgroundColor: '#E3E3E3', marginLeft: 5, marginRight: 5 }} />
                             <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
 
-                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.5) }}>Session Done - 5000</Text>
+                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.5) }}>Session Done - {profileDetails?.session_done}</Text>
                             </View>
                         </View>
                     </View>
@@ -476,70 +736,29 @@ const TherapistProfile = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
                         <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Reviews</Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>See All</Text>
+                            {/* <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>See All</Text> */}
                         </View>
                     </View>
                 </View>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <View style={{ flexDirection: 'row', marginBottom: responsiveHeight(2) }}>
-                        <View style={{ padding: 20, width: responsiveWidth(80), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(3), elevation: 5 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Image
-                                    source={userPhoto}
-                                    style={{ height: 50, width: 50, borderRadius: 25 }}
-                                />
-                                <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}>Jalal Ahmed</Text>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(65) }}>
-                                        <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5) }}>Jun 1,2023</Text>
-                                    </View>
-                                </View>
-                            </View>
-                            <View style={{ width: responsiveWidth(25), marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
-                                <StarRating
-                                    disabled={true}
-                                    maxStars={5}
-                                    rating={starCount}
-                                    selectedStar={(rating) => setStarCount(rating)}
-                                    fullStarColor={'#FFCB45'}
-                                    starSize={15}
-                                    starStyle={{ marginHorizontal: responsiveWidth(1) }}
-                                />
-                            </View>
-                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Reliable and trustworthy. They have earned my trust and loyalty. This company has consistently demonstrated reliability and trustworthiness.</Text>
-                        </View>
-                        <View style={{ padding: 20, width: responsiveWidth(80), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(3), elevation: 5 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Image
-                                    source={userPhoto}
-                                    style={{ height: 50, width: 50, borderRadius: 25 }}
-                                />
-                                <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}>Jalal Ahmed</Text>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(65) }}>
-                                        <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5) }}>Jun 1,2023</Text>
-                                    </View>
-                                </View>
-                            </View>
-                            <View style={{ width: responsiveWidth(25), marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
-                                <StarRating
-                                    disabled={true}
-                                    maxStars={5}
-                                    rating={starCount}
-                                    selectedStar={(rating) => setStarCount(rating)}
-                                    fullStarColor={'#FFCB45'}
-                                    starSize={15}
-                                    starStyle={{ marginHorizontal: responsiveWidth(1) }}
-                                />
-                            </View>
-                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Reliable and trustworthy. They have earned my trust and loyalty. This company has consistently demonstrated reliability and trustworthiness.</Text>
-                        </View>
-                    </View>
-                </ScrollView>
+                <View style={{ flexDirection: 'row', marginBottom: responsiveHeight(2) }}>
+                    <FlatList
+                        data={allReview}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id.toString()}
+                        maxToRenderPerBatch={10}
+                        windowSize={5}
+                        initialNumToRender={10}
+                        getItemLayout={(allReview, index) => (
+                            { length: 50, offset: 50 * index, index }
+                        )}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                </View>
                 <View style={{ width: responsiveWidth(90), alignSelf: 'center' }}>
                     <CustomButton label={"Book Appointment"}
                         // onPress={() => { login() }}
-                        onPress={() => { submitForm() }}
+                        onPress={() => { handlePayment() }}
                     />
                 </View>
             </ScrollView>

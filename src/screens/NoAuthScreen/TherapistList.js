@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State, TouchableWithoutFeedback } from 'react-native-gesture-handler'
-import { bookmarkedFill, cameraColor, chatColor, checkedImg, dateIcon, deleteImg, editImg, filterImg, milkImg, phoneColor, phoneImg, searchImg, timeIcon, uncheckedImg, userPhoto, wallet, walletBlack, walletCredit } from '../../utils/Images'
+import { bookmarkedFill, bookmarkedNotFill, cameraColor, chatColor, checkedImg, dateIcon, deleteImg, editImg, filterImg, milkImg, phoneColor, phoneImg, searchImg, timeIcon, uncheckedImg, userPhoto, wallet, walletBlack, walletCredit } from '../../utils/Images'
 import { API_URL } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,6 +19,7 @@ import CheckBox from '@react-native-community/checkbox';
 import SelectMultiple from 'react-native-select-multiple'
 import { Dropdown } from 'react-native-element-dropdown';
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const dropdowndata = [
     { label: 'All therapist', value: 'All' },
@@ -152,15 +153,76 @@ const TherapistList = ({ navigation, route }) => {
     const onChangeDropdown = (item) => {
         setValue(item.value);
         setIsFocus(false);
-        const filteredData = therapistData.filter(entry => 
-            entry.therapy_type_list.split(',').includes(item.value)
-        );
-        console.log(filteredData, 'filterd data')
-        setTherapistFilterData(filteredData)
+        if (item.value == "All") {
+            setTherapistFilterData(therapistData)
+        } else {
+            const filteredData = therapistData.filter(entry =>
+                entry.therapy_type_list.split(',').includes(item.value)
+            );
+            console.log(filteredData, 'filterd data')
+            setTherapistFilterData(filteredData)
+        }
+
+    }
+    const bookmarkedToggle = (therapistId) => {
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            AsyncStorage.getItem('userInfo', (err, userInfo) => {
+                const userData = JSON.parse(userInfo)
+                const option = {
+                    "patient_id" : userData.patient_details.user_id,
+                    "therapist_id" : therapistId
+                }
+                axios.post(`${API_URL}/patient/wishlist-click`, option, {
+                    headers: {
+                        'Accept': 'application/json',
+                        "Authorization": 'Bearer ' + usertoken,
+                        //'Content-Type': 'multipart/form-data',
+                    },
+                })
+                    .then(res => {
+                        console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
+                        if (res.data.response == true) {
+                            setIsLoading(false);
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Hello',
+                                text2: "Successfully added to wishlist",
+                                position: 'top',
+                                topOffset: Platform.OS == 'ios' ? 55 : 20
+                              });
+                              fetchAllTherapist()
+                        } else {
+                            console.log('not okk')
+                            setIsLoading(false)
+                            Alert.alert('Oops..', "Something went wrong", [
+                                {
+                                    text: 'Cancel',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                },
+                                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                            ]);
+                        }
+                    })
+                    .catch(e => {
+                        setIsLoading(false)
+                        console.log(`user register error ${e}`)
+                        console.log(e.response)
+                        Alert.alert('Oops..', e.response?.data?.message, [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    });
+            });
+        });
     }
 
     const renderItem = ({ item }) => (
-        <Pressable onPress={() => navigation.navigate('TherapistProfile',{detailsData:item})}>
+        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id })}>
             <View style={styles.totalValue}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                     <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), }}>
@@ -177,29 +239,44 @@ const TherapistList = ({ navigation, route }) => {
                             starSize={12}
                             starStyle={{ marginHorizontal: responsiveWidth(0.5), marginBottom: responsiveHeight(1) }}
                         />
-                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>100+ Reviews</Text>
+                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>{item?.review_counter} Reviews</Text>
                     </View>
                     <View style={{ flexDirection: 'column', width: responsiveWidth(47), height: responsiveHeight(10) }}>
                         <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginBottom: responsiveHeight(1) }}>{item?.user?.name}</Text>
                         <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>{item?.qualification_list}</Text>
-                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>{item?.experience} Year Experience</Text>
+                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>{item?.experience} Years Experience</Text>
                         <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Language : <Text style={{ fontSize: responsiveFontSize(1.7), color: '#959595', fontFamily: 'DMSans-Regular', }}>{item?.languages_list}</Text></Text>
                         <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>₹{item?.rate} for 30 Min</Text>
                         <Text style={{ fontSize: responsiveFontSize(1.5), color: '#444343', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Next Avl. Slot : Today 09:00 PM</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
-                        <Image
-                            source={bookmarkedFill}
-                            style={{ height: 25, width: 25 }}
-                        />
+                        {item?.wishlistcount == 'yes' ?
+                            <TouchableOpacity onPress={() => bookmarkedToggle(item?.user_id)}>
+                                <Image
+                                    source={bookmarkedFill}
+                                    style={{ height: 25, width: 25 }}
+                                />
+                            </TouchableOpacity>
+                            :
+                            <TouchableOpacity onPress={() => bookmarkedToggle(item?.user_id)}>
+                                <Image
+                                    source={bookmarkedNotFill}
+                                    style={{ height: 25, width: 25 }}
+                                />
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
-                <View style={{ marginTop: responsiveHeight(2), borderRadius: 10, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <TouchableOpacity onPress={() => toggleModal()}>
-                        <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ color: '#607875', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), textAlign: 'center' }}>Instant Connect</Text>
-                        </View>
-                    </TouchableOpacity>
+                <View style={{ marginTop: responsiveHeight(1), borderRadius: 10, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {item?.instant_availability == 'yes' ?
+                        <TouchableOpacity onPress={() => toggleModal()}>
+                            <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: '#607875', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), textAlign: 'center' }}>Instant Connect</Text>
+                            </View>
+                        </TouchableOpacity>
+                        :
+                        <></>
+                    }
                     <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
                         <Image
                             source={cameraColor}
@@ -235,7 +312,7 @@ const TherapistList = ({ navigation, route }) => {
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.goBack()} title={'Therapist'} />
             <ScrollView style={styles.wrapper}>
-                <View style={{ marginBottom: responsiveHeight(5), alignSelf: 'center', marginTop: responsiveHeight(2) }}>
+                <View style={{ marginBottom: responsiveHeight(1), marginTop: responsiveHeight(2), paddingHorizontal: responsiveWidth(3) }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
                         <View style={{ width: responsiveWidth(35), }}>
                             <Dropdown
@@ -255,7 +332,7 @@ const TherapistList = ({ navigation, route }) => {
                                 onFocus={() => setIsFocus(true)}
                                 onBlur={() => setIsFocus(false)}
                                 onChange={item => {
-                                   onChangeDropdown(item)
+                                    onChangeDropdown(item)
                                 }}
                             />
                             {/* <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Type for therapy</Text> */}
@@ -270,7 +347,8 @@ const TherapistList = ({ navigation, route }) => {
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
-                    {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                </View>
+                {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
                         <View style={{ height: responsiveHeight(5), width: responsiveWidth(27), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Individual</Text>
                         </View>
@@ -281,6 +359,7 @@ const TherapistList = ({ navigation, route }) => {
                             <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Child</Text>
                         </View>
                     </View> */}
+                <View style={{ alignSelf: 'center' }}>
                     <FlatList
                         data={therapistFilterData}
                         renderItem={renderItem}

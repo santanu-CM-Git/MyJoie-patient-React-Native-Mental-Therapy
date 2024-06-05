@@ -84,6 +84,7 @@ export const walletDebit = require("../assets/images/wallet-debit.png");
 export const walletCredit = require("../assets/images/wallet-credit.png");
 export const wallet = require("../assets/images/wallet.png");
 export const bookmarkedFill = require("../assets/images/bookmarked-fill.png");
+export const bookmarkedNotFill = require("../assets/images/bookmarknotfill.png");
 export const walletBlack = require("../assets/images/wallet-black.png");
 export const cameraColor = require("../assets/images/camera-color.png");
 export const chatColor = require("../assets/images/chat-color.png");
