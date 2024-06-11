@@ -6,8 +6,9 @@ import Thankyou from '../..//assets/images/misc/Thankyou.svg';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomButton from '../../components/CustomButton';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
+import moment from 'moment-timezone';
 
-const ThankYouBookingScreen = ({ navigation }) => {
+const ThankYouBookingScreen = ({ navigation,route }) => {
   return (
 
     <SafeAreaView
@@ -44,7 +45,7 @@ const ThankYouBookingScreen = ({ navigation }) => {
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
             <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Date</Text>
-            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>29 March, 2024</Text>
+            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>{moment(route?.params?.date).format('dddd, D MMMM')}</Text>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
             <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Appointment</Text>
@@ -54,7 +55,7 @@ const ThankYouBookingScreen = ({ navigation }) => {
       </View>
       <View style={styles.buttonwrapper}>
         <CustomButton label={"Back to Home"}
-          onPress={() => submitReview()}
+          onPress={() => navigation.navigate('Home')}
         />
       </View>
 

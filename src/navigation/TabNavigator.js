@@ -55,12 +55,12 @@ const HomeStack = () => {
         component={ChatScreen}
         options={{ headerShown: false }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="WalletScreen"
         component={WalletScreen}
         options={{ headerShown: false }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="ReviewScreen"
         component={ReviewScreen}
         options={{ headerShown: false }}
@@ -70,17 +70,17 @@ const HomeStack = () => {
         component={ThankYouBookingScreen}
         options={{ headerShown: false }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="Summary"
         component={BookingSummary}
         options={{ headerShown: false }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="TherapistList"
         component={TherapistList}
         options={{ headerShown: false }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="TherapistProfile"
         component={TherapistProfile}
         options={{ headerShown: false }}
@@ -102,7 +102,7 @@ const HomeStack = () => {
 const TherapistStack = () => {
   return (
     <Stack.Navigator>
-     <Stack.Screen
+      <Stack.Screen
         name="TherapistList"
         component={TherapistList}
         options={{ headerShown: false }}
@@ -133,7 +133,7 @@ const ProfileStack = () => {
         component={ProfileScreen}
         options={{ headerShown: false }}
       />
-      
+
       <Stack.Screen
         name="PrivacyPolicy"
         component={PrivacyPolicy}
@@ -262,7 +262,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
-              <FontAwesome name="user" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }}/>
+              <FontAwesome name="user" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }} />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
@@ -292,7 +292,9 @@ const getTabBarVisibility = route => {
   console.log(routeName)
   if (routeName == 'Summary') {
     return 'none';
-  }else{
+  } else if (routeName == 'ThankYouBookingScreen') {
+    return 'none';
+  } else {
     return 'flex';
   }
 };

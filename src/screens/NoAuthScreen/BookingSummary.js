@@ -135,10 +135,10 @@ const BookingSummary = ({ navigation, route }) => {
                         Alert.alert('Oops..', res.data.message, [
                             {
                                 text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
+                                onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}),
                                 style: 'cancel',
                             },
-                            { text: 'OK', onPress: () => navigation.navigate('Home') },
+                            { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}) },
                         ]);
                     } else {
                         console.log('not okk')
