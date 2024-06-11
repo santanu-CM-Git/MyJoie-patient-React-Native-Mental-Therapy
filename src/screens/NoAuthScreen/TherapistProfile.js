@@ -5,7 +5,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State } from 'react-native-gesture-handler'
 import { bookmarkedFill, bookmarkedNotFill, cameraColor, chatColor, checkedImg, dateIcon, deleteImg, editImg, filterImg, milkImg, phoneColor, phoneImg, searchImg, timeIcon, uncheckedImg, userPhoto, videoIcon, wallet, walletBlack, walletCredit } from '../../utils/Images'
-import { API_URL, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from '@env'
+import { API_URL, } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from '../../utils/Loader';
@@ -15,7 +15,7 @@ import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
 import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-toast-message';
-import RazorpayCheckout from 'react-native-razorpay';
+
 
 const items = [
     { id: 1, icon: chatColor },
@@ -38,8 +38,7 @@ const TherapistProfile = ({ navigation, route }) => {
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedItem, setSelectedItem] = useState(1);
-    let razorpayKeyId = RAZORPAY_KEY_ID;
-    let razorpayKeySecret = RAZORPAY_KEY_SECRET;
+
 
     const getNextSevenDays = () => {
         const days = [];
@@ -94,8 +93,9 @@ const TherapistProfile = ({ navigation, route }) => {
                 .then(res => {
                     console.log(JSON.stringify(res.data.data), 'fetch all therapist availibility')
                     if (res.data.response == true) {
-                        const filteredData = res.data.data.filter(slot => slot.booked_status === 0);
-                        setTherapistAvailability(filteredData);
+                        //const filteredData = res.data.data.filter(slot => slot.booked_status === 0);
+                        //setTherapistAvailability(filteredData);
+                        setTherapistAvailability(res.data.data)
                         setIsLoading(false);
 
                     } else {
@@ -128,15 +128,17 @@ const TherapistProfile = ({ navigation, route }) => {
     }
 
     const handleSlotSelect = (slot) => {
-        setSelectedByUser((prevSelected) => {
-            if (prevSelected.includes(slot)) {
-                // Deselect if already selected
-                return prevSelected.filter(selectedSlot => selectedSlot !== slot);
-            } else {
-                // Select the slot
-                return [...prevSelected, slot];
-            }
-        });
+        if (slot.booked_status === 0) {
+            setSelectedByUser((prevSelected) => {
+                if (prevSelected.includes(slot)) {
+                    // Deselect if already selected
+                    return prevSelected.filter(selectedSlot => selectedSlot !== slot);
+                } else {
+                    // Select the slot
+                    return [...prevSelected, slot];
+                }
+            });
+        }
     };
 
     const fetchTherapistData = () => {
@@ -145,6 +147,7 @@ const TherapistProfile = ({ navigation, route }) => {
             const option = {
                 "therapist_id": route?.params?.therapistId
             }
+            console.log(option)
             axios.post(`${API_URL}/patient/therapist`, option, {
                 headers: {
                     'Accept': 'application/json',
@@ -249,7 +252,7 @@ const TherapistProfile = ({ navigation, route }) => {
         });
     }
 
-    const submitForm = (transactionId) => {
+    const submitForm = () => {
         console.log(selectedByUser.length, 'no of selected slot')
         console.log(profileDetails?.rate, 'rate of the therapist')
         const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
@@ -269,7 +272,7 @@ const TherapistProfile = ({ navigation, route }) => {
         }
         const totalAmount = (selectedByUser.length * profileDetails?.rate)
 
-        console.log(profileDetails?.id, "therapist_id")
+        console.log(profileDetails?.user_id, "therapist_id")
         console.log(ids, 'slot_ids')
         console.log(selectedDate, 'date')
         console.log('purpose', 'purpose')
@@ -278,119 +281,134 @@ const TherapistProfile = ({ navigation, route }) => {
         console.log("Razorpay", "gateway_name")
         console.log(prescription_checked, "prescription_checked")
         console.log(totalAmount, 'transaction_amount')
-        const formData = new FormData();
-        formData.append("therapist_id", profileDetails?.id);
-        formData.append("slot_ids", JSON.stringify(ids));
-        formData.append("date", selectedDate);
-        formData.append("purpose", 'purpose');
-        formData.append("mode_of_conversation", mode);
-        formData.append("payment_mode", 'online');
-        formData.append("gateway_name", 'Razorpay');
-        formData.append("prescription_checked", prescription_checked);
-        formData.append("transaction_amount", totalAmount);
-        formData.append("payment_status", 'paid');
-        formData.append("order_id", '37866876');
-        formData.append("transaction_no", transactionId);
-        console.log(formData)
-        AsyncStorage.getItem('userToken', (err, usertoken) => {
-            axios.post(`${API_URL}/patient/slot-book`, formData, {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'multipart/form-data',
-                    "Authorization": `Bearer ${usertoken}`,
-                },
-            })
-                .then(res => {
-                    console.log(res.data)
-                    if (res.data.response == true) {
-                        setIsLoading(false)
-                        setSelectedByUser([])
-                        fetchTherapistData()
-                        const formattedDate = moment().format('YYYY-MM-DD');
-                        const dayOfWeek = moment().format('dddd');
-                        const index = 0;
-                        console.log(formattedDate);
-                        console.log(dayOfWeek)
-                        selectedDateChange(index, dayOfWeek, formattedDate)
-                        Alert.alert('Oops..', res.data.message, [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
-                            { text: 'OK', onPress: () => console.log('OK Pressed') },
-                        ]);
-                    } else {
-                        console.log('not okk')
-                        setSelectedByUser([])
-                        setIsLoading(false)
-                        Alert.alert('Oops..', "Something went wrong", [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
-                            { text: 'OK', onPress: () => console.log('OK Pressed') },
-                        ]);
-                    }
-                })
-                .catch(e => {
-                    setIsLoading(false)
-                    setSelectedByUser([])
-                    console.log(`user register error ${e}`)
-                    console.log(e.response)
-                    Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
-                    ]);
-                });
-        });
-
-    }
-
-    const handlePayment = () => {
-        const totalAmount = (selectedByUser.length * profileDetails?.rate)
-        if (selectedByUser.length != '0') {
-            var options = {
-                description: 'This is the description we need',
-                image: 'https://i.imgur.com/3g7nmJC.jpg',
-                currency: 'INR',
-                key: razorpayKeyId,
-                amount: totalAmount * 100,
-                name: 'Customer 1',
-                order_id: '',
-                prefill: {
-                    email: 'xyz@example.com',
-                    contact: '9191919191',
-                    name: 'Person Name'
-                },
-                theme: { color: '#ECFCFA' }
-            }
-            RazorpayCheckout.open(options).then((data) => {
-                // handle success
-                //alert(`Success: ${data.razorpay_payment_id}`);
-                console.log(data, 'data')
-                submitForm(data.razorpay_payment_id)
-            }).catch((error) => {
-                // handle failure
-                alert(`Error: ${error.code} | ${error.description}`);
-            });
-        } else {
-            Toast.show({
-                type: 'error',
-                text1: 'Hello',
-                text2: "Please choose time slot",
-                position: 'top',
-                topOffset: Platform.OS == 'ios' ? 55 : 20
-            });
+        // const formData = new FormData();
+        // formData.append("therapist_id", profileDetails?.user_id);
+        // formData.append("slot_ids", JSON.stringify(ids));
+        // formData.append("date", selectedDate);
+        // formData.append("purpose", 'purpose');
+        // formData.append("mode_of_conversation", mode);
+        // formData.append("payment_mode", 'online');
+        // formData.append("gateway_name", 'Razorpay');
+        // formData.append("prescription_checked", prescription_checked);
+        // formData.append("transaction_amount", totalAmount);
+        // formData.append("payment_status", 'paid');
+        // formData.append("order_id", '37866876');
+        //formData.append("transaction_no", transactionId);
+        //formData.append("wallet_deduction", walletAmount);
+        //console.log(formData)
+        const option = {
+            "therapist_id": profileDetails?.user_id,
+            "slot_ids": JSON.stringify(ids),
+            "date": selectedDate,
+            "purpose": 'purpose',
+            "mode_of_conversation": mode,
+            "payment_mode": 'online',
+            "gateway_name": 'Razorpay',
+            "prescription_checked": prescription_checked,
+            "transaction_amount": totalAmount,
+            "payment_status": 'paid',
+            "order_id": '37866876'
         }
-
+        navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option })
+        // AsyncStorage.getItem('userToken', (err, usertoken) => {
+        //     axios.post(`${API_URL}/patient/slot-book`, formData, {
+        //         headers: {
+        //             Accept: 'application/json',
+        //             'Content-Type': 'multipart/form-data',
+        //             "Authorization": `Bearer ${usertoken}`,
+        //         },
+        //     })
+        //         .then(res => {
+        //             console.log(res.data)
+        //             if (res.data.response == true) {
+        //                 setIsLoading(false)
+        //                 setSelectedByUser([])
+        //                 fetchTherapistData()
+        //                 const formattedDate = moment().format('YYYY-MM-DD');
+        //                 const dayOfWeek = moment().format('dddd');
+        //                 const index = 0;
+        //                 console.log(formattedDate);
+        //                 console.log(dayOfWeek)
+        //                 selectedDateChange(index, dayOfWeek, formattedDate)
+        //                 Alert.alert('Oops..', res.data.message, [
+        //                     {
+        //                         text: 'Cancel',
+        //                         onPress: () => console.log('Cancel Pressed'),
+        //                         style: 'cancel',
+        //                     },
+        //                     { text: 'OK', onPress: () => console.log('OK Pressed') },
+        //                 ]);
+        //             } else {
+        //                 console.log('not okk')
+        //                 setSelectedByUser([])
+        //                 setIsLoading(false)
+        //                 Alert.alert('Oops..', "Something went wrong", [
+        //                     {
+        //                         text: 'Cancel',
+        //                         onPress: () => console.log('Cancel Pressed'),
+        //                         style: 'cancel',
+        //                     },
+        //                     { text: 'OK', onPress: () => console.log('OK Pressed') },
+        //                 ]);
+        //             }
+        //         })
+        //         .catch(e => {
+        //             setIsLoading(false)
+        //             setSelectedByUser([])
+        //             console.log(`user register error ${e}`)
+        //             console.log(e.response)
+        //             Alert.alert('Oops..', e.response?.data?.message, [
+        //                 {
+        //                     text: 'Cancel',
+        //                     onPress: () => console.log('Cancel Pressed'),
+        //                     style: 'cancel',
+        //                 },
+        //                 { text: 'OK', onPress: () => console.log('OK Pressed') },
+        //             ]);
+        //         });
+        // });
 
     }
+
+    // const handlePayment = () => {
+    //     const totalAmount = (selectedByUser.length * profileDetails?.rate)
+    //     if (selectedByUser.length != '0') {
+    //         var options = {
+    //             description: 'This is the description we need',
+    //             image: 'https://i.imgur.com/3g7nmJC.jpg',
+    //             currency: 'INR',
+    //             key: razorpayKeyId,
+    //             amount: totalAmount * 100,
+    //             name: 'Customer 1',
+    //             order_id: '',
+    //             prefill: {
+    //                 email: 'xyz@example.com',
+    //                 contact: '9191919191',
+    //                 name: 'Person Name'
+    //             },
+    //             theme: { color: '#ECFCFA' }
+    //         }
+    //         RazorpayCheckout.open(options).then((data) => {
+    //             // handle success
+    //             //alert(`Success: ${data.razorpay_payment_id}`);
+    //             console.log(data, 'data')
+    //             submitForm(data.razorpay_payment_id)
+    //         }).catch((error) => {
+    //             // handle failure
+    //             alert(`Error: ${error.code} | ${error.description}`);
+    //         });
+    //     } else {
+    //         Toast.show({
+    //             type: 'error',
+    //             text1: 'Hello',
+    //             text2: "Please choose time slot",
+    //             position: 'top',
+    //             topOffset: Platform.OS == 'ios' ? 55 : 20
+    //         });
+    //     }
+
+
+    // }
 
     const bookmarkedToggle = (therapistId) => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -618,21 +636,22 @@ const TherapistProfile = ({ navigation, route }) => {
                         ) : (
                             therapistAvailability.map((slot, index) => {
                                 const isSelected = selectedByUser.includes(slot);
-
+                                const isBooked = slot.booked_status === 1;
                                 return (
                                     <TouchableOpacity
                                         key={index}
                                         onPress={() => handleSlotSelect(slot)}
+                                        disabled={isBooked}
                                         style={{
                                             height: responsiveHeight(5),
                                             padding: 10,
-                                            backgroundColor: isSelected ? '#ECFCFA' : '#EAECF0', // Change background color if selected
+                                            backgroundColor: isBooked ? '#D3D3D3' : isSelected ? '#ECFCFA' : '#EAECF0', // Change background color if selected
                                             justifyContent: 'center',
                                             alignItems: 'center',
                                             borderRadius: 20,
                                             marginRight: 10,
                                             marginBottom: 10,
-                                            borderColor: isSelected ? '#87ADA8' : '#EAECF0',
+                                            borderColor: isBooked ? '#A9A9A9' : isSelected ? '#87ADA8' : '#EAECF0',
                                             borderWidth: 1,
                                         }}
                                     >
@@ -758,7 +777,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 <View style={{ width: responsiveWidth(90), alignSelf: 'center' }}>
                     <CustomButton label={"Book Appointment"}
                         // onPress={() => { login() }}
-                        onPress={() => { handlePayment() }}
+                        onPress={() => { submitForm() }}
                     />
                 </View>
             </ScrollView>

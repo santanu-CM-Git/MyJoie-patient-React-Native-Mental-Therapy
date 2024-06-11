@@ -14,29 +14,55 @@ import moment from "moment"
 
 const WalletScreen = ({ navigation }) => {
 
-    const [walletHistory, setWalletHistory] = React.useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [walletBalance, setWalletBalance] = React.useState(0)
+    const [WalletTransaction, setWalletTransaction] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        //fetchWalletHistory();
+        fetchWalletBalance();
+        fetchWalletTransaction()
     }, [])
 
-    const fetchWalletHistory = () => {
+    const fetchWalletBalance = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
-
-            axios.get(`${API_URL}/public/api/user/paydetails`, {
+            axios.post(`${API_URL}/patient/wallet`, {}, {
                 headers: {
-                    "Authorization": 'Bearer ' + usertoken,
+                    "Authorization": `Bearer ${usertoken}`,
                     "Content-Type": 'application/json'
                 },
             })
                 .then(res => {
-                    console.log(res.data.paydetails, 'user details')
-                    setWalletHistory(res.data.paydetails)
+                    //console.log(res.data,'user details')
+                    let userBalance = res.data.wallet_amount;
+                    console.log(userBalance, 'wallet balance')
+                    setWalletBalance(userBalance)
+                    //setIsLoading(false);
+                })
+                .catch(e => {
+                    console.log(`Login error ${e}`)
+                    console.log(e.response?.data?.message)
+                });
+        });
+    }
+
+    const fetchWalletTransaction = () => {
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            axios.post(`${API_URL}/patient/wallet-transaction`, {}, {
+                headers: {
+                    "Authorization": `Bearer ${usertoken}`,
+                    "Content-Type": 'application/json'
+                },
+            })
+                .then(res => {
+                    //console.log(res.data,'user details')
+                    let userBalanceTransaction = res.data.data;
+                    console.log(userBalanceTransaction, 'wallet balance')
+                    setWalletTransaction(userBalanceTransaction)
                     setIsLoading(false);
                 })
                 .catch(e => {
                     console.log(`Login error ${e}`)
+                    console.log(e.response?.data?.message)
                 });
         });
     }
@@ -48,47 +74,29 @@ const WalletScreen = ({ navigation }) => {
     }
 
     const renderHistory = (item, index) => {
-        //console.log(item)
+        // console.log(item)
         return (
-            <>
-                {item.item.status == 1 ?
-                    <View style={styles.singleValue}>
-                        <Feather name="arrow-up-right" size={22} color="#4cbb17" />
-                        <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(50) }}>
-                            <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(2), fontWeight: '700' }}>Credit</Text>
-                            <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(1.7), }}>{item.item.trasanction_id}</Text>
-                            <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(2), }}>{moment(item.item.created_at).format("DD-MM-YYYY")}</Text>
-                        </View>
-                        <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                            <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(2), fontWeight: '700', textAlign: 'right' }}>+{item.item.amount}</Text>
-                        </View>
+            <View style={styles.singleValue}>
+                <View style={{ height: 40, width: 40, borderRadius: 40 / 2, backgroundColor: '#F4F5F5', justifyContent: 'center', alignItems: 'center' }}>
+                    <Image
+                        source={walletCredit}
+                        style={{ height: 20, width: 20, resizeMode: 'contain' }}
+                    />
+                </View>
+                <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(45), }}>
+                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2), }}>{item.item.remarks}</Text>
+                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7), }}>{moment(item.item.created_at).format('dddd, D MMMM')}</Text>
+                </View>
+                {item.item.status == 'credit' ?
+                    <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
+                        <Text style={{ color: '#19BF1F', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), textAlign: 'right' }}>+ ₹{item.item.amount}</Text>
                     </View>
-                    : item.item.status == 2 ?
-                        <View style={styles.singleValue}>
-                            <Feather name="arrow-down-left" size={22} color="#F25C5C" />
-                            <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(50) }}>
-                                <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(2), fontWeight: '700' }}>Debit</Text>
-                                <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(1.7), }}>{item.item.trasanction_id}</Text>
-                                <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(2), }}>{moment(item.item.created_at).format("DD-MM-YYYY")}</Text>
-                            </View>
-                            <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                                <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(2), fontWeight: '700', textAlign: 'right' }}>-{item.item.amount}</Text>
-                            </View>
-                        </View>
-                        :
-                        <View style={styles.singleValue}>
-                            <Feather name="arrow-down-left" size={22} color="#F25C5C" />
-                            <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(50) }}>
-                                <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(2), fontWeight: '700' }}>Debit</Text>
-                                <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(1.7), }}>{item.item.trasanction_id}</Text>
-                                <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(2), }}>{moment(item.item.created_at).format("DD-MM-YYYY")}</Text>
-                            </View>
-                            <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                                <Text style={{ color: '#444', fontFamily: 'Poppins-Regular', fontSize: responsiveFontSize(2), fontWeight: '700', textAlign: 'right' }}>-{item.item.amount}</Text>
-                            </View>
-                        </View>
+                    :
+                    <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
+                        <Text style={{ color: '#E1293B', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), textAlign: 'right' }}>- ₹{item.item.amount}</Text>
+                    </View>
                 }
-            </>
+            </View>
         )
     }
 
@@ -98,39 +106,35 @@ const WalletScreen = ({ navigation }) => {
             <ScrollView style={styles.wrapper}>
                 <View style={{ marginBottom: responsiveHeight(5), alignSelf: 'center', marginTop: responsiveHeight(2) }}>
                     <View style={styles.totalValue}>
-                       
-                        <View style={{ height: 40, width: 40, borderRadius: 40 / 2, backgroundColor: '#FFF',borderColor:'#E3E3E3',borderWidth:1, justifyContent: 'center', alignItems: 'center' }}>
+
+                        <View style={{ height: 40, width: 40, borderRadius: 40 / 2, backgroundColor: '#FFF', borderColor: '#E3E3E3', borderWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
                             <Image
                                 source={wallet}
                                 style={{ height: 20, width: 20, resizeMode: 'contain' }}
                             />
                         </View>
-                        <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(40),height: responsiveHeight(5),justifyContent:'space-between' }}>
+                        <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(40), height: responsiveHeight(5), justifyContent: 'space-between' }}>
                             <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), }}>Wallet Balance</Text>
                             <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), }}>Available Amount</Text>
                         </View>
                         <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2.5), textAlign: 'right' }}>₹500</Text>
+                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2.5), textAlign: 'right' }}>₹{walletBalance}</Text>
                         </View>
                     </View>
                 </View>
-                <Text style={{color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2),marginLeft: responsiveWidth(3)}}>Recent Transaction</Text>
-                <View style={{ marginBottom: responsiveHeight(10),alignSelf:'center' }}>
-                    <View style={styles.singleValue}>
-                        <View style={{ height: 40, width: 40, borderRadius: 40 / 2, backgroundColor: '#F4F5F5', justifyContent: 'center', alignItems: 'center' }}>
-                            <Image
-                                source={walletCredit}
-                                style={{ height: 20, width: 20, resizeMode: 'contain' }}
-                            />
-                        </View>
-                        <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(45), }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2), }}>Refund Booking Fees</Text>
-                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7), }}>29 March, 2024</Text>
-                        </View>
-                        <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                            <Text style={{ color: '#19BF1F', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), fontWeight: '700', textAlign: 'right' }}>+ ₹1500</Text>
-                        </View>
-                    </View>
+                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), marginLeft: responsiveWidth(3) }}>Recent Transaction</Text>
+                <View style={{ marginBottom: responsiveHeight(10), alignSelf: 'center' }}>
+                    <FlatList
+                        data={WalletTransaction}
+                        renderItem={renderHistory}
+                        keyExtractor={(item) => item.id.toString()}
+                        maxToRenderPerBatch={10}
+                        windowSize={5}
+                        initialNumToRender={10}
+                        getItemLayout={(WalletTransaction, index) => (
+                            { length: 50, offset: 50 * index, index }
+                        )}
+                    />
                 </View>
             </ScrollView>
         </SafeAreaView>

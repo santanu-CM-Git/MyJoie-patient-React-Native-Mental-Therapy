@@ -11,7 +11,8 @@ import {
   FlatList,
   StyleSheet,
   Alert,
-  Dimensions
+  Dimensions,
+  Pressable
 } from 'react-native';
 import Modal from "react-native-modal";
 import { AuthContext } from '../../context/AuthContext';
@@ -61,6 +62,8 @@ export default function HomeScreen({ navigation }) {
   const [endDay, setEndDay] = useState(null);
   const [markedDates, setMarkedDates] = useState({});
   const [notificationStatus, setNotificationStatus] = useState(false)
+  const [therapistData, setTherapistData] = React.useState([])
+  const [upcomingBooking, setUpcomingBooking] = useState([])
   const [starCount, setStarCount] = useState(4)
   const [activeSlide, setActiveSlide] = React.useState(0);
   const [bannerData, setBannerData] = useState([{
@@ -194,10 +197,152 @@ export default function HomeScreen({ navigation }) {
 
   }
 
-  const fetchData = (getId) => {
+  const fetchUpcomingBooking = () => {
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+        axios.post(`${API_URL}/patient/upcoming-slot`, {}, {
+            headers: {
+                "Authorization": `Bearer ${usertoken}`,
+                "Content-Type": 'application/json'
+            },
+        })
+            .then(res => {
+                //console.log(res.data,'user details')
+                let upcomingBooking = res.data.data;
+                console.log(upcomingBooking, 'upcomingBooking')
+                setUpcomingBooking(upcomingBooking)
+                setIsLoading(false);
+            })
+            .catch(e => {
+                console.log(`Login error ${e}`)
+                console.log(e.response?.data?.message)
+            });
+    });
+}
 
+  const fetchAllTherapist = () => {
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+      axios.post(`${API_URL}/patient/therapist-list`, {}, {
+        headers: {
+          'Accept': 'application/json',
+          "Authorization": 'Bearer ' + usertoken,
+          //'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(res => {
+          console.log(JSON.stringify(res.data.data), 'fetch all therapist')
+          if (res.data.response == true) {
+            setTherapistData(res.data.data);
+            setIsLoading(false);
 
+          } else {
+            console.log('not okk')
+            setIsLoading(false)
+            Alert.alert('Oops..', "Something went wrong", [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+          }
+        })
+        .catch(e => {
+          setIsLoading(false)
+          console.log(`user register error ${e}`)
+          console.log(e.response)
+          Alert.alert('Oops..', e.response?.data?.message, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ]);
+        });
+    });
   }
+  const renderTherapistItem = ({ item }) => (
+    <View style={styles.therapistCardView}>
+      <View style={{ flexDirection: 'row', padding: 20, }}>
+
+        <Image
+          source={{ uri: item?.user?.profile_pic }}
+          style={styles.cardImg}
+        />
+        <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
+          <Text style={styles.nameText}>
+            {item?.user?.name}
+          </Text>
+          <Text style={styles.nameSubText2}>
+            Therapist
+          </Text>
+          <View style={{ marginBottom: 5, width: responsiveWidth(30), }}>
+            <StarRating
+              disabled={true}
+              maxStars={5}
+              rating={item?.display_rating}
+              selectedStar={(rating) => setStarCount(rating)}
+              fullStarColor={'#FFCB45'}
+              starSize={20}
+            //starStyle={{ marginHorizontal: responsiveWidth(2) }}
+            />
+          </View>
+          <Text style={styles.nameSubText3}>
+            {item?.qualification_list}
+          </Text>
+          <Text style={styles.nameSubText2}>
+            {item?.experience} Years Experience
+          </Text>
+        </View>
+      </View>
+      <View style={styles.bookapointView}>
+        <Image
+          source={dateIcon}
+          style={{ height: 20, width: 20, }}
+        />
+        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id })}>
+          <Text style={styles.bookapointText}>Book Appointment</Text>
+        </Pressable>
+      </View>
+    </View>
+  )
+
+  const renderUpcomingBooking = ({ item }) => (
+    <View style={styles.upcommingAppointmentView}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+              <Image
+                source={{uri: item?.therapist?.profile_pic}}
+                style={styles.cardImg}
+              />
+              <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3),width: responsiveWidth(40)}}>
+                <Text style={styles.nameText}>{item?.therapist?.name}</Text>
+                <Text style={styles.namesubText}> Therapist</Text>
+              </View>
+              <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen')}>
+                <Text style={styles.joinButtonText}>Join Now</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.dateTimeView}>
+              <View style={styles.dateView1}>
+                <Image
+                  source={dateIcon}
+                  style={styles.datetimeIcon}
+                />
+                <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
+              </View>
+              <View style={styles.dividerLine} />
+              <View style={styles.dateView2}>
+                <Image
+                  source={timeIcon}
+                  style={styles.datetimeIcon}
+                />
+                <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
+              </View>
+            </View>
+          </View>
+  )
 
   const dateRangeSearch = () => {
     console.log(startDay)
@@ -207,12 +352,14 @@ export default function HomeScreen({ navigation }) {
   }
 
   useEffect(() => {
-    //fetchData();
+    fetchAllTherapist();
+    fetchUpcomingBooking()
   }, [])
 
   useFocusEffect(
     React.useCallback(() => {
-      //fetchData()
+      fetchAllTherapist()
+      fetchUpcomingBooking()
     }, [])
   )
 
@@ -264,50 +411,30 @@ export default function HomeScreen({ navigation }) {
           </View>
           <View style={styles.sectionHeaderView}>
             <Text style={styles.sectionHeaderText}>Upcoming Appointment</Text>
-            <TouchableOpacity onPress={()=> navigation.navigate('ScheduleScreen')}>
-            <Text style={styles.seeallText}>See All</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('ScheduleScreen')}>
+              <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.upcommingAppointmentView}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-              <Image
-                source={userPhoto}
-                style={styles.cardImg}
-              />
-              <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                <Text style={styles.nameText}> Diptamoy Saha </Text>
-                <Text style={styles.namesubText}> Patient</Text>
-              </View>
-              <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen')}>
-                <Text style={styles.joinButtonText}>Join Now</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.dateTimeView}>
-              <View style={styles.dateView}>
-                <Image
-                  source={dateIcon}
-                  style={styles.datetimeIcon}
-                />
-                <Text style={styles.dateTimeText}>Monday, 26 April</Text>
-              </View>
-              <View style={styles.dividerLine} />
-              <View style={styles.dateView}>
-                <Image
-                  source={timeIcon}
-                  style={styles.datetimeIcon}
-                />
-                <Text style={styles.dateTimeText}>09:00 PM</Text>
-              </View>
-            </View>
-          </View>
+          <FlatList
+              data={upcomingBooking}
+              renderItem={renderUpcomingBooking}
+              keyExtractor={(item) => item.id.toString()}
+              maxToRenderPerBatch={10}
+              windowSize={5}
+              initialNumToRender={10}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              getItemLayout={(upcomingBooking, index) => (
+                { length: 50, offset: 50 * index, index }
+              )}
+            />
           <View style={styles.sectionHeaderView}>
             <Text style={styles.sectionHeaderText}>Therapist</Text>
-            <TouchableOpacity onPress={()=> navigation.navigate('TherapistList')}>
-            <Text style={styles.seeallText}>See All</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('TherapistList')}>
+              <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={{ paddingVertical: 10, flexDirection: 'row' }}>
               <View style={styles.therapistCardView}>
                 <View style={{ flexDirection: 'row', padding: 20, }}>
@@ -350,49 +477,24 @@ export default function HomeScreen({ navigation }) {
                   <Text style={styles.bookapointText}>Book Appointment</Text>
                 </View>
               </View>
-              <View style={styles.therapistCardView}>
-                <View style={{ flexDirection: 'row', padding: 20, }}>
-
-                  <Image
-                    source={userPhoto}
-                    style={styles.cardImg}
-                  />
-                  <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                    <Text style={styles.nameText}>
-                      Jennifer Kourtney
-                    </Text>
-                    <Text style={styles.nameSubText2}>
-                      Therapist
-                    </Text>
-                    <View style={{ marginBottom: 5, width: responsiveWidth(30), }}>
-                      <StarRating
-                        disabled={true}
-                        maxStars={5}
-                        rating={starCount}
-                        selectedStar={(rating) => setStarCount(rating)}
-                        fullStarColor={'#FFCB45'}
-                        starSize={20}
-                      //starStyle={{ marginHorizontal: responsiveWidth(2) }}
-                      />
-                    </View>
-                    <Text style={styles.nameSubText3}>
-                      M.PHIL ( Clinical Psycology)
-                    </Text>
-                    <Text style={styles.nameSubText2}>
-                      1 Year Experience
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.bookapointView}>
-                  <Image
-                    source={dateIcon}
-                    style={{ height: 20, width: 20, }}
-                  />
-                  <Text style={styles.bookapointText}>Book Appointment</Text>
-                </View>
-              </View>
             </View>
-          </ScrollView>
+          </ScrollView> */}
+          <View style={{ paddingVertical: 10 }}>
+            <FlatList
+              data={therapistData}
+              renderItem={renderTherapistItem}
+              keyExtractor={(item) => item.id.toString()}
+              maxToRenderPerBatch={10}
+              windowSize={5}
+              initialNumToRender={10}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              getItemLayout={(therapistData, index) => (
+                { length: 50, offset: 50 * index, index }
+              )}
+            />
+          </View>
+
           <View style={{ marginTop: responsiveHeight(3) }}>
             <Image
               source={require('../../assets/images/freeconsultation.png')}
@@ -836,12 +938,13 @@ const styles = StyleSheet.create({
   },
   upcommingAppointmentView: {
     height: responsiveHeight(20),
-    width: '92%',
+    width: responsiveWidth(90),
     backgroundColor: '#FFF',
     marginHorizontal: 15,
     padding: 20,
     borderRadius: 20,
     marginTop: responsiveHeight(2),
+    marginBottom: responsiveHeight(1),
     elevation: 5
   },
   nameText: {
@@ -857,7 +960,7 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.5)
   },
   joinNowButton: {
-    marginLeft: responsiveWidth(10),
+    marginLeft: responsiveWidth(2),
     backgroundColor: '#ECFCFA',
     borderColor: '#87ADA8',
     borderWidth: 1,
@@ -883,10 +986,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between'
   },
-  dateView: {
+  dateView1: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: responsiveWidth(35)
+    width: responsiveWidth(25)
+  },
+  dateView2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: responsiveWidth(40)
   },
   datetimeIcon: {
     height: 20,
@@ -912,6 +1020,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     borderRadius: 20,
     marginTop: responsiveHeight(2),
+    marginBottom: responsiveHeight(1),
     elevation: 5
   },
   cardImg: {
