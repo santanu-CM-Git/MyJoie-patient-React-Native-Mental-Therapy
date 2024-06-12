@@ -32,5 +32,7 @@
        <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyAL3Pc5eDmrlddtdgFRGFqpFk9RtfmZMo0"/>
+        <!-- add for truecaller login -->
+        <!-- <meta-data android:name="com.truecaller.android.sdk.PartnerKey" android:value="@string/partnerKey"/>  -->
     </application>
 </manifest>

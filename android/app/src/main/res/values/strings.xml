@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SwastiLife</string>
+    <!-- add for truecaller login -->
+    <!-- <string name="partnerKey">-df3_ox1_dh4f9shnjts_ehuwrd3hsjs9bsoshnbhko</string>  -->
 </resources>

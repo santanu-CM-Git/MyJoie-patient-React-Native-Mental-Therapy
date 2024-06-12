@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -52,6 +52,9 @@ const CustomDrawer = props => {
       fetchProfileDetails()
     }, [])
   )
+  useEffect(()=>{
+    fetchProfileDetails()
+  },[])
   return (
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView

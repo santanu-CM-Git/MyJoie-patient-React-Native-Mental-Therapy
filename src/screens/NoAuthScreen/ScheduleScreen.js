@@ -58,12 +58,12 @@ const ScheduleScreen = ({ navigation }) => {
     )
 
     const renderUpcoming = ({ item }) => (
-       
+
         <View style={{ width: responsiveWidth(89), backgroundColor: '#FFF', padding: 20, borderRadius: 20, marginTop: responsiveHeight(1), marginBottom: responsiveHeight(1), elevation: 5, alignSelf: 'center' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
                 <Image
-                    source={{uri: item?.therapist?.profile_pic}}
+                    source={{ uri: item?.therapist?.profile_pic }}
                     style={{ height: 50, width: 50, borderRadius: 25 }}
                 />
                 <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(40), }}>
@@ -129,17 +129,19 @@ const ScheduleScreen = ({ navigation }) => {
 
                 </View>
                 {activeTab == 'Upcoming' ?
-                    <FlatList
-                        data={upcomingBooking}
-                        renderItem={renderUpcoming}
-                        keyExtractor={(item) => item.id.toString()}
-                        maxToRenderPerBatch={10}
-                        windowSize={5}
-                        initialNumToRender={10}
-                        getItemLayout={(upcomingBooking, index) => (
-                            { length: 50, offset: 50 * index, index }
-                        )}
-                    />
+                    <View style={{ marginBottom: responsiveHeight(2) }}>
+                        <FlatList
+                            data={upcomingBooking}
+                            renderItem={renderUpcoming}
+                            keyExtractor={(item) => item.id.toString()}
+                            maxToRenderPerBatch={10}
+                            windowSize={5}
+                            initialNumToRender={10}
+                            getItemLayout={(upcomingBooking, index) => (
+                                { length: 50, offset: 50 * index, index }
+                            )}
+                        />
+                    </View>
                     :
                     <View style={{ width: '99%', backgroundColor: '#FFF', padding: 20, borderRadius: 20, marginTop: responsiveHeight(2), borderColor: '#F4F5F5', borderWidth: 2, }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

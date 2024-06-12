@@ -199,25 +199,25 @@ export default function HomeScreen({ navigation }) {
 
   const fetchUpcomingBooking = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
-        axios.post(`${API_URL}/patient/upcoming-slot`, {}, {
-            headers: {
-                "Authorization": `Bearer ${usertoken}`,
-                "Content-Type": 'application/json'
-            },
+      axios.post(`${API_URL}/patient/upcoming-slot`, {}, {
+        headers: {
+          "Authorization": `Bearer ${usertoken}`,
+          "Content-Type": 'application/json'
+        },
+      })
+        .then(res => {
+          //console.log(res.data,'user details')
+          let upcomingBooking = res.data.data;
+          console.log(upcomingBooking, 'upcomingBooking')
+          setUpcomingBooking(upcomingBooking)
+          setIsLoading(false);
         })
-            .then(res => {
-                //console.log(res.data,'user details')
-                let upcomingBooking = res.data.data;
-                console.log(upcomingBooking, 'upcomingBooking')
-                setUpcomingBooking(upcomingBooking)
-                setIsLoading(false);
-            })
-            .catch(e => {
-                console.log(`Login error ${e}`)
-                console.log(e.response?.data?.message)
-            });
+        .catch(e => {
+          console.log(`Login error ${e}`)
+          console.log(e.response?.data?.message)
+        });
     });
-}
+  }
 
   const fetchAllTherapist = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -310,38 +310,37 @@ export default function HomeScreen({ navigation }) {
 
   const renderUpcomingBooking = ({ item }) => (
     <View style={styles.upcommingAppointmentView}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-              <Image
-                source={{uri: item?.therapist?.profile_pic}}
-                style={styles.cardImg}
-              />
-              <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3),width: responsiveWidth(40)}}>
-                <Text style={styles.nameText}>{item?.therapist?.name}</Text>
-                <Text style={styles.namesubText}> Therapist</Text>
-              </View>
-              <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen')}>
-                <Text style={styles.joinButtonText}>Join Now</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.dateTimeView}>
-              <View style={styles.dateView1}>
-                <Image
-                  source={dateIcon}
-                  style={styles.datetimeIcon}
-                />
-                <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
-              </View>
-              <View style={styles.dividerLine} />
-              <View style={styles.dateView2}>
-                <Image
-                  source={timeIcon}
-                  style={styles.datetimeIcon}
-                />
-                <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
-              </View>
-            </View>
-          </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Image
+          source={{ uri: item?.therapist?.profile_pic }}
+          style={styles.cardImg}
+        />
+        <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(40) }}>
+          <Text style={styles.nameText}>{item?.therapist?.name}</Text>
+          <Text style={styles.namesubText}> Therapist</Text>
+        </View>
+        <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen')}>
+          <Text style={styles.joinButtonText}>Join Now</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.dateTimeView}>
+        <View style={styles.dateView1}>
+          <Image
+            source={dateIcon}
+            style={styles.datetimeIcon}
+          />
+          <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
+        </View>
+        <View style={styles.dividerLine} />
+        <View style={styles.dateView2}>
+          <Image
+            source={timeIcon}
+            style={styles.datetimeIcon}
+          />
+          <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
+        </View>
+      </View>
+    </View>
   )
 
   const dateRangeSearch = () => {
@@ -363,7 +362,7 @@ export default function HomeScreen({ navigation }) {
     }, [])
   )
 
-  if (status == 'loading') {
+  if (isLoading) {
     return (
       <Loader />
     )
@@ -416,18 +415,18 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           </View>
           <FlatList
-              data={upcomingBooking}
-              renderItem={renderUpcomingBooking}
-              keyExtractor={(item) => item.id.toString()}
-              maxToRenderPerBatch={10}
-              windowSize={5}
-              initialNumToRender={10}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              getItemLayout={(upcomingBooking, index) => (
-                { length: 50, offset: 50 * index, index }
-              )}
-            />
+            data={upcomingBooking}
+            renderItem={renderUpcomingBooking}
+            keyExtractor={(item) => item.id.toString()}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+            initialNumToRender={10}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            getItemLayout={(upcomingBooking, index) => (
+              { length: 50, offset: 50 * index, index }
+            )}
+          />
           <View style={styles.sectionHeaderView}>
             <Text style={styles.sectionHeaderText}>Therapist</Text>
             <TouchableOpacity onPress={() => navigation.navigate('TherapistList')}>
