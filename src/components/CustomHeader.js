@@ -88,7 +88,7 @@ export default function CustomHeader({
                             />
                         </View>
                         <View style={styles.secondSection}>
-                            <TouchableOpacity onPress={onPress} style={{ marginRight: responsiveWidth(5) }}>
+                            <TouchableOpacity onPress={() => navigation.navigate('TherapistList',{comingFrom:'search'})} style={{ marginRight: responsiveWidth(5) }}>
                                 <Ionicons name="search-outline" size={28} color="#444343" />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => navigation.navigate('WalletScreen')}>

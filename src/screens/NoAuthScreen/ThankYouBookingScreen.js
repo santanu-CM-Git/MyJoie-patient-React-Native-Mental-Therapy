@@ -1,64 +1,57 @@
-import React from 'react'
-import { SafeAreaView, View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Thankyou from '../..//assets/images/misc/Thankyou.svg';
+import Thankyou from '../../assets/images/misc/Thankyou.svg';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomButton from '../../components/CustomButton';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import moment from 'moment-timezone';
 
-const ThankYouBookingScreen = ({ navigation,route }) => {
+const ThankYouBookingScreen = ({ navigation, route }) => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const detailsData = JSON.parse(route?.params?.detailsData);
+    setData(detailsData);
+  }, []);
+
   return (
-
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: '#fff',
-        padding:20,
-        justifyContent:'center',
-        alignItems:'center'
-      }}>
-      <View style={{ flex: 0.4, justifyContent: 'center', alignItems: 'center',  }}>
-        <Thankyou
-          width={300}
-          height={150}
-        //style={{transform: [{rotate: '-15deg'}]}}
-        />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.thankYouImageWrapper}>
+        <Thankyou width={300} height={150} />
       </View>
-      <View style={{ paddingHorizontal: 20, marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2) }}>
-        <Text style={{ color: '#444343', alignSelf: 'center', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2.5), textAlign: 'center', marginBottom: 10 }}>Thank You</Text>
-        <Text style={{ color: '#746868', alignSelf: 'center', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), textAlign: 'center' }}>We really appreciate you for booking! </Text>
+      <View style={styles.thankYouTextWrapper}>
+        <Text style={styles.thankYouText}>Thank You</Text>
+        <Text style={styles.appreciationText}>We really appreciate you for booking!</Text>
       </View>
-      <View style={styles.totalValue}>
-        <View style={{ flexDirection: 'row', height: responsiveHeight(7), backgroundColor: '#DEDEDE', borderTopRightRadius: 10, borderTopLeftRadius: 10, alignItems: 'center', }}>
-          <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), fontWeight: 'bold', textAlign: 'center', marginLeft: responsiveWidth(2) }}>Patient Details</Text>
-        </View>
-        <View style={{ padding: 10, }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
-            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Name</Text>
-            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Sourav Ganguly</Text>
+      {data && (
+        <View style={styles.totalValue}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Patient Details</Text>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
-            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Therapist Name</Text>
-            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Jennifer Kourtney</Text>
-          </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
-            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Date</Text>
-            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>{moment(route?.params?.date).format('dddd, D MMMM')}</Text>
-          </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
-            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Appointment</Text>
-            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Booked</Text>
+          <View style={styles.detailsWrapper}>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Name</Text>
+              <Text style={styles.detailValue}>{data[0]?.patient.name}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Therapist Name</Text>
+              <Text style={styles.detailValue}>{data[0]?.therapist.name}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Date</Text>
+              <Text style={styles.detailValue}>{moment(data[0]?.date).format('dddd, D MMMM')}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Appointment</Text>
+              <Text style={styles.detailValue}>Booked</Text>
+            </View>
           </View>
         </View>
+      )}
+      <View style={styles.buttonWrapper}>
+        <CustomButton label={"Back to Home"} onPress={() => navigation.navigate('Home')} />
       </View>
-      <View style={styles.buttonwrapper}>
-        <CustomButton label={"Back to Home"}
-          onPress={() => navigation.navigate('Home')}
-        />
-      </View>
-
     </SafeAreaView>
   );
 };
@@ -66,20 +59,85 @@ const ThankYouBookingScreen = ({ navigation,route }) => {
 export default ThankYouBookingScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  thankYouImageWrapper: {
+    flex: 0.4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  thankYouTextWrapper: {
+    paddingHorizontal: 20,
+    marginBottom: responsiveHeight(2),
+    marginTop: responsiveHeight(2),
+  },
+  thankYouText: {
+    color: '#444343',
+    alignSelf: 'center',
+    fontFamily: 'DMSans-Bold',
+    fontSize: responsiveFontSize(2.5),
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  appreciationText: {
+    color: '#746868',
+    alignSelf: 'center',
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.5),
+    textAlign: 'center',
+  },
   totalValue: {
     width: responsiveWidth(89),
-    height: responsiveHeight(28),
     backgroundColor: '#fff',
     borderRadius: 15,
     borderColor: '#E3E3E3',
     borderWidth: 1,
     marginTop: responsiveHeight(5),
-    alignSelf:'center'
+    alignSelf: 'center',
   },
-  buttonwrapper:{
-    position:'absolute',
-    bottom:0,
-    width: responsiveWidth(90)
-  }
-
+  header: {
+    flexDirection: 'row',
+    height: responsiveHeight(7),
+    backgroundColor: '#DEDEDE',
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+    alignItems: 'center',
+  },
+  headerText: {
+    color: '#2D2D2D',
+    fontFamily: 'DMSans-Bold',
+    fontSize: responsiveFontSize(2),
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginLeft: responsiveWidth(2),
+  },
+  detailsWrapper: {
+    padding: 10,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: responsiveHeight(2),
+  },
+  detailLabel: {
+    color: '#746868',
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.7),
+  },
+  detailValue: {
+    color: '#444343',
+    fontFamily: 'DMSans-Medium',
+    fontSize: responsiveFontSize(1.7),
+  },
+  buttonWrapper: {
+    position: 'absolute',
+    bottom: 0,
+    width: responsiveWidth(90),
+  },
 });

@@ -128,6 +128,7 @@ const TherapistProfile = ({ navigation, route }) => {
     }
 
     const handleSlotSelect = (slot) => {
+        console.log(slot,'selected slot data')
         if (slot.booked_status === 0) {
             setSelectedByUser((prevSelected) => {
                 if (prevSelected.includes(slot)) {
@@ -309,7 +310,7 @@ const TherapistProfile = ({ navigation, route }) => {
             "payment_status": 'paid',
             "order_id": '37866876'
         }
-        navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option })
+        navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot:selectedByUser })
         // AsyncStorage.getItem('userToken', (err, usertoken) => {
         //     axios.post(`${API_URL}/patient/slot-book`, formData, {
         //         headers: {

@@ -24,8 +24,6 @@ const BookingSummary = ({ navigation, route }) => {
     const [previousPageData, setPreviousPageData] = useState(route?.params?.submitData)
     const [payableAmount, setPayableAmount] = useState(route?.params?.submitData?.transaction_amount)
     const [isEnabled, setIsEnabled] = useState(false);
-    const [minTime,setMinTime] = useState(null)
-    const [maxTime, setMaxTime] = useState(null)
     const toggleSwitch = () => {
         setIsEnabled(previousState => !previousState)
         console.log(payableAmount, 'payable amount')
@@ -45,31 +43,7 @@ const BookingSummary = ({ navigation, route }) => {
         console.log(route?.params?.profileDetails, 'profile details')
         console.log(route?.params?.submitData, 'submited data')
         console.log(route?.params?.selectedSlot, 'selected slot')
-        const { minStartTime, maxEndTime } = findTimeBounds(route?.params?.selectedSlot);
-        setMinTime(minStartTime)
-        setMaxTime(maxEndTime)
     }, [])
-
-    const convertTime = (time) => {
-        return moment(time, 'HH:mm:ss').format('hh:mm A');
-      };
-      
-      // Function to find the lowest start time and highest end time
-      const findTimeBounds = (data) => {
-        let minStartTime = data[0].slot_start_time;
-        let maxEndTime = data[0].slot_end_time;
-      
-        data.forEach(slot => {
-          if (slot.slot_start_time < minStartTime) {
-            minStartTime = slot.slot_start_time;
-          }
-          if (slot.slot_end_time > maxEndTime) {
-            maxEndTime = slot.slot_end_time;
-          }
-        });
-      
-        return { minStartTime, maxEndTime };
-      }
 
     const fetchWalletBalance = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -156,7 +130,7 @@ const BookingSummary = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data),'submit form response')
+                    console.log(JSON.stringify(res.data.data))
                     if (res.data.response == true) {
                         setIsLoading(false)
                         Alert.alert('Oops..', res.data.message, [
@@ -239,19 +213,19 @@ const BookingSummary = ({ navigation, route }) => {
                         <View style={{ width: responsiveWidth(80), backgroundColor: '#F4F5F5', height: responsiveHeight(10), marginTop: responsiveHeight(2), borderRadius: 10, padding: 10, }}>
                             <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Appointment Time :</Text>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(30) }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
                                     <Image
                                         source={dateIcon}
                                         style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
                                     />
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>{moment(previousPageData?.date).format('ddd, D MMMM')}</Text>
+                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>{moment(previousPageData?.date).format('dddd, D MMMM')}</Text>
                                 </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(45) }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
                                     <Image
                                         source={timeIcon}
                                         style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
                                     />
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>{convertTime(minTime)} - {convertTime(maxTime)}</Text>
+                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>09:00 PM</Text>
                                 </View>
                             </View>
                         </View>

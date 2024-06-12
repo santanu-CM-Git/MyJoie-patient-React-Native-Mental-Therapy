@@ -68,6 +68,7 @@ const TherapistList = ({ navigation, route }) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     const [activeTab, setActiveTab] = useState('Experience')
+    const [searchValue, setSearchValue] = useState('');
 
     const [selectedExperience, setSelectedExperience] = useState([]);
     const onSelectionsChangeExperience = (selectedExperience) => {
@@ -169,8 +170,8 @@ const TherapistList = ({ navigation, route }) => {
             AsyncStorage.getItem('userInfo', (err, userInfo) => {
                 const userData = JSON.parse(userInfo)
                 const option = {
-                    "patient_id" : userData.patient_details.user_id,
-                    "therapist_id" : therapistId
+                    "patient_id": userData.patient_details.user_id,
+                    "therapist_id": therapistId
                 }
                 axios.post(`${API_URL}/patient/wishlist-click`, option, {
                     headers: {
@@ -189,8 +190,8 @@ const TherapistList = ({ navigation, route }) => {
                                 text2: "Successfully added to wishlist",
                                 position: 'top',
                                 topOffset: Platform.OS == 'ios' ? 55 : 20
-                              });
-                              fetchAllTherapist()
+                            });
+                            fetchAllTherapist()
                         } else {
                             console.log('not okk')
                             setIsLoading(false)
@@ -306,13 +307,21 @@ const TherapistList = ({ navigation, route }) => {
         )
     }
 
+    const changeSearchValue = (text) => {
+        const searchText = text.toLowerCase().trim();
+        const filteredData = therapistData.filter(therapist =>
+            therapist.user.name.toLowerCase().includes(searchText)
+        );
+        setSearchValue(text);
+        setTherapistFilterData(filteredData);
+    }
 
 
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.goBack()} title={'Therapist'} />
             <ScrollView style={styles.wrapper}>
-                <View style={{ marginBottom: responsiveHeight(1), marginTop: responsiveHeight(2), paddingHorizontal: responsiveWidth(3) }}>
+                <View style={{ marginBottom: responsiveHeight(0), marginTop: responsiveHeight(2), paddingHorizontal: responsiveWidth(3) }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
                         <View style={{ width: responsiveWidth(35), }}>
                             <Dropdown
@@ -347,6 +356,16 @@ const TherapistList = ({ navigation, route }) => {
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
+                </View>
+                <View style={{ alignSelf: 'center' }}>
+                    <InputField
+                        label={'Search by therapist name'}
+                        keyboardType=" "
+                        value={searchValue}
+                        //helperText={'Please enter lastname'}
+                        inputType={'others'}
+                        onChangeText={(text) => changeSearchValue(text)}
+                    />
                 </View>
                 {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
                         <View style={{ height: responsiveHeight(5), width: responsiveWidth(27), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
