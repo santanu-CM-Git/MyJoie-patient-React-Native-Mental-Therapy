@@ -646,13 +646,13 @@ const TherapistProfile = ({ navigation, route }) => {
                                         style={{
                                             height: responsiveHeight(5),
                                             padding: 10,
-                                            backgroundColor: isBooked ? '#D3D3D3' : isSelected ? '#ECFCFA' : '#EAECF0', // Change background color if selected
+                                            backgroundColor: isBooked ? '#EAECF0' : isSelected ? '#ECFCFA' : '#FFFFFF', // Change background color if selected
                                             justifyContent: 'center',
                                             alignItems: 'center',
                                             borderRadius: 20,
                                             marginRight: 10,
                                             marginBottom: 10,
-                                            borderColor: isBooked ? '#A9A9A9' : isSelected ? '#87ADA8' : '#EAECF0',
+                                            borderColor: isBooked ? '#EAECF0' : isSelected ? '#87ADA8' : '#E3E3E3',
                                             borderWidth: 1,
                                         }}
                                     >
