@@ -225,7 +225,7 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.termsView}>
         <Text style={styles.termsText}>By signing in you agree to our Terms & Condition and Privacy Policy</Text>
       </View>
-      <Image
+      {/* <Image
         source={orImg}
         style={styles.orImg}
       />
@@ -235,7 +235,7 @@ const LoginScreen = ({ navigation }) => {
           buttonColor='gray'
         //onPress={() => { navigation.push('Otp', { phoneno: phone }) }}
         />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     paddingHorizontal: 20,
-    marginTop: -responsiveHeight(5),
+    marginTop: -responsiveHeight(2),
     backgroundColor: '#fff',
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   },
   bannaerContainer: {
     width: responsiveWidth(100),
-    height: responsiveHeight(50),
+    height: responsiveHeight(55),
     backgroundColor: '#fff',
   },
   bannerBg: {
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     marginBottom: responsiveHeight(1)
   },
   termsView: {
-    marginBottom: responsiveHeight(0),
+    marginBottom: responsiveHeight(5),
     paddingHorizontal: 20,
     alignSelf: 'center'
   },

@@ -626,7 +626,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2) }}>
                         <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Select Time</Text>
                     </View>
-                    <View style={{ height: responsiveHeight(8), width: responsiveWidth(90), backgroundColor: '#33D1C3', borderRadius: 15, justifyContent: 'center', padding: 10 }}>
+                    <View style={{ height: responsiveHeight(8), width: responsiveWidth(90), backgroundColor: '#519ED8', borderRadius: 15, justifyContent: 'center', padding: 10 }}>
                         <Text style={{ color: '#FFF', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(2) }}>We recommend booking one hour (two continuous slots)</Text>
                     </View>
                     <View style={{ width: responsiveWidth(90), marginTop: responsiveHeight(2), flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -646,13 +646,13 @@ const TherapistProfile = ({ navigation, route }) => {
                                         style={{
                                             height: responsiveHeight(5),
                                             padding: 10,
-                                            backgroundColor: isBooked ? '#EAECF0' : isSelected ? '#ECFCFA' : '#FFFFFF', // Change background color if selected
+                                            backgroundColor: isBooked ? '#EAECF0' : isSelected ? '#EEF8FF' : '#FFFFFF', // Change background color if selected
                                             justifyContent: 'center',
                                             alignItems: 'center',
                                             borderRadius: 20,
                                             marginRight: 10,
                                             marginBottom: 10,
-                                            borderColor: isBooked ? '#EAECF0' : isSelected ? '#87ADA8' : '#E3E3E3',
+                                            borderColor: isBooked ? '#EAECF0' : isSelected ? '#417AA4' : '#E3E3E3',
                                             borderWidth: 1,
                                         }}
                                     >
@@ -849,8 +849,8 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     selectedDay: {
-        backgroundColor: '#ECFCFA',
-        borderColor: '#87ADA8',
+        backgroundColor: '#EEF8FF',
+        borderColor: '#417AA4',
         borderWidth: 1,
     },
     defaultDay: {
@@ -876,13 +876,13 @@ const styles = StyleSheet.create({
     itemContainer: {
         height: responsiveHeight(11),
         width: responsiveWidth(25),
-        borderColor: '#87ADA8',
+        borderColor: '#417AA4',
         borderWidth: 1,
         borderRadius: 10,
         padding: 5,
     },
     selectedItem: {
-        backgroundColor: '#ECFCFA',
+        backgroundColor: '#EEF8FF',
     },
     defaultItem: {
         backgroundColor: '#FFF',

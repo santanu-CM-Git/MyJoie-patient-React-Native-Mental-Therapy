@@ -19,8 +19,8 @@ export default function CustomButton({ label, onPress, buttonIcon, buttonColor }
 
 const styles = StyleSheet.create({
   buttonView: {
-    backgroundColor: '#ECFCFA',
-    borderColor: '#87ADA8',
+    backgroundColor: '#EEF8FF',
+    borderColor: '#417AA4',
     borderWidth: 1,
     padding: 17,
     borderRadius: 8,
@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonViewSmall: {
-    backgroundColor: '#ECFCFA',
-    borderColor: '#87ADA8',
+    backgroundColor: '#EEF8FF',
+    borderColor: '#417AA4',
     borderWidth: 1,
     padding: 10,
     borderRadius: 8,

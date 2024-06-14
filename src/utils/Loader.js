@@ -9,7 +9,7 @@ export default function Loader({ navigation }) {
     return (
         <View style={styles.Container}>
             <ActivityIndicator
-                size="large" color={'#339999'}
+                size="large" color={'#417AA4'}
             />
         </View>
     )

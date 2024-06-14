@@ -960,8 +960,8 @@ const styles = StyleSheet.create({
   },
   joinNowButton: {
     marginLeft: responsiveWidth(2),
-    backgroundColor: '#ECFCFA',
-    borderColor: '#87ADA8',
+    backgroundColor: '#EEF8FF',
+    borderColor: '#417AA4',
     borderWidth: 1,
     padding: 10,
     borderRadius: 20,
