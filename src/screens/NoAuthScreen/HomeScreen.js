@@ -319,7 +319,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.nameText}>{item?.therapist?.name}</Text>
           <Text style={styles.namesubText}> Therapist</Text>
         </View>
-        <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen')}>
+        <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen',{details: item})}>
           <Text style={styles.joinButtonText}>Join Now</Text>
         </TouchableOpacity>
       </View>

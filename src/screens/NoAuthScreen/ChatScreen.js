@@ -16,6 +16,7 @@ import firebase from '@react-native-firebase/app';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore'
 import RNFetchBlob from 'rn-fetch-blob'
 // import { CometChat } from '@cometchat/chat-sdk-react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -30,7 +31,7 @@ const channelName = 'testvoice';
 const token = '123456789';
 const uid = Math.random().toString(36).substr(2, 10);
 
-const ChatScreen = ({ navigation }) => {
+const ChatScreen = ({ navigation, route }) => {
 
   const [videoCall, setVideoCall] = useState(true);
   const connectionData = {
@@ -45,6 +46,10 @@ const ChatScreen = ({ navigation }) => {
   };
 
   const [messages, setMessages] = useState([])
+  const [therapistId, setTherapistId] = useState(route?.params?.details?.therapist?.id)
+  const [therapistProfilePic, setTherapistProfilePic] = useState(route?.params?.details?.therapist?.profile_pic)
+  const [patientId, setPatientId] = useState(route?.params?.details?.patient?.id)
+  const [patientProfilePic, setPatientProfilePic] = useState(route?.params?.details?.patient?.profile_pic)
   const [chatgenidres, setChatgenidres] = useState('4');
   const [isAttachImage, setIsAttachImage] = useState(false);
   const [isAttachFile, setIsAttachFile] = useState(false);
@@ -59,6 +64,7 @@ const ChatScreen = ({ navigation }) => {
 
   useEffect(() => {
     //receivedMsg()
+    console.log(route?.params?.details, 'details from home page')
   }, [])
 
 
@@ -226,86 +232,122 @@ const ChatScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: require('../../assets/images/user-profile.jpg'),
-        },
-      },
-    ])
+    // setMessages([
+    //   {
+    //     _id: 1,
+    //     text: 'Hello developer',
+    //     createdAt: new Date(),
+    //     user: {
+    //       _id: 2,
+    //       name: 'React Native',
+    //       avatar: require('../../assets/images/user-profile.jpg'),
+    //     },
+    //   },
+    // ])
+    const docid  = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
+    const messageRef = firestore().collection('chatrooms')
+    .doc(docid)
+    .collection('messages')
+    .orderBy('createdAt',"desc")
+
+  const unSubscribe =  messageRef.onSnapshot((querySnap)=>{
+        const allmsg =   querySnap.docs.map(docSanp=>{
+         const data = docSanp.data()
+         if(data.createdAt){
+             return {
+                ...docSanp.data(),
+                createdAt:docSanp.data().createdAt.toDate()
+            }
+         }else {
+            return {
+                ...docSanp.data(),
+                createdAt:new Date()
+            }
+         }
+            
+        })
+        setMessages(allmsg)
+    })
+
+
+    return ()=>{
+      unSubscribe()
+    }
   }, [])
 
-  const onSend = useCallback((messages = []) => {
-    const [messageToSend] = messages;
-    if (isAttachImage) {
-      const newMessage = {
-        _id: messages[0]._id + 1,
-        text: messageToSend.text,
-        timestamp: firebase.database.ServerValue.TIMESTAMP,
-        user: {
-          _id: 1,
-          avatar: require('../../assets/images/user-profile.jpg'),
-        },
-        codeSnippet: true,
-        image: imagePath,
-        file: {
-          url: ''
-        }
-      };
-      setMessages(previousMessages =>
-        GiftedChat.append(previousMessages, newMessage),
-      );
-      // messages.forEach(item => {
-      //   const message = newMessage
-      //   db.push(message);
-      // });
-      setImagePath('');
-      setIsAttachImage(false);
-    } else if (isAttachFile) {
-      const newMessage = {
-        _id: messages[0]._id + 1,
-        text: messageToSend.text,
-        createdAt: new Date(),
-        user: {
-          _id: 1,
-          avatar: require('../../assets/images/user-profile.jpg'),
-        },
-        image: '',
-        file: {
-          url: filePath
-        }
-      };
-      setMessages(previousMessages =>
-        GiftedChat.append(previousMessages, newMessage),
-      );
-      setFilePath('');
-      setIsAttachFile(false);
-    } else {
-      setMessages(previousMessages =>
-        GiftedChat.append(previousMessages, messages),
-      );
-      // let receiverID = "1";
-      // let messageText = JSON.stringify(messages);
-      // let receiverType = CometChat.RECEIVER_TYPE.USER;
-      // let textMessage = new CometChat.TextMessage(receiverID, messageText, receiverType);
+  // const onSend = useCallback((messages = []) => {
+  //   const [messageToSend] = messages;
+  //   if (isAttachImage) {
+  //     const newMessage = {
+  //       _id: messages[0]._id + 1,
+  //       text: messageToSend.text,
+  //       timestamp: firebase.database.ServerValue.TIMESTAMP,
+  //       user: {
+  //         _id: 1,
+  //         avatar: require('../../assets/images/user-profile.jpg'),
+  //       },
+  //       codeSnippet: true,
+  //       image: imagePath,
+  //       file: {
+  //         url: ''
+  //       }
+  //     };
+  //     setMessages(previousMessages =>
+  //       GiftedChat.append(previousMessages, newMessage),
+  //     );
+  //     // messages.forEach(item => {
+  //     //   const message = newMessage
+  //     //   db.push(message);
+  //     // });
+  //     setImagePath('');
+  //     setIsAttachImage(false);
+  //   } else if (isAttachFile) {
+  //     const newMessage = {
+  //       _id: messages[0]._id + 1,
+  //       text: messageToSend.text,
+  //       createdAt: new Date(),
+  //       user: {
+  //         _id: 1,
+  //         avatar: require('../../assets/images/user-profile.jpg'),
+  //       },
+  //       image: '',
+  //       file: {
+  //         url: filePath
+  //       }
+  //     };
+  //     setMessages(previousMessages =>
+  //       GiftedChat.append(previousMessages, newMessage),
+  //     );
+  //     setFilePath('');
+  //     setIsAttachFile(false);
+  //   } else {
+  //     setMessages(previousMessages =>
+  //       GiftedChat.append(previousMessages, messages),
+  //     );
+  //   }
+  // },
+  //   [filePath, imagePath, isAttachFile, isAttachImage],
+  // );
 
-      // CometChat.sendMessage(textMessage).then(
-      //   message => {
-      //     console.log("Message sent successfully:", message);
-      //   }, error => {
-      //     console.log("Message sending failed with error:", error);
-      //   }
-      // );
-
+  const onSend = (messageArray) => {
+    console.log(messageArray)
+    const msg = messageArray[0]
+    const mymsg = {
+      ...msg,
+      sentBy: patientId,
+      sentTo: therapistId,
+      createdAt: new Date()
     }
-  },
-    [filePath, imagePath, isAttachFile, isAttachImage],
-  );
+    setMessages(previousMessages => GiftedChat.append(previousMessages, mymsg))
+    const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
+
+    firestore().collection('chatrooms')
+      .doc(docid)
+      .collection('messages')
+      .add({ ...mymsg, createdAt: firestore.FieldValue.serverTimestamp() })
+
+
+  }
 
 
   // audio call 
@@ -590,8 +632,8 @@ const ChatScreen = ({ navigation }) => {
             onSend={messages => onSend(messages)}
             style={styles.messageContainer}
             user={{
-              _id: 1,
-              avatar: require('../../assets/images/user-profile.jpg'),
+              _id: patientId,
+              avatar: {uri:patientProfilePic},
             }}
           //user={user}
           />
