@@ -74,7 +74,7 @@ const ScheduleScreen = ({ navigation }) => {
                         Therapist
                     </Text>
                 </View>
-                <TouchableOpacity style={{ marginLeft: responsiveWidth(2), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, padding: 10, borderRadius: 20, flexDirection: 'row', justifyContent: 'center' }} onPress={() => navigation.navigate('ChatScreen')}>
+                <TouchableOpacity style={{ marginLeft: responsiveWidth(2), backgroundColor: '#EEF8FF', borderColor: '#417AA4', borderWidth: 1, padding: 10, borderRadius: 20, flexDirection: 'row', justifyContent: 'center' }} onPress={() => navigation.navigate('ChatScreen')}>
                     <Text style={{ fontFamily: 'DMSans-Bold', color: '#2D2D2D', fontSize: responsiveFontSize(1.7) }}>Join Now</Text>
                 </TouchableOpacity>
             </View>
