@@ -414,19 +414,24 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
           </View>
-          <FlatList
-            data={upcomingBooking}
-            renderItem={renderUpcomingBooking}
-            keyExtractor={(item) => item.id.toString()}
-            maxToRenderPerBatch={10}
-            windowSize={5}
-            initialNumToRender={10}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            getItemLayout={(upcomingBooking, index) => (
-              { length: 50, offset: 50 * index, index }
-            )}
-          />
+          {upcomingBooking.length != '0' ?
+            <FlatList
+              data={upcomingBooking}
+              renderItem={renderUpcomingBooking}
+              keyExtractor={(item) => item.id.toString()}
+              maxToRenderPerBatch={10}
+              windowSize={5}
+              initialNumToRender={10}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              getItemLayout={(upcomingBooking, index) => (
+                { length: 50, offset: 50 * index, index }
+              )}
+            />
+            :
+            <View style={styles.upcomingView}>
+              <Text style={{ alignSelf: 'center', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>No upcoming appointment yet</Text>
+            </View>}
           <View style={styles.sectionHeaderView}>
             <Text style={styles.sectionHeaderText}>Therapist</Text>
             <TouchableOpacity onPress={() => navigation.navigate('TherapistList')}>
@@ -1156,6 +1161,16 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans-Medium',
     fontSize: responsiveFontSize(1.7),
     marginLeft: 5
-  }
+  },
+  upcomingView: {
+    height: responsiveHeight(20),
+    width: '92%',
+    backgroundColor: '#FFF',
+    marginHorizontal: 15,
+    padding: 20,
+    borderRadius: 20,
+    marginTop: responsiveHeight(2),
+    elevation: 5
+  },
 
 });

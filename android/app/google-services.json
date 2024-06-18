@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "980159603394",
-    "project_id": "driver-app-c4784",
-    "storage_bucket": "driver-app-c4784.appspot.com"
+    "project_number": "556554635578",
+    "project_id": "myjoie",
+    "storage_bucket": "myjoie.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:980159603394:android:bbbd63e126c0462c49115b",
+        "mobilesdk_app_id": "1:556554635578:android:026b250917f23e9d446803",
         "android_client_info": {
           "package_name": "com.patientapp"
         }
@@ -15,7 +15,26 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAf_bkfD29SbIqxP2ABL-_bs5LAhnQ1I48"
+          "current_key": "AIzaSyDKYXk3-dzUtYNBBzAgE67nDq3RwBOVask"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556554635578:android:3dc219f97978d44e446803",
+        "android_client_info": {
+          "package_name": "com.therapistapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKYXk3-dzUtYNBBzAgE67nDq3RwBOVask"
         }
       ],
       "services": {

@@ -79,7 +79,7 @@ const ScheduleScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <View style={{ height: responsiveHeight(5), width: responsiveWidth(80), marginTop: responsiveHeight(2), borderColor: '#E3E3E3', borderWidth: 1, borderRadius: 20, padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(40) }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
                     <Image
                         source={dateIcon}
                         style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
