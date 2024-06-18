@@ -294,6 +294,8 @@ const getTabBarVisibility = route => {
     return 'none';
   } else if (routeName == 'ThankYouBookingScreen') {
     return 'none';
+  }else if (routeName == 'ChatScreen') {
+    return 'none';
   } else {
     return 'flex';
   }
