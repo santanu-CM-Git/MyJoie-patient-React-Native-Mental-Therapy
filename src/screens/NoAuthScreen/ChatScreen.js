@@ -202,7 +202,7 @@ const ChatScreen = ({ navigation, route }) => {
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: '#ECFCFA',
+            backgroundColor: '#EEF8FF',
           },
         }}
         textStyle={{
