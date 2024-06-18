@@ -32,7 +32,7 @@ const AuthStack = () => {
       drawerContent={props => <CustomDrawer {...props} />}
       screenOptions={{
         headerShown: false,
-        drawerActiveBackgroundColor: '#ECFCFA',
+        drawerActiveBackgroundColor: '#EEF8FF',
         drawerActiveTintColor: '#2D2D2D',
         drawerInactiveTintColor: '#949494',
         drawerLabelStyle: {
@@ -112,7 +112,7 @@ const AuthStack = () => {
           ),
         }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="  Thankyou"
         component={ThankYouBookingScreen}
         options={{
@@ -121,8 +121,8 @@ const AuthStack = () => {
             <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
           ),
         }}
-      />
-       <Drawer.Screen
+      /> */}
+       {/* <Drawer.Screen
         name="  Summary"
         component={BookingSummary}
         options={{
@@ -131,7 +131,7 @@ const AuthStack = () => {
             <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
           ),
         }}
-      />
+      /> */}
         <Drawer.Screen
         name="  Therapist"
         component={TherapistList}
