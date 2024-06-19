@@ -23,6 +23,7 @@ import ThankYouBookingScreen from '../screens/NoAuthScreen/ThankYouBookingScreen
 import BookingSummary from '../screens/NoAuthScreen/BookingSummary';
 import TherapistList from '../screens/NoAuthScreen/TherapistList';
 import TherapistProfile from '../screens/NoAuthScreen/TherapistProfile';
+import TestPage from '../screens/NoAuthScreen/TestPage';
 
 const Drawer = createDrawerNavigator();
 
@@ -165,6 +166,16 @@ const AuthStack = () => {
       <Drawer.Screen
         name="  Session Summary"
         component={UploadSessionSummary}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={PolicyIcon} style={{ width: 25,height: 25}} color={color}/>
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="  testtttt"
+        component={TestPage}
         options={{
           drawerIcon: ({color}) => (
             // <Ionicons name="settings-outline" size={22} color={color} />
