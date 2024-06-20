@@ -25,19 +25,25 @@ import Modal from "react-native-modal";
 import AgoraUIKit, { StreamFallbackOptions, PropsInterface, VideoRenderMode, RenderModeType } from 'agora-rn-uikit';
 console.log(RenderModeType.RenderModeFit,'kkkkkkkkkkk')
 
-import { ClientRoleType, createAgoraRtcEngine, ChannelProfileType } from 'react-native-agora';
+import {
+  ClientRoleType,
+  createAgoraRtcEngine,
+  IRtcEngine,
+  ChannelProfileType,
+} from 'react-native-agora';
 const appId = '975e09acde854ac38b3304da072c111e';
 const channelName = 'testvoice';
-const token = '123456789';
-const uid = Math.random().toString(36).substr(2, 10);
+const token = '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==';
+ const uid = Math.random().toString(36).substr(2, 10);
 
 const ChatScreen = ({ navigation, route }) => {
 
   const [videoCall, setVideoCall] = useState(true);
   const connectionData = {
     appId: '975e09acde854ac38b3304da072c111e',
+    //appId: '8b2a5d01a4eb489682000abfc52cfc9c',
     channel: 'test',
-
+    token: '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==',
   };
   const rtcCallbacks = {
     EndCall: () => {
@@ -375,7 +381,7 @@ const ChatScreen = ({ navigation, route }) => {
   useEffect(() => {
     // Initialize Agora engine when the app starts
     setupVoiceSDKEngine();
-  }, []);
+  });
 
   const setupVoiceSDKEngine = async () => {
     try {
@@ -383,6 +389,8 @@ const ChatScreen = ({ navigation, route }) => {
       if (Platform.OS === 'android') await getPermission();
       agoraEngineRef.current = createAgoraRtcEngine();
       const agoraEngine = agoraEngineRef.current;
+      console.log('Agora Engine initialized:', agoraEngine);
+      console.log('Agora Engine details:', JSON.stringify(agoraEngine, null, 2));
       agoraEngine.registerEventHandler({
         onJoinChannelSuccess: () => {
           showMessage('Successfully joined the channel ' + channelName);
@@ -471,6 +479,7 @@ const ChatScreen = ({ navigation, route }) => {
   const goingToactiveTab = (name) => {
 
     if(name == 'audio'){
+      //setupVoiceSDKEngine()
       join()
       setActiveTab('audio')
       setVideoCall(false)
