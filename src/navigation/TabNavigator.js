@@ -296,6 +296,8 @@ const getTabBarVisibility = route => {
     return 'none';
   }else if (routeName == 'ChatScreen') {
     return 'none';
+  }else if (routeName == 'WalletScreen') {
+    return 'none';
   } else {
     return 'flex';
   }

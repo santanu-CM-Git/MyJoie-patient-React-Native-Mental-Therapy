@@ -21,6 +21,7 @@ import axios from 'axios';
 import { API_URL } from '@env'
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import Logo from '../../src/assets/images/misc/logo.svg';
 
 export default function CustomHeader({
     onPress,
@@ -70,7 +71,7 @@ export default function CustomHeader({
                         style={styles.headerView}
                     >
                         <View style={styles.firstSection}>
-                            <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ width: 44, height: 44, borderRadius: 44 / 2, borderColor: '#8C8C8C', borderWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ width: 44, height: 44, borderRadius: 44 / 2, justifyContent: 'center', alignItems: 'center' }}>
                                 {/* {userInfo?.photo ?
                                     <Image
                                         source={{ uri: userInfo?.photo }}
@@ -82,9 +83,14 @@ export default function CustomHeader({
                                 />
                                 {/* } */}
                             </TouchableOpacity>
-                            <Image
+                            {/* <Image
                                 source={require('../assets/images/icon.png')}
-                                style={{ height: responsiveHeight(5), width: responsiveWidth(35), resizeMode: 'contain', marginLeft: responsiveWidth(2) }}
+                                style={{ height: responsiveHeight(3.5), width: responsiveWidth(25), resizeMode: 'contain', marginLeft: responsiveWidth(2) }}
+                            /> */}
+                            <Logo
+                                width={responsiveWidth(25)}
+                                height={responsiveHeight(3.5)}
+                            //style={{transform: [{rotate: '-15deg'}]}}
                             />
                         </View>
                         <View style={styles.secondSection}>

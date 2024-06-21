@@ -92,3 +92,5 @@ export const phoneColor = require("../assets/images/phone-color.png");
 export const filterImg = require("../assets/images/filter.png");
 export const checkedImg = require("../assets/images/checked.png");
 export const uncheckedImg = require("../assets/images/unchecked.png");
+export const audioBgImg = require("../assets/images/audio-bg.png");
+export const defaultUserImg = require("../assets/images/default-user.png");
