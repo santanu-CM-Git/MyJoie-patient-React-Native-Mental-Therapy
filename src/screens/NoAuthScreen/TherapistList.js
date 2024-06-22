@@ -225,11 +225,11 @@ const TherapistList = ({ navigation, route }) => {
     const renderItem = ({ item }) => (
         <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id })}>
             <View style={styles.totalValue}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                    <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), }}>
+                <View style={styles.totalValue1stSection}>
+                    <View style={styles.profilePicSection}>
                         <Image
                             source={{ uri: item?.user?.profile_pic }}
-                            style={{ height: 100, width: 90, borderRadius: 15, resizeMode: 'contain', marginBottom: responsiveHeight(1) }}
+                            style={styles.profilePicStyle}
                         />
                         <StarRating
                             disabled={true}
@@ -238,62 +238,62 @@ const TherapistList = ({ navigation, route }) => {
                             selectedStar={(rating) => setStarCount(rating)}
                             fullStarColor={'#FFCB45'}
                             starSize={12}
-                            starStyle={{ marginHorizontal: responsiveWidth(0.5), marginBottom: responsiveHeight(1) }}
+                            starStyle={styles.starStyle}
                         />
-                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>{item?.review_counter} Reviews</Text>
+                        <Text style={styles.noOfReview}>{item?.review_counter} Reviews</Text>
                     </View>
-                    <View style={{ flexDirection: 'column', width: responsiveWidth(47), height: responsiveHeight(10) }}>
-                        <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginBottom: responsiveHeight(1) }}>{item?.user?.name}</Text>
-                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>{item?.qualification_list}</Text>
-                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>{item?.experience} Years Experience</Text>
-                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Language : <Text style={{ fontSize: responsiveFontSize(1.7), color: '#959595', fontFamily: 'DMSans-Regular', }}>{item?.languages_list}</Text></Text>
-                        <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>₹{item?.rate} for 30 Min</Text>
-                        <Text style={{ fontSize: responsiveFontSize(1.5), color: '#444343', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Next Avl. Slot : Today 09:00 PM</Text>
+                    <View style={styles.contentStyle}>
+                        <Text style={styles.contentStyleName}>{item?.user?.name}</Text>
+                        <Text style={styles.contentStyleQualification}>{item?.qualification_list}</Text>
+                        <Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text>
+                        <Text style={styles.contentStyleLang}>Language : <Text style={styles.contentStyleLangValue}>{item?.languages_list}</Text></Text>
+                        <Text style={styles.contentStyleRate}>₹{item?.rate} for 30 Min</Text>
+                        <Text style={styles.contentStyleAvailableSlot}>Next Avl. Slot : Today 09:00 PM</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
                         {item?.wishlistcount == 'yes' ?
                             <TouchableOpacity onPress={() => bookmarkedToggle(item?.user_id)}>
                                 <Image
                                     source={bookmarkedFill}
-                                    style={{ height: 25, width: 25 }}
+                                    style={styles.iconSize}
                                 />
                             </TouchableOpacity>
                             :
                             <TouchableOpacity onPress={() => bookmarkedToggle(item?.user_id)}>
                                 <Image
                                     source={bookmarkedNotFill}
-                                    style={{ height: 25, width: 25 }}
+                                    style={styles.iconSize}
                                 />
                             </TouchableOpacity>
                         }
                     </View>
                 </View>
-                <View style={{ marginTop: responsiveHeight(1), borderRadius: 10, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View style={styles.totalValue2ndSection}>
                     {item?.instant_availability == 'yes' ?
                         <TouchableOpacity onPress={() => toggleModal()}>
-                            <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#EEF8FF', borderColor: '#417AA4', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#566D7E', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), textAlign: 'center' }}>Instant Connect</Text>
+                            <View style={styles.instantConnectView}>
+                                <Text style={styles.instantConnectText}>Instant Connect</Text>
                             </View>
                         </TouchableOpacity>
                         :
                         <></>
                     }
-                    <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#417AA4', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={styles.iconView}>
                         <Image
                             source={cameraColor}
-                            style={{ height: 25, width: 25 }}
+                            style={styles.iconSize}
                         />
                     </View>
-                    <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#417AA4', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={styles.iconView}>
                         <Image
                             source={phoneColor}
-                            style={{ height: 25, width: 25 }}
+                            style={styles.iconSize}
                         />
                     </View>
-                    <View style={{ height: responsiveHeight(7), width: responsiveWidth(17), backgroundColor: '#FFF', borderColor: '#417AA4', borderWidth: 1, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={styles.iconView}>
                         <Image
                             source={chatColor}
-                            style={{ height: 25, width: 25 }}
+                            style={styles.iconSize}
                         />
                     </View>
                 </View>
@@ -321,8 +321,8 @@ const TherapistList = ({ navigation, route }) => {
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.goBack()} title={'Therapist'} />
             <ScrollView style={styles.wrapper}>
-                <View style={{ marginBottom: responsiveHeight(0), marginTop: responsiveHeight(2), paddingHorizontal: responsiveWidth(3) }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                <View style={styles.filterSection}>
+                    <View style={styles.filterSection1st}>
                         <View style={{ width: responsiveWidth(35), }}>
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -347,12 +347,12 @@ const TherapistList = ({ navigation, route }) => {
                             {/* <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Type for therapy</Text> */}
                         </View>
                         <TouchableWithoutFeedback onPress={() => toggleFilterModal()}>
-                            <View style={{ width: responsiveWidth(20), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <View style={styles.filterIconView}>
                                 <Image
                                     source={filterImg}
                                     style={{ height: 20, width: 20 }}
                                 />
-                                <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Filter</Text>
+                                <Text style={styles.filterIconText}>Filter</Text>
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
@@ -651,6 +651,28 @@ const styles = StyleSheet.create({
         padding: responsiveWidth(2),
 
     },
+    filterSection: {
+        marginBottom: responsiveHeight(0),
+        marginTop: responsiveHeight(2),
+        paddingHorizontal: responsiveWidth(3)
+    },
+    filterSection1st: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: responsiveHeight(2)
+    },
+    filterIconView: {
+        width: responsiveWidth(20),
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    filterIconText: {
+        fontSize: responsiveFontSize(2),
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold',
+    },
     totalValue: {
         width: responsiveWidth(90),
         //height: responsiveHeight(36),
@@ -663,30 +685,115 @@ const styles = StyleSheet.create({
         margin: 2,
         marginBottom: responsiveHeight(2)
     },
-    switchStyle: {
-        transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]  // Adjust scale values as needed
-    },
-    totalValue2: {
-        width: responsiveWidth(89),
-        //height: responsiveHeight(28),
-        backgroundColor: '#fff',
-        borderRadius: 15,
-        borderColor: '#E3E3E3',
-        borderWidth: 1,
-        marginTop: responsiveHeight(2),
-        alignSelf: 'center'
-    },
-    buttonwrapper: {
-        paddingHorizontal: 25,
-        bottom: 5,
+    totalValue1stSection: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    profilePicSection: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        borderTopColor: '#E3E3E3',
-        borderTopWidth: 1,
-        paddingTop: 5,
-        position: 'absolute',
-        width: responsiveWidth(100)
+        width: responsiveWidth(25),
+    },
+    profilePicStyle: {
+        height: 100,
+        width: 90,
+        borderRadius: 15,
+        resizeMode: 'contain',
+        marginBottom: responsiveHeight(1)
+    },
+    starStyle: {
+        marginHorizontal: responsiveWidth(0.5),
+        marginBottom: responsiveHeight(1)
+    },
+    noOfReview: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#746868',
+        fontFamily: 'DMSans-Regular',
+    },
+    contentStyle: {
+        flexDirection: 'column',
+        width: responsiveWidth(47),
+        height: responsiveHeight(10)
+    },
+    contentStyleName: {
+        fontSize: responsiveFontSize(2),
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold',
+        marginBottom: responsiveHeight(1)
+    },
+    contentStyleQualification: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#746868',
+        fontFamily: 'DMSans-Medium',
+        marginBottom: responsiveHeight(1)
+    },
+    contentStyleExp: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#746868',
+        fontFamily: 'DMSans-Regular',
+        marginBottom: responsiveHeight(1)
+    },
+    contentStyleLang: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#746868',
+        fontFamily: 'DMSans-Medium',
+        marginBottom: responsiveHeight(1)
+    },
+    contentStyleLangValue: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#959595',
+        fontFamily: 'DMSans-Regular',
+    },
+    contentStyleRate: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#746868',
+        fontFamily: 'DMSans-Medium',
+        marginBottom: responsiveHeight(1)
+    },
+    contentStyleAvailableSlot: {
+        fontSize: responsiveFontSize(1.5),
+        color: '#444343',
+        fontFamily: 'DMSans-Medium',
+        marginBottom: responsiveHeight(1)
+    },
+    totalValue2ndSection: {
+        marginTop: responsiveHeight(1),
+        borderRadius: 10,
+        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    iconView: {
+        height: responsiveHeight(7),
+        width: responsiveWidth(17),
+        backgroundColor: '#FFF',
+        borderColor: '#417AA4',
+        borderWidth: 1,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    iconSize: {
+        height: 25,
+        width: 25
+    },
+    instantConnectView: {
+        height: responsiveHeight(7),
+        width: responsiveWidth(17),
+        backgroundColor: '#EEF8FF',
+        borderColor: '#417AA4',
+        borderWidth: 1,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    instantConnectText: {
+        color: '#566D7E',
+        fontFamily: 'DMSans-Medium',
+        fontSize: responsiveFontSize(1.7),
+        textAlign: 'center'
     },
     totalValue3: {
         width: responsiveWidth(90),

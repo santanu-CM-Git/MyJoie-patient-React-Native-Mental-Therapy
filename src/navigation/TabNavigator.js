@@ -298,6 +298,8 @@ const getTabBarVisibility = route => {
     return 'none';
   }else if (routeName == 'WalletScreen') {
     return 'none';
+  }else if (routeName == 'TherapistProfile') {
+    return 'none';
   } else {
     return 'flex';
   }

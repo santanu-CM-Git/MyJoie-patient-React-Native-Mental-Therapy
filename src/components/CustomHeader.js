@@ -35,31 +35,14 @@ export default function CustomHeader({
     const [userInfo, setuserInfo] = useState([])
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-    const fetchProfileDetails = () => {
-        AsyncStorage.getItem('userToken', (err, usertoken) => {
-            axios.get(`${API_URL}/api/driver/me`, {
-                headers: {
-                    "Authorization": 'Bearer ' + usertoken,
-                    "Content-Type": 'application/json'
-                },
-            })
-                .then(res => {
-                    //console.log(res.data, 'user details')
-                    let userInfo = res.data.response.records.data;
-                    setuserInfo(userInfo)
-                })
-                .catch(e => {
-                    console.log(`User Details Fetch error ${e}`)
-                });
-        });
-    }
+    
 
     useEffect(() => {
-        fetchProfileDetails()
+        
     }, [])
     useFocusEffect(
         React.useCallback(() => {
-            fetchProfileDetails()
+           
         }, [])
     )
     return (

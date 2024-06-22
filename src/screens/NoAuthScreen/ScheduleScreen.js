@@ -59,39 +59,39 @@ const ScheduleScreen = ({ navigation }) => {
 
     const renderUpcoming = ({ item }) => (
 
-        <View style={{ width: responsiveWidth(89), backgroundColor: '#FFF', padding: 20, borderRadius: 20, marginTop: responsiveHeight(1), marginBottom: responsiveHeight(1), elevation: 5, alignSelf: 'center' }}>
+        <View style={styles.upcomingView}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
                 <Image
                     source={{ uri: item?.therapist?.profile_pic }}
-                    style={{ height: 50, width: 50, borderRadius: 25 }}
+                    style={styles.cardImg}
                 />
                 <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(40), }}>
-                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}>
+                    <Text style={styles.nameText}>
                         {item?.therapist?.name}
                     </Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5) }}>
+                    <Text style={styles.nameSubText2}>
                         Therapist
                     </Text>
                 </View>
-                <TouchableOpacity style={{ marginLeft: responsiveWidth(2), backgroundColor: '#EEF8FF', borderColor: '#417AA4', borderWidth: 1, padding: 10, borderRadius: 20, flexDirection: 'row', justifyContent: 'center' }} onPress={() => navigation.navigate('ChatScreen',{details: item})}>
-                    <Text style={{ fontFamily: 'DMSans-Bold', color: '#2D2D2D', fontSize: responsiveFontSize(1.7) }}>Join Now</Text>
+                <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
+                    <Text style={styles.joinNowText}>Join Now</Text>
                 </TouchableOpacity>
             </View>
-            <View style={{ height: responsiveHeight(5), width: responsiveWidth(80), marginTop: responsiveHeight(2), borderColor: '#E3E3E3', borderWidth: 1, borderRadius: 20, padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
+            <View style={styles.dateTimeView}>
+                <View style={styles.dateView1}>
                     <Image
                         source={dateIcon}
-                        style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
+                        style={styles.datetimeIcon}
                     />
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>{moment(item?.date).format('ddd, D MMMM')}</Text>
+                    <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(40) }}>
+                <View style={styles.dateView2}>
                     <Image
                         source={timeIcon}
-                        style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
+                        style={styles.datetimeIcon}
                     />
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
+                    <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
                 </View>
             </View>
         </View>
@@ -143,32 +143,32 @@ const ScheduleScreen = ({ navigation }) => {
                         />
                     </View>
                     :
-                    <View style={{ width: '99%', backgroundColor: '#FFF', padding: 20, borderRadius: 20, marginTop: responsiveHeight(2), borderColor: '#F4F5F5', borderWidth: 2, }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Rohit Sharma</Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={styles.previousBookingView}>
+                        <View style={styles.previousBooking1stRow}>
+                            <Text style={styles.previousBookingName}>Rohit Sharma</Text>
+                            <View style={styles.previousBookingStatusView}>
                                 <Image
                                     source={GreenTick}
-                                    style={{ height: 20, width: 20, resizeMode: 'contain' }}
+                                    style={styles.previousBookingStatusIcon}
                                 />
-                                <Text style={{ color: '#444343', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-SemiBold', marginLeft: responsiveWidth(1) }}>Completed</Text>
+                                <Text style={styles.previousBookingStatusText}>Completed</Text>
                             </View>
                         </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Order ID :</Text>
-                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>1923659</Text>
+                        <View style={styles.previousBookingContentView}>
+                            <Text style={styles.previousBookingContentHeader}>Order ID :</Text>
+                            <Text style={styles.previousBookingContentValue}>1923659</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Date :</Text>
-                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>24-02-2024, 09:30 PM</Text>
+                        <View style={styles.previousBookingContentView}>
+                            <Text style={styles.previousBookingContentHeader}>Date :</Text>
+                            <Text style={styles.previousBookingContentValue}>24-02-2024, 09:30 PM</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Appointment Time :</Text>
-                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>60 Min</Text>
+                        <View style={styles.previousBookingContentView}>
+                            <Text style={styles.previousBookingContentHeader}>Appointment Time :</Text>
+                            <Text style={styles.previousBookingContentValue}>60 Min</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Rate :</Text>
-                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Rs 1100 for 30 Min</Text>
+                        <View style={styles.previousBookingContentView}>
+                            <Text style={styles.previousBookingContentHeader}>Rate :</Text>
+                            <Text style={styles.previousBookingContentValue}>Rs 1100 for 30 Min</Text>
                         </View>
                         <View style={{ marginTop: responsiveHeight(2) }}>
                             <CustomButton buttonColor={''} label={"Book Again"} onPress={() => { }} />
@@ -194,100 +194,130 @@ const styles = StyleSheet.create({
         padding: 15,
         //marginBottom: responsiveHeight(1)
     },
-    activeButtonView: {
-        backgroundColor: '#ECFCFA',
-        height: responsiveHeight(5),
-        width: responsiveWidth(45),
+    upcomingView: {
+        width: responsiveWidth(89),
+        backgroundColor: '#FFF',
+        padding: 20,
         borderRadius: 20,
-        borderColor: '#87ADA8',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        marginTop: responsiveHeight(1),
+        marginBottom: responsiveHeight(1),
+        elevation: 5,
+        alignSelf: 'center'
     },
-    activeButtonText: {
+    cardImg: {
+        height: 50,
+        width: 50,
+        borderRadius: 25
+    },
+    nameText: {
         color: '#2D2D2D',
-        fontFamily: 'DMSans-SemiBold',
+        fontSize: responsiveFontSize(2),
+        fontFamily: 'DMSans-Bold',
+        marginBottom: 5,
+    },
+    nameSubText2: {
+        color: '#746868',
+        fontFamily: 'DMSans-Regular',
+        fontSize: responsiveFontSize(1.5)
+    },
+    joinNowButton: {
+        marginLeft: responsiveWidth(2),
+        backgroundColor: '#EEF8FF',
+        borderColor: '#417AA4',
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 20,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    joinNowText: {
+        fontFamily: 'DMSans-Bold',
+        color: '#2D2D2D',
         fontSize: responsiveFontSize(1.7)
     },
-    inActiveButtonView: {
-        backgroundColor: '#FFF',
+    dateTimeView: {
         height: responsiveHeight(5),
-        width: responsiveWidth(45),
-        borderRadius: 20,
-        borderColor: '#87ADA8',
+        width: responsiveWidth(80),
+        marginTop: responsiveHeight(2),
+        borderColor: '#E3E3E3',
         borderWidth: 1,
+        borderRadius: 20,
+        padding: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    dateView1: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: responsiveWidth(25)
+    },
+    dateView2: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: responsiveWidth(40)
+    },
+    datetimeIcon: {
+        height: 20,
+        width: 20,
+        resizeMode: 'contain',
+        marginRight: responsiveWidth(2)
+    },
+    dateTimeText: {
+        color: '#444343',
+        fontFamily: 'DMSans-SemiBold',
+        fontSize: responsiveFontSize(1.5)
+    },
+    previousBookingView: {
+        width: '99%',
+        backgroundColor: '#FFF',
+        padding: 20,
+        borderRadius: 20,
+        marginTop: responsiveHeight(2),
+        borderColor: '#F4F5F5',
+        borderWidth: 2,
+    },
+    previousBooking1stRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    previousBookingName: {
+        color: '#2D2D2D',
+        fontSize: responsiveFontSize(2),
+        fontFamily: 'DMSans-Bold'
+    },
+    previousBookingStatusView: {
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'
     },
-    inActiveButtonText: {
+    previousBookingStatusIcon: {
+        height: 20,
+        width: 20,
+        resizeMode: 'contain'
+    },
+    previousBookingStatusText: {
+        color: '#444343',
+        fontSize: responsiveFontSize(1.7),
+        fontFamily: 'DMSans-SemiBold',
+        marginLeft: responsiveWidth(1)
+    },
+    previousBookingContentView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: responsiveHeight(1.5)
+    },
+    previousBookingContentHeader: {
+        color: '#444343',
+        fontFamily: 'DMSans-Medium',
+        fontSize: responsiveFontSize(1.7),
+        marginRight: responsiveWidth(2)
+    },
+    previousBookingContentValue: {
         color: '#746868',
         fontFamily: 'DMSans-Medium',
         fontSize: responsiveFontSize(1.7)
-    },
-    switchStyle: {
-        transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]  // Adjust scale values as needed
-    },
-    activeButtonInsideView: {
-        backgroundColor: '#FFF',
-        height: responsiveHeight(5),
-        width: responsiveWidth(40),
-        borderRadius: 15,
-        borderColor: '#E3E3E3',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    activeButtonInsideText: {
-        color: '#2D2D2D',
-        fontFamily: 'DMSans-SemiBold',
-        fontSize: responsiveFontSize(1.7)
-    },
-    inActiveButtonInsideView: {
-        backgroundColor: '#F4F5F5',
-        height: responsiveHeight(5),
-        width: responsiveWidth(84),
-        borderRadius: 15,
-        borderColor: '#F4F5F5',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    timePicker: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#E3E3E3',
-        borderRadius: 15,
-        padding: 10,
-        width: responsiveWidth(35),
-        justifyContent: 'space-between'
-    },
-    icon: {
-        width: 20,
-        height: 20,
-        resizeMode: 'contain',
-    },
-    timeRangeContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    timeText: {
-        marginRight: 10,
-        fontSize: responsiveFontSize(1.7),
-        color: '#746868'
-    },
-    deleteButton: {
-        // Additional styles may be required
-    },
-    deleteIcon: {
-        width: 24,
-        height: 24,
     }
 
 });

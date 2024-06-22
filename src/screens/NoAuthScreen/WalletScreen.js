@@ -78,23 +78,23 @@ const WalletScreen = ({ navigation }) => {
         // console.log(item)
         return (
             <View style={styles.singleValue}>
-                <View style={{ height: 40, width: 40, borderRadius: 40 / 2, backgroundColor: '#F4F5F5', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.iconView}>
                     <Image
                         source={walletCredit}
-                        style={{ height: 20, width: 20, resizeMode: 'contain' }}
+                        style={styles.iconStyle}
                     />
                 </View>
-                <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(45), }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2), }}>{item.item.remarks}</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7), }}>{moment(item.item.created_at).format('dddd, D MMMM')}</Text>
+                <View style={styles.remarkView}>
+                    <Text style={styles.remarkText}>{item.item.remarks}</Text>
+                    <Text style={styles.remarkDate}>{moment(item.item.created_at).format('dddd, D MMMM')}</Text>
                 </View>
                 {item.item.status == 'credit' ?
-                    <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                        <Text style={{ color: '#19BF1F', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), textAlign: 'right' }}>+ ₹{item.item.amount}</Text>
+                    <View style={styles.remarkAmountView}>
+                        <Text style={[styles.remarkAmount, { color: '#19BF1F', }]}>+ ₹{item.item.amount}</Text>
                     </View>
                     :
-                    <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                        <Text style={{ color: '#E1293B', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), textAlign: 'right' }}>- ₹{item.item.amount}</Text>
+                    <View style={styles.remarkAmountView}>
+                        <Text style={[styles.remarkAmount, { color: '#E1293B', }]}>- ₹{item.item.amount}</Text>
                     </View>
                 }
             </View>
@@ -108,23 +108,23 @@ const WalletScreen = ({ navigation }) => {
                 <View style={{ marginBottom: responsiveHeight(5), alignSelf: 'center', marginTop: responsiveHeight(2) }}>
                     <View style={styles.totalValue}>
 
-                        <View style={{ height: 40, width: 40, borderRadius: 40 / 2, backgroundColor: '#FFF', borderColor: '#E3E3E3', borderWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={styles.transactionIconView}>
                             <Image
                                 source={wallet}
-                                style={{ height: 20, width: 20, resizeMode: 'contain' }}
+                                style={styles.transactionIconStyle}
                             />
                         </View>
-                        <View style={{ flexDirection: 'column', marginLeft: 20, width: responsiveWidth(40), height: responsiveHeight(5), justifyContent: 'space-between' }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), }}>Wallet Balance</Text>
-                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), }}>Available Amount</Text>
+                        <View style={styles.walletTitleView}>
+                            <Text style={styles.walletTitleText}>Wallet Balance</Text>
+                            <Text style={styles.walletTitleSubtext}>Available Amount</Text>
                         </View>
                         <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                            <Text style={{ color: '#444343', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2.5), textAlign: 'right' }}>₹{walletBalance}</Text>
+                            <Text style={styles.walletBalance}>₹{walletBalance}</Text>
                         </View>
                     </View>
                 </View>
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), marginLeft: responsiveWidth(3) }}>Recent Transaction</Text>
-                <View style={{ marginBottom: responsiveHeight(10), alignSelf: 'center' }}>
+                <Text style={styles.transactionHeader}>Recent Transaction</Text>
+                <View style={styles.transactionList}>
                     <FlatList
                         data={WalletTransaction}
                         renderItem={renderHistory}
@@ -172,6 +172,91 @@ const styles = StyleSheet.create({
         //justifyContent: 'center',
         padding: 20,
         borderRadius: 15
+    },
+    transactionIconView: {
+        height: 40,
+        width: 40,
+        borderRadius: 40 / 2,
+        backgroundColor: '#FFF',
+        borderColor: '#E3E3E3',
+        borderWidth: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    transactionIconStyle: {
+        height: 20,
+        width: 20,
+        resizeMode: 'contain'
+    },
+    walletTitleView: {
+        flexDirection: 'column',
+        marginLeft: 20,
+        width: responsiveWidth(40),
+        height: responsiveHeight(5),
+        justifyContent: 'space-between'
+    },
+    walletTitleText: {
+        color: '#444343',
+        fontFamily: 'DMSans-Bold',
+        fontSize: responsiveFontSize(2),
+    },
+    walletTitleSubtext: {
+        color: '#746868',
+        fontFamily: 'DMSans-Regular',
+        fontSize: responsiveFontSize(1.5),
+    },
+    walletBalance: {
+        color: '#444343',
+        fontFamily: 'DMSans-Bold',
+        fontSize: responsiveFontSize(2.5),
+        textAlign: 'right'
+    },
+    iconView: {
+        height: 40,
+        width: 40,
+        borderRadius: 40 / 2,
+        backgroundColor: '#F4F5F5',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    iconStyle: {
+        height: 20,
+        width: 20,
+        resizeMode: 'contain'
+    },
+    remarkView: {
+        flexDirection: 'column',
+        marginLeft: 20,
+        width: responsiveWidth(45),
+    },
+    remarkText: {
+        color: '#444343',
+        fontFamily: 'DMSans-SemiBold',
+        fontSize: responsiveFontSize(2),
+    },
+    remarkDate: {
+        color: '#746868',
+        fontFamily: 'DMSans-Regular',
+        fontSize: responsiveFontSize(1.7),
+    },
+    remarkAmountView: {
+        width: responsiveWidth(20),
+        marginLeft: 10
+    },
+    remarkAmount: {
+        fontFamily: 'DMSans-Regular',
+        fontSize: responsiveFontSize(2),
+        textAlign: 'right'
+    },
+    transactionList: {
+        marginBottom: responsiveHeight(10),
+        alignSelf: 'center'
+    },
+    transactionHeader: {
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold',
+        fontSize: responsiveFontSize(2),
+        marginLeft: responsiveWidth(3)
     }
 
 });

@@ -128,7 +128,7 @@ const TherapistProfile = ({ navigation, route }) => {
     }
 
     const handleSlotSelect = (slot) => {
-        console.log(slot,'selected slot data')
+        console.log(slot, 'selected slot data')
         if (slot.booked_status === 0) {
             setSelectedByUser((prevSelected) => {
                 if (prevSelected.includes(slot)) {
@@ -310,7 +310,7 @@ const TherapistProfile = ({ navigation, route }) => {
             "payment_status": 'paid',
             "order_id": '37866876'
         }
-        navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot:selectedByUser })
+        navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
         // AsyncStorage.getItem('userToken', (err, usertoken) => {
         //     axios.post(`${API_URL}/patient/slot-book`, formData, {
         //         headers: {
@@ -469,20 +469,20 @@ const TherapistProfile = ({ navigation, route }) => {
     }
 
     const renderItem = ({ item }) => (
-        <View style={{ padding: 20, width: responsiveWidth(80), backgroundColor: '#FFF', marginHorizontal: 15, borderRadius: 20, marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2), elevation: 5 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={styles.reviewSectionView}>
+            <View style={styles.reviewSection1st}>
                 <Image
                     source={{ uri: item?.patient?.profile_pic }}
-                    style={{ height: 50, width: 50, borderRadius: 25 }}
+                    style={styles.reviewProfilePic}
                 />
-                <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', marginBottom: 5, }}>{item?.patient?.name}</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(65) }}>
-                        <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', marginRight: 5, fontSize: responsiveFontSize(1.5) }}>{moment(item?.patient?.created_at).format('MMM D, YYYY')}</Text>
+                <View style={styles.reviewSectionDetails}>
+                    <Text style={styles.reviewSectionName}>{item?.patient?.name}</Text>
+                    <View style={styles.reviewSectionDateView}>
+                        <Text style={styles.reviewSectionDateText}>{moment(item?.patient?.created_at).format('MMM D, YYYY')}</Text>
                     </View>
                 </View>
             </View>
-            <View style={{ width: responsiveWidth(25), marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
+            <View style={styles.reviewSectionStarView}>
                 <StarRating
                     disabled={true}
                     maxStars={5}
@@ -493,7 +493,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     starStyle={{ marginHorizontal: responsiveWidth(1) }}
                 />
             </View>
-            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>{item?.review}</Text>
+            <Text style={styles.reviewSectionStarText}>{item?.review}</Text>
         </View>
     );
 
@@ -512,11 +512,11 @@ const TherapistProfile = ({ navigation, route }) => {
                 <View style={{ alignSelf: 'center', marginTop: responsiveHeight(2) }}>
 
                     <View style={styles.totalValue}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                            <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), }}>
+                        <View style={styles.totalValue1stSection}>
+                            <View style={styles.totalValueProfileView}>
                                 <Image
                                     source={{ uri: profileDetails?.user?.profile_pic }}
-                                    style={{ height: 100, width: 90, borderRadius: 15, resizeMode: 'contain', marginBottom: responsiveHeight(1) }}
+                                    style={styles.totalValueProfilePic}
                                 />
                                 <StarRating
                                     disabled={true}
@@ -525,47 +525,47 @@ const TherapistProfile = ({ navigation, route }) => {
                                     selectedStar={(rating) => setStarCount(rating)}
                                     fullStarColor={'#FFCB45'}
                                     starSize={12}
-                                    starStyle={{ marginHorizontal: responsiveWidth(0.5), marginBottom: responsiveHeight(1) }}
+                                    starStyle={styles.starStyle}
                                 />
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>{profileDetails?.review_counter} Reviews</Text>
+                                <Text style={styles.reviewCount}>{profileDetails?.review_counter} Reviews</Text>
                             </View>
-                            <View style={{ flexDirection: 'column', width: responsiveWidth(47), height: responsiveHeight(10) }}>
-                                <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginBottom: responsiveHeight(1) }}>{profileDetails?.user?.name}</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>{profileDetails?.qualification_list}</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>{profileDetails?.experience} Year Experience</Text>
-                                <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Medium', marginBottom: responsiveHeight(1) }}>Language : <Text style={{ fontSize: responsiveFontSize(1.7), color: '#959595', fontFamily: 'DMSans-Regular', }}>{profileDetails?.languages_list}</Text></Text>
+                            <View style={styles.totalValuedetailsView}>
+                                <Text style={styles.totalValueDetailsName}>{profileDetails?.user?.name}</Text>
+                                <Text style={styles.totalValueDetails}>{profileDetails?.qualification_list}</Text>
+                                <Text style={styles.totalValueDetails}>{profileDetails?.experience} Year Experience</Text>
+                                <Text style={styles.totalValueDetails}>Language : <Text style={styles.totalValueDetailsLan}>{profileDetails?.languages_list}</Text></Text>
                             </View>
                             <View style={{ width: responsiveWidth(6), }}>
                                 {profileDetails?.wishlistcount == 'yes' ?
                                     <TouchableOpacity onPress={() => bookmarkedToggle(profileDetails?.user_id)}>
                                         <Image
                                             source={bookmarkedFill}
-                                            style={{ height: 25, width: 25 }}
+                                            style={styles.iconStyle}
                                         />
                                     </TouchableOpacity>
                                     :
                                     <TouchableOpacity onPress={() => bookmarkedToggle(profileDetails?.user_id)}>
                                         <Image
                                             source={bookmarkedNotFill}
-                                            style={{ height: 25, width: 25 }}
+                                            style={styles.iconStyle}
                                         />
                                     </TouchableOpacity>
                                 }
                             </View>
                         </View>
-                        <View style={{ height: responsiveHeight(5), width: responsiveWidth(85), marginTop: responsiveHeight(2), backgroundColor: '#F4F5F5', borderRadius: 10, padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.5) }}>₹{profileDetails?.rate} for 30 Min Booking</Text>
+                        <View style={styles.profilebooking}>
+                            <View style={styles.profilebookingRateView}>
+                                <Text style={styles.profilebookingText}>₹{profileDetails?.rate} for 30 Min Booking</Text>
                             </View>
-                            <View style={{ height: '80%', width: 1, backgroundColor: '#E3E3E3', marginLeft: 5, marginRight: 5 }} />
-                            <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
+                            <View style={styles.varticleLine} />
+                            <View style={styles.profilebookingView}>
 
-                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.5) }}>Session Done - {profileDetails?.session_done}</Text>
+                                <Text style={styles.profilebookingText}>Session Done - {profileDetails?.session_done}</Text>
                             </View>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2) }}>
-                        <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Select Date</Text>
+                        <Text style={styles.headerText}>Select Date</Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             {/* <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>View Full Calender</Text> */}
                         </View>
@@ -623,16 +623,16 @@ const TherapistProfile = ({ navigation, route }) => {
                     </View>
                 </ScrollView>
                 <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2) }}>
-                        <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Select Time</Text>
+                    <View style={styles.selectDateView}>
+                        <Text style={styles.headerText}>Select Time</Text>
                     </View>
-                    <View style={{ height: responsiveHeight(8), width: responsiveWidth(90), backgroundColor: '#519ED8', borderRadius: 15, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ color: '#FFF', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(2) }}>We recommend booking one hour (two continuous slots)</Text>
+                    <View style={styles.warningView}>
+                        <Text style={styles.warningText}>We recommend booking one hour (two continuous slots)</Text>
                     </View>
-                    <View style={{ width: responsiveWidth(90), marginTop: responsiveHeight(2), flexDirection: 'row', flexWrap: 'wrap' }}>
+                    <View style={styles.availableSlotView}>
                         {therapistAvailability.length === 0 ? (
-                            <View style={{ height: responsiveHeight(5), width: responsiveWidth(90), padding: 10, backgroundColor: '#FFFFFF', borderColor: '#E1293B', borderWidth: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10, alignSelf: 'center' }}>
-                                <Text style={{ color: '#E1293B', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>No slots available for this date</Text>
+                            <View style={styles.noSlotView}>
+                                <Text style={styles.noSlotText}>No slots available for this date</Text>
                             </View>
                         ) : (
                             therapistAvailability.map((slot, index) => {
@@ -656,7 +656,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                             borderWidth: 1,
                                         }}
                                     >
-                                        <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>
+                                        <Text style={styles.availableText}>
                                             {moment(slot.slot_start_time, 'HH:mm:ss').format('h:mm A')} - {moment(slot.slot_end_time, 'HH:mm:ss').format('h:mm A')}
                                         </Text>
                                     </TouchableOpacity>
@@ -688,7 +688,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 </View> */}
                 <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
                     <View style={styles.totalValue}>
-                        <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Select Mode</Text>
+                        <Text style={styles.modeText}>Select Mode</Text>
                         {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
                             <View style={{ height: responsiveHeight(11), width: responsiveWidth(25), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, padding: 5 }}>
                                 <Image
@@ -744,17 +744,17 @@ const TherapistProfile = ({ navigation, route }) => {
                         </View>
                     </View>
                 </View>
-                <View style={{ padding: responsiveWidth(2), flexDirection: 'row', width: responsiveWidth(90) }}>
+                <View style={styles.checkboxView}>
                     <CheckBox
                         disabled={false}
                         value={toggleCheckBox}
                         onValueChange={(newValue) => setToggleCheckBox(newValue)}
                     />
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>I give my consent to the app and therapists to access my past medical history available on the platform </Text>
+                    <Text style={styles.checkboxText}>I give my consent to the app and therapists to access my past medical history available on the platform </Text>
                 </View>
                 <View style={{ padding: responsiveWidth(3), }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
-                        <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Reviews</Text>
+                        <Text style={styles.headerText}>Reviews</Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             {/* <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>See All</Text> */}
                         </View>
@@ -808,30 +808,149 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         elevation: 5
     },
-    switchStyle: {
-        transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]  // Adjust scale values as needed
+    totalValue1stSection: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
-    totalValue2: {
-        width: responsiveWidth(89),
-        //height: responsiveHeight(28),
-        backgroundColor: '#fff',
+    totalValueProfileView: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: responsiveWidth(25),
+    },
+    totalValueProfilePic: {
+        height: 100,
+        width: 90,
         borderRadius: 15,
-        borderColor: '#E3E3E3',
-        borderWidth: 1,
+        resizeMode: 'contain',
+        marginBottom: responsiveHeight(1)
+    },
+    starStyle: {
+        marginHorizontal: responsiveWidth(0.5),
+        marginBottom: responsiveHeight(1)
+    },
+    reviewCount: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#746868',
+        fontFamily: 'DMSans-Regular',
+    },
+    totalValuedetailsView: {
+        flexDirection: 'column',
+        width: responsiveWidth(47),
+        height: responsiveHeight(10)
+    },
+    totalValueDetailsName: {
+        fontSize: responsiveFontSize(2),
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold',
+        marginBottom: responsiveHeight(1)
+    },
+    totalValueDetails: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#746868',
+        fontFamily: 'DMSans-Medium',
+        marginBottom: responsiveHeight(1)
+    },
+    iconStyle: {
+        height: 25,
+        width: 25
+    },
+    totalValueDetailsLan: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#959595',
+        fontFamily: 'DMSans-Regular',
+    },
+    profilebooking: {
+        height: responsiveHeight(5),
+        width: responsiveWidth(85),
         marginTop: responsiveHeight(2),
+        backgroundColor: '#F4F5F5',
+        borderRadius: 10,
+        padding: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    profilebookingRateView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    profilebookingText: {
+        color: '#444343',
+        fontFamily: 'DMSans-Medium',
+        fontSize: responsiveFontSize(1.5)
+    },
+    varticleLine: {
+        height: '80%',
+        width: 1,
+        backgroundColor: '#E3E3E3',
+        marginLeft: 5,
+        marginRight: 5
+    },
+    profilebookingView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: responsiveWidth(35)
+    },
+    headerText: {
+        fontSize: responsiveFontSize(2),
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold',
+    },
+    warningView: {
+        height: responsiveHeight(8),
+        width: responsiveWidth(90),
+        backgroundColor: '#519ED8',
+        borderRadius: 15,
+        justifyContent: 'center',
+        padding: 10
+    },
+    warningText: {
+        color: '#FFF',
+        fontFamily: 'DMSans-Medium',
+        fontSize: responsiveFontSize(2)
+    },
+    availableSlotView: {
+        width: responsiveWidth(90),
+        marginTop: responsiveHeight(2),
+        flexDirection: 'row',
+        flexWrap: 'wrap'
+    },
+    noSlotView: {
+        height: responsiveHeight(5),
+        width: responsiveWidth(90),
+        padding: 10,
+        backgroundColor: '#FFFFFF',
+        borderColor: '#E1293B',
+        borderWidth: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
+        marginRight: 10,
+        marginBottom: 10,
         alignSelf: 'center'
     },
-    buttonwrapper: {
-        paddingHorizontal: 25,
-        bottom: 5,
+    noSlotText: {
+        color: '#E1293B',
+        fontFamily: 'DMSans-Bold',
+        fontSize: responsiveFontSize(1.7)
+    },
+    availableText: {
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold',
+        fontSize: responsiveFontSize(1.7)
+    },
+    selectDateView: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        borderTopColor: '#E3E3E3',
-        borderTopWidth: 1,
-        paddingTop: 5,
-        position: 'absolute',
-        width: responsiveWidth(100)
+        marginBottom: responsiveHeight(2),
+        marginTop: responsiveHeight(2)
+    },
+    modeText: {
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold',
+        fontSize: responsiveFontSize(1.7)
     },
     //date loop
     dateView: {
@@ -899,5 +1018,67 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         alignSelf: 'center',
     },
+    checkboxView: {
+        padding: responsiveWidth(2),
+        flexDirection: 'row',
+        width: responsiveWidth(90)
+    },
+    checkboxText: {
+        color: '#746868',
+        fontFamily: 'DMSans-Regular',
+        fontSize: responsiveFontSize(1.7)
+    },
+    //review section
+    reviewSectionView: {
+        padding: 20,
+        width: responsiveWidth(80),
+        backgroundColor: '#FFF',
+        marginHorizontal: 15,
+        borderRadius: 20,
+        marginTop: responsiveHeight(2),
+        marginBottom: responsiveHeight(2),
+        elevation: 5
+    },
+    reviewSection1st: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    reviewProfilePic: {
+        height: 50,
+        width: 50,
+        borderRadius: 25
+    },
+    reviewSectionDetails: {
+        flexDirection: 'column',
+        marginLeft: responsiveWidth(3)
+    },
+    reviewSectionName: {
+        color: '#2D2D2D',
+        fontSize: responsiveFontSize(2),
+        fontFamily: 'DMSans-Bold',
+        marginBottom: 5,
+    },
+    reviewSectionDateView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: responsiveWidth(65)
+    },
+    reviewSectionDateText: {
+        color: '#746868',
+        fontFamily: 'DMSans-Regular',
+        marginRight: 5,
+        fontSize: responsiveFontSize(1.5)
+    },
+    reviewSectionStarView: {
+        width: responsiveWidth(25),
+        marginTop: responsiveHeight(2),
+        marginBottom: responsiveHeight(2)
+    },
+    reviewSectionStarText: {
+        color: '#746868',
+        fontFamily: 'DMSans-Regular',
+        fontSize: responsiveFontSize(1.7)
+    }
 
 });
