@@ -63,20 +63,20 @@ const TherapistProfile = ({ navigation, route }) => {
         if (day == 'Monday') {
             givendate = 'monday'
         } else if (day == 'Tuesday') {
-            givenday = 'tuesday'
+            givendate = 'tuesday'
         } else if (day == 'Wednesday') {
-            givenday = 'wednessday'
+            givendate = 'wednessday'
         } else if (day == 'Thursday') {
-            givenday = 'thursday'
+            givendate = 'thursday'
         } else if (day == 'Friday') {
-            givenday = 'friday'
+            givendate = 'friday'
         } else if (day == 'Saturday') {
-            givenday = 'saturday'
+            givendate = 'saturday'
         } else if (day == 'Sunday') {
-            givenday = 'sunday'
+            givendate = 'sunday'
         }
         const option = {
-            "day": givenday,
+            "day": givendate,
             "date": date,
             "therapist_id": route?.params?.therapistId,
             "booking_type": "paid"
@@ -159,7 +159,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 .then(res => {
                     console.log(JSON.stringify(res.data.data), 'response from therapist data')
                     if (res.data.response == true) {
-                        setProfileDetails(res.data.data)
+                        setProfileDetails(res.data.data[0])
                         setIsLoading(false);
                     } else {
                         console.log('not okk')
@@ -564,7 +564,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             </View>
                         </View>
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2) }}>
+                    <View style={styles.selectedDateSection}>
                         <Text style={styles.headerText}>Select Date</Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             {/* <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>View Full Calender</Text> */}
@@ -686,7 +686,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         </View>
                     </View>
                 </View> */}
-                <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
+                <View style={styles.selectedItemSection}>
                     <View style={styles.totalValue}>
                         <Text style={styles.modeText}>Select Mode</Text>
                         {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
@@ -752,15 +752,17 @@ const TherapistProfile = ({ navigation, route }) => {
                     />
                     <Text style={styles.checkboxText}>I give my consent to the app and therapists to access my past medical history available on the platform </Text>
                 </View>
-                <View style={{ padding: responsiveWidth(3), }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
-                        <Text style={styles.headerText}>Reviews</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            {/* <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>See All</Text> */}
+                {allReview.length !== 0 ?
+                    <View style={{ padding: responsiveWidth(3), }}>
+                        <View style={styles.reviewSection}>
+                            <Text style={styles.headerText}>Reviews</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                {/* <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>See All</Text> */}
+                            </View>
                         </View>
                     </View>
-                </View>
-                <View style={{ flexDirection: 'row', marginBottom: responsiveHeight(2) }}>
+                    : <></>}
+                <View style={styles.reviewSectionList}>
                     <FlatList
                         data={allReview}
                         renderItem={renderItem}
@@ -1079,6 +1081,26 @@ const styles = StyleSheet.create({
         color: '#746868',
         fontFamily: 'DMSans-Regular',
         fontSize: responsiveFontSize(1.7)
+    },
+    reviewSection: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    reviewSectionList: {
+        flexDirection: 'row',
+        marginBottom: responsiveHeight(2)
+    },
+    selectedItemSection: {
+        padding: responsiveWidth(2),
+        alignSelf: 'center'
+    },
+    selectedDateSection: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: responsiveHeight(2),
+        marginTop: responsiveHeight(2)
     }
 
 });

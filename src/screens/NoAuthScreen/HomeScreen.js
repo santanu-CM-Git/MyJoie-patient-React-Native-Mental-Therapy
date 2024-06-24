@@ -56,35 +56,23 @@ export default function HomeScreen({ navigation }) {
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [therapistData, setTherapistData] = React.useState([])
   const [upcomingBooking, setUpcomingBooking] = useState([])
+  const [previousBooking, setPreviousBooking] = useState([])
   const [starCount, setStarCount] = useState(4)
   const [activeSlide, setActiveSlide] = React.useState(0);
-  const [bannerData, setBannerData] = useState([{
-    title: "Aenean leo",
-    description: "Ut tincidunt tincidunt erat. Sed cursus Donec quam felis, ultricieum quis, sem.",
-    imgUrl: "https://picsum.photos/id/11/200/300",
-  },
-  {
-    title: "In turpis",
-    description: "Aenean ut eros et nisl sagittis vestibulum ante. Curabitur at lacus ac velit ornare lobortis. ",
-    imgUrl: "https://picsum.photos/id/10/200/300",
-  },
-  {
-    title: "Lorem Ipsum",
-    description: "Phasellus ullamcorper ipsum rutrum nunc. etus, bibendum sed, posuere ac, mattis non, nunc.",
-    imgUrl: "https://picsum.photos/id/12/200/300",
-  },])
+  const [bannerData, setBannerData] = useState([])
+  const [customerSpeaksData, setCustomerSpeaksData] = useState([])
 
   const CarouselCardItem = ({ item, index }) => {
     //console.log(item, 'banner itemmm')
     return (
       <View style={styles.bannaerContainer}>
         <Image
-          source={{ uri: item.imgUrl }}
+          source={{ uri: item.banner_image }}
           style={styles.bannerBg}
         />
         <View style={styles.textWrap}>
-          {item?.title && <Text style={styles.bannerText}>Looking For Specialist Therapist?</Text>}
-          {item?.description && <Text style={styles.bannerSubText} numberOfLines={4}>Schedule an appointment with our top Therapist</Text>}
+          {item?.banner_title && <Text style={styles.bannerText}>{item?.banner_title}</Text>}
+          {item?.banner_description && <Text style={styles.bannerSubText} numberOfLines={4}>{item?.banner_description}</Text>}
           <View style={styles.bannerButtonView}>
             <Text style={styles.bannerButtonText}>Call Us Today!</Text>
           </View>
@@ -126,6 +114,72 @@ export default function HomeScreen({ navigation }) {
       return unsubscribe;
     }
   }, [])
+
+  const fetchBanner = () => {
+    axios.get(`${API_URL}/patient/banners`, {
+      headers: {
+        "Content-Type": 'application/json'
+      },
+    })
+      .then(res => {
+        //console.log(res.data,'user details')
+        let banner = res.data.data;
+        console.log(banner, 'banner data')
+        setBannerData(banner)
+        setIsLoading(false);
+      })
+      .catch(e => {
+        console.log(`Login error ${e}`)
+        console.log(e.response?.data?.message)
+        setIsLoading(false);
+      });
+  }
+
+  const fetchCustomerSpeaks = () => {
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+      axios.post(`${API_URL}/patient/good-reviews`, {}, {
+        headers: {
+          "Authorization": `Bearer ${usertoken}`,
+          "Content-Type": 'application/json'
+        },
+      })
+        .then(res => {
+          //console.log(res.data,'user details')
+          let customerSpeak = res.data.data;
+          console.log(customerSpeak, 'customer speaks data')
+          setCustomerSpeaksData(customerSpeak)
+          setIsLoading(false);
+        })
+        .catch(e => {
+          console.log(`Login error ${e}`)
+          console.log(e.response?.data?.message)
+          setIsLoading(false);
+        });
+    });
+  }
+
+  const fetchPreviousBooking = () => {
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+      axios.post(`${API_URL}/patient/previous-slot`, {}, {
+        headers: {
+          "Authorization": `Bearer ${usertoken}`,
+          "Content-Type": 'application/json'
+        },
+      })
+        .then(res => {
+          //console.log(res.data,'user details')
+          let previousBooking = res.data.data;
+          console.log(previousBooking, 'previous Booking data')
+          setPreviousBooking(previousBooking)
+          setIsLoading(false);
+        })
+        .catch(e => {
+          console.log(`Login error ${e}`)
+          console.log(e.response?.data?.message)
+          setIsLoading(false);
+        });
+    });
+  }
 
   const fetchUpcomingBooking = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -194,7 +248,7 @@ export default function HomeScreen({ navigation }) {
   }
   const renderTherapistItem = ({ item }) => (
     <View style={styles.therapistCardView}>
-      <View style={{ flexDirection: 'row', padding: 20, }}>
+      <View style={{ flexDirection: 'row', padding: 15, }}>
 
         <Image
           source={{ uri: item?.user?.profile_pic }}
@@ -273,16 +327,111 @@ export default function HomeScreen({ navigation }) {
     </View>
   )
 
+  const renderPreviousBooking = ({ item }) => (
+    <View style={styles.previousTherapistView}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Image
+          source={{uri: item?.therapist?.profile_pic}}
+          style={styles.cardImg}
+        />
+        <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
+          <Text style={styles.nameText}>{item?.therapist?.name}</Text>
+          {/* <Text style={styles.namesubText}>Patient</Text> */}
+          <View style={styles.ratingView}>
+            <Text style={styles.namesubText}>MBBS</Text>
+            <StarRating
+              disabled={true}
+              maxStars={5}
+              rating={item?.therapist_details?.display_rating}
+              selectedStar={(rating) => setStarCount(rating)}
+              fullStarColor={'#FFCB45'}
+              starSize={15}
+              starStyle={{ marginHorizontal: responsiveWidth(1) }}
+            />
+          </View>
+        </View>
+
+      </View>
+      <View
+        style={styles.horizontalLine}
+      />
+      <Text style={styles.bookingDateText}>Booking Date</Text>
+      <View style={styles.dateTimeSection2}>
+        <View style={[styles.dateTimeHalfSection,{ width: responsiveWidth(25)}]}>
+          <Image
+            source={dateIcon}
+            style={styles.datetimeIcon}
+          />
+          <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
+        </View>
+        {/* <View
+          style={styles.verticalLine}
+        /> */}
+        <View style={[styles.dateTimeHalfSection,{ width: responsiveWidth(45)}]}>
+          <Image
+            source={timeIcon}
+            style={styles.datetimeIcon}
+          />
+          <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
+        </View>
+      </View>
+      <View style={{ marginTop: responsiveHeight(1) }}>
+        <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id })}} />
+      </View>
+    </View>
+  )
+
+  const renderCustomerSpeaks = ({ item }) => (
+    <View style={styles.customerSpeaksView}>
+      <View style={styles.qouteImgView}>
+        <Image
+          source={qouteImg}
+          style={{ height: 20, width: 20, }}
+        />
+      </View>
+      <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2), }}>
+        <Text style={styles.quoteText}>
+          {item?.review}
+        </Text>
+      </View>
+      <View style={styles.quotepersonView}>
+        <Image
+          source={{ uri: item?.patient?.profile_pic }}
+          style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
+        />
+        <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
+        <View
+          style={styles.verticalLine}
+        />
+        <StarRating
+          disabled={true}
+          maxStars={5}
+          rating={item?.star}
+          selectedStar={(rating) => setStarCount(rating)}
+          fullStarColor={'#FFCB45'}
+          starSize={15}
+          starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
+        />
+      </View>
+    </View>
+  )
+
 
   useEffect(() => {
+    fetchBanner()
     fetchAllTherapist();
     fetchUpcomingBooking()
+    fetchPreviousBooking()
+    fetchCustomerSpeaks()
   }, [])
 
   useFocusEffect(
     React.useCallback(() => {
+      fetchBanner()
       fetchAllTherapist()
       fetchUpcomingBooking()
+      fetchPreviousBooking()
+      fetchCustomerSpeaks()
     }, [])
   )
 
@@ -294,7 +443,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.Container}>
-      <CustomHeader commingFrom={'Home'} onPress={() => navigation.navigate('Notification')} onPressProfile={() => navigation.navigate('Profile')} />
+      <CustomHeader commingFrom={'Home'} onPressProfile={() => navigation.navigate('Profile')} />
       <ScrollView>
         <View style={{ marginBottom: 10 }}>
           <View style={styles.carouselView}>
@@ -334,11 +483,11 @@ export default function HomeScreen({ navigation }) {
           </View>
           <View style={styles.sectionHeaderView}>
             <Text style={styles.sectionHeaderText}>Upcoming Appointment</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('ScheduleScreen')}>
+            <TouchableOpacity onPress={() => navigation.navigate('ScheduleScreen', { activeTab: 'Upcoming' })}>
               <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
           </View>
-          {upcomingBooking.length != '0' ?
+          {upcomingBooking.length !== 0 ?
             <FlatList
               data={upcomingBooking}
               renderItem={renderUpcomingBooking}
@@ -362,51 +511,6 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
           </View>
-          {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={{ paddingVertical: 10, flexDirection: 'row' }}>
-              <View style={styles.therapistCardView}>
-                <View style={{ flexDirection: 'row', padding: 20, }}>
-
-                  <Image
-                    source={userPhoto}
-                    style={styles.cardImg}
-                  />
-                  <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                    <Text style={styles.nameText}>
-                      Jennifer Kourtney
-                    </Text>
-                    <Text style={styles.nameSubText2}>
-                      Therapist
-                    </Text>
-                    <View style={{ marginBottom: 5, width: responsiveWidth(30), }}>
-                      <StarRating
-                        disabled={true}
-                        maxStars={5}
-                        rating={starCount}
-                        selectedStar={(rating) => setStarCount(rating)}
-                        fullStarColor={'#FFCB45'}
-                        starSize={20}
-                      //starStyle={{ marginHorizontal: responsiveWidth(2) }}
-                      />
-                    </View>
-                    <Text style={styles.nameSubText3}>
-                      M.PHIL ( Clinical Psycology)
-                    </Text>
-                    <Text style={styles.nameSubText2}>
-                      1 Year Experience
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.bookapointView}>
-                  <Image
-                    source={dateIcon}
-                    style={{ height: 20, width: 20, }}
-                  />
-                  <Text style={styles.bookapointText}>Book Appointment</Text>
-                </View>
-              </View>
-            </View>
-          </ScrollView> */}
           <View style={{ paddingVertical: 10 }}>
             <FlatList
               data={therapistData}
@@ -422,106 +526,59 @@ export default function HomeScreen({ navigation }) {
               )}
             />
           </View>
-
-          <View style={{ marginTop: responsiveHeight(3) }}>
-            <Image
-              source={require('../../assets/images/freeconsultation.png')}
-              style={styles.freebannerImg}
+          <TouchableOpacity onPress={() => navigation.navigate('FreeTherapistList')}>
+            <View style={styles.freebannerContainer}>
+              <Image
+                source={require('../../assets/images/freeconsultation.png')}
+                style={styles.freebannerImg}
+              />
+            </View>
+          </TouchableOpacity>
+          {previousBooking.length !== 0 ?
+            <View style={styles.sectionHeaderView}>
+              <Text style={styles.sectionHeaderText}>Previous Therapists</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('ScheduleScreen', { activeTab: 'Previous' })}>
+                <Text style={styles.seeallText}>See All</Text>
+              </TouchableOpacity>
+            </View> : <></>}
+          <View style={{ paddingVertical: 10 }}>
+            <FlatList
+              data={previousBooking}
+              renderItem={renderPreviousBooking}
+              //keyExtractor={(item) => item.id.toString()}
+              maxToRenderPerBatch={10}
+              windowSize={5}
+              initialNumToRender={10}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              getItemLayout={(previousBooking, index) => (
+                { length: 50, offset: 50 * index, index }
+              )}
             />
           </View>
-          <View style={styles.sectionHeaderView}>
-            <Text style={styles.sectionHeaderText}>Previous Therapists</Text>
-            <Text style={styles.seeallText}>See All</Text>
-          </View>
-          <View style={styles.previousTherapistView}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {customerSpeaksData.length !== 0 ?
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(2), }}>
+              <Text style={styles.sectionHeaderText}>Customer Speaks</Text>
               <Image
-                source={userPhoto}
-                style={styles.cardImg}
+                source={yellowStarImg}
+                style={{ height: 20, width: 20 }}
               />
-              <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-                <Text style={styles.nameText}> Diptamoy Saha</Text>
-                <Text style={styles.namesubText}>Patient</Text>
-                <View style={styles.ratingView}>
-                  <Text style={styles.namesubText}>MBBS</Text>
-                  <StarRating
-                    disabled={true}
-                    maxStars={5}
-                    rating={starCount}
-                    selectedStar={(rating) => setStarCount(rating)}
-                    fullStarColor={'#FFCB45'}
-                    starSize={15}
-                    starStyle={{ marginHorizontal: responsiveWidth(1) }}
-                  />
-                </View>
-              </View>
-
             </View>
-            <View
-              style={styles.horizontalLine}
+            : <></>}
+          <View style={{ paddingVertical: 10 }}>
+            <FlatList
+              data={customerSpeaksData}
+              renderItem={renderCustomerSpeaks}
+              //keyExtractor={(item) => item.id.toString()}
+              maxToRenderPerBatch={10}
+              windowSize={5}
+              initialNumToRender={10}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              getItemLayout={(customerSpeaksData, index) => (
+                { length: 50, offset: 50 * index, index }
+              )}
             />
-            <Text style={styles.bookingDateText}>Booking Date</Text>
-            <View style={styles.dateTimeSection2}>
-              <View style={styles.dateTimeHalfSection}>
-                <Image
-                  source={dateIcon}
-                  style={styles.datetimeIcon}
-                />
-                <Text style={styles.dateTimeText}>Monday, 26 April</Text>
-              </View>
-              <View
-                style={styles.verticalLine}
-              />
-              <View style={styles.dateTimeHalfSection}>
-                <Image
-                  source={timeIcon}
-                  style={styles.datetimeIcon}
-                />
-                <Text style={styles.dateTimeText}>09:00 PM</Text>
-              </View>
-            </View>
-            <View style={{ marginTop: responsiveHeight(1) }}>
-              <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { }} />
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(2), }}>
-            <Text style={styles.sectionHeaderText}>Customer Speaks</Text>
-            <Image
-              source={yellowStarImg}
-              style={{ height: 20, width: 20 }}
-            />
-          </View>
-          <View style={styles.customerSpeaksView}>
-            <View style={styles.qouteImgView}>
-              <Image
-                source={qouteImg}
-                style={{ height: 20, width: 20, }}
-              />
-            </View>
-            <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2), }}>
-              <Text style={styles.quoteText}>
-                Reliable and trustworthy. They have earned my trust and loyalty. This company has consistently demonstrated reliability and trustworthiness.
-              </Text>
-            </View>
-            <View style={styles.quotepersonView}>
-              <Image
-                source={userPhoto}
-                style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
-              />
-              <Text style={styles.quotepersonName}>Darcel Ballentine</Text>
-              <View
-                style={styles.verticalLine}
-              />
-              <StarRating
-                disabled={true}
-                maxStars={5}
-                rating={starCount}
-                selectedStar={(rating) => setStarCount(rating)}
-                fullStarColor={'#FFCB45'}
-                starSize={15}
-                starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
-              />
-            </View>
           </View>
         </View>
       </ScrollView>
@@ -742,26 +799,32 @@ const styles = StyleSheet.create({
   },
   bookapointText: {
     color: '#444343',
-    fontFamily: 'DMSans-Bold',
-    fontSize: responsiveFontSize(2),
+    fontFamily: 'DMSans-SemiBold',
+    fontSize: responsiveFontSize(1.7),
     textAlign: 'center',
     marginLeft: responsiveWidth(2)
   },
+  freebannerContainer: {
+    marginTop: responsiveHeight(3),
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   freebannerImg: {
-    height: responsiveHeight(20),
-    width: '92%',
-    alignSelf: 'center',
+    height: responsiveHeight(20), // Adjust height based on desired aspect ratio
+    width: responsiveWidth(92),   // 92% of the screen width
     borderRadius: 10,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
   previousTherapistView: {
     height: responsiveHeight(30),
-    width: '92%',
+    width: '90%',
     backgroundColor: '#FFF',
     marginHorizontal: 15,
-    padding: 20,
+    padding: 15,
     borderRadius: 20,
     marginTop: responsiveHeight(2),
+    marginBottom: responsiveHeight(1),
     elevation: 5
   },
   ratingView: {
@@ -792,7 +855,7 @@ const styles = StyleSheet.create({
   },
   dateTimeSection2: {
     height: responsiveHeight(5),
-    width: responsiveWidth(80),
+    width: responsiveWidth(90),
     marginTop: responsiveHeight(1),
     flexDirection: 'row',
     alignItems: 'center',
@@ -801,7 +864,6 @@ const styles = StyleSheet.create({
   dateTimeHalfSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: responsiveWidth(35)
   },
   customerSpeaksView: {
     padding: 20,
@@ -810,6 +872,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     borderRadius: 20,
     marginTop: responsiveHeight(3),
+    marginBottom: responsiveHeight(1),
     elevation: 5
   },
   qouteImgView: {

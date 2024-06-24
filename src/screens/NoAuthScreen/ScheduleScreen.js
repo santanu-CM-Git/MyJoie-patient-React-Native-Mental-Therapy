@@ -4,7 +4,7 @@ import CustomHeader from '../../components/CustomHeader'
 import CustomButton from '../../components/CustomButton';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { ArrowGratter, GreenTick, Payment, dateIcon, deleteImg, plus, timeIcon, userPhoto } from '../../utils/Images'
+import { ArrowGratter, GreenTick,YellowTck,RedCross, Payment, dateIcon, deleteImg, plus, timeIcon, userPhoto } from '../../utils/Images'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -19,9 +19,10 @@ import axios from 'axios';
 import { API_URL } from '@env'
 
 
-const ScheduleScreen = ({ navigation }) => {
+const ScheduleScreen = ({ navigation, route }) => {
 
     const [activeTab, setActiveTab] = useState('Upcoming')
+    const [activeButtonNo, setActiveButtonNo] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
     const [upcomingBooking, setUpcomingBooking] = useState([])
     const [previousBooking, setPreviousBooking] = useState([])
@@ -47,13 +48,45 @@ const ScheduleScreen = ({ navigation }) => {
                 });
         });
     }
+    const fetchPreviousBooking = () => {
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            axios.post(`${API_URL}/patient/previous-slot`, {}, {
+                headers: {
+                    "Authorization": `Bearer ${usertoken}`,
+                    "Content-Type": 'application/json'
+                },
+            })
+                .then(res => {
+                    //console.log(res.data,'user details')
+                    let previousBooking = res.data.data;
+                    console.log(previousBooking, 'previous Booking data')
+                    setPreviousBooking(previousBooking)
+                    setIsLoading(false);
+                })
+                .catch(e => {
+                    console.log(`Login error ${e}`)
+                    console.log(e.response?.data?.message)
+                    setIsLoading(false);
+                });
+        });
+    }
 
     useEffect(() => {
+        console.log(route?.params?.activeTab, 'active tabbbb')
+        if (route?.params?.activeTab == 'Upcoming') {
+            setActiveTab('Upcoming')
+            setActiveButtonNo(0)
+        } else {
+            setActiveTab('Previous')
+            setActiveButtonNo(1)
+        }
         fetchUpcomingBooking();
+        fetchPreviousBooking();
     }, [])
     useFocusEffect(
         React.useCallback(() => {
-            fetchUpcomingBooking()
+            fetchUpcomingBooking();
+            fetchPreviousBooking();
         }, [])
     )
 
@@ -97,6 +130,47 @@ const ScheduleScreen = ({ navigation }) => {
         </View>
     )
 
+    const renderPrevious = ({ item }) => (
+        <View style={styles.previousBookingView}>
+            <View style={styles.previousBooking1stRow}>
+                <Text style={styles.previousBookingName}>{item?.therapist?.name}</Text>
+                <View style={styles.previousBookingStatusView}>
+                    <Image
+                       source={
+                        item?.status === 'completed' ? GreenTick :
+                        item?.status === 'scheduled' ? YellowTick :
+                        item?.status === 'cancel' ? RedCross :
+                        null // You can set a default image or handle the null case appropriately
+                      }
+                        style={styles.previousBookingStatusIcon}
+                    />
+                    <Text style={styles.previousBookingStatusText}>
+                        {item?.status === 'completed' ? 'Completed' : item?.status === 'cancel' ? 'Cancel' : 'Scheduled'}
+                    </Text>
+                </View>
+            </View>
+            <View style={styles.previousBookingContentView}>
+                <Text style={styles.previousBookingContentHeader}>Order ID :</Text>
+                <Text style={styles.previousBookingContentValue}>{item?.id}</Text>
+            </View>
+            <View style={styles.previousBookingContentView}>
+                <Text style={styles.previousBookingContentHeader}>Date :</Text>
+                <Text style={styles.previousBookingContentValue}>{moment(item?.date).format('ddd, D MMMM')}, {moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
+            </View>
+            <View style={styles.previousBookingContentView}>
+                <Text style={styles.previousBookingContentHeader}>Appointment Time :</Text>
+                <Text style={styles.previousBookingContentValue}>{moment(item?.end_time, 'HH:mm:ss').diff(moment(item?.start_time, 'HH:mm:ss'), 'minutes')} Min</Text>
+            </View>
+            <View style={styles.previousBookingContentView}>
+                <Text style={styles.previousBookingContentHeader}>Rate :</Text>
+                <Text style={styles.previousBookingContentValue}>Rs {item?.therapist_details?.rate} for 30 Min</Text>
+            </View>
+            <View style={{ marginTop: responsiveHeight(2) }}>
+                <CustomButton buttonColor={''} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
+            </View>
+        </View>
+    )
+
     if (isLoading) {
         return (
             <Loader />
@@ -109,7 +183,7 @@ const ScheduleScreen = ({ navigation }) => {
             <ScrollView style={styles.wrapper}>
                 <View style={{ marginBottom: responsiveHeight(3) }}>
                     <SwitchSelector
-                        initial={0}
+                        initial={activeButtonNo}
                         onPress={value => setActiveTab(value)}
                         textColor={'#746868'}
                         selectedColor={'#444343'}
@@ -143,36 +217,19 @@ const ScheduleScreen = ({ navigation }) => {
                         />
                     </View>
                     :
-                    <View style={styles.previousBookingView}>
-                        <View style={styles.previousBooking1stRow}>
-                            <Text style={styles.previousBookingName}>Rohit Sharma</Text>
-                            <View style={styles.previousBookingStatusView}>
-                                <Image
-                                    source={GreenTick}
-                                    style={styles.previousBookingStatusIcon}
-                                />
-                                <Text style={styles.previousBookingStatusText}>Completed</Text>
-                            </View>
-                        </View>
-                        <View style={styles.previousBookingContentView}>
-                            <Text style={styles.previousBookingContentHeader}>Order ID :</Text>
-                            <Text style={styles.previousBookingContentValue}>1923659</Text>
-                        </View>
-                        <View style={styles.previousBookingContentView}>
-                            <Text style={styles.previousBookingContentHeader}>Date :</Text>
-                            <Text style={styles.previousBookingContentValue}>24-02-2024, 09:30 PM</Text>
-                        </View>
-                        <View style={styles.previousBookingContentView}>
-                            <Text style={styles.previousBookingContentHeader}>Appointment Time :</Text>
-                            <Text style={styles.previousBookingContentValue}>60 Min</Text>
-                        </View>
-                        <View style={styles.previousBookingContentView}>
-                            <Text style={styles.previousBookingContentHeader}>Rate :</Text>
-                            <Text style={styles.previousBookingContentValue}>Rs 1100 for 30 Min</Text>
-                        </View>
-                        <View style={{ marginTop: responsiveHeight(2) }}>
-                            <CustomButton buttonColor={''} label={"Book Again"} onPress={() => { }} />
-                        </View>
+
+                    <View style={{ marginBottom: responsiveHeight(2) }}>
+                        <FlatList
+                            data={previousBooking}
+                            renderItem={renderPrevious}
+                            keyExtractor={(item) => item.id.toString()}
+                            maxToRenderPerBatch={10}
+                            windowSize={5}
+                            initialNumToRender={10}
+                            getItemLayout={(upcomingBooking, index) => (
+                                { length: 50, offset: 50 * index, index }
+                            )}
+                        />
                     </View>
                 }
             </ScrollView>
@@ -271,7 +328,7 @@ const styles = StyleSheet.create({
     previousBookingView: {
         width: '99%',
         backgroundColor: '#FFF',
-        padding: 20,
+        padding: 15,
         borderRadius: 20,
         marginTop: responsiveHeight(2),
         borderColor: '#F4F5F5',

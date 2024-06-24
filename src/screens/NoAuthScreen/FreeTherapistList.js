@@ -54,7 +54,7 @@ const Ages = [
 ]
 
 
-const TherapistList = ({ navigation, route }) => {
+const FreeTherapistList = ({ navigation, route }) => {
 
     const [value, setValue] = useState('All');
     const [isFocus, setIsFocus] = useState(false);
@@ -644,7 +644,7 @@ const TherapistList = ({ navigation, route }) => {
     )
 }
 
-export default TherapistList
+export default FreeTherapistList
 
 const styles = StyleSheet.create({
     Container: {
