@@ -120,7 +120,12 @@ const BookingSummary = ({ navigation, route }) => {
                 submitForm(data.razorpay_payment_id)
             }).catch((error) => {
                 // handle failure
-                alert(`Error: ${error.code} | ${error.description}`);
+                //alert(`Error: ${error.code} | ${error.description}`);
+                console.log(JSON.parse(error.description))
+                const errorMsg = JSON.parse(error.description)
+                console.log(errorMsg.error.description)
+                navigation.navigate('PaymentFailed', { message: errorMsg.error.description });
+              
             });
         }
 

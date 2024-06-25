@@ -226,7 +226,7 @@ const TherapistList = ({ navigation, route }) => {
     }
 
     const renderItem = ({ item }) => (
-        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id })}>
+        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id,mode:'paid' })}>
             <View style={styles.totalValue}>
                 <View style={styles.totalValue1stSection}>
                     <View style={styles.profilePicSection}>

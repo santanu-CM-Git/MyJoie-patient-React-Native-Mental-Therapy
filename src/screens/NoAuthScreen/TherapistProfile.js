@@ -39,7 +39,6 @@ const TherapistProfile = ({ navigation, route }) => {
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedItem, setSelectedItem] = useState(1);
 
-
     const getNextSevenDays = () => {
         const days = [];
         for (let i = 0; i < 7; i++) {
@@ -79,7 +78,7 @@ const TherapistProfile = ({ navigation, route }) => {
             "day": givendate,
             "date": date,
             "therapist_id": route?.params?.therapistId,
-            "booking_type": "paid"
+            "booking_type": route?.params?.mode
         }
         console.log(option)
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -256,61 +255,75 @@ const TherapistProfile = ({ navigation, route }) => {
     const submitForm = () => {
         console.log(selectedByUser.length, 'no of selected slot')
         console.log(profileDetails?.rate, 'rate of the therapist')
-        const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
-        var mode = ''
-        if (selectedItem == 1) {
-            mode = "chat"
-        } else if (selectedItem == 2) {
-            mode = "audio"
-        } else if (selectedItem == 3) {
-            mode = "video"
-        }
-        var prescription_checked = ''
-        if (toggleCheckBox) {
-            prescription_checked = 'yes'
-        } else {
-            prescription_checked = 'no'
-        }
-        const totalAmount = (selectedByUser.length * profileDetails?.rate)
 
-        console.log(profileDetails?.user_id, "therapist_id")
-        console.log(ids, 'slot_ids')
-        console.log(selectedDate, 'date')
-        console.log('purpose', 'purpose')
-        console.log(mode, 'mode_of_conversation')
-        console.log("online", 'payment_mode')
-        console.log("Razorpay", "gateway_name")
-        console.log(prescription_checked, "prescription_checked")
-        console.log(totalAmount, 'transaction_amount')
-        // const formData = new FormData();
-        // formData.append("therapist_id", profileDetails?.user_id);
-        // formData.append("slot_ids", JSON.stringify(ids));
-        // formData.append("date", selectedDate);
-        // formData.append("purpose", 'purpose');
-        // formData.append("mode_of_conversation", mode);
-        // formData.append("payment_mode", 'online');
-        // formData.append("gateway_name", 'Razorpay');
-        // formData.append("prescription_checked", prescription_checked);
-        // formData.append("transaction_amount", totalAmount);
-        // formData.append("payment_status", 'paid');
-        // formData.append("order_id", '37866876');
-        //formData.append("transaction_no", transactionId);
-        //formData.append("wallet_deduction", walletAmount);
-        //console.log(formData)
-        const option = {
-            "therapist_id": profileDetails?.user_id,
-            "slot_ids": JSON.stringify(ids),
-            "date": selectedDate,
-            "purpose": 'purpose',
-            "mode_of_conversation": mode,
-            "payment_mode": 'online',
-            "gateway_name": 'Razorpay',
-            "prescription_checked": prescription_checked,
-            "transaction_amount": totalAmount,
-            "payment_status": 'paid',
-            "order_id": '37866876'
+        if (selectedByUser.length === 0) {
+            Alert.alert('Oops..', 'You need to select at least one slot.', [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        } else {
+            const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
+            var mode = ''
+            if (selectedItem == 1) {
+                mode = "chat"
+            } else if (selectedItem == 2) {
+                mode = "audio"
+            } else if (selectedItem == 3) {
+                mode = "video"
+            }
+            var prescription_checked = ''
+            if (toggleCheckBox) {
+                prescription_checked = 'yes'
+            } else {
+                prescription_checked = 'no'
+            }
+            const totalAmount = (selectedByUser.length * profileDetails?.rate)
+
+            console.log(profileDetails?.user_id, "therapist_id")
+            console.log(ids, 'slot_ids')
+            console.log(selectedDate, 'date')
+            console.log('purpose', 'purpose')
+            console.log(mode, 'mode_of_conversation')
+            console.log("online", 'payment_mode')
+            console.log("Razorpay", "gateway_name")
+            console.log(prescription_checked, "prescription_checked")
+            console.log(totalAmount, 'transaction_amount')
+            // const formData = new FormData();
+            // formData.append("therapist_id", profileDetails?.user_id);
+            // formData.append("slot_ids", JSON.stringify(ids));
+            // formData.append("date", selectedDate);
+            // formData.append("purpose", 'purpose');
+            // formData.append("mode_of_conversation", mode);
+            // formData.append("payment_mode", 'online');
+            // formData.append("gateway_name", 'Razorpay');
+            // formData.append("prescription_checked", prescription_checked);
+            // formData.append("transaction_amount", totalAmount);
+            // formData.append("payment_status", 'paid');
+            // formData.append("order_id", '37866876');
+            //formData.append("transaction_no", transactionId);
+            //formData.append("wallet_deduction", walletAmount);
+            //console.log(formData)
+            const option = {
+                "therapist_id": profileDetails?.user_id,
+                "slot_ids": JSON.stringify(ids),
+                "date": selectedDate,
+                "purpose": 'purpose',
+                "mode_of_conversation": mode,
+                "payment_mode": 'online',
+                "gateway_name": 'Razorpay',
+                "prescription_checked": prescription_checked,
+                "transaction_amount": totalAmount,
+                "payment_status": 'paid',
+                "order_id": '37866876'
+            }
+            navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
         }
-        navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
+
+
         // AsyncStorage.getItem('userToken', (err, usertoken) => {
         //     axios.post(`${API_URL}/patient/slot-book`, formData, {
         //         headers: {

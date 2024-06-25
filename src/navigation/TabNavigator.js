@@ -27,6 +27,7 @@ import BookingSummary from '../screens/NoAuthScreen/BookingSummary';
 import TherapistList from '../screens/NoAuthScreen/TherapistList';
 import TherapistProfile from '../screens/NoAuthScreen/TherapistProfile';
 import FreeTherapistList from '../screens/NoAuthScreen/FreeTherapistList';
+import PaymentFailed from '../screens/NoAuthScreen/PaymentFailed';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -92,6 +93,11 @@ const HomeStack = () => {
       <Stack.Screen
         name="ProfileScreen"
         component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="PaymentFailed"
+        component={PaymentFailed}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
@@ -302,6 +308,8 @@ const getTabBarVisibility = route => {
   }else if (routeName == 'FreeTherapistList') {
     return 'none';
   }else if (routeName == 'ScheduleScreen') {
+    return 'none';
+  }else if (routeName == 'PaymentFailed') {
     return 'none';
   } else {
     return 'flex';
