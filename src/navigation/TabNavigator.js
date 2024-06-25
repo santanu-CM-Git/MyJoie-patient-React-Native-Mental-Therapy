@@ -8,7 +8,6 @@ import { Text, Image, View } from 'react-native';
 import HomeScreen from '../screens/NoAuthScreen/HomeScreen';
 import ProfileScreen from '../screens/NoAuthScreen/ProfileScreen';
 import NotificationScreen from '../screens/NoAuthScreen/NotificationScreen';
-import OrderScreen from '../screens/NoAuthScreen/OrderScreen';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
@@ -17,7 +16,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 
 import PrivacyPolicy from '../screens/NoAuthScreen/PrivacyPolicy';
-import OrderSummary from '../screens/NoAuthScreen/OrderSummary';
 import ChatScreen from '../screens/NoAuthScreen/ChatScreen';
 import EarningScreen from '../screens/NoAuthScreen/EarningScreen';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
@@ -44,11 +42,6 @@ const HomeStack = () => {
       <Stack.Screen
         name="Notification"
         component={NotificationScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name='OrderSummary'
-        component={OrderSummary}
         options={{ headerShown: false }}
       />
       <Stack.Screen

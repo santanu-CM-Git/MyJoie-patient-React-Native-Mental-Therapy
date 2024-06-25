@@ -51,7 +51,7 @@ export default function HomeScreen({ navigation }) {
 
   const dispatch = useDispatch();
   const { data: products, status } = useSelector(state => state.products)
-  const { userInfo } = useContext(AuthContext)
+  // const { userInfo } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(true)
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [therapistData, setTherapistData] = React.useState([])
@@ -61,25 +61,7 @@ export default function HomeScreen({ navigation }) {
   const [activeSlide, setActiveSlide] = React.useState(0);
   const [bannerData, setBannerData] = useState([])
   const [customerSpeaksData, setCustomerSpeaksData] = useState([])
-
-  const CarouselCardItem = ({ item, index }) => {
-    //console.log(item, 'banner itemmm')
-    return (
-      <View style={styles.bannaerContainer}>
-        <Image
-          source={{ uri: item.banner_image }}
-          style={styles.bannerBg}
-        />
-        <View style={styles.textWrap}>
-          {item?.banner_title && <Text style={styles.bannerText}>{item?.banner_title}</Text>}
-          {item?.banner_description && <Text style={styles.bannerSubText} numberOfLines={4}>{item?.banner_description}</Text>}
-          <View style={styles.bannerButtonView}>
-            <Text style={styles.bannerButtonText}>Call Us Today!</Text>
-          </View>
-        </View>
-      </View>
-    )
-  }
+  const [userInfo, setuserInfo] = useState([])
 
   const getFCMToken = async () => {
     try {
@@ -115,6 +97,24 @@ export default function HomeScreen({ navigation }) {
     }
   }, [])
 
+  const fetchProfileDetails = () => {
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+      axios.post(`${API_URL}/patient/profile`, {}, {
+        headers: {
+          "Authorization": `Bearer ${usertoken}`,
+          "Content-Type": 'application/json'
+        },
+      })
+        .then(res => {
+          let userInfo = res.data.data;
+          console.log(userInfo, 'user data from contact informmation')
+          setuserInfo(userInfo)
+        })
+        .catch(e => {
+          console.log(`Profile error ${e}`)
+        });
+    });
+  }
   const fetchBanner = () => {
     axios.get(`${API_URL}/patient/banners`, {
       headers: {
@@ -134,7 +134,6 @@ export default function HomeScreen({ navigation }) {
         setIsLoading(false);
       });
   }
-
   const fetchCustomerSpeaks = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
       axios.post(`${API_URL}/patient/good-reviews`, {}, {
@@ -157,7 +156,6 @@ export default function HomeScreen({ navigation }) {
         });
     });
   }
-
   const fetchPreviousBooking = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
       axios.post(`${API_URL}/patient/previous-slot`, {}, {
@@ -180,7 +178,6 @@ export default function HomeScreen({ navigation }) {
         });
     });
   }
-
   const fetchUpcomingBooking = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
       axios.post(`${API_URL}/patient/upcoming-slot`, {}, {
@@ -202,10 +199,12 @@ export default function HomeScreen({ navigation }) {
         });
     });
   }
-
   const fetchAllTherapist = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
-      axios.post(`${API_URL}/patient/therapist-list`, {}, {
+      const option = {
+        "flag" : 'paid'
+      }
+      axios.post(`${API_URL}/patient/therapist-list`, option, {
         headers: {
           'Accept': 'application/json',
           "Authorization": 'Bearer ' + usertoken,
@@ -245,6 +244,25 @@ export default function HomeScreen({ navigation }) {
           ]);
         });
     });
+  }
+
+  const CarouselCardItem = ({ item, index }) => {
+    //console.log(item, 'banner itemmm')
+    return (
+      <View style={styles.bannaerContainer}>
+        <Image
+          source={{ uri: item.banner_image }}
+          style={styles.bannerBg}
+        />
+        <View style={styles.textWrap}>
+          {item?.banner_title && <Text style={styles.bannerText}>{item?.banner_title}</Text>}
+          {item?.banner_description && <Text style={styles.bannerSubText} numberOfLines={4}>{item?.banner_description}</Text>}
+          <View style={styles.bannerButtonView}>
+            <Text style={styles.bannerButtonText}>Call Us Today!</Text>
+          </View>
+        </View>
+      </View>
+    )
   }
   const renderTherapistItem = ({ item }) => (
     <View style={styles.therapistCardView}>
@@ -291,7 +309,6 @@ export default function HomeScreen({ navigation }) {
       </View>
     </View>
   )
-
   const renderUpcomingBooking = ({ item }) => (
     <View style={styles.upcommingAppointmentView}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -326,12 +343,11 @@ export default function HomeScreen({ navigation }) {
       </View>
     </View>
   )
-
   const renderPreviousBooking = ({ item }) => (
     <View style={styles.previousTherapistView}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Image
-          source={{uri: item?.therapist?.profile_pic}}
+          source={{ uri: item?.therapist?.profile_pic }}
           style={styles.cardImg}
         />
         <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
@@ -357,7 +373,7 @@ export default function HomeScreen({ navigation }) {
       />
       <Text style={styles.bookingDateText}>Booking Date</Text>
       <View style={styles.dateTimeSection2}>
-        <View style={[styles.dateTimeHalfSection,{ width: responsiveWidth(25)}]}>
+        <View style={[styles.dateTimeHalfSection, { width: responsiveWidth(25) }]}>
           <Image
             source={dateIcon}
             style={styles.datetimeIcon}
@@ -367,7 +383,7 @@ export default function HomeScreen({ navigation }) {
         {/* <View
           style={styles.verticalLine}
         /> */}
-        <View style={[styles.dateTimeHalfSection,{ width: responsiveWidth(45)}]}>
+        <View style={[styles.dateTimeHalfSection, { width: responsiveWidth(45) }]}>
           <Image
             source={timeIcon}
             style={styles.datetimeIcon}
@@ -376,11 +392,10 @@ export default function HomeScreen({ navigation }) {
         </View>
       </View>
       <View style={{ marginTop: responsiveHeight(1) }}>
-        <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id })}} />
+        <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
       </View>
     </View>
   )
-
   const renderCustomerSpeaks = ({ item }) => (
     <View style={styles.customerSpeaksView}>
       <View style={styles.qouteImgView}>
@@ -416,8 +431,8 @@ export default function HomeScreen({ navigation }) {
     </View>
   )
 
-
   useEffect(() => {
+    fetchProfileDetails()
     fetchBanner()
     fetchAllTherapist();
     fetchUpcomingBooking()
@@ -427,6 +442,7 @@ export default function HomeScreen({ navigation }) {
 
   useFocusEffect(
     React.useCallback(() => {
+      fetchProfileDetails()
       fetchBanner()
       fetchAllTherapist()
       fetchUpcomingBooking()
@@ -447,23 +463,6 @@ export default function HomeScreen({ navigation }) {
       <ScrollView>
         <View style={{ marginBottom: 10 }}>
           <View style={styles.carouselView}>
-            {/* <Carousel
-              autoplay
-              autoplayTimeout={5000}
-              loop
-              index={0}
-              pageSize={BannerWidth}
-              showsPageIndicator={true}
-              sliderWidth={sliderWidth}
-              itemWidth={sliderWidth}
-              // itemHeight={itemHeight}
-              activePageIndicatorStyle={{ backgroundColor: '#00B2EB' }}
-            >
-              {bannerData.map((datab, index) =>
-                CarouselCardItem(datab, index)
-
-              )}
-            </Carousel> */}
             <Carousel
               data={bannerData}
               renderItem={CarouselCardItem}
@@ -526,14 +525,17 @@ export default function HomeScreen({ navigation }) {
               )}
             />
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('FreeTherapistList')}>
-            <View style={styles.freebannerContainer}>
-              <Image
-                source={require('../../assets/images/freeconsultation.png')}
-                style={styles.freebannerImg}
-              />
-            </View>
-          </TouchableOpacity>
+          {userInfo?.patient_details?.free_session === 'no' ?
+            <TouchableOpacity onPress={() => navigation.navigate('FreeTherapistList')}>
+              <View style={styles.freebannerContainer}>
+                <Image
+                  source={require('../../assets/images/freeconsultation.png')}
+                  style={styles.freebannerImg}
+                />
+              </View>
+            </TouchableOpacity>
+            : <></>
+          }
           {previousBooking.length !== 0 ?
             <View style={styles.sectionHeaderView}>
               <Text style={styles.sectionHeaderText}>Previous Therapists</Text>
@@ -818,7 +820,7 @@ const styles = StyleSheet.create({
   },
   previousTherapistView: {
     height: responsiveHeight(30),
-    width: '90%',
+    width: responsiveWidth(92),
     backgroundColor: '#FFF',
     marginHorizontal: 15,
     padding: 15,

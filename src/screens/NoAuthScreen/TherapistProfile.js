@@ -749,6 +749,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         disabled={false}
                         value={toggleCheckBox}
                         onValueChange={(newValue) => setToggleCheckBox(newValue)}
+                        tintColors={{ true: '#444343', false: '#444343' }}
                     />
                     <Text style={styles.checkboxText}>I give my consent to the app and therapists to access my past medical history available on the platform </Text>
                 </View>

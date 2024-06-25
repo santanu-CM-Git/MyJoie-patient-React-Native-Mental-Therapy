@@ -54,6 +54,8 @@ const ProfileScreen = ({ navigation, route }) => {
   const [phonenoError, setphonenoError] = useState('')
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('')
+  const [pickedDocument, setPickedDocument] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -72,6 +74,28 @@ const ProfileScreen = ({ navigation, route }) => {
   const [selectedDOB, setSelectedDOB] = useState(MAX_DATE)
   const [open, setOpen] = useState(false)
   const [dobError, setdobError] = useState('')
+
+  const pickDocument = async () => {
+    try {
+        const result = await DocumentPicker.pick({
+            type: [DocumentPicker.types.allFiles],
+        });
+
+        //console.log('URI: ', result[0].uri);
+        //console.log('Type: ', result[0].type);
+        //console.log('Name: ', result[0].name);
+        //console.log('Size: ', result[0].size);
+
+        setPickedDocument(result[0]);
+    } catch (err) {
+        if (DocumentPicker.isCancel(err)) {
+            // User cancelled the document picker
+            console.log('Document picker was cancelled');
+        } else {
+            console.error('Error picking document', err);
+        }
+    }
+};
 
   const fetchUserData = () => {
     setIsLoading(true)
@@ -92,7 +116,7 @@ const ProfileScreen = ({ navigation, route }) => {
           setDate(userInfo?.dob)
           setYearValue(userInfo?.gender)
           setMonthValue(userInfo?.marital_status)
-          
+          setImageFile(userInfo?.profile_pic)
           setIsLoading(false)
         })
         .catch(e => {
@@ -169,7 +193,7 @@ const ProfileScreen = ({ navigation, route }) => {
         "email": email,
         "dob": moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
         "gender": yearvalue,
-        "marital_status" :  monthvalue,
+        "marital_status": monthvalue,
         //"mobile": "7797599595"
       }
       console.log(option, 'dhhhdhhd')
@@ -234,6 +258,29 @@ const ProfileScreen = ({ navigation, route }) => {
       <CustomHeader commingFrom={'My Profile'} onPress={() => navigation.goBack()} title={'My Profile'} />
       <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: responsiveHeight(4) }}>
         <View style={styles.wrapper}>
+          <View style={styles.mainView}>
+
+            {pickedDocument == null ?
+              imageFile != null ?
+                <Image
+                  source={{ uri: imageFile }}
+                  style={styles.imageStyle}
+                /> :
+                <Image
+                  source={userPhoto}
+                  style={styles.imageStyle}
+                /> :
+              <Image
+                source={{ uri: pickedDocument.uri }}
+                style={styles.imageStyle}
+              />
+
+            }
+            <TouchableOpacity style={styles.plusIcon} onPress={() => pickDocument()}
+            >
+              <Image source={plus} style={{ height: 25, width: 25,resizeMode:'contain' }} />
+            </TouchableOpacity>
+          </View>
           <View style={styles.textinputview}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Name</Text>
@@ -432,15 +479,15 @@ const styles = StyleSheet.create({
     marginTop: responsiveHeight(2)
   },
   imageStyle: {
-    height: 80,
-    width: 80,
-    borderRadius: 40,
+    height: 90,
+    width: 90,
+    borderRadius: 45,
     marginBottom: 10
   },
   plusIcon: {
     position: 'absolute',
-    bottom: 10,
-    left: 50
+    top: 0,
+    left: 60
   },
   textinputview: {
     marginBottom: responsiveHeight(10),
@@ -509,4 +556,14 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: responsiveHeight(4)
   },
+  headerImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10
+  },
+  mainView: {
+    alignSelf: 'center',
+    marginTop: responsiveHeight(2)
+  }
 });

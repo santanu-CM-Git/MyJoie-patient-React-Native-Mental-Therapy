@@ -108,7 +108,10 @@ const TherapistList = ({ navigation, route }) => {
 
     const fetchAllTherapist = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
-            axios.post(`${API_URL}/patient/therapist-list`, {}, {
+            const option = {
+                "flag" : 'paid'
+              }
+            axios.post(`${API_URL}/patient/therapist-list`, option, {
                 headers: {
                     'Accept': 'application/json',
                     "Authorization": 'Bearer ' + usertoken,
@@ -318,6 +321,14 @@ const TherapistList = ({ navigation, route }) => {
         );
         setSearchValue(text);
         setTherapistFilterData(filteredData);
+    }
+
+    const submitReview = () => {
+        console.log('hello')
+        console.log(selectedExperience)
+        console.log(selectedRating); 
+        console.log(selectedGender);
+        console.log(selectedAge);
     }
 
 
@@ -628,7 +639,7 @@ const TherapistList = ({ navigation, route }) => {
                         <View style={{ width: responsiveWidth(45), marginTop: responsiveHeight(2) }}>
                             <CustomButton label={"Cancel"}
                                 buttonColor={'gray'}
-                                onPress={() => submitReview()}
+                                onPress={null}
                             />
                         </View>
                         <View style={{ width: responsiveWidth(45), marginTop: responsiveHeight(2) }}>

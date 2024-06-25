@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, Switch, Image, Platform, Alert, FlatList } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, Switch, Image, Platform, Alert, FlatList, Pressable } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import CustomButton from '../../components/CustomButton';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { ArrowGratter, GreenTick,YellowTck,RedCross, Payment, dateIcon, deleteImg, plus, timeIcon, userPhoto } from '../../utils/Images'
+import { ArrowGratter, GreenTick, YellowTck, RedCross, Payment, dateIcon, deleteImg, plus, timeIcon, userPhoto, dotIcon } from '../../utils/Images'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -17,6 +17,7 @@ import Loader from '../../utils/Loader';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { API_URL } from '@env'
+import Toast from 'react-native-toast-message';
 
 
 const ScheduleScreen = ({ navigation, route }) => {
@@ -26,6 +27,7 @@ const ScheduleScreen = ({ navigation, route }) => {
     const [isLoading, setIsLoading] = useState(true)
     const [upcomingBooking, setUpcomingBooking] = useState([])
     const [previousBooking, setPreviousBooking] = useState([])
+    const [isFocus, setIsFocus] = useState(false);
 
     const fetchUpcomingBooking = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -71,9 +73,78 @@ const ScheduleScreen = ({ navigation, route }) => {
         });
     }
 
+    const confirmationBeforeCancel = (id) => {
+        Alert.alert('Hello', "Are you sure you want to cancel the booking? It might deduct from your balance.", [
+            {
+                text: 'Cancel',
+                onPress: () => setIsFocus(!isFocus),
+                style: 'cancel',
+            },
+            { text: 'OK', onPress: () => cancelSchedule(id) },
+        ]);
+    }
+
+    const cancelSchedule = (id) => {
+        console.log(JSON.stringify(id))
+        const option = {
+            "booked_slot_id": id
+        }
+        console.log(option)
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            axios.post(`${API_URL}/patient/slot-cancel`, option, {
+                headers: {
+                    'Accept': 'application/json',
+                    "Authorization": 'Bearer ' + usertoken,
+                    //'Content-Type': 'multipart/form-data',
+                },
+            })
+                .then(res => {
+                    console.log(JSON.stringify(res.data.data), 'cancel response')
+                    if (res.data.response == true) {
+                        setIsLoading(false);
+                        Toast.show({
+                            type: 'success',
+                            text1: 'Hello',
+                            text2: "Schedule cancel successfully",
+                            position: 'top',
+                            topOffset: Platform.OS == 'ios' ? 55 : 20
+                        });
+                        fetchUpcomingBooking()
+                    } else {
+                        console.log('not okk')
+                        setIsLoading(false)
+                        Alert.alert('Oops..', "Something went wrong", [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(e => {
+                    setIsLoading(false)
+                    console.log(`user register error ${e}`)
+                    console.log(e.response)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
+                });
+        });
+    }
+
     useEffect(() => {
-        console.log(route?.params?.activeTab, 'active tabbbb')
+        console.log(route?.params?.activeTab, 'active tabbbbyyy')
         if (route?.params?.activeTab == 'Upcoming') {
+            setActiveTab('Upcoming')
+            setActiveButtonNo(0)
+        }else if(route?.params?.activeTab == undefined){
             setActiveTab('Upcoming')
             setActiveButtonNo(0)
         } else {
@@ -81,7 +152,7 @@ const ScheduleScreen = ({ navigation, route }) => {
             setActiveButtonNo(1)
         }
         fetchUpcomingBooking();
-        fetchPreviousBooking();
+        fetchPreviousBooking(); 
     }, [])
     useFocusEffect(
         React.useCallback(() => {
@@ -93,13 +164,39 @@ const ScheduleScreen = ({ navigation, route }) => {
     const renderUpcoming = ({ item }) => (
 
         <View style={styles.upcomingView}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {/* <Pressable onPress={()=> cancelSchedule()} style={{ position: 'absolute', top: 5, right: 10 }} >
+                <Icon name="delete-forever" color={'red'} size={22} />
+            </Pressable> */}
+            <View style={styles.flexStyle}>
+
+                {!isFocus ?
+                    <Pressable onPress={() => setIsFocus(!isFocus)}>
+                        <Image
+                            source={dotIcon}
+                            style={{ height: 25, width: 25, resizeMode: 'contain', }}
+                        />
+                    </Pressable> :
+                    <Icon name="cross" size={25} color="#B0B0B0" onPress={() => setIsFocus(!isFocus)} />
+                }
+
+                {isFocus ?
+                    <View style={{ width: responsiveWidth(40), backgroundColor: '#fff', height: responsiveHeight(8), position: 'absolute', right: 0, top: 30, zIndex: 10, padding: 10, borderRadius: 15, justifyContent: 'center', elevation: 5 }}>
+                        <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                            <TouchableOpacity onPress={() => confirmationBeforeCancel(item?.id)}>
+                                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    : <></>}
+
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
 
                 <Image
                     source={{ uri: item?.therapist?.profile_pic }}
                     style={styles.cardImg}
                 />
-                <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(40), }}>
+                <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(40) }}>
                     <Text style={styles.nameText}>
                         {item?.therapist?.name}
                     </Text>
@@ -136,12 +233,12 @@ const ScheduleScreen = ({ navigation, route }) => {
                 <Text style={styles.previousBookingName}>{item?.therapist?.name}</Text>
                 <View style={styles.previousBookingStatusView}>
                     <Image
-                       source={
-                        item?.status === 'completed' ? GreenTick :
-                        item?.status === 'scheduled' ? YellowTick :
-                        item?.status === 'cancel' ? RedCross :
-                        null // You can set a default image or handle the null case appropriately
-                      }
+                        source={
+                            item?.status === 'completed' ? GreenTick :
+                                item?.status === 'scheduled' ? YellowTck :
+                                    item?.status === 'cancel' ? RedCross :
+                                        null // You can set a default image or handle the null case appropriately
+                        }
                         style={styles.previousBookingStatusIcon}
                     />
                     <Text style={styles.previousBookingStatusText}>
@@ -204,17 +301,23 @@ const ScheduleScreen = ({ navigation, route }) => {
                 </View>
                 {activeTab == 'Upcoming' ?
                     <View style={{ marginBottom: responsiveHeight(2) }}>
-                        <FlatList
-                            data={upcomingBooking}
-                            renderItem={renderUpcoming}
-                            keyExtractor={(item) => item.id.toString()}
-                            maxToRenderPerBatch={10}
-                            windowSize={5}
-                            initialNumToRender={10}
-                            getItemLayout={(upcomingBooking, index) => (
-                                { length: 50, offset: 50 * index, index }
-                            )}
-                        />
+                        {upcomingBooking.length !== 0 ?
+                            <FlatList
+                                data={upcomingBooking}
+                                renderItem={renderUpcoming}
+                                keyExtractor={(item) => item.id.toString()}
+                                maxToRenderPerBatch={10}
+                                windowSize={5}
+                                initialNumToRender={10}
+                                getItemLayout={(upcomingBooking, index) => (
+                                    { length: 50, offset: 50 * index, index }
+                                )}
+                            />
+                            :
+                            <View style={styles.upcomingView}>
+                                <Text style={styles.nodataText}>No upcoming appointment yet</Text>
+                            </View>
+                        }
                     </View>
                     :
 
@@ -254,7 +357,8 @@ const styles = StyleSheet.create({
     upcomingView: {
         width: responsiveWidth(89),
         backgroundColor: '#FFF',
-        padding: 20,
+        paddingVertical: 20,
+        paddingHorizontal: 15,
         borderRadius: 20,
         marginTop: responsiveHeight(1),
         marginBottom: responsiveHeight(1),
@@ -375,6 +479,16 @@ const styles = StyleSheet.create({
         color: '#746868',
         fontFamily: 'DMSans-Medium',
         fontSize: responsiveFontSize(1.7)
-    }
+    },
+    flexStyle: {
+        position: 'absolute',
+        top: 5,
+        right: 10
+    },
+    nodataText: {
+        alignSelf: 'center',
+        fontFamily: 'DMSans-Bold',
+        fontSize: responsiveFontSize(2)
+    },
 
 });
