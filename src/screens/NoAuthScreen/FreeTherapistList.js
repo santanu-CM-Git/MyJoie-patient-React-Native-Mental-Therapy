@@ -250,7 +250,11 @@ const FreeTherapistList = ({ navigation, route }) => {
                         <Text style={styles.contentStyleQualification}>{item?.qualification_list}</Text>
                         <Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text>
                         <Text style={styles.contentStyleLang}>Language : <Text style={styles.contentStyleLangValue}>{item?.languages_list}</Text></Text>
-                        <Text style={styles.contentStyleRate}>₹{item?.rate} for 30 Min</Text>
+                        <View style={{flexDirection:'row',}}>
+                        <Text style={[styles.contentStyleRate,{marginRight:5}]}>₹{item?.rate} for 15 Min</Text>
+                        <Text style={styles.contentStyleRateFree}>Free for 15 Min</Text>
+                        </View>
+                        
                         <Text style={styles.contentStyleAvailableSlot}>Next Avl. Slot : Today 09:00 PM</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
@@ -756,7 +760,14 @@ const styles = StyleSheet.create({
         fontSize: responsiveFontSize(1.7),
         color: '#746868',
         fontFamily: 'DMSans-Medium',
-        marginBottom: responsiveHeight(1)
+        marginBottom: responsiveHeight(1),
+        textDecorationLine: 'line-through', textDecorationStyle: 'solid'
+    },
+    contentStyleRateFree:{
+        fontSize: responsiveFontSize(1.7),
+        color: '#746868',
+        fontFamily: 'DMSans-Bold',
+        marginBottom: responsiveHeight(1),
     },
     contentStyleAvailableSlot: {
         fontSize: responsiveFontSize(1.5),

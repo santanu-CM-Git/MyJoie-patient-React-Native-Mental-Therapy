@@ -303,7 +303,7 @@ export default function HomeScreen({ navigation }) {
           source={dateIcon}
           style={{ height: 20, width: 20, }}
         />
-        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id })}>
+        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id,mode:'paid' })}>
           <Text style={styles.bookapointText}>Book Appointment</Text>
         </Pressable>
       </View>
