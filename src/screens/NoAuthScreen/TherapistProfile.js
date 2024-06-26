@@ -323,86 +323,99 @@ const TherapistProfile = ({ navigation, route }) => {
                 }
                 navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
             } else {
-                console.log(selectedByUser)
-                const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
-                // var mode = ''
-                // if (selectedItem == 1) {
-                //     mode = "chat"
-                // } else if (selectedItem == 2) {
-                //     mode = "audio"
-                // } else if (selectedItem == 3) {
-                //     mode = "video"
-                // }
-                // var prescription_checked = ''
-                // if (toggleCheckBox) {
-                //     prescription_checked = 'yes'
-                // } else {
-                //     prescription_checked = 'no'
-                // }
-
-                // const formData = new FormData();
-                // formData.append("therapist_id", profileDetails?.user_id);
-                // formData.append("slot_ids", JSON.stringify(ids));
-                // formData.append("date", selectedDate);
-                // formData.append("purpose", 'purpose');
-                // formData.append("mode_of_conversation", mode);
-                // formData.append("payment_mode", 'online');
-                // formData.append("gateway_name", 'Razorpay');
-                // formData.append("prescription_checked", prescription_checked);
-                // formData.append("transaction_amount", "0");
-                // formData.append("payment_status",'paid');
-                // formData.append("order_id", "0");
-                // formData.append("transaction_no", "0");
-                // formData.append("wallet_deduction", "0");
+                if(selectedByUser.length > 1){
+                    Alert.alert('Sorry..', 'You need to choose only one slot for a free session.', [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
+                }else{
+                    console.log(selectedByUser)
+                    const ids = selectedByUser.flatMap(item => [item.id.toString()]);
+                    console.log(ids)
+                    var mode = ''
+                    if (selectedItem == 1) {
+                        mode = "chat"
+                    } else if (selectedItem == 2) {
+                        mode = "audio"
+                    } else if (selectedItem == 3) {
+                        mode = "video"
+                    }
+                    var prescription_checked = ''
+                    if (toggleCheckBox) {
+                        prescription_checked = 'yes'
+                    } else {
+                        prescription_checked = 'no'
+                    }
+    
+                    const formData = new FormData();
+                    formData.append("therapist_id", profileDetails?.user_id);
+                    formData.append("slot_ids", JSON.stringify(ids));
+                    formData.append("date", selectedDate);
+                    formData.append("purpose", 'purpose');
+                    formData.append("mode_of_conversation", mode);
+                    formData.append("payment_mode", 'free');
+                    formData.append("gateway_name", 'free');
+                    formData.append("prescription_checked", prescription_checked);
+                    formData.append("transaction_amount", "0");
+                    formData.append("payment_status",'free');
+                    formData.append("order_id", "0");
+                    formData.append("transaction_no", "0");
+                    formData.append("wallet_deduction", "0");
+                    
+                     console.log(formData)
+                    AsyncStorage.getItem('userToken', (err, usertoken) => {
+                        axios.post(`${API_URL}/patient/slot-book`, formData, {
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'multipart/form-data',
+                                "Authorization": `Bearer ${usertoken}`,
+                            },
+                        })
+                            .then(res => {
+                                console.log(JSON.stringify(res.data.data),'submit form response')
+                                if (res.data.response == true) {
+                                    setIsLoading(false)
+                                    Alert.alert('Oops..', res.data.message, [
+                                        {
+                                            text: 'Cancel',
+                                            onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}),
+                                            style: 'cancel',
+                                        },
+                                        { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}) },
+                                    ]);
+                                } else {
+                                    console.log('not okk')
+                                    setIsLoading(false)
+                                    Alert.alert('Oops..', "Something went wrong", [
+                                        {
+                                            text: 'Cancel',
+                                            onPress: () => console.log('Cancel Pressed'),
+                                            style: 'cancel',
+                                        },
+                                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                    ]);
+                                }
+                            })
+                            .catch(e => {
+                                setIsLoading(false)
+                                console.log(`user register error ${e}`)
+                                console.log(e.response)
+                                Alert.alert('Oops..', e.response?.data?.message, [
+                                    {
+                                        text: 'Cancel',
+                                        onPress: () => console.log('Cancel Pressed'),
+                                        style: 'cancel',
+                                    },
+                                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                ]);
+                            });
+                    });
+                }
                 
-                // console.log(formData)
-                // AsyncStorage.getItem('userToken', (err, usertoken) => {
-                //     axios.post(`${API_URL}/patient/slot-book`, formData, {
-                //         headers: {
-                //             Accept: 'application/json',
-                //             'Content-Type': 'multipart/form-data',
-                //             "Authorization": `Bearer ${usertoken}`,
-                //         },
-                //     })
-                //         .then(res => {
-                //             console.log(JSON.stringify(res.data.data),'submit form response')
-                //             if (res.data.response == true) {
-                //                 setIsLoading(false)
-                //                 Alert.alert('Oops..', res.data.message, [
-                //                     {
-                //                         text: 'Cancel',
-                //                         onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}),
-                //                         style: 'cancel',
-                //                     },
-                //                     { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}) },
-                //                 ]);
-                //             } else {
-                //                 console.log('not okk')
-                //                 setIsLoading(false)
-                //                 Alert.alert('Oops..', "Something went wrong", [
-                //                     {
-                //                         text: 'Cancel',
-                //                         onPress: () => console.log('Cancel Pressed'),
-                //                         style: 'cancel',
-                //                     },
-                //                     { text: 'OK', onPress: () => console.log('OK Pressed') },
-                //                 ]);
-                //             }
-                //         })
-                //         .catch(e => {
-                //             setIsLoading(false)
-                //             console.log(`user register error ${e}`)
-                //             console.log(e.response)
-                //             Alert.alert('Oops..', e.response?.data?.message, [
-                //                 {
-                //                     text: 'Cancel',
-                //                     onPress: () => console.log('Cancel Pressed'),
-                //                     style: 'cancel',
-                //                 },
-                //                 { text: 'OK', onPress: () => console.log('OK Pressed') },
-                //             ]);
-                //         });
-                // });
             }
 
         }
