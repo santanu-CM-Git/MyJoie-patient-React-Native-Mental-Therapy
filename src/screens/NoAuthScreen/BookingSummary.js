@@ -164,7 +164,7 @@ const BookingSummary = ({ navigation, route }) => {
                     console.log(JSON.stringify(res.data.data),'submit form response')
                     if (res.data.response == true) {
                         setIsLoading(false)
-                        Alert.alert('Oops..', res.data.message, [
+                        Alert.alert('Hello..', res.data.message, [
                             {
                                 text: 'Cancel',
                                 onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}),

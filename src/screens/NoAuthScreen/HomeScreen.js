@@ -190,6 +190,20 @@ export default function HomeScreen({ navigation }) {
           //console.log(res.data,'user details')
           let upcomingBooking = res.data.data;
           console.log(upcomingBooking, 'upcomingBooking')
+          upcomingBooking.sort((a, b) => {
+            let dateA = new Date(a.date);
+            let dateB = new Date(b.date);
+            if (dateA < dateB) return -1;
+            if (dateA > dateB) return 1;
+
+            // If dates are the same, compare start_time
+            let timeA = a.start_time.split(':').map(Number);
+            let timeB = b.start_time.split(':').map(Number);
+            let dateTimeA = new Date(dateA.setHours(timeA[0], timeA[1]));
+            let dateTimeB = new Date(dateB.setHours(timeB[0], timeB[1]));
+
+            return dateTimeA - dateTimeB;
+          });
           setUpcomingBooking(upcomingBooking)
           setIsLoading(false);
         })
@@ -202,7 +216,7 @@ export default function HomeScreen({ navigation }) {
   const fetchAllTherapist = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
       const option = {
-        "flag" : 'paid'
+        "flag": 'paid'
       }
       axios.post(`${API_URL}/patient/therapist-list`, option, {
         headers: {
@@ -303,7 +317,7 @@ export default function HomeScreen({ navigation }) {
           source={dateIcon}
           style={{ height: 20, width: 20, }}
         />
-        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id,mode:'paid' })}>
+        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
           <Text style={styles.bookapointText}>Book Appointment</Text>
         </Pressable>
       </View>
