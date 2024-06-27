@@ -49,38 +49,124 @@ const TherapistProfile = ({ navigation, route }) => {
 
     const nextSevenDays = getNextSevenDays();
 
+    // const selectedDateChange = (index, day, date) => {
+    //     console.log(index, day, date)
+    //     setSelectedDay(index)
+    //     setSelectedDate(date)
+    //     setIsLoading(true);
+    //     // console.log(day, 'day');
+    //     // console.log(date, 'date');
+    //     // console.log(profileDetails?.id, 'therapist_id');
+    //     // console.log('paid', 'paid')
+    //     var givendate = '';
+    //     if (day == 'Monday') {
+    //         givendate = 'monday'
+    //     } else if (day == 'Tuesday') {
+    //         givendate = 'tuesday'
+    //     } else if (day == 'Wednesday') {
+    //         givendate = 'wednessday'
+    //     } else if (day == 'Thursday') {
+    //         givendate = 'thursday'
+    //     } else if (day == 'Friday') {
+    //         givendate = 'friday'
+    //     } else if (day == 'Saturday') {
+    //         givendate = 'saturday'
+    //     } else if (day == 'Sunday') {
+    //         givendate = 'sunday'
+    //     }
+    //     const option = {
+    //         "day": givendate,
+    //         "date": date,
+    //         "therapist_id": route?.params?.therapistId,
+    //         "booking_type": route?.params?.mode
+    //     }
+    //     console.log(option)
+    //     AsyncStorage.getItem('userToken', (err, usertoken) => {
+    //         axios.post(`${API_URL}/patient/therapist-date-slots`, option, {
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 "Authorization": 'Bearer ' + usertoken,
+    //                 //'Content-Type': 'multipart/form-data',
+    //             },
+    //         })
+    //             .then(res => {
+    //                 console.log(JSON.stringify(res.data.data), 'fetch all therapist availibility')
+    //                 if (res.data.response == true) {
+    //                     //const filteredData = res.data.data.filter(slot => slot.booked_status === 0);
+    //                     //setTherapistAvailability(filteredData);
+    //                     setTherapistAvailability(res.data.data)
+    //                     setIsLoading(false);
+
+    //                 } else {
+    //                     console.log('not okk')
+    //                     setIsLoading(false)
+    //                     Alert.alert('Oops..', "Something went wrong", [
+    //                         {
+    //                             text: 'Cancel',
+    //                             onPress: () => console.log('Cancel Pressed'),
+    //                             style: 'cancel',
+    //                         },
+    //                         { text: 'OK', onPress: () => console.log('OK Pressed') },
+    //                     ]);
+    //                 }
+    //             })
+    //             .catch(e => {
+    //                 setIsLoading(false)
+    //                 console.log(`user register error ${e}`)
+    //                 console.log(e.response)
+    //                 Alert.alert('Oops..', e.response?.data?.message, [
+    //                     {
+    //                         text: 'Cancel',
+    //                         onPress: () => console.log('Cancel Pressed'),
+    //                         style: 'cancel',
+    //                     },
+    //                     { text: 'OK', onPress: () => console.log('OK Pressed') },
+    //                 ]);
+    //             });
+    //     });
+    // }
+
     const selectedDateChange = (index, day, date) => {
-        console.log(index, day, date)
-        setSelectedDay(index)
-        setSelectedDate(date)
+        console.log(index, day, date);
+        setSelectedDay(index);
+        setSelectedDate(date);
         setIsLoading(true);
-        // console.log(day, 'day');
-        // console.log(date, 'date');
-        // console.log(profileDetails?.id, 'therapist_id');
-        // console.log('paid', 'paid')
-        var givendate = '';
-        if (day == 'Monday') {
-            givendate = 'monday'
-        } else if (day == 'Tuesday') {
-            givendate = 'tuesday'
-        } else if (day == 'Wednesday') {
-            givendate = 'wednessday'
-        } else if (day == 'Thursday') {
-            givendate = 'thursday'
-        } else if (day == 'Friday') {
-            givendate = 'friday'
-        } else if (day == 'Saturday') {
-            givendate = 'saturday'
-        } else if (day == 'Sunday') {
-            givendate = 'sunday'
+
+        let givendate = '';
+        switch (day) {
+            case 'Monday':
+                givendate = 'monday';
+                break;
+            case 'Tuesday':
+                givendate = 'tuesday';
+                break;
+            case 'Wednesday':
+                givendate = 'wednesday';
+                break;
+            case 'Thursday':
+                givendate = 'thursday';
+                break;
+            case 'Friday':
+                givendate = 'friday';
+                break;
+            case 'Saturday':
+                givendate = 'saturday';
+                break;
+            case 'Sunday':
+                givendate = 'sunday';
+                break;
+            default:
+                givendate = '';
         }
+
         const option = {
             "day": givendate,
             "date": date,
             "therapist_id": route?.params?.therapistId,
             "booking_type": route?.params?.mode
-        }
-        console.log(option)
+        };
+        console.log(option);
+
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             axios.post(`${API_URL}/patient/therapist-date-slots`, option, {
                 headers: {
@@ -90,16 +176,18 @@ const TherapistProfile = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'fetch all therapist availibility')
+                    console.log(JSON.stringify(res.data.data), 'fetch all therapist availability');
                     if (res.data.response == true) {
-                        //const filteredData = res.data.data.filter(slot => slot.booked_status === 0);
-                        //setTherapistAvailability(filteredData);
-                        setTherapistAvailability(res.data.data)
+                        const currentTime = moment();
+                        const filteredData = res.data.data.filter(slot => {
+                            const slotStartTime = moment(date + ' ' + slot.slot_start_time, 'YYYY-MM-DD HH:mm:ss');
+                            return slotStartTime.isSameOrAfter(currentTime);
+                        });
+                        setTherapistAvailability(filteredData);
                         setIsLoading(false);
-
                     } else {
-                        console.log('not okk')
-                        setIsLoading(false)
+                        console.log('not okk');
+                        setIsLoading(false);
                         Alert.alert('Oops..', "Something went wrong", [
                             {
                                 text: 'Cancel',
@@ -111,9 +199,9 @@ const TherapistProfile = ({ navigation, route }) => {
                     }
                 })
                 .catch(e => {
-                    setIsLoading(false)
-                    console.log(`user register error ${e}`)
-                    console.log(e.response)
+                    setIsLoading(false);
+                    console.log(`user register error ${e}`);
+                    console.log(e.response);
                     Alert.alert('Oops..', e.response?.data?.message, [
                         {
                             text: 'Cancel',
@@ -124,7 +212,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     ]);
                 });
         });
-    }
+    };
 
     const handleSlotSelect = (slot) => {
         console.log(slot, 'selected slot data')
@@ -255,7 +343,7 @@ const TherapistProfile = ({ navigation, route }) => {
     const submitForm = () => {
         console.log(selectedByUser.length, 'no of selected slot')
         console.log(profileDetails?.rate, 'rate of the therapist')
-        console.log(route?.params?.mode,'type')
+        console.log(route?.params?.mode, 'type')
         if (selectedByUser.length === 0) {
             Alert.alert('Oops..', 'You need to select at least one slot.', [
                 {
@@ -323,7 +411,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 }
                 navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
             } else {
-                if(selectedByUser.length > 1){
+                if (selectedByUser.length > 1) {
                     Alert.alert('Sorry..', 'You need to choose only one slot for a free session.', [
                         {
                             text: 'Cancel',
@@ -332,7 +420,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         },
                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ]);
-                }else{
+                } else {
                     console.log(selectedByUser)
                     const ids = selectedByUser.flatMap(item => [item.id.toString()]);
                     console.log(ids)
@@ -350,7 +438,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     } else {
                         prescription_checked = 'no'
                     }
-    
+
                     const formData = new FormData();
                     formData.append("therapist_id", profileDetails?.user_id);
                     formData.append("slot_ids", JSON.stringify(ids));
@@ -361,12 +449,12 @@ const TherapistProfile = ({ navigation, route }) => {
                     formData.append("gateway_name", 'free');
                     formData.append("prescription_checked", prescription_checked);
                     formData.append("transaction_amount", "0");
-                    formData.append("payment_status",'free');
+                    formData.append("payment_status", 'free');
                     formData.append("order_id", "0");
                     formData.append("transaction_no", "0");
                     formData.append("wallet_deduction", "0");
-                    
-                     console.log(formData)
+
+                    console.log(formData)
                     AsyncStorage.getItem('userToken', (err, usertoken) => {
                         axios.post(`${API_URL}/patient/slot-book`, formData, {
                             headers: {
@@ -376,16 +464,16 @@ const TherapistProfile = ({ navigation, route }) => {
                             },
                         })
                             .then(res => {
-                                console.log(JSON.stringify(res.data.data),'submit form response')
+                                console.log(JSON.stringify(res.data.data), 'submit form response')
                                 if (res.data.response == true) {
                                     setIsLoading(false)
                                     Alert.alert('Oops..', res.data.message, [
                                         {
                                             text: 'Cancel',
-                                            onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}),
+                                            onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }),
                                             style: 'cancel',
                                         },
-                                        { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}) },
+                                        { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
                                     ]);
                                 } else {
                                     console.log('not okk')
@@ -415,7 +503,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             });
                     });
                 }
-                
+
             }
 
         }
@@ -664,9 +752,15 @@ const TherapistProfile = ({ navigation, route }) => {
                             </View>
                         </View>
                         <View style={styles.profilebooking}>
-                            <View style={styles.profilebookingRateView}>
-                                <Text style={styles.profilebookingText}>₹{profileDetails?.rate} for 30 Min Booking</Text>
-                            </View>
+                            {route?.params?.mode === 'paid' ?
+                                <View style={styles.profilebookingRateView}>
+                                    <Text style={styles.profilebookingText}>₹{profileDetails?.rate} for 30 Min Booking</Text>
+                                </View>
+                                :
+                                <View style={styles.profilebookingRateView}>
+                                    <Text style={styles.profilebookingText}>Free for 15 Min Booking</Text>
+                                </View>
+                            }
                             <View style={styles.varticleLine} />
                             <View style={styles.profilebookingView}>
 
@@ -736,9 +830,10 @@ const TherapistProfile = ({ navigation, route }) => {
                     <View style={styles.selectDateView}>
                         <Text style={styles.headerText}>Select Time</Text>
                     </View>
-                    <View style={styles.warningView}>
-                        <Text style={styles.warningText}>We recommend booking one hour (two continuous slots)</Text>
-                    </View>
+                    {route?.params?.mode === 'paid' ?
+                        <View style={styles.warningView}>
+                            <Text style={styles.warningText}>We recommend booking one hour (two continuous slots)</Text>
+                        </View> : <></>}
                     <View style={styles.availableSlotView}>
                         {therapistAvailability.length === 0 ? (
                             <View style={styles.noSlotView}>

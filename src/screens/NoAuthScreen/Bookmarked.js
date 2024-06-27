@@ -192,7 +192,7 @@ const Bookmarked = ({ navigation }) => {
                 />
                 <Text style={styles.profilebookingText}>Avl. Slot : Today 09:00 PM</Text>
             </View>
-            <View style={{ marginTop: responsiveHeight(2) }}>
+            <View style={{ marginTop: responsiveHeight(2),marginBottom: -responsiveHeight(1) }}>
                 <CustomButton label={"Book Now"}
                     onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id })}
                 />
@@ -212,7 +212,7 @@ const Bookmarked = ({ navigation }) => {
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Bookmarked Therapist'} onPress={() => navigation.goBack()} title={'Bookmarked Therapist'} />
             <ScrollView style={styles.wrapper}>
-                <View style={{ alignSelf: 'center' }}>
+                <View style={{ alignSelf: 'center',marginTop: responsiveHeight(2) }}>
                     {therapistData.length != 0 ?
                         <FlatList
                             data={therapistData}

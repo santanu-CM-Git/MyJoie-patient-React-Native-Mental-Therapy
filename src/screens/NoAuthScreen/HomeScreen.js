@@ -330,7 +330,7 @@ export default function HomeScreen({ navigation }) {
           source={{ uri: item?.therapist?.profile_pic }}
           style={styles.cardImg}
         />
-        <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(40) }}>
+        <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(45) }}>
           <Text style={styles.nameText}>{item?.therapist?.name}</Text>
           <Text style={styles.namesubText}> Therapist</Text>
         </View>
@@ -346,7 +346,7 @@ export default function HomeScreen({ navigation }) {
           />
           <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
         </View>
-        <View style={styles.dividerLine} />
+        {/* <View style={styles.dividerLine} /> */}
         <View style={styles.dateView2}>
           <Image
             source={timeIcon}
@@ -696,11 +696,11 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.7)
   },
   upcommingAppointmentView: {
-    height: responsiveHeight(20),
-    width: responsiveWidth(90),
+    height: responsiveHeight(18),
+    width: responsiveWidth(91),
     backgroundColor: '#FFF',
     marginHorizontal: 15,
-    padding: 20,
+    padding: 15,
     borderRadius: 20,
     marginTop: responsiveHeight(2),
     marginBottom: responsiveHeight(1),
@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
   },
   dateTimeView: {
     height: responsiveHeight(5),
-    width: responsiveWidth(80),
+    width: responsiveWidth(84),
     marginTop: responsiveHeight(2),
     borderColor: '#E3E3E3',
     borderWidth: 1,
