@@ -701,7 +701,17 @@ const TherapistProfile = ({ navigation, route }) => {
         )
     }
 
+    const calculateHeight = () => {
+        if (therapistAvailability.length === 0) {
+            return responsiveHeight(10); // Set a fixed height for the "No slots available" message
+        }
+        const itemHeight = responsiveHeight(5) + 20; // Item height + padding and margin
+        const itemsPerRow = 3; // Number of items per row
+        const rows = Math.ceil(therapistAvailability.length / itemsPerRow);
+        const maxHeight = responsiveHeight(40); // Maximum height for the ScrollView
 
+        return Math.min(rows * itemHeight, maxHeight);
+    };
 
     return (
         <SafeAreaView style={styles.Container}>
@@ -776,36 +786,6 @@ const TherapistProfile = ({ navigation, route }) => {
                     </View>
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ padding: responsiveWidth(2), }}>
-                    {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
-                            <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Fri</Text>
-                            <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>23</Text>
-                        </View>
-                        <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#ECFCFA', borderRadius: 30, borderColor: '#87ADA8', borderWidth: 1, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
-                            <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Sat</Text>
-                            <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>24</Text>
-                        </View>
-                        <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
-                            <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Sun</Text>
-                            <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>25</Text>
-                        </View>
-                        <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
-                            <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Mon</Text>
-                            <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>26</Text>
-                        </View>
-                        <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
-                            <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Tue</Text>
-                            <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>27</Text>
-                        </View>
-                        <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
-                            <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Wed</Text>
-                            <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>28</Text>
-                        </View>
-                        <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
-                            <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Thr</Text>
-                            <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>29</Text>
-                        </View>
-                    </View> */}
                     <View style={styles.dateView}>
                         {nextSevenDays.map((day, index) => (
                             <TouchableOpacity
@@ -835,39 +815,45 @@ const TherapistProfile = ({ navigation, route }) => {
                             <Text style={styles.warningText}>We recommend booking one hour (two continuous slots)</Text>
                         </View> : <></>}
                     <View style={styles.availableSlotView}>
-                        {therapistAvailability.length === 0 ? (
-                            <View style={styles.noSlotView}>
-                                <Text style={styles.noSlotText}>No slots available for this date</Text>
+                        <ScrollView nestedScrollEnabled={true} style={{ width: responsiveWidth(90), height: calculateHeight() }}>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                {therapistAvailability.length === 0 ? (
+                                    <View style={styles.noSlotView}>
+                                        <Text style={styles.noSlotText}>No slots available for this date</Text>
+                                    </View>
+                                ) : (
+                                    therapistAvailability.map((slot, index) => {
+                                        const isSelected = selectedByUser.includes(slot);
+                                        const isBooked = slot.booked_status === 1;
+                                        return (
+
+                                            <TouchableOpacity
+                                                key={index}
+                                                onPress={() => handleSlotSelect(slot)}
+                                                disabled={isBooked}
+                                                style={{
+                                                    height: responsiveHeight(5),
+                                                    padding: 10,
+                                                    backgroundColor: isBooked ? '#EAECF0' : isSelected ? '#EEF8FF' : '#FFFFFF', // Change background color if selected
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    borderRadius: 20,
+                                                    marginRight: 10,
+                                                    marginBottom: 10,
+                                                    borderColor: isBooked ? '#EAECF0' : isSelected ? '#417AA4' : '#E3E3E3',
+                                                    borderWidth: 1,
+                                                }}
+                                            >
+                                                <Text style={styles.availableText}>
+                                                    {moment(slot.slot_start_time, 'HH:mm:ss').format('h:mm A')} - {moment(slot.slot_end_time, 'HH:mm:ss').format('h:mm A')}
+                                                </Text>
+                                            </TouchableOpacity>
+
+                                        );
+                                    })
+                                )}
                             </View>
-                        ) : (
-                            therapistAvailability.map((slot, index) => {
-                                const isSelected = selectedByUser.includes(slot);
-                                const isBooked = slot.booked_status === 1;
-                                return (
-                                    <TouchableOpacity
-                                        key={index}
-                                        onPress={() => handleSlotSelect(slot)}
-                                        disabled={isBooked}
-                                        style={{
-                                            height: responsiveHeight(5),
-                                            padding: 10,
-                                            backgroundColor: isBooked ? '#EAECF0' : isSelected ? '#EEF8FF' : '#FFFFFF', // Change background color if selected
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 20,
-                                            marginRight: 10,
-                                            marginBottom: 10,
-                                            borderColor: isBooked ? '#EAECF0' : isSelected ? '#417AA4' : '#E3E3E3',
-                                            borderWidth: 1,
-                                        }}
-                                    >
-                                        <Text style={styles.availableText}>
-                                            {moment(slot.slot_start_time, 'HH:mm:ss').format('h:mm A')} - {moment(slot.slot_end_time, 'HH:mm:ss').format('h:mm A')}
-                                        </Text>
-                                    </TouchableOpacity>
-                                );
-                            })
-                        )}
+                        </ScrollView>
                     </View>
                 </View>
                 {/* <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
@@ -1181,7 +1167,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     defaultDay: {
-        backgroundColor: '#EEE',
+        backgroundColor: '#fff',
+        borderColor: '#E3E3E3',
+        borderWidth: 1
     },
     weekDay: {
         color: '#746868',

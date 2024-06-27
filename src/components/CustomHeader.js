@@ -125,7 +125,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
+        paddingVertical: 20,
+        paddingHorizontal:10,
         backgroundColor: '#377172',
         marginTop: -responsiveHeight(1),
         //paddingRight: responsiveWidth(10)

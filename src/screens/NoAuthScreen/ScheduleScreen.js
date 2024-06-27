@@ -27,7 +27,8 @@ const ScheduleScreen = ({ navigation, route }) => {
     const [isLoading, setIsLoading] = useState(true)
     const [upcomingBooking, setUpcomingBooking] = useState([])
     const [previousBooking, setPreviousBooking] = useState([])
-    const [isFocus, setIsFocus] = useState(false);
+    // const [isFocus, setIsFocus] = useState(false);
+    const [focusedItemId, setFocusedItemId] = useState(null);
 
     const fetchUpcomingBooking = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -46,13 +47,13 @@ const ScheduleScreen = ({ navigation, route }) => {
                         let dateB = new Date(b.date);
                         if (dateA < dateB) return -1;
                         if (dateA > dateB) return 1;
-        
+
                         // If dates are the same, compare start_time
                         let timeA = a.start_time.split(':').map(Number);
                         let timeB = b.start_time.split(':').map(Number);
                         let dateTimeA = new Date(dateA.setHours(timeA[0], timeA[1]));
                         let dateTimeB = new Date(dateB.setHours(timeB[0], timeB[1]));
-        
+
                         return dateTimeA - dateTimeB;
                     });
                     setUpcomingBooking(upcomingBooking)
@@ -158,7 +159,7 @@ const ScheduleScreen = ({ navigation, route }) => {
         if (route?.params?.activeTab == 'Upcoming') {
             setActiveTab('Upcoming')
             setActiveButtonNo(0)
-        }else if(route?.params?.activeTab == undefined){
+        } else if (route?.params?.activeTab == undefined) {
             setActiveTab('Upcoming')
             setActiveButtonNo(0)
         } else {
@@ -166,7 +167,7 @@ const ScheduleScreen = ({ navigation, route }) => {
             setActiveButtonNo(1)
         }
         fetchUpcomingBooking();
-        fetchPreviousBooking(); 
+        fetchPreviousBooking();
     }, [])
     useFocusEffect(
         React.useCallback(() => {
@@ -183,25 +184,25 @@ const ScheduleScreen = ({ navigation, route }) => {
             </Pressable> */}
             <View style={styles.flexStyle}>
 
-                {!isFocus ?
-                    <Pressable onPress={() => setIsFocus(!isFocus)}>
+                {!focusedItemId || focusedItemId !== item.id ?
+                    <Pressable onPress={() => setFocusedItemId(item.id)}>
                         <Image
                             source={dotIcon}
                             style={{ height: 25, width: 25, resizeMode: 'contain', }}
                         />
                     </Pressable> :
-                    <Icon name="cross" size={25} color="#B0B0B0" onPress={() => setIsFocus(!isFocus)} />
+                    <Icon name="cross" size={25} color="#B0B0B0" onPress={() => setFocusedItemId(null)} />
                 }
 
-                {isFocus ?
-                    <View style={{ width: responsiveWidth(40), backgroundColor: '#fff', height: responsiveHeight(8), position: 'absolute', right: 0, top: 30, zIndex: 10, padding: 10, borderRadius: 15, justifyContent: 'center', elevation: 5 }}>
+                {focusedItemId === item.id &&
+                    <View style={{ width: responsiveWidth(53), backgroundColor: '#fff', height: responsiveHeight(8), position: 'absolute', right: 0, top: 30, zIndex: 10, padding: 10, borderRadius: 15, justifyContent: 'center', elevation: 5 }}>
                         <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
                             <TouchableOpacity onPress={() => confirmationBeforeCancel(item?.id)}>
-                                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Cancel</Text>
+                                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Cancel the appointment</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-                    : <></>}
+                }
 
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
