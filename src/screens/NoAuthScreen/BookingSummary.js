@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Alert } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, ActivityIndicator, useWindowDimensions, Switch, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -17,59 +17,104 @@ import RazorpayCheckout from 'react-native-razorpay';
 
 const BookingSummary = ({ navigation, route }) => {
 
-    const [walletBalance, setWalletBalance] = React.useState(0)
-    const [isLoading, setIsLoading] = useState(true)
-    const [starCount, setStarCount] = useState(4)
-    const [profileDetails, setProfileDetails] = useState(route?.params?.profileDetails)
-    const [previousPageData, setPreviousPageData] = useState(route?.params?.submitData)
-    const [payableAmount, setPayableAmount] = useState(route?.params?.submitData?.transaction_amount)
+    const [couponCode, setCouponCode] = useState('');
+    const [walletBalance, setWalletBalance] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isCouponLoading, setIsCouponLoading] = useState(false);
+    const [starCount, setStarCount] = useState(4);
+    const [profileDetails, setProfileDetails] = useState(route?.params?.profileDetails);
+    const [previousPageData, setPreviousPageData] = useState(route?.params?.submitData);
+    const [payableAmount, setPayableAmount] = useState(route?.params?.submitData?.transaction_amount);
     const [isEnabled, setIsEnabled] = useState(false);
-    const [minTime,setMinTime] = useState(null)
-    const [maxTime, setMaxTime] = useState(null)
+    const [minTime, setMinTime] = useState(null);
+    const [maxTime, setMaxTime] = useState(null);
+    const [taxableAmount, setTaxableAmount] = useState(0);
+    const [couponDeduction, setCouponDeduction] = useState(0);
+    const [walletDeduction, setWalletDeduction] = useState(0);
+
+    // const toggleSwitch = () => {
+    //     setIsEnabled((prevIsEnabled) => {
+    //         const newIsEnabled = !prevIsEnabled;
+
+    //         // Calculate the initial payable amount based on the original transaction amount, taxable amount, and coupon deduction
+    //         let newPayableAmount = route?.params?.submitData?.transaction_amount + taxableAmount - couponDeduction;
+
+    //         // Deduct wallet balance if the switch is enabled
+    //         if (newIsEnabled) {
+    //             newPayableAmount -= Math.min(walletBalance, newPayableAmount);
+    //         }
+
+    //         // Ensure payable amount is not negative
+    //         newPayableAmount = Math.max(newPayableAmount, 0);
+
+    //         setPayableAmount(newPayableAmount);
+    //         setWalletDeduction(newIsEnabled ? Math.min(walletBalance, newPayableAmount + walletBalance) : 0);
+
+    //         return newIsEnabled;
+    //     });
+    // };
+
     const toggleSwitch = () => {
-        setIsEnabled(previousState => !previousState)
-        console.log(payableAmount, 'payable amount')
-        console.log(walletBalance, 'wallet amount')
-        if (!isEnabled) {
-            setPayableAmount(payableAmount - walletBalance)
-        }
-        if (isEnabled) {
-            setPayableAmount(route?.params?.submitData?.transaction_amount)
-        }
+        setIsEnabled((prevIsEnabled) => {
+            const newIsEnabled = !prevIsEnabled;
+
+            // Calculate the initial payable amount based on the original transaction amount, taxable amount, and coupon deduction
+            let newPayableAmount = route?.params?.submitData?.transaction_amount + taxableAmount - couponDeduction;
+
+            // Deduct wallet balance if the switch is enabled
+            let newWalletDeduction = 0;
+            if (newIsEnabled) {
+                newWalletDeduction = Math.min(walletBalance, newPayableAmount);
+                newPayableAmount -= newWalletDeduction;
+            }
+
+            // Ensure payable amount is not negative
+            newPayableAmount = Math.max(newPayableAmount, 0);
+
+            setPayableAmount(newPayableAmount);
+            setWalletDeduction(newWalletDeduction);
+
+            return newIsEnabled;
+        });
     };
-    let razorpayKeyId = RAZORPAY_KEY_ID;
-    let razorpayKeySecret = RAZORPAY_KEY_SECRET;
+
+    const razorpayKeyId = RAZORPAY_KEY_ID;
+    const razorpayKeySecret = RAZORPAY_KEY_SECRET;
 
     useEffect(() => {
         fetchWalletBalance();
-        console.log(route?.params?.profileDetails, 'profile details')
-        console.log(route?.params?.submitData, 'submited data')
-        console.log(route?.params?.selectedSlot, 'selected slot')
+
         const { minStartTime, maxEndTime } = findTimeBounds(route?.params?.selectedSlot);
-        setMinTime(minStartTime)
-        setMaxTime(maxEndTime)
-    }, [])
+        setMinTime(minStartTime);
+        setMaxTime(maxEndTime);
+
+        const originalAmount = route?.params?.submitData?.transaction_amount || 0;
+        const calculatedTaxableAmount = (originalAmount * 18) / 100;
+        setTaxableAmount(calculatedTaxableAmount);
+
+        const initialPayableAmount = originalAmount + calculatedTaxableAmount;
+        setPayableAmount(initialPayableAmount);
+    }, []);
 
     const convertTime = (time) => {
         return moment(time, 'HH:mm:ss').format('hh:mm A');
-      };
-      
-      // Function to find the lowest start time and highest end time
-      const findTimeBounds = (data) => {
+    };
+
+    const findTimeBounds = (data) => {
         let minStartTime = data[0].slot_start_time;
         let maxEndTime = data[0].slot_end_time;
-      
+
         data.forEach(slot => {
-          if (slot.slot_start_time < minStartTime) {
-            minStartTime = slot.slot_start_time;
-          }
-          if (slot.slot_end_time > maxEndTime) {
-            maxEndTime = slot.slot_end_time;
-          }
+            if (slot.slot_start_time < minStartTime) {
+                minStartTime = slot.slot_start_time;
+            }
+            if (slot.slot_end_time > maxEndTime) {
+                maxEndTime = slot.slot_end_time;
+            }
         });
-      
+
         return { minStartTime, maxEndTime };
-      }
+    };
 
     const fetchWalletBalance = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -80,25 +125,24 @@ const BookingSummary = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    //console.log(res.data,'user details')
-                    let userBalance = res.data.wallet_amount;
-                    console.log(userBalance, 'wallet balance')
-                    setWalletBalance(userBalance)
+                    const userBalance = res.data.wallet_amount;
+                    console.log(userBalance, 'wallet balance');
+                    setWalletBalance(userBalance);
                     setIsLoading(false);
                 })
                 .catch(e => {
-                    console.log(`Login error ${e}`)
-                    console.log(e.response?.data?.message)
+                    console.log(`Login error ${e}`);
+                    console.log(e.response?.data?.message);
                 });
         });
-    }
+    };
 
     const handlePayment = () => {
-        const totalAmount = payableAmount
-        if (totalAmount == '0') {
-            submitForm("")
+        const totalAmount = payableAmount;
+        if (totalAmount === 0) {
+            submitForm("");
         } else {
-            var options = {
+            const options = {
                 description: 'This is the description we need',
                 image: 'https://i.imgur.com/3g7nmJC.jpg',
                 currency: 'INR',
@@ -112,25 +156,18 @@ const BookingSummary = ({ navigation, route }) => {
                     name: 'Person Name'
                 },
                 theme: { color: '#ECFCFA' }
-            }
+            };
             RazorpayCheckout.open(options).then((data) => {
-                // handle success
-                //alert(`Success: ${data.razorpay_payment_id}`);
-                console.log(data, 'data')
-                submitForm(data.razorpay_payment_id)
+                console.log(data, 'data');
+                submitForm(data.razorpay_payment_id);
             }).catch((error) => {
-                // handle failure
-                //alert(`Error: ${error.code} | ${error.description}`);
-                console.log(JSON.parse(error.description))
-                const errorMsg = JSON.parse(error.description)
-                console.log(errorMsg.error.description)
+                console.log(JSON.parse(error.description));
+                const errorMsg = JSON.parse(error.description);
+                console.log(errorMsg.error.description);
                 navigation.navigate('PaymentFailed', { message: errorMsg.error.description });
-              
             });
         }
-
-
-    }
+    };
 
     const submitForm = (transactionId) => {
         const formData = new FormData();
@@ -146,12 +183,10 @@ const BookingSummary = ({ navigation, route }) => {
         formData.append("payment_status", previousPageData?.payment_status);
         formData.append("order_id", previousPageData?.order_id);
         formData.append("transaction_no", transactionId);
-        if (isEnabled) {
-            formData.append("wallet_deduction", walletBalance);
-        } else {
-            formData.append("wallet_deduction", "0");
-        }
-        console.log(formData)
+        formData.append("wallet_deduction", isEnabled ? walletDeduction : "0");
+
+        console.log(formData);
+
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             axios.post(`${API_URL}/patient/slot-book`, formData, {
                 headers: {
@@ -161,20 +196,20 @@ const BookingSummary = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data),'submit form response')
-                    if (res.data.response == true) {
-                        setIsLoading(false)
+                    console.log(JSON.stringify(res.data.data), 'submit form response');
+                    if (res.data.response) {
+                        setIsLoading(false);
                         Alert.alert('Hello..', res.data.message, [
                             {
                                 text: 'Cancel',
-                                onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}),
+                                onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }),
                                 style: 'cancel',
                             },
-                            { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen',{detailsData : JSON.stringify(res.data.data)}) },
+                            { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
                         ]);
                     } else {
-                        console.log('not okk')
-                        setIsLoading(false)
+                        console.log('not ok');
+                        setIsLoading(false);
                         Alert.alert('Oops..', "Something went wrong", [
                             {
                                 text: 'Cancel',
@@ -186,9 +221,9 @@ const BookingSummary = ({ navigation, route }) => {
                     }
                 })
                 .catch(e => {
-                    setIsLoading(false)
-                    console.log(`user register error ${e}`)
-                    console.log(e.response)
+                    setIsLoading(false);
+                    console.log(`user register error ${e}`);
+                    console.log(e.response);
                     Alert.alert('Oops..', e.response?.data?.message, [
                         {
                             text: 'Cancel',
@@ -199,7 +234,115 @@ const BookingSummary = ({ navigation, route }) => {
                     ]);
                 });
         });
-    }
+    };
+
+    const changeCouponCode = (text) => {
+        setCouponCode(text);
+    };
+
+    const callForCoupon = async () => {
+        if (couponCode) {
+            setIsCouponLoading(true);
+            try {
+                const userToken = await AsyncStorage.getItem('userToken');
+                if (!userToken) {
+                    throw new Error('User token not found');
+                }
+                const option = {
+                    "coupon_code": couponCode
+                };
+
+                const response = await axios.post(`${API_URL}/patient/coupon`, option, {
+                    headers: {
+                        Accept: 'application/json',
+                        "Authorization": `Bearer ${userToken}`,
+                    },
+                });
+
+                if (response.data.response === true) {
+                    setIsCouponLoading(false);
+                    setCouponCode('');
+                    const couponData = response.data.data[0];
+                    console.log(couponData, 'response from coupon code');
+                    if (couponData) {
+                        // Calculate coupon deduction based on type
+                        if (couponData.type === 'percentage') {
+                            const couponAmount = (payableAmount * couponData.discount_percentage) / 100;
+                            setCouponDeduction(couponAmount);
+                            setPayableAmount(payableAmount - couponAmount);
+                        } else if (couponData.type === 'flat') {
+                            const couponAmount = parseFloat(couponData.discount_percentage);
+                            setCouponDeduction(couponAmount);
+                            setPayableAmount(payableAmount - couponAmount);
+                        }
+                    } else {
+                        setCouponDeduction(0)
+                    }
+
+                }
+            } catch (error) {
+                setIsCouponLoading(false);
+                console.log(`Coupon apply error ${error}`);
+                Alert.alert('Oops..', error.message || 'Something went wrong', [
+                    {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                    },
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ]);
+            }
+        } else {
+            Alert.alert('Oops..', "Please enter coupon code first", [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        }
+    };
+    // const removeCoupon = () => {
+    //     // Reset coupon deduction to 0
+    //     setCouponDeduction(0);
+
+    //     // Recalculate payable amount based on original transaction amount and taxable amount
+    //     const originalAmount = route?.params?.submitData?.transaction_amount || 0;
+    //     let newPayableAmount = originalAmount + taxableAmount;
+
+    //     // Adjust payable amount based on wallet deduction if applicable
+    //     if (isEnabled) {
+    //         newPayableAmount -= walletBalance;
+    //     }
+
+    //     // Ensure payable amount is not negative
+    //     newPayableAmount = Math.max(newPayableAmount, 0);
+
+    //     // Update payable amount
+    //     setPayableAmount(newPayableAmount);
+    // };
+
+    const removeCoupon = () => {
+        // Reset coupon deduction to 0
+        setCouponDeduction(0);
+
+        // Recalculate payable amount based on original transaction amount and taxable amount
+        const originalAmount = route?.params?.submitData?.transaction_amount || 0;
+        let newPayableAmount = originalAmount + taxableAmount;
+
+        // Adjust payable amount based on wallet deduction if applicable
+        if (isEnabled) {
+            newPayableAmount -= walletDeduction;
+        }
+
+        // Ensure payable amount is not negative
+        newPayableAmount = Math.max(newPayableAmount, 0);
+
+        // Update payable amount
+        setPayableAmount(newPayableAmount);
+    };
+
 
     if (isLoading) {
         return (
@@ -261,7 +404,7 @@ const BookingSummary = ({ navigation, route }) => {
                             </View>
                         </View>
                     </View>
-                    <View style={{ width: responsiveWidth(89), backgroundColor: '#FFFFFF', height: responsiveHeight(8), marginTop: responsiveHeight(2), borderRadius: 10, padding: 10, borderColor: '#E3E3E3', borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <View style={{ width: responsiveWidth(89), backgroundColor: '#FFFFFF', height: responsiveHeight(8), marginTop: responsiveHeight(2), borderRadius: 15, padding: 10, borderColor: '#E3E3E3', borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{ width: responsiveWidth(40), flexDirection: 'row' }}>
                             <Image
                                 source={walletBlack}
@@ -282,6 +425,63 @@ const BookingSummary = ({ navigation, route }) => {
                             />
                         </View>
                     </View>
+                    <View style={{ width: responsiveWidth(89), height: responsiveHeight(15), backgroundColor: '#FFF', padding: 10, borderRadius: 15, elevation: 5, justifyContent: 'center', marginTop: responsiveHeight(2) }}>
+                        <View style={{ marginTop: 10 }}>
+                            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), marginLeft: responsiveWidth(1) }}>Enter Coupon Code</Text>
+                            <InputField
+                                label={'Enter Coupon'}
+                                keyboardType=" "
+                                value={couponCode}
+                                //helperText={'Please enter lastname'}
+                                inputType={'coupon'}
+                                onChangeText={(text) => changeCouponCode(text)}
+                            />
+                        </View>
+                        {couponDeduction === 0 ?
+                            <TouchableOpacity style={{ position: 'absolute', right: 25, top: responsiveHeight(7) }} onPress={() => callForCoupon()}>
+                                {isCouponLoading ? (
+                                    <ActivityIndicator size="small" color="#417AA4" />
+                                ) : (
+                                    <Text style={{ color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), }}>APPLY</Text>
+                                )}
+                            </TouchableOpacity>
+                            :
+                            <Text style={{ position: 'absolute', right: 25, top: responsiveHeight(7), color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), }}>Coupon applied</Text>
+                        }
+                    </View>
+                    {/* <View style={styles.totalValue2}>
+                        <View style={{ flexDirection: 'row', height: responsiveHeight(7), backgroundColor: '#DEDEDE', borderTopRightRadius: 10, borderTopLeftRadius: 10, alignItems: 'center', }}>
+                            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), fontWeight: 'bold', textAlign: 'center', marginLeft: responsiveWidth(2) }}>Price Details</Text>
+                        </View>
+                        <View style={{ padding: 10, }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Consult Fee</Text>
+                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>₹{previousPageData?.transaction_amount}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Applicable Taxes</Text>
+                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>₹{taxableAmount}</Text>
+                            </View>
+                            {couponDeduction !== 0 ?
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Coupon Deduction</Text>
+                                    <TouchableOpacity onPress={() => removeCoupon()}>
+                                        <Text style={{ color: '#E1293B', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Remove</Text>
+                                    </TouchableOpacity>
+                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>- ₹{couponDeduction}</Text>
+                                </View> : null}
+                            {isEnabled ?
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Wallet Deduction</Text>
+                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>- ₹{walletBalance}</Text>
+                                </View>
+                                : null}
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7) }}>You Pay</Text>
+                                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7) }}>₹{payableAmount}</Text>
+                            </View>
+                        </View>
+                    </View> */}
                     <View style={styles.totalValue2}>
                         <View style={{ flexDirection: 'row', height: responsiveHeight(7), backgroundColor: '#DEDEDE', borderTopRightRadius: 10, borderTopLeftRadius: 10, alignItems: 'center', }}>
                             <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), fontWeight: 'bold', textAlign: 'center', marginLeft: responsiveWidth(2) }}>Price Details</Text>
@@ -291,16 +491,24 @@ const BookingSummary = ({ navigation, route }) => {
                                 <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Consult Fee</Text>
                                 <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>₹{previousPageData?.transaction_amount}</Text>
                             </View>
-                            {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
                                 <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Applicable Taxes</Text>
-                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>₹101</Text>
-                            </View> */}
-                            {isEnabled ?
+                                <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>₹{taxableAmount}</Text>
+                            </View>
+                            {couponDeduction !== 0 ?
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
-                                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Wallet Balance</Text>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>- ₹{walletBalance}</Text>
+                                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Coupon Deduction</Text>
+                                    <TouchableOpacity onPress={() => removeCoupon()}>
+                                        <Text style={{ color: '#E1293B', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Remove</Text>
+                                    </TouchableOpacity>
+                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>- ₹{couponDeduction}</Text>
+                                </View> : null}
+                            {isEnabled && walletDeduction > 0 ?
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>Wallet Deduction</Text>
+                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>- ₹{walletDeduction}</Text>
                                 </View>
-                                : <></>}
+                                : null}
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
                                 <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7) }}>You Pay</Text>
                                 <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7) }}>₹{payableAmount}</Text>
@@ -334,7 +542,7 @@ const styles = StyleSheet.create({
     },
     wrapper: {
         padding: responsiveWidth(2),
-
+        marginBottom: responsiveHeight(10)
     },
     totalValue: {
         width: responsiveWidth(89),
@@ -369,7 +577,8 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         paddingTop: 5,
         position: 'absolute',
-        width: responsiveWidth(100)
+        width: responsiveWidth(100),
+        backgroundColor: '#fff'
     },
 
 });

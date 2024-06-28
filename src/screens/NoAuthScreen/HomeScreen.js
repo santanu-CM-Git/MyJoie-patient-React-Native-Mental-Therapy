@@ -268,13 +268,13 @@ export default function HomeScreen({ navigation }) {
           source={{ uri: item.banner_image }}
           style={styles.bannerBg}
         />
-        <View style={styles.textWrap}>
+        {/* <View style={styles.textWrap}>
           {item?.banner_title && <Text style={styles.bannerText}>{item?.banner_title}</Text>}
           {item?.banner_description && <Text style={styles.bannerSubText} numberOfLines={4}>{item?.banner_description}</Text>}
           <View style={styles.bannerButtonView}>
             <Text style={styles.bannerButtonText}>Call Us Today!</Text>
           </View>
-        </View>
+        </View> */}
       </View>
     )
   }
