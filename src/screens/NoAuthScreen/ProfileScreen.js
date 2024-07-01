@@ -9,7 +9,9 @@ import {
   StyleSheet,
   Image,
   Alert,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator
 } from 'react-native';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -60,6 +62,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
+  const [isPicUploadLoading, setIsPicUploadLoading] = useState(false);
   const { login, userToken } = useContext(AuthContext);
 
   const [yearvalue, setYearValue] = useState(null);
@@ -75,27 +78,158 @@ const ProfileScreen = ({ navigation, route }) => {
   const [open, setOpen] = useState(false)
   const [dobError, setdobError] = useState('')
 
+  // const pickDocument = async () => {
+  //   try {
+  //     const result = await DocumentPicker.pick({
+  //       type: [DocumentPicker.types.allFiles],
+  //     });
+
+  //     //console.log('URI: ', result[0].uri);
+  //     //console.log('Type: ', result[0].type);
+  //     //console.log('Name: ', result[0].name);
+  //     //console.log('Size: ', result[0].size);
+
+  //     setPickedDocument(result[0]);
+  //     const formData = new FormData();
+  //     console.log(pickedDocument, 'mmmmm')
+  //     if (pickedDocument != null) {
+  //       formData.append("licenseFront", {
+  //         uri: pickedDocument.uri,
+  //         type: 'image/jpeg',
+  //         name: 'photo.jpg',
+  //       });
+  //     } else {
+  //       formData.append("licenseFront", "");
+  //     }
+  //     AsyncStorage.getItem('userToken', (err, usertoken) => {
+  //       axios.post(`${API_URL}/patient/submitDocuments`, formData, {
+  //         headers: {
+  //           Accept: 'application/json',
+  //           'Content-Type': 'multipart/form-data',
+  //           "Authorization": 'Bearer ' + usertoken,
+  //         },
+  //       })
+  //         .then(res => {
+  //           console.log(res.data)
+  //           if (res.data.response == true) {
+  //             setIsLoading(false)
+  //             Toast.show({
+  //               type: 'success',
+  //               text1: 'Hello',
+  //               text2: "Profile picture updated successfully",
+  //               position: 'top',
+  //               topOffset: Platform.OS == 'ios' ? 55 : 20
+  //             });
+  //           } else {
+  //             console.log('not okk')
+  //             setIsLoading(false)
+  //             Alert.alert('Oops..', "Something went wrong", [
+  //               {
+  //                 text: 'Cancel',
+  //                 onPress: () => console.log('Cancel Pressed'),
+  //                 style: 'cancel',
+  //               },
+  //               { text: 'OK', onPress: () => console.log('OK Pressed') },
+  //             ]);
+  //           }
+  //         })
+  //         .catch(e => {
+  //           setIsLoading(false)
+  //           console.log(`user update error ${e}`)
+  //           console.log(e.response.data?.response.records)
+  //           Alert.alert('Oops..', e.response?.data?.message, [
+  //             {
+  //               text: 'Cancel',
+  //               onPress: () => console.log('Cancel Pressed'),
+  //               style: 'cancel',
+  //             },
+  //             { text: 'OK', onPress: () => console.log('OK Pressed') },
+  //           ]);
+  //         });
+  //     });
+  //   } catch (err) {
+  //     if (DocumentPicker.isCancel(err)) {
+  //       // User cancelled the document picker
+  //       console.log('Document picker was cancelled');
+  //     } else {
+  //       console.error('Error picking document', err);
+  //     }
+  //   }
+  // };
+
   const pickDocument = async () => {
     try {
-        const result = await DocumentPicker.pick({
-            type: [DocumentPicker.types.allFiles],
+      const result = await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles],
+      });
+
+      const pickedDocument = result[0];
+      setPickedDocument(pickedDocument);
+
+      const formData = new FormData();
+      if (pickedDocument) {
+        formData.append("profile_pic", {
+          uri: pickedDocument.uri,
+          type: pickedDocument.type || 'image/jpeg',
+          name: pickedDocument.name || 'photo.jpg',
         });
+      } else {
+        formData.append("profile_pic", "");
+      }
 
-        //console.log('URI: ', result[0].uri);
-        //console.log('Type: ', result[0].type);
-        //console.log('Name: ', result[0].name);
-        //console.log('Size: ', result[0].size);
-
-        setPickedDocument(result[0]);
-    } catch (err) {
-        if (DocumentPicker.isCancel(err)) {
-            // User cancelled the document picker
-            console.log('Document picker was cancelled');
-        } else {
-            console.error('Error picking document', err);
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (!userToken) {
+        throw new Error("User token not found");
+      }
+      setIsPicUploadLoading(true);
+      const response = await axios.post(
+        `${API_URL}/patient/profile-pic-upload`,
+        formData,
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${userToken}`,
+          },
         }
+      );
+      setIsPicUploadLoading(false);
+
+      if (response.data.response) {
+        Toast.show({
+          type: 'success',
+          text1: 'Hello',
+          text2: 'Profile picture updated successfully',
+          position: 'top',
+          topOffset: Platform.OS === 'ios' ? 55 : 20,
+        });
+      } else {
+        handleAlert('Oops..', 'Something went wrong');
+      }
+    } catch (err) {
+      setIsPicUploadLoading(false);
+      if (DocumentPicker.isCancel(err)) {
+        console.log('Document picker was cancelled');
+      } else if (err.response) {
+        console.log('Error response:', err.response.data?.response?.records);
+        handleAlert('Oops..', err.response.data?.message);
+      } else {
+        console.error('Error picking document', err);
+      }
     }
-};
+  };
+
+  const handleAlert = (title, message) => {
+    Alert.alert(title, message, [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'OK', onPress: () => console.log('OK Pressed') },
+    ]);
+  };
+
 
   const fetchUserData = () => {
     setIsLoading(true)
@@ -258,34 +392,51 @@ const ProfileScreen = ({ navigation, route }) => {
       <CustomHeader commingFrom={'My Profile'} onPress={() => navigation.goBack()} title={'My Profile'} />
       <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: responsiveHeight(4) }}>
         <View style={styles.wrapper}>
+          {/* <View style={styles.mainView}>
+            {isPicUploadLoading ? (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="small" color="#417AA4" />
+              </View>
+            ) : (
+              pickedDocument == null ? (
+                imageFile != null ? (
+                  <Image source={{ uri: imageFile }} style={styles.imageStyle} />
+                ) : (
+                  <Image source={userPhoto} style={styles.imageStyle} />
+                )
+              ) : (
+                <Image source={{ uri: pickedDocument.uri }} style={styles.imageStyle} />
+              )
+            )}
+            <TouchableOpacity style={styles.plusIcon} onPress={pickDocument}>
+              <Image source={plus} style={{ height: 25, width: 25, resizeMode: 'contain' }} />
+            </TouchableOpacity>
+          </View> */}
           <View style={styles.mainView}>
-
-            {pickedDocument == null ?
-              imageFile != null ?
-                <Image
-                  source={{ uri: imageFile }}
-                  style={styles.imageStyle}
-                /> :
-                <Image
-                  source={userPhoto}
-                  style={styles.imageStyle}
-                /> :
-              <Image
-                source={{ uri: pickedDocument.uri }}
-                style={styles.imageStyle}
-              />
-
-            }
-            <TouchableOpacity style={styles.plusIcon} onPress={() => pickDocument()}
-            >
-              <Image source={plus} style={{ height: 25, width: 25,resizeMode:'contain' }} />
+            <View style={styles.imageContainer}>
+              {isPicUploadLoading ? (
+                <ActivityIndicator size="small" color="#417AA4" style={styles.loader} />
+              ) : (
+                pickedDocument == null ? (
+                  imageFile != null ? (
+                    <Image source={{ uri: imageFile }} style={styles.imageStyle} />
+                  ) : (
+                    <Image source={userPhoto} style={styles.imageStyle} />
+                  )
+                ) : (
+                  <Image source={{ uri: pickedDocument.uri }} style={styles.imageStyle} />
+                )
+              )}
+            </View>
+            <TouchableOpacity style={styles.plusIcon} onPress={pickDocument}>
+              <Image source={plus} style={{ height: 25, width: 25, resizeMode: 'contain' }} />
             </TouchableOpacity>
           </View>
           <View style={styles.textinputview}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Name</Text>
             </View>
-            {firstNameError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{firstNameError}</Text> : <></>}
+            {firstNameError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{firstNameError}</Text> : <></>}
             <View style={styles.inputView}>
               <InputField
                 label={'First name'}
@@ -299,7 +450,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Mobile Number</Text>
             </View>
-            {phonenoError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{phonenoError}</Text> : <></>}
+            {phonenoError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{phonenoError}</Text> : <></>}
             <View style={styles.inputView}>
               <InputField
                 label={'Mobile Number'}
@@ -313,7 +464,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Email Id</Text>
             </View>
-            {emailError ? <Text style={{ color: 'red', fontFamily: 'Outfit-Regular' }}>{emailError}</Text> : <></>}
+            {emailError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{emailError}</Text> : <></>}
             <View style={styles.inputView}>
               <InputField
                 label={'e.g. abc@gmail.com'}
@@ -565,5 +716,15 @@ const styles = StyleSheet.create({
   mainView: {
     alignSelf: 'center',
     marginTop: responsiveHeight(2)
-  }
+  },
+  loader: {
+    position: 'absolute',
+  },
+  imageContainer: {
+    height: 90,
+    width: 90,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
 });

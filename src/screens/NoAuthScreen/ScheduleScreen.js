@@ -29,6 +29,7 @@ const ScheduleScreen = ({ navigation, route }) => {
     const [previousBooking, setPreviousBooking] = useState([])
     // const [isFocus, setIsFocus] = useState(false);
     const [focusedItemId, setFocusedItemId] = useState(null);
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
     const fetchUpcomingBooking = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -168,6 +169,10 @@ const ScheduleScreen = ({ navigation, route }) => {
         }
         fetchUpcomingBooking();
         fetchPreviousBooking();
+        const timer = setInterval(() => {
+            setCurrentDateTime(new Date());
+        }, 60000); // Update every minute
+        return () => clearInterval(timer);
     }, [])
     useFocusEffect(
         React.useCallback(() => {
@@ -176,71 +181,77 @@ const ScheduleScreen = ({ navigation, route }) => {
         }, [])
     )
 
-    const renderUpcoming = ({ item }) => (
-
-        <View style={styles.upcomingView}>
-            {/* <Pressable onPress={()=> cancelSchedule()} style={{ position: 'absolute', top: 5, right: 10 }} >
+    const renderUpcoming = ({ item }) => {
+        const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
+        const isButtonEnabled = currentDateTime >= bookingDateTime;
+        return (
+            <View style={styles.upcomingView}>
+                {/* <Pressable onPress={()=> cancelSchedule()} style={{ position: 'absolute', top: 5, right: 10 }} >
                 <Icon name="delete-forever" color={'red'} size={22} />
             </Pressable> */}
-            <View style={styles.flexStyle}>
+                <View style={styles.flexStyle}>
 
-                {!focusedItemId || focusedItemId !== item.id ?
-                    <Pressable onPress={() => setFocusedItemId(item.id)}>
-                        <Image
-                            source={dotIcon}
-                            style={{ height: 25, width: 25, resizeMode: 'contain', }}
-                        />
-                    </Pressable> :
-                    <Icon name="cross" size={25} color="#B0B0B0" onPress={() => setFocusedItemId(null)} />
-                }
+                    {!focusedItemId || focusedItemId !== item.id ?
+                        <Pressable onPress={() => setFocusedItemId(item.id)}>
+                            <Image
+                                source={dotIcon}
+                                style={{ height: 25, width: 25, resizeMode: 'contain', }}
+                            />
+                        </Pressable> :
+                        <Icon name="cross" size={25} color="#B0B0B0" onPress={() => setFocusedItemId(null)} />
+                    }
 
-                {focusedItemId === item.id &&
-                    <View style={{ width: responsiveWidth(53), backgroundColor: '#fff', height: responsiveHeight(8), position: 'absolute', right: 0, top: 30, zIndex: 10, padding: 10, borderRadius: 15, justifyContent: 'center', elevation: 5 }}>
-                        <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
-                            <TouchableOpacity onPress={() => confirmationBeforeCancel(item?.id)}>
-                                <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Cancel the appointment</Text>
-                            </TouchableOpacity>
+                    {focusedItemId === item.id &&
+                        <View style={{ width: responsiveWidth(53), backgroundColor: '#fff', height: responsiveHeight(8), position: 'absolute', right: 0, top: 30, zIndex: 10, padding: 10, borderRadius: 15, justifyContent: 'center', elevation: 5 }}>
+                            <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                                <TouchableOpacity onPress={() => confirmationBeforeCancel(item?.id)}>
+                                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Cancel the appointment</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
+                    }
+
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+
+                    <Image
+                        source={{ uri: item?.therapist?.profile_pic }}
+                        style={styles.cardImg}
+                    />
+                    <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(40) }}>
+                        <Text style={styles.nameText}>
+                            {item?.therapist?.name}
+                        </Text>
+                        <Text style={styles.nameSubText2}>
+                            Therapist
+                        </Text>
                     </View>
-                }
-
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-
-                <Image
-                    source={{ uri: item?.therapist?.profile_pic }}
-                    style={styles.cardImg}
-                />
-                <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(40) }}>
-                    <Text style={styles.nameText}>
-                        {item?.therapist?.name}
-                    </Text>
-                    <Text style={styles.nameSubText2}>
-                        Therapist
-                    </Text>
+                    <TouchableOpacity style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
+                        onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
+                        disabled={!isButtonEnabled}
+                    >
+                        <Text style={styles.joinNowText}>Join Now</Text>
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
-                    <Text style={styles.joinNowText}>Join Now</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.dateTimeView}>
-                <View style={styles.dateView1}>
-                    <Image
-                        source={dateIcon}
-                        style={styles.datetimeIcon}
-                    />
-                    <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
-                </View>
-                <View style={styles.dateView2}>
-                    <Image
-                        source={timeIcon}
-                        style={styles.datetimeIcon}
-                    />
-                    <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
+                <View style={styles.dateTimeView}>
+                    <View style={styles.dateView1}>
+                        <Image
+                            source={dateIcon}
+                            style={styles.datetimeIcon}
+                        />
+                        <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
+                    </View>
+                    <View style={styles.dateView2}>
+                        <Image
+                            source={timeIcon}
+                            style={styles.datetimeIcon}
+                        />
+                        <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
+                    </View>
                 </View>
             </View>
-        </View>
-    )
+        )
+    }
 
     const renderPrevious = ({ item }) => (
         <View style={styles.previousBookingView}>

@@ -62,6 +62,7 @@ export default function HomeScreen({ navigation }) {
   const [bannerData, setBannerData] = useState([])
   const [customerSpeaksData, setCustomerSpeaksData] = useState([])
   const [userInfo, setuserInfo] = useState([])
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   const getFCMToken = async () => {
     try {
@@ -323,40 +324,47 @@ export default function HomeScreen({ navigation }) {
       </View>
     </View>
   )
-  const renderUpcomingBooking = ({ item }) => (
-    <View style={styles.upcommingAppointmentView}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Image
-          source={{ uri: item?.therapist?.profile_pic }}
-          style={styles.cardImg}
-        />
-        <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(45) }}>
-          <Text style={styles.nameText}>{item?.therapist?.name}</Text>
-          <Text style={styles.namesubText}> Therapist</Text>
-        </View>
-        <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
-          <Text style={styles.joinButtonText}>Join Now</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.dateTimeView}>
-        <View style={styles.dateView1}>
+  const renderUpcomingBooking = ({ item }) => {
+    const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
+    const isButtonEnabled = currentDateTime >= bookingDateTime;
+    return (
+      <View style={styles.upcommingAppointmentView}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image
-            source={dateIcon}
-            style={styles.datetimeIcon}
+            source={{ uri: item?.therapist?.profile_pic }}
+            style={styles.cardImg}
           />
-          <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
+          <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(45) }}>
+            <Text style={styles.nameText}>{item?.therapist?.name}</Text>
+            <Text style={styles.namesubText}> Therapist</Text>
+          </View>
+          <TouchableOpacity style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
+           onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
+           disabled={!isButtonEnabled}
+           >
+            <Text style={styles.joinButtonText}>Join Now</Text>
+          </TouchableOpacity>
         </View>
-        {/* <View style={styles.dividerLine} /> */}
-        <View style={styles.dateView2}>
-          <Image
-            source={timeIcon}
-            style={styles.datetimeIcon}
-          />
-          <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
+        <View style={styles.dateTimeView}>
+          <View style={styles.dateView1}>
+            <Image
+              source={dateIcon}
+              style={styles.datetimeIcon}
+            />
+            <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
+          </View>
+          {/* <View style={styles.dividerLine} /> */}
+          <View style={styles.dateView2}>
+            <Image
+              source={timeIcon}
+              style={styles.datetimeIcon}
+            />
+            <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
+          </View>
         </View>
       </View>
-    </View>
-  )
+    )
+  }
   const renderPreviousBooking = ({ item }) => (
     <View style={styles.previousTherapistView}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -452,6 +460,10 @@ export default function HomeScreen({ navigation }) {
     fetchUpcomingBooking()
     fetchPreviousBooking()
     fetchCustomerSpeaks()
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 60000); // Update every minute
+    return () => clearInterval(timer);
   }, [])
 
   useFocusEffect(
@@ -462,6 +474,10 @@ export default function HomeScreen({ navigation }) {
       fetchUpcomingBooking()
       fetchPreviousBooking()
       fetchCustomerSpeaks()
+      const timer = setInterval(() => {
+        setCurrentDateTime(new Date());
+      }, 60000); // Update every minute
+      return () => clearInterval(timer);
     }, [])
   )
 
