@@ -171,6 +171,8 @@ const ScheduleScreen = ({ navigation, route }) => {
         fetchPreviousBooking();
         const timer = setInterval(() => {
             setCurrentDateTime(new Date());
+            console.log('every minute call')
+            fetchUpcomingBooking();
         }, 60000); // Update every minute
         return () => clearInterval(timer);
     }, [])
@@ -183,7 +185,8 @@ const ScheduleScreen = ({ navigation, route }) => {
 
     const renderUpcoming = ({ item }) => {
         const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
-        const isButtonEnabled = currentDateTime >= bookingDateTime;
+        const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
+        const isButtonEnabled = currentDateTime >= twoMinutesBefore;
         return (
             <View style={styles.upcomingView}>
                 {/* <Pressable onPress={()=> cancelSchedule()} style={{ position: 'absolute', top: 5, right: 10 }} >

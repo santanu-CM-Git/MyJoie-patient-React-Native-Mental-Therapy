@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, KeyboardAvoidingView, PermissionsAndroid } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, KeyboardAvoidingView, PermissionsAndroid, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
@@ -9,6 +9,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as DocumentPicker from 'react-native-document-picker';
 import InChatFileTransfer from '../../components/InChatFileTransfer';
 import InChatViewFile from '../../components/InChatViewFile';
+import { API_URL } from '@env'
 // import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
 // import { getDatabase, ref, onValue, push } from '@react-native-firebase/database';
 // import * as firebase from "firebase/app"
@@ -31,6 +32,10 @@ import {
   IRtcEngine,
   ChannelProfileType,
 } from 'react-native-agora';
+import moment from 'moment-timezone'
+import Loader from '../../utils/Loader'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios'
 // Define basic information
 const appId = '975e09acde854ac38b3304da072c111e';
 const token = '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==';
@@ -67,16 +72,165 @@ const ChatScreen = ({ navigation, route }) => {
   const [fileVisible, setFileVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('chat')
+  const [isLoading, setIsLoading] = useState(true)
+
+  const [timer, setTimer] = useState(0);
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
   useEffect(() => {
-    //receivedMsg()
+    // If timer is 0, return early
+    if (timer === 0) return;
+
+    // Create an interval that decrements the timer value every second
+    const interval = setInterval(() => {
+      setTimer((timer) => timer - 1);
+    }, 1000);
+
+    // Clear the interval if the component is unmounted or timer reaches 0
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const formatTime = (totalSeconds) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    // Format the time to ensure it always shows two digits for minutes and seconds
+    return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  useEffect(() => {
+    // //receivedMsg()
     console.log(route?.params?.details, 'details from home page')
+
+    sessionStart()
   }, [])
 
+  const sessionStart = () => {
+    setIsLoading(true)
+    const currentTime = moment().format('HH:mm:ss');
+    const option = {
+      "booked_slot_id": route?.params?.details?.id,
+      "time": currentTime
+    }
+    console.log(option)
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+      axios.post(`${API_URL}/patient/slot-start`, option, {
+        headers: {
+          Accept: 'application/json',
+          "Authorization": 'Bearer ' + usertoken,
+        },
+      })
+        .then(res => {
+          console.log(res.data)
+          if (res.data.response == true) {
+            const endTime = route?.params?.details?.end_time;
+            // Get the current time using moment
+            const currentTime = moment().format('HH:mm:ss');
+            // Create a new Date object for the end time, assuming the date is today
+            const endDate = moment(endTime, 'HH:mm:ss').toDate();
+            // Create a new Date object for the current time
+            const currentDate = moment(currentTime, 'HH:mm:ss').toDate();
+            // Calculate the difference in seconds
+            const timeDifferenceInSeconds = Math.max(0, Math.floor((endDate - currentDate) / 1000));
+            // Set the timer state
+            setTimer(timeDifferenceInSeconds);
+            setIsLoading(false)
+          } else {
+            console.log('not okk')
+            setIsLoading(false)
+            Alert.alert('Oops..', "Something went wrong", [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+          }
+        })
+        .catch(e => {
+          setIsLoading(false)
+          console.log(`user update error ${e}`)
+          console.log(e.response.data?.response.records)
+          Alert.alert('Oops..', e.response?.data?.message, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ]);
+        });
+    });
+  }
 
+  useEffect(() => {
+    if (timer > 0) {
+      const intervalId = setInterval(() => {
+        setTimer(prevTimer => {
+          if (prevTimer <= 1) {
+            clearInterval(intervalId);
+            handleTimerEnd();
+            return 0;
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+
+      // Cleanup the interval on component unmount
+      return () => clearInterval(intervalId);
+    }
+  }, [timer]);
+
+  const handleTimerEnd = () => {
+    console.log('Timer has ended. Execute your function here.');
+    const currentTime = moment().format('HH:mm:ss');
+    const option = {
+      "booked_slot_id": route?.params?.details?.id,
+      "time": currentTime
+    }
+    console.log(option)
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+      axios.post(`${API_URL}/patient/slot-complete`, option, {
+        headers: {
+          Accept: 'application/json',
+          "Authorization": 'Bearer ' + usertoken,
+        },
+      })
+        .then(res => {
+          console.log(res.data)
+          if (res.data.response == true) {
+            navigation.navigate('Home')
+          } else {
+            console.log('not okk')
+            setIsLoading(false)
+            Alert.alert('Oops..', "Something went wrong", [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+          }
+        })
+        .catch(e => {
+          setIsLoading(false)
+          console.log(`user update error ${e}`)
+          console.log(e.response.data?.response.records)
+          Alert.alert('Oops..', e.response?.data?.message, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ]);
+        });
+    });
+  };
   const _pickDocument = async () => {
     try {
       const result = await DocumentPicker.pick({
@@ -576,6 +730,12 @@ const ChatScreen = ({ navigation, route }) => {
     // other configurations
   };
 
+  if (isLoading) {
+    return (
+      <Loader />
+    )
+  }
+
   return (
     <SafeAreaView style={styles.Container} behavior="padding" keyboardVerticalOffset={30} enabled>
       {/* <CustomHeader commingFrom={'chat'} onPress={() => navigation.goBack()} title={'Admin Community'} /> */}
@@ -588,10 +748,12 @@ const ChatScreen = ({ navigation, route }) => {
           </View>
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: '#CC2131', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(5) }}>14:59</Text>
-          <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#53A39F', borderRadius: 15, marginLeft: responsiveWidth(2) }}>
-            <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>End</Text>
-          </View>
+          <Text style={{ color: '#CC2131', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(5) }}>{formatTime(timer)}</Text>
+          <TouchableOpacity onPress={() => handleTimerEnd()}>
+            <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#53A39F', borderRadius: 15, marginLeft: responsiveWidth(2) }}>
+              <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>End</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>

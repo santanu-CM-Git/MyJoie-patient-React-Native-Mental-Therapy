@@ -326,7 +326,8 @@ export default function HomeScreen({ navigation }) {
   )
   const renderUpcomingBooking = ({ item }) => {
     const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
-    const isButtonEnabled = currentDateTime >= bookingDateTime;
+    const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
+    const isButtonEnabled = currentDateTime >= twoMinutesBefore;
     return (
       <View style={styles.upcommingAppointmentView}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
