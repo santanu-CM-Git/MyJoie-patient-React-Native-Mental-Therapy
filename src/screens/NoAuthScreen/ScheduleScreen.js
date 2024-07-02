@@ -355,17 +355,23 @@ const ScheduleScreen = ({ navigation, route }) => {
                     :
 
                     <View style={{ marginBottom: responsiveHeight(2) }}>
-                        <FlatList
-                            data={previousBooking}
-                            renderItem={renderPrevious}
-                            keyExtractor={(item) => item.id.toString()}
-                            maxToRenderPerBatch={10}
-                            windowSize={5}
-                            initialNumToRender={10}
-                            getItemLayout={(upcomingBooking, index) => (
-                                { length: 50, offset: 50 * index, index }
-                            )}
-                        />
+                        {previousBooking.length !== 0 ?
+                            <FlatList
+                                data={previousBooking}
+                                renderItem={renderPrevious}
+                                keyExtractor={(item) => item.id.toString()}
+                                maxToRenderPerBatch={10}
+                                windowSize={5}
+                                initialNumToRender={10}
+                                getItemLayout={(upcomingBooking, index) => (
+                                    { length: 50, offset: 50 * index, index }
+                                )}
+                            />
+                            :
+                            <View style={styles.upcomingView}>
+                                <Text style={styles.nodataText}>No previous booking yet</Text>
+                            </View>
+                        }
                     </View>
                 }
             </ScrollView>
@@ -521,7 +527,8 @@ const styles = StyleSheet.create({
     nodataText: {
         alignSelf: 'center',
         fontFamily: 'DMSans-Bold',
-        fontSize: responsiveFontSize(2)
+        fontSize: responsiveFontSize(2),
+        color: '#746868'
     },
 
 });
