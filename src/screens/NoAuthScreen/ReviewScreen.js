@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Alert, Platform } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -13,36 +13,69 @@ import moment from "moment"
 import StarRating from 'react-native-star-rating';
 import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
+import Toast from 'react-native-toast-message';
 
 
-const ReviewScreen = ({ navigation }) => {
+const ReviewScreen = ({ navigation, route }) => {
 
     const [walletHistory, setWalletHistory] = React.useState([])
     const [isLoading, setIsLoading] = useState(false)
-    const [starCount, setStarCount] = useState(4)
+    const [starCount, setStarCount] = useState(0)
     const [address, setaddress] = useState('');
     const [addressError, setaddressError] = useState('')
 
-    useEffect(() => {
-        //fetchWalletHistory();
-    }, [])
 
-    const fetchWalletHistory = () => {
+    const submitForm = () => {
+        const option = {
+            "booked_slot_id": route?.params?.bookedId,
+            "review": address,
+            "star": starCount
+        }
+        setIsLoading(true)
         AsyncStorage.getItem('userToken', (err, usertoken) => {
-
-            axios.get(`${API_URL}/public/api/user/paydetails`, {
+            axios.post(`${API_URL}/patient/post-review`, option, {
                 headers: {
-                    "Authorization": 'Bearer ' + usertoken,
-                    "Content-Type": 'application/json'
+                    Accept: 'application/json',
+                    "Authorization": `Bearer ${usertoken}`,
                 },
             })
                 .then(res => {
-                    console.log(res.data.paydetails, 'user details')
-                    setWalletHistory(res.data.paydetails)
-                    setIsLoading(false);
+                    console.log(res.data)
+                    if (res.data.response == true) {
+                        setIsLoading(false)
+                        Toast.show({
+                            type: 'success',
+                            text1: 'Hello',
+                            text2: "Upload data Successfully",
+                            position: 'top',
+                            topOffset: Platform.OS == 'ios' ? 55 : 20
+                        });
+                        navigation.navigate('Home')
+                    } else {
+                        console.log('not okk')
+                        setIsLoading(false)
+                        Alert.alert('Oops..', "Something went wrong", [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
                 })
                 .catch(e => {
-                    console.log(`Login error ${e}`)
+                    setIsLoading(false)
+                    console.log(`user register error ${e}`)
+                    console.log(e.response)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
                 });
         });
     }
@@ -62,16 +95,16 @@ const ReviewScreen = ({ navigation }) => {
                 <View style={{ marginBottom: responsiveHeight(5), alignSelf: 'center', marginTop: responsiveHeight(2) }}>
                     <View style={styles.totalValue}>
                         <Image
-                            source={userPhoto}
+                            source={{uri:route?.params?.therapistPic}}
                             style={{ height: 90, width: 90, borderRadius: 90 / 2, resizeMode: 'contain' }}
                         />
-                        <Text style={{ fontSize: responsiveFontSize(2.5), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2) }}>Jennifer Kourtney</Text>
+                        <Text style={{ fontSize: responsiveFontSize(2.5), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2) }}>{route?.params?.therapistName}</Text>
                         <Text style={{ fontSize: responsiveFontSize(2), color: '#746868', fontFamily: 'DMSans-Medium', marginTop: responsiveHeight(2) }}>Therapist</Text>
                     </View>
                     <Text style={{ fontSize: responsiveFontSize(2), color: '#746868', fontFamily: 'DMSans-Regular', textAlign: 'center', marginTop: responsiveHeight(2) }}>How was your experience?</Text>
                     <View style={{ alignSelf: 'center', width: responsiveWidth(50), marginTop: responsiveHeight(2) }}>
                         <StarRating
-                            disabled={true}
+                            disabled={false}
                             maxStars={5}
                             rating={starCount}
                             selectedStar={(rating) => setStarCount(rating)}
@@ -95,10 +128,12 @@ const ReviewScreen = ({ navigation }) => {
                     </View>
                     <View style={styles.buttonwrapper}>
                         <CustomButton label={"Submit Review"}
-                            onPress={() => submitReview()}
+                            onPress={() => submitForm()}
                         />
                     </View>
+                    <TouchableOpacity onPress={()=> navigation.navigate('Home')}>
                     <Text style={{fontSize: responsiveFontSize(1.7), color: '#808080', fontFamily: 'DMSans-Regular', textAlign: 'center',}}>Skip</Text>
+                    </TouchableOpacity>
                 </View>
 
             </ScrollView>

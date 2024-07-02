@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect,useRef } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, Switch, Image, Platform, Alert, FlatList, Pressable } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import CustomButton from '../../components/CustomButton';
@@ -21,7 +21,7 @@ import Toast from 'react-native-toast-message';
 
 
 const ScheduleScreen = ({ navigation, route }) => {
-
+    const timerRef = useRef(null);
     const [activeTab, setActiveTab] = useState('Upcoming')
     const [activeButtonNo, setActiveButtonNo] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
@@ -155,27 +155,75 @@ const ScheduleScreen = ({ navigation, route }) => {
         });
     }
 
+    // useEffect(() => {
+    //     console.log(route?.params?.activeTab, 'active tabbbbyyy')
+    //     if (route?.params?.activeTab == 'Upcoming') {
+    //         setActiveTab('Upcoming')
+    //         setActiveButtonNo(0)
+    //     } else if (route?.params?.activeTab == undefined) {
+    //         setActiveTab('Upcoming')
+    //         setActiveButtonNo(0)
+    //     } else {
+    //         setActiveTab('Previous')
+    //         setActiveButtonNo(1)
+    //     }
+    //     fetchUpcomingBooking();
+    //     fetchPreviousBooking();
+    //     const timer = setInterval(() => {
+    //         setCurrentDateTime(new Date());
+    //         console.log('every minute call')
+    //         fetchUpcomingBooking();
+    //     }, 60000); // Update every minute
+
+    //     return () => clearInterval(timer);
+    // }, [])
     useEffect(() => {
-        console.log(route?.params?.activeTab, 'active tabbbbyyy')
-        if (route?.params?.activeTab == 'Upcoming') {
-            setActiveTab('Upcoming')
-            setActiveButtonNo(0)
-        } else if (route?.params?.activeTab == undefined) {
-            setActiveTab('Upcoming')
-            setActiveButtonNo(0)
+        console.log(route?.params?.activeTab, 'active tabbbbyyy');
+
+        if (route?.params?.activeTab === 'Upcoming' || route?.params?.activeTab === undefined) {
+            setActiveTab('Upcoming');
+            setActiveButtonNo(0);
         } else {
-            setActiveTab('Previous')
-            setActiveButtonNo(1)
+            setActiveTab('Previous');
+            setActiveButtonNo(1);
         }
+
         fetchUpcomingBooking();
         fetchPreviousBooking();
-        const timer = setInterval(() => {
+
+        timerRef.current = setInterval(() => {
             setCurrentDateTime(new Date());
-            console.log('every minute call')
+            console.log('every minute call');
             fetchUpcomingBooking();
         }, 60000); // Update every minute
-        return () => clearInterval(timer);
-    }, [])
+
+        const unsubscribeFocus = navigation.addListener('focus', () => {
+            console.log('Component gained focus');
+            if (timerRef.current === null) {
+                timerRef.current = setInterval(() => {
+                    setCurrentDateTime(new Date());
+                    console.log('every minute call');
+                    fetchUpcomingBooking();
+                }, 60000);
+            }
+        });
+
+        const unsubscribeBlur = navigation.addListener('blur', () => {
+            console.log('Component lost focus, clearing interval');
+            if (timerRef.current !== null) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
+        });
+
+        return () => {
+            console.log('Component unmounting, clearing interval');
+            clearInterval(timerRef.current);
+            unsubscribeFocus();
+            unsubscribeBlur();
+        };
+    }, [navigation]);
+
     useFocusEffect(
         React.useCallback(() => {
             fetchUpcomingBooking();

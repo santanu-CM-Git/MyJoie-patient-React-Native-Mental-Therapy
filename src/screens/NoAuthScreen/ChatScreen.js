@@ -10,6 +10,7 @@ import * as DocumentPicker from 'react-native-document-picker';
 import InChatFileTransfer from '../../components/InChatFileTransfer';
 import InChatViewFile from '../../components/InChatViewFile';
 import { API_URL } from '@env'
+import { useRoute } from '@react-navigation/native';
 // import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
 // import { getDatabase, ref, onValue, push } from '@react-native-firebase/database';
 // import * as firebase from "firebase/app"
@@ -43,7 +44,7 @@ const channelName = 'test';
 const uid = 0; // Local user UID, no need to modify
 
 const ChatScreen = ({ navigation, route }) => {
-
+  const routepage = useRoute();
   const [videoCall, setVideoCall] = useState(true);
   const connectionData = {
     appId: '975e09acde854ac38b3304da072c111e',
@@ -81,20 +82,23 @@ const ChatScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    const backAction = () => {
-      // Prevent the default back button action
-      return true;
-    };
+    console.log(routepage.name);
+    if (routepage.name === 'ChatScreen') {
+      const backAction = () => {
+        // Prevent the default back button action
+        return true;
+      };
 
-    // Add event listener to handle the back button
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    );
+      // Add event listener to handle the back button
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction
+      );
 
-    // Clean up the event listener when the component unmounts
-    return () => backHandler.remove();
-  }, []);
+      // Clean up the event listener when the component unmounts
+      return () => backHandler.remove();
+    }
+  }, [routepage]);
 
   useEffect(() => {
     // If timer is 0, return early
@@ -218,7 +222,7 @@ const ChatScreen = ({ navigation, route }) => {
         .then(res => {
           console.log(res.data)
           if (res.data.response == true) {
-            navigation.navigate('Home')
+            navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id,therapistName: route?.params?.details?.therapist?.name,therapistPic:route?.params?.details?.therapist?.profile_pic})
           } else {
             console.log('not okk')
             setIsLoading(false)
@@ -838,7 +842,7 @@ const ChatScreen = ({ navigation, route }) => {
             </>
         }
       </View>
-      <TouchableOpacity onPress={() => toggleModal()}>
+      {/* <TouchableOpacity onPress={() => toggleModal()}>
         <View style={{ width: responsiveWidth(95), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginTop: responsiveHeight(1) }}>
           <Image
             source={summaryIcon}
@@ -846,8 +850,8 @@ const ChatScreen = ({ navigation, route }) => {
           />
           <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Previous Session Summary</Text>
         </View>
-      </TouchableOpacity>
-      <View style={{ height: responsiveHeight(75), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+      </TouchableOpacity> */}
+      <View style={{ height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
         {activeTab == 'chat' ?
           <GiftedChat
             messages={messages}
