@@ -184,9 +184,13 @@ const ScheduleScreen = ({ navigation, route }) => {
     )
 
     const renderUpcoming = ({ item }) => {
+        // const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
+        // const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
+        // const isButtonEnabled = currentDateTime >= twoMinutesBefore;
         const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
+        const endDateTime = new Date(`${item.date}T${item.end_time}`);
         const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
-        const isButtonEnabled = currentDateTime >= twoMinutesBefore;
+        const isButtonEnabled = currentDateTime >= twoMinutesBefore && currentDateTime <= endDateTime;
         return (
             <View style={styles.upcomingView}>
                 {/* <Pressable onPress={()=> cancelSchedule()} style={{ position: 'absolute', top: 5, right: 10 }} >

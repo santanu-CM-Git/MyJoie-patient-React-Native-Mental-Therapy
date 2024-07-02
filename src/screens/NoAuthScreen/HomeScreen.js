@@ -325,9 +325,13 @@ export default function HomeScreen({ navigation }) {
     </View>
   )
   const renderUpcomingBooking = ({ item }) => {
+    // const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
+    // const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
+    // const isButtonEnabled = currentDateTime >= twoMinutesBefore;
     const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
+    const endDateTime = new Date(`${item.date}T${item.end_time}`);
     const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
-    const isButtonEnabled = currentDateTime >= twoMinutesBefore;
+    const isButtonEnabled = currentDateTime >= twoMinutesBefore && currentDateTime <= endDateTime;
     return (
       <View style={styles.upcommingAppointmentView}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -340,9 +344,9 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.namesubText}> Therapist</Text>
           </View>
           <TouchableOpacity style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
-           onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
-           disabled={!isButtonEnabled}
-           >
+            onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
+            disabled={!isButtonEnabled}
+          >
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
         </View>
