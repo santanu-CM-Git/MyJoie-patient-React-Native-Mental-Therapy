@@ -141,7 +141,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 givendate = 'tuesday';
                 break;
             case 'Wednesday':
-                givendate = 'wednesday';
+                givendate = 'wednessday';
                 break;
             case 'Thursday':
                 givendate = 'thursday';
