@@ -957,7 +957,8 @@ const styles = StyleSheet.create({
   nodataText: {
     alignSelf: 'center',
     fontFamily: 'DMSans-Bold',
-    fontSize: responsiveFontSize(2)
+    fontSize: responsiveFontSize(2),
+    color:'#746868'
   },
 
 });
