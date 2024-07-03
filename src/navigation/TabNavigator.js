@@ -17,7 +17,6 @@ import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-nat
 
 import PrivacyPolicy from '../screens/NoAuthScreen/PrivacyPolicy';
 import ChatScreen from '../screens/NoAuthScreen/ChatScreen';
-import EarningScreen from '../screens/NoAuthScreen/EarningScreen';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
 import { talkImg } from '../utils/Images';
 import WalletScreen from '../screens/NoAuthScreen/WalletScreen';

@@ -10,7 +10,7 @@ import * as DocumentPicker from 'react-native-document-picker';
 import InChatFileTransfer from '../../components/InChatFileTransfer';
 import InChatViewFile from '../../components/InChatViewFile';
 import { API_URL } from '@env'
-import { useRoute } from '@react-navigation/native';
+import { TabActions, useRoute } from '@react-navigation/native';
 // import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
 // import { getDatabase, ref, onValue, push } from '@react-native-firebase/database';
 // import * as firebase from "firebase/app"
@@ -18,7 +18,7 @@ import firebase from '@react-native-firebase/app';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
-import firestore from '@react-native-firebase/firestore'
+import firestore, { endBefore } from '@react-native-firebase/firestore'
 import RNFetchBlob from 'rn-fetch-blob'
 // import { CometChat } from '@cometchat/chat-sdk-react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -759,84 +759,84 @@ const ChatScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.Container} behavior="padding" keyboardVerticalOffset={30} enabled>
       {/* <CustomHeader commingFrom={'chat'} onPress={() => navigation.goBack()} title={'Admin Community'} /> */}
-      <View style={{ height: responsiveHeight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 5 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.HeaderSection}>
+        <View style={styles.HeaderSectionHalf}>
           <Ionicons name="chevron-back" size={25} color="#000"/>
           <View style={{ flexDirection: 'column', marginLeft: 10 }}>
-            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>{route?.params?.details?.therapist?.name}</Text>
-            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Therapist</Text>
+            <Text style={styles.therapistName}>{route?.params?.details?.therapist?.name}</Text>
+            <Text style={styles.therapistDesc}>Therapist</Text>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: '#CC2131', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(5) }}>{formatTime(timer)}</Text>
+        <View style={styles.HeaderSectionHalf}>
+          <Text style={styles.timerText}>{formatTime(timer)}</Text>
           <TouchableOpacity onPress={() => handleTimerEnd()}>
-            <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#53A39F', borderRadius: 15, marginLeft: responsiveWidth(2) }}>
-              <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>End</Text>
+            <View style={styles.endButtonView}>
+              <Text style={styles.endButtonText}>End</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+      <View style={styles.TabSection}>
         {activeTab == 'chat' ?
           <>
             <TouchableOpacity onPress={() => goingToactiveTab('audio')}>
-              <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <View style={styles.ButtonView}>
                 <Image
                   source={callIcon}
-                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                  style={styles.ButtonImg}
                 />
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Audio Call</Text>
+                <Text style={styles.ButtonText}>Switch to Audio Call</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => goingToactiveTab('video')}>
-              <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <View style={styles.ButtonView}>
                 <Image
                   source={videoIcon}
-                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                  style={styles.ButtonImg}
                 />
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Video Call</Text>
+                <Text style={styles.ButtonText}>Switch to Video Call</Text>
               </View>
             </TouchableOpacity>
           </>
           : activeTab == 'audio' ?
             <>
               <TouchableOpacity onPress={() => goingToactiveTab('chat')}>
-                <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.ButtonView}>
                   <Image
                     source={chatImg}
-                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                    style={styles.ButtonImg}
                   />
-                  <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Chat</Text>
+                  <Text style={styles.ButtonText}>Switch to Chat</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => goingToactiveTab('video')}>
-                <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.ButtonView}>
                   <Image
                     source={videoIcon}
-                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                    style={styles.ButtonImg}
                   />
-                  <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Video Call</Text>
+                  <Text style={styles.ButtonText}>Switch to Video Call</Text>
                 </View>
               </TouchableOpacity>
             </>
             :
             <>
               <TouchableOpacity onPress={() => goingToactiveTab('chat')}>
-                <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.ButtonView}>
                   <Image
                     source={chatImg}
-                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                    style={styles.ButtonImg}
                   />
-                  <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Chat</Text>
+                  <Text style={styles.ButtonText}>Switch to Chat</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => goingToactiveTab('audio')}>
-                <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.ButtonView}>
                   <Image
                     source={callIcon}
-                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                    style={styles.ButtonImg}
                   />
-                  <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Audio Call</Text>
+                  <Text style={styles.ButtonText}>Switch to Audio Call</Text>
                 </View>
               </TouchableOpacity>
             </>
@@ -851,7 +851,7 @@ const ChatScreen = ({ navigation, route }) => {
           <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Previous Session Summary</Text>
         </View>
       </TouchableOpacity> */}
-      <View style={{ height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+      <View style={styles.containSection}>
         {activeTab == 'chat' ?
           <GiftedChat
             messages={messages}
@@ -903,43 +903,43 @@ const ChatScreen = ({ navigation, route }) => {
                 )}
                 <Text style={{color:'#000'}}>{message}</Text>
               </ScrollView> */}
-              <ImageBackground source={audioBgImg} blurRadius={10} style={{ width: responsiveWidth(100), height: responsiveHeight(75), justifyContent: 'center', alignItems: 'center' }}>
+              <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground}>
                 {route?.params?.details?.therapist?.profile_pic ?
                   <Image
                     source={{ uri: route?.params?.details?.therapist?.profile_pic }}
-                    style={{ height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) }}
+                    style={styles.buttonImage}
                   /> :
                   <Image
                     source={defaultUserImg}
-                    style={{ height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) }}
+                    style={styles.buttonImage}
                   />
                 }
-                <Text style={{ color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>{route?.params?.details?.therapist?.name}</Text>
-                <View style={{ backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                <Text style={styles.audioSectionTherapistName}>{route?.params?.details?.therapist?.name}</Text>
+                <View style={styles.audioButtonSection}>
                   {micOn ?
                     <TouchableOpacity onPress={() => toggleMic()}>
                       <Image
                         source={audiooffIcon}
-                        style={{ height: 50, width: 50 }}
+                        style={styles.iconStyle}
                       />
                     </TouchableOpacity> :
                     <TouchableOpacity onPress={() => toggleMic()}>
                       <Image
                         source={audioonIcon}
-                        style={{ height: 50, width: 50 }}
+                        style={styles.iconStyle}
                       />
                     </TouchableOpacity>}
                   {speakerOn ?
                     <TouchableOpacity onPress={() => toggleSpeaker()}>
                       <Image
                         source={speakeroffIcon}
-                        style={{ height: 50, width: 50 }}
+                        style={styles.iconStyle}
                       />
                     </TouchableOpacity> :
                     <TouchableOpacity onPress={() => toggleSpeaker()}>
                       <Image
                         source={speakeronIcon}
-                        style={{ height: 50, width: 50 }}
+                        style={styles.iconStyle}
                       />
                     </TouchableOpacity>}
                 </View>
@@ -1067,6 +1067,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAECF0',
     paddingBottom: 10,
   },
+  HeaderSection:{ height: responsiveHeight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 5 },
+  HeaderSectionHalf:{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  therapistName:{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) },
+  therapistDesc:{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
+  timerText:{ color: '#CC2131', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(5) },
+  endButtonView:{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#53A39F', borderRadius: 15, marginLeft: responsiveWidth(2) },
+  endButtonText:{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) },
+  TabSection:{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 },
+  ButtonView:{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  ButtonImg:{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 },
+  ButtonText:{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
+  containSection:{ height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+  AudioBackground:{ width: responsiveWidth(100), height: responsiveHeight(75), justifyContent: 'center', alignItems: 'center' },
+  buttonImage:{ height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
+  audioSectionTherapistName:{ color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
+  audioButtonSection:{ backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
+  iconStyle:{ height: 50, width: 50 },
   messageContainer: {
     backgroundColor: 'red',
     height: responsiveHeight(70)

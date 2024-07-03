@@ -14,6 +14,7 @@ import StarRating from 'react-native-star-rating';
 import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
 import RazorpayCheckout from 'react-native-razorpay';
+import Toast from 'react-native-toast-message';
 
 const BookingSummary = ({ navigation, route }) => {
 
@@ -25,34 +26,14 @@ const BookingSummary = ({ navigation, route }) => {
     const [profileDetails, setProfileDetails] = useState(route?.params?.profileDetails);
     const [previousPageData, setPreviousPageData] = useState(route?.params?.submitData);
     const [payableAmount, setPayableAmount] = useState(route?.params?.submitData?.transaction_amount);
+    const [consultFees, setCounsultFees] = useState(route?.params?.submitData?.transaction_amount)
     const [isEnabled, setIsEnabled] = useState(false);
     const [minTime, setMinTime] = useState(null);
     const [maxTime, setMaxTime] = useState(null);
     const [taxableAmount, setTaxableAmount] = useState(0);
     const [couponDeduction, setCouponDeduction] = useState(0);
+    const [couponId, setCouponId] = useState(null)
     const [walletDeduction, setWalletDeduction] = useState(0);
-
-    // const toggleSwitch = () => {
-    //     setIsEnabled((prevIsEnabled) => {
-    //         const newIsEnabled = !prevIsEnabled;
-
-    //         // Calculate the initial payable amount based on the original transaction amount, taxable amount, and coupon deduction
-    //         let newPayableAmount = route?.params?.submitData?.transaction_amount + taxableAmount - couponDeduction;
-
-    //         // Deduct wallet balance if the switch is enabled
-    //         if (newIsEnabled) {
-    //             newPayableAmount -= Math.min(walletBalance, newPayableAmount);
-    //         }
-
-    //         // Ensure payable amount is not negative
-    //         newPayableAmount = Math.max(newPayableAmount, 0);
-
-    //         setPayableAmount(newPayableAmount);
-    //         setWalletDeduction(newIsEnabled ? Math.min(walletBalance, newPayableAmount + walletBalance) : 0);
-
-    //         return newIsEnabled;
-    //     });
-    // };
 
     const toggleSwitch = () => {
         setIsEnabled((prevIsEnabled) => {
@@ -71,6 +52,7 @@ const BookingSummary = ({ navigation, route }) => {
             // Ensure payable amount is not negative
             newPayableAmount = Math.max(newPayableAmount, 0);
 
+            // Update states with new amounts
             setPayableAmount(newPayableAmount);
             setWalletDeduction(newWalletDeduction);
 
@@ -78,23 +60,9 @@ const BookingSummary = ({ navigation, route }) => {
         });
     };
 
+
     const razorpayKeyId = RAZORPAY_KEY_ID;
     const razorpayKeySecret = RAZORPAY_KEY_SECRET;
-
-    useEffect(() => {
-        fetchWalletBalance();
-
-        const { minStartTime, maxEndTime } = findTimeBounds(route?.params?.selectedSlot);
-        setMinTime(minStartTime);
-        setMaxTime(maxEndTime);
-
-        const originalAmount = route?.params?.submitData?.transaction_amount || 0;
-        const calculatedTaxableAmount = (originalAmount * 18) / 100;
-        setTaxableAmount(calculatedTaxableAmount);
-
-        const initialPayableAmount = originalAmount + calculatedTaxableAmount;
-        setPayableAmount(initialPayableAmount);
-    }, []);
 
     const convertTime = (time) => {
         return moment(time, 'HH:mm:ss').format('hh:mm A');
@@ -265,17 +233,30 @@ const BookingSummary = ({ navigation, route }) => {
                     const couponData = response.data.data[0];
                     console.log(couponData, 'response from coupon code');
                     if (couponData) {
+                        setCouponId(couponData.id)
                         // Calculate coupon deduction based on type
                         if (couponData.type === 'percentage') {
-                            const couponAmount = (payableAmount * couponData.discount_percentage) / 100;
+                            const couponAmount = (consultFees * couponData.discount_percentage) / 100;
                             setCouponDeduction(couponAmount);
-                            setPayableAmount(payableAmount - couponAmount);
+                            const tax = ((consultFees - couponAmount)*18)/100
+                            setTaxableAmount(tax)
+                            setPayableAmount(consultFees - couponAmount + tax);
+
                         } else if (couponData.type === 'flat') {
                             const couponAmount = parseFloat(couponData.discount_percentage);
                             setCouponDeduction(couponAmount);
-                            setPayableAmount(payableAmount - couponAmount);
+                            const tax = ((consultFees - couponAmount)*18)/100
+                            setTaxableAmount(tax)
+                            setPayableAmount(consultFees - couponAmount + tax);
                         }
                     } else {
+                        Toast.show({
+                            type: 'error',
+                            text1: 'Sorry',
+                            text2: "Coupone code is not valid",
+                            position: 'top',
+                            topOffset: Platform.OS == 'ios' ? 55 : 20
+                        });
                         setCouponDeduction(0)
                     }
 
@@ -303,25 +284,6 @@ const BookingSummary = ({ navigation, route }) => {
             ]);
         }
     };
-    // const removeCoupon = () => {
-    //     // Reset coupon deduction to 0
-    //     setCouponDeduction(0);
-
-    //     // Recalculate payable amount based on original transaction amount and taxable amount
-    //     const originalAmount = route?.params?.submitData?.transaction_amount || 0;
-    //     let newPayableAmount = originalAmount + taxableAmount;
-
-    //     // Adjust payable amount based on wallet deduction if applicable
-    //     if (isEnabled) {
-    //         newPayableAmount -= walletBalance;
-    //     }
-
-    //     // Ensure payable amount is not negative
-    //     newPayableAmount = Math.max(newPayableAmount, 0);
-
-    //     // Update payable amount
-    //     setPayableAmount(newPayableAmount);
-    // };
 
     const removeCoupon = () => {
         // Reset coupon deduction to 0
@@ -342,6 +304,25 @@ const BookingSummary = ({ navigation, route }) => {
         // Update payable amount
         setPayableAmount(newPayableAmount);
     };
+
+    useEffect(() => {
+        // Fetch wallet balance and set time bounds
+        fetchWalletBalance();
+
+        const { minStartTime, maxEndTime } = findTimeBounds(route?.params?.selectedSlot);
+        setMinTime(minStartTime);
+        setMaxTime(maxEndTime);
+
+        const originalAmount = route?.params?.submitData?.transaction_amount || 0;
+
+        // Calculate taxable amount including coupon deduction
+        const calculatedTaxableAmount = ((originalAmount - couponDeduction) * 18) / 100;
+        setTaxableAmount(calculatedTaxableAmount);
+
+        const initialPayableAmount = originalAmount + calculatedTaxableAmount;
+        setPayableAmount(initialPayableAmount);
+    }, [couponDeduction]);
+
 
 
     if (isLoading) {
@@ -446,7 +427,7 @@ const BookingSummary = ({ navigation, route }) => {
                                 )}
                             </TouchableOpacity>
                             :
-                            <Text style={{ position: 'absolute', right: 25, top: responsiveHeight(7), color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), }}>Coupon applied</Text>
+                            <Text style={{ position: 'absolute', right: 25, top: responsiveHeight(7), color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), }}>Coupon already applied</Text>
                         }
                     </View>
                     {/* <View style={styles.totalValue2}>

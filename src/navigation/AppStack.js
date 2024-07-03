@@ -15,7 +15,6 @@ import SessionHistory from '../screens/NoAuthScreen/SessionHistory';
 import NoNotification from '../screens/NoAuthScreen/NoNotification';
 import UploadSessionSummary from '../screens/NoAuthScreen/UploadSessionSummary';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
-import EarningScreen from '../screens/NoAuthScreen/EarningScreen';
 import WalletScreen from '../screens/NoAuthScreen/WalletScreen';
 import ReviewScreen from '../screens/NoAuthScreen/ReviewScreen';
 import Bookmarked from '../screens/NoAuthScreen/Bookmarked';
@@ -63,16 +62,6 @@ const AuthStack = () => {
           ),
         }}
       />
-       {/* <Drawer.Screen
-        name="  Earning"
-        component={EarningScreen}
-        options={{
-          drawerIcon: ({color}) => (
-            // <Ionicons name="home-outline" size={22} color={color} />
-            <Image source={earningBlackImg} style={{ width: 25,height: 25,}} color={color}/>
-          ),
-        }}
-      /> */}
       <Drawer.Screen
         name="  Session History"
         component={SessionHistory}

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect,useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, Switch, Image, Platform, Alert, FlatList, Pressable } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import CustomButton from '../../components/CustomButton';
@@ -66,28 +66,70 @@ const ScheduleScreen = ({ navigation, route }) => {
                 });
         });
     }
-    const fetchPreviousBooking = () => {
-        AsyncStorage.getItem('userToken', (err, usertoken) => {
-            axios.post(`${API_URL}/patient/previous-slot`, {}, {
-                headers: {
-                    "Authorization": `Bearer ${usertoken}`,
-                    "Content-Type": 'application/json'
-                },
-            })
-                .then(res => {
-                    //console.log(res.data,'user details')
-                    let previousBooking = res.data.data;
-                    console.log(previousBooking, 'previous Booking data')
-                    setPreviousBooking(previousBooking)
-                    setIsLoading(false);
-                })
-                .catch(e => {
-                    console.log(`Login error ${e}`)
-                    console.log(e.response?.data?.message)
-                    setIsLoading(false);
-                });
-        });
-    }
+    // const fetchPreviousBooking = () => {
+    //     AsyncStorage.getItem('userToken', (err, usertoken) => {
+    //         axios.post(`${API_URL}/patient/previous-slot`, {}, {
+    //             headers: {
+    //                 "Authorization": `Bearer ${usertoken}`,
+    //                 "Content-Type": 'application/json'
+    //             },
+    //         })
+    //             .then(res => {
+    //                 //console.log(res.data,'user details')
+    //                 let previousBooking = res.data.data;
+    //                 console.log(previousBooking, 'previous Booking data')
+    //                 setPreviousBooking(previousBooking)
+    //                 setIsLoading(false);
+    //             })
+    //             .catch(e => {
+    //                 console.log(`Login error ${e}`)
+    //                 console.log(e.response?.data?.message)
+    //                 setIsLoading(false);
+    //             });
+    //     });
+    // }
+    const fetchPreviousBooking = async () => {
+        setIsLoading(true);
+        try {
+            const usertoken = await AsyncStorage.getItem('userToken');
+            if (!usertoken) {
+                throw new Error('User token not found');
+            }
+
+            const response = await axios.post(
+                `${API_URL}/patient/previous-slot`,
+                {},
+                {
+                    headers: {
+                        "Authorization": `Bearer ${usertoken}`,
+                        "Content-Type": 'application/json',
+                    },
+                }
+            );
+
+            let previousBooking = response.data.data;
+            console.log(previousBooking, 'previous Booking data');
+
+            // Sort by date and start_time
+            previousBooking.sort((a, b) => {
+                const dateA = new Date(a.date + ' ' + a.start_time);
+                const dateB = new Date(b.date + ' ' + b.start_time);
+                return dateB - dateA;  // sort in descending order
+            });
+
+            // Get the last 5 entries
+            //previousBooking = previousBooking.slice(0, 10);
+
+            setPreviousBooking(previousBooking);
+        } catch (error) {
+            console.log(`Login error ${error}`);
+            if (error.response && error.response.data && error.response.data.message) {
+                console.log(error.response.data.message);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const confirmationBeforeCancel = (id) => {
         Alert.alert('Hello', "Are you sure you want to cancel the booking? It might deduct from your balance.", [
@@ -316,9 +358,8 @@ const ScheduleScreen = ({ navigation, route }) => {
                     <Image
                         source={
                             item?.status === 'completed' ? GreenTick :
-                                item?.status === 'scheduled' ? YellowTck :
-                                    item?.status === 'cancel' ? RedCross :
-                                        null // You can set a default image or handle the null case appropriately
+                                item?.status === 'cancel' ? RedCross :
+                                    YellowTck  // You can set a default image or handle the null case appropriately
                         }
                         style={styles.previousBookingStatusIcon}
                     />
@@ -411,7 +452,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                                 maxToRenderPerBatch={10}
                                 windowSize={5}
                                 initialNumToRender={10}
-                                getItemLayout={(upcomingBooking, index) => (
+                                getItemLayout={(previousBooking, index) => (
                                     { length: 50, offset: 50 * index, index }
                                 )}
                             />

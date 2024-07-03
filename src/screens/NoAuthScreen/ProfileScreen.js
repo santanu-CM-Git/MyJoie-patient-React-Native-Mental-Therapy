@@ -392,26 +392,6 @@ const ProfileScreen = ({ navigation, route }) => {
       <CustomHeader commingFrom={'My Profile'} onPress={() => navigation.goBack()} title={'My Profile'} />
       <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: responsiveHeight(4) }}>
         <View style={styles.wrapper}>
-          {/* <View style={styles.mainView}>
-            {isPicUploadLoading ? (
-              <View style={styles.loaderContainer}>
-                <ActivityIndicator size="small" color="#417AA4" />
-              </View>
-            ) : (
-              pickedDocument == null ? (
-                imageFile != null ? (
-                  <Image source={{ uri: imageFile }} style={styles.imageStyle} />
-                ) : (
-                  <Image source={userPhoto} style={styles.imageStyle} />
-                )
-              ) : (
-                <Image source={{ uri: pickedDocument.uri }} style={styles.imageStyle} />
-              )
-            )}
-            <TouchableOpacity style={styles.plusIcon} onPress={pickDocument}>
-              <Image source={plus} style={{ height: 25, width: 25, resizeMode: 'contain' }} />
-            </TouchableOpacity>
-          </View> */}
           <View style={styles.mainView}>
             <View style={styles.imageContainer}>
               {isPicUploadLoading ? (
@@ -429,11 +409,11 @@ const ProfileScreen = ({ navigation, route }) => {
               )}
             </View>
             <TouchableOpacity style={styles.plusIcon} onPress={pickDocument}>
-              <Image source={plus} style={{ height: 25, width: 25, resizeMode: 'contain' }} />
+              <Image source={plus} style={styles.iconStyle} />
             </TouchableOpacity>
           </View>
           <View style={styles.textinputview}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.inputFieldHeader}>
               <Text style={styles.header}>Name</Text>
             </View>
             {firstNameError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{firstNameError}</Text> : <></>}
@@ -447,7 +427,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 onChangeText={(text) => changeFirstname(text)}
               />
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.inputFieldHeader}>
               <Text style={styles.header}>Mobile Number</Text>
             </View>
             {phonenoError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{phonenoError}</Text> : <></>}
@@ -461,7 +441,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 onChangeText={(text) => changePhone(text)}
               />
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.inputFieldHeader}>
               <Text style={styles.header}>Email Id</Text>
             </View>
             {emailError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{emailError}</Text> : <></>}
@@ -475,12 +455,12 @@ const ProfileScreen = ({ navigation, route }) => {
                 onChangeText={(text) => changeEmail(text)}
               />
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.inputFieldHeader}>
               <Text style={styles.header}>Date of Birth</Text>
             </View>
             {dobError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{dobError}</Text> : <></>}
             <TouchableOpacity onPress={() => setOpen(true)}>
-              <View style={{ height: responsiveHeight(7), width: responsiveWidth(88), borderRadius: 10, borderWidth: 1, borderColor: '#E0E0E0', marginBottom: responsiveHeight(2), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+              <View style={styles.dateView}>
                 <Text style={styles.dayname}>  {date}</Text>
                 <Entypo name="calendar" size={22} color="#000" />
               </View>
@@ -514,7 +494,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
                 }}
               /> : null}
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.inputFieldHeader}>
               <Text style={styles.header}>Gender</Text>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -540,7 +520,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 }}
               />
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.inputFieldHeader}>
               <Text style={styles.header}>Marital Status</Text>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -607,6 +587,12 @@ const styles = StyleSheet.create({
     color: '#2F2F2F',
     marginBottom: responsiveHeight(1),
   },
+  dateView:{ height: responsiveHeight(7), width: responsiveWidth(88), borderRadius: 10, borderWidth: 1, borderColor: '#E0E0E0', marginBottom: responsiveHeight(2), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 },
+  dayname:{
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.8),
+    color: '#808080',
+  },
   requiredheader: {
     fontFamily: 'DMSans-SemiBold',
     fontSize: responsiveFontSize(1.5),
@@ -640,9 +626,14 @@ const styles = StyleSheet.create({
     top: 0,
     left: 60
   },
+  iconStyle: { height: 25, width: 25, resizeMode: 'contain' },
   textinputview: {
     marginBottom: responsiveHeight(10),
     marginTop: responsiveHeight(5)
+  },
+  inputFieldHeader: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   inputView: {
     paddingVertical: 1

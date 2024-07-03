@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect,memo } from 'react';
 import {
   View,
   Text,
@@ -36,7 +36,6 @@ import { Dropdown } from 'react-native-element-dropdown';
 import messaging from '@react-native-firebase/messaging';
 import LinearGradient from 'react-native-linear-gradient';
 import StarRating from 'react-native-star-rating';
-
 const data = [
   { label: 'Today', value: '1' },
   { label: 'Date Wise', value: '2' },
@@ -157,28 +156,48 @@ export default function HomeScreen({ navigation }) {
         });
     });
   }
-  const fetchPreviousBooking = () => {
-    AsyncStorage.getItem('userToken', (err, usertoken) => {
-      axios.post(`${API_URL}/patient/previous-slot`, {}, {
-        headers: {
-          "Authorization": `Bearer ${usertoken}`,
-          "Content-Type": 'application/json'
-        },
-      })
-        .then(res => {
-          //console.log(res.data,'user details')
-          let previousBooking = res.data.data;
-          console.log(previousBooking, 'previous Booking data')
-          setPreviousBooking(previousBooking)
-          setIsLoading(false);
-        })
-        .catch(e => {
-          console.log(`Login error ${e}`)
-          console.log(e.response?.data?.message)
-          setIsLoading(false);
-        });
-    });
-  }
+  const fetchPreviousBooking = async () => {
+    setIsLoading(true);
+    try {
+      const usertoken = await AsyncStorage.getItem('userToken');
+      if (!usertoken) {
+        throw new Error('User token not found');
+      }
+
+      const response = await axios.post(
+        `${API_URL}/patient/previous-slot`,
+        {},
+        {
+          headers: {
+            "Authorization": `Bearer ${usertoken}`,
+            "Content-Type": 'application/json',
+          },
+        }
+      );
+
+      let previousBooking = response.data.data;
+      console.log(previousBooking, 'previous Booking data');
+
+      // Sort by date and start_time
+      previousBooking.sort((a, b) => {
+        const dateA = new Date(a.date + ' ' + a.start_time);
+        const dateB = new Date(b.date + ' ' + b.start_time);
+        return dateB - dateA;  // sort in descending order
+      });
+
+      // Get the last 5 entries
+      previousBooking = previousBooking.slice(0, 10);
+
+      setPreviousBooking(previousBooking);
+    } catch (error) {
+      console.log(`Login error ${error}`);
+      if (error.response && error.response.data && error.response.data.message) {
+        console.log(error.response.data.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const fetchUpcomingBooking = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
       axios.post(`${API_URL}/patient/upcoming-slot`, {}, {
@@ -318,9 +337,9 @@ export default function HomeScreen({ navigation }) {
           source={dateIcon}
           style={{ height: 20, width: 20, }}
         />
-        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
+        <TouchableOpacity onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
           <Text style={styles.bookapointText}>Book Appointment</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -347,7 +366,7 @@ export default function HomeScreen({ navigation }) {
             onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
             disabled={!isButtonEnabled}
           > */}
-          <TouchableOpacity style={styles.joinNowButton}  onPress={() => navigation.navigate('ChatScreen', { details: item })}>
+          <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
         </View>
@@ -424,48 +443,91 @@ export default function HomeScreen({ navigation }) {
       </View>
     </View>
   )
-  const renderCustomerSpeaks = ({ item }) => (
-    <View style={styles.customerSpeaksView}>
-      <View style={styles.qouteImgView}>
-        <Image
-          source={qouteImg}
-          style={{ height: 20, width: 20, }}
-        />
-      </View>
-      <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2), }}>
-        <Text style={styles.quoteText}>
-          {item?.review}
-        </Text>
-      </View>
-      <View style={styles.quotepersonView}>
-        <Image
-          source={{ uri: item?.patient?.profile_pic }}
-          style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
-        />
-        <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
-        <View
-          style={styles.verticalLine}
-        />
-        <StarRating
-          disabled={true}
-          maxStars={5}
-          rating={item?.star}
-          selectedStar={(rating) => setStarCount(rating)}
-          fullStarColor={'#FFCB45'}
-          starSize={15}
-          starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
-        />
-      </View>
+  // const renderCustomerSpeaks = ({ item }) => (
+  //   <View style={styles.customerSpeaksView}>
+  //     <View style={styles.qouteImgView}>
+  //       <Image
+  //         source={qouteImg}
+  //         style={{ height: 20, width: 20, }}
+  //       />
+  //     </View>
+  //     <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2), }}>
+  //       <Text style={styles.quoteText}>
+  //         {item?.review}
+  //       </Text>
+  //     </View>
+  //     <View style={styles.quotepersonView}>
+  //       <Image
+  //         source={{ uri: item?.patient?.profile_pic }}
+  //         style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
+  //       />
+  //       <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
+  //       <View
+  //         style={styles.verticalLine}
+  //       />
+  //       <StarRating
+  //         disabled={true}
+  //         maxStars={5}
+  //         rating={item?.star}
+  //         selectedStar={(rating) => setStarCount(rating)}
+  //         fullStarColor={'#FFCB45'}
+  //         starSize={15}
+  //         starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
+  //       />
+  //     </View>
+  //   </View>
+  // )
+
+  // Memoized CustomerSpeakItem component
+const CustomerSpeakItem = memo(({ item }) => (
+  <View style={styles.customerSpeaksView}>
+    <View style={styles.qouteImgView}>
+      <Image
+        source={qouteImg}
+        style={{ height: 20, width: 20 }}
+      />
     </View>
-  )
+    <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
+      <Text style={styles.quoteText}>
+        {item?.review}
+      </Text>
+    </View>
+    <View style={styles.quotepersonView}>
+      <Image
+        source={{ uri: item?.patient?.profile_pic }}
+        style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
+      />
+      <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
+      <View style={styles.verticalLine} />
+      <StarRating
+        disabled={true}
+        maxStars={5}
+        rating={item?.star}
+        fullStarColor={'#FFCB45'}
+        starSize={15}
+        starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
+      />
+    </View>
+  </View>
+));
+
+// renderCustomerSpeaks function
+const renderCustomerSpeaks = ({ item }) => <CustomerSpeakItem item={item} />;
 
   useEffect(() => {
-    fetchProfileDetails()
-    fetchBanner()
-    fetchAllTherapist();
-    fetchUpcomingBooking()
-    fetchPreviousBooking()
-    fetchCustomerSpeaks()
+    // fetchProfileDetails()
+    // fetchBanner()
+    // fetchAllTherapist();
+    // fetchUpcomingBooking()
+    // fetchPreviousBooking()
+    // fetchCustomerSpeaks()
+    const fetchData = async () => {
+      setIsLoading(true);
+      await Promise.all([fetchProfileDetails(), fetchBanner(), fetchCustomerSpeaks(), fetchPreviousBooking(), fetchUpcomingBooking(), fetchAllTherapist()]);
+      setIsLoading(false);
+    };
+
+    fetchData();
     const timer = setInterval(() => {
       setCurrentDateTime(new Date());
     }, 60000); // Update every minute
@@ -474,12 +536,11 @@ export default function HomeScreen({ navigation }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchProfileDetails()
-      fetchBanner()
-      fetchAllTherapist()
-      fetchUpcomingBooking()
-      fetchPreviousBooking()
-      fetchCustomerSpeaks()
+      const fetchData = async () => {
+        await Promise.all([fetchProfileDetails(), fetchBanner(), fetchCustomerSpeaks(), fetchPreviousBooking(), fetchUpcomingBooking(), fetchAllTherapist()]);
+      };
+
+      fetchData();
       const timer = setInterval(() => {
         setCurrentDateTime(new Date());
       }, 60000); // Update every minute
@@ -959,7 +1020,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontFamily: 'DMSans-Bold',
     fontSize: responsiveFontSize(2),
-    color:'#746868'
+    color: '#746868'
   },
 
 });

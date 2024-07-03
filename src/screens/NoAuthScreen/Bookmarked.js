@@ -212,7 +212,7 @@ const Bookmarked = ({ navigation }) => {
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Bookmarked Therapist'} onPress={() => navigation.goBack()} title={'Bookmarked Therapist'} />
             <ScrollView style={styles.wrapper}>
-                <View style={{ alignSelf: 'center',marginTop: responsiveHeight(2) }}>
+                <View style={styles.listSection}>
                     {therapistData.length != 0 ?
                         <FlatList
                             data={therapistData}
@@ -246,6 +246,7 @@ const styles = StyleSheet.create({
         padding: responsiveWidth(2),
 
     },
+    listSection:{ alignSelf: 'center',marginTop: responsiveHeight(2) },
     // totalValue: {
     //     width: responsiveWidth(89),
     //     //height: responsiveHeight(38),
