@@ -401,7 +401,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.nameText}>{item?.therapist?.name}</Text>
           {/* <Text style={styles.namesubText}>Patient</Text> */}
           <View style={styles.ratingView}>
-            <Text style={styles.namesubText}>MBBS</Text>
+            <Text style={styles.namesubText}>{item?.qualification_list}</Text>
             <StarRating
               disabled={true}
               maxStars={5}
