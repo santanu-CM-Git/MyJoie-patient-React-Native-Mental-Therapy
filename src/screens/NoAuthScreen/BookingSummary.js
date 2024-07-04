@@ -142,16 +142,20 @@ const BookingSummary = ({ navigation, route }) => {
         formData.append("therapist_id", previousPageData?.therapist_id);
         formData.append("slot_ids", previousPageData?.slot_ids);
         formData.append("date", previousPageData?.date);
+        formData.append("coupon_id", couponId || '');
         formData.append("purpose", previousPageData?.purpose);
         formData.append("mode_of_conversation", previousPageData?.mode_of_conversation);
         formData.append("payment_mode", previousPageData?.payment_mode);
         formData.append("gateway_name", previousPageData?.gateway_name);
         formData.append("prescription_checked", previousPageData?.prescription_checked);
-        formData.append("transaction_amount", previousPageData?.transaction_amount);
         formData.append("payment_status", previousPageData?.payment_status);
         formData.append("order_id", previousPageData?.order_id);
         formData.append("transaction_no", transactionId);
+        formData.append("amount", previousPageData?.transaction_amount);
+        formData.append("coupon_deduction", couponDeduction);
+        formData.append("gst_amount", taxableAmount);
         formData.append("wallet_deduction", isEnabled ? walletDeduction : "0");
+        formData.append("transaction_amount", payableAmount);
 
         console.log(formData);
 
@@ -240,14 +244,14 @@ const BookingSummary = ({ navigation, route }) => {
                             setCouponDeduction(couponAmount);
                             const tax = ((consultFees - couponAmount) * 18) / 100
                             setTaxableAmount(tax)
-                            setPayableAmount(consultFees - couponAmount + tax);
+                            setPayableAmount(consultFees - couponAmount + tax - walletDeduction);
 
                         } else if (couponData.type === 'flat') {
                             const couponAmount = parseFloat(couponData.discount_percentage);
                             setCouponDeduction(couponAmount);
                             const tax = ((consultFees - couponAmount) * 18) / 100
                             setTaxableAmount(tax)
-                            setPayableAmount(consultFees - couponAmount + tax);
+                            setPayableAmount(consultFees - couponAmount + tax - walletDeduction);
                         }
                     } else {
                         Toast.show({

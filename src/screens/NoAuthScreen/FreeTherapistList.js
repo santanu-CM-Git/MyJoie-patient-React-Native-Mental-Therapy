@@ -725,7 +725,7 @@ const styles = StyleSheet.create({
     contentStyle: {
         flexDirection: 'column',
         width: responsiveWidth(47),
-        height: responsiveHeight(10)
+        //height: responsiveHeight(10)
     },
     contentStyleName: {
         fontSize: responsiveFontSize(2),

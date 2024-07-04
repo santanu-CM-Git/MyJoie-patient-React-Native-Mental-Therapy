@@ -273,12 +273,12 @@ const TherapistList = ({ navigation, route }) => {
                 </View>
                 <View style={styles.totalValue2ndSection}>
                     <View style={styles.listButtonFirstSection}>
-                        {item?.instant_availability == 'yes' ?
-                            <TouchableOpacity onPress={() => toggleModal()}>
+                        {item?.instant_availability == 'on' ?
+                            // <TouchableOpacity onPress={() => toggleModal()}>
                                 <View style={styles.instantConnectView}>
                                     <Text style={styles.instantConnectText}>Instant Connect</Text>
                                 </View>
-                            </TouchableOpacity>
+                            // </TouchableOpacity>
                             :
                             <></>
                         }
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
     contentStyle: {
         flexDirection: 'column',
         width: responsiveWidth(47),
-        height: responsiveHeight(10)
+        //height: responsiveHeight(10)
     },
     contentStyleName: {
         fontSize: responsiveFontSize(2),
@@ -773,7 +773,7 @@ const styles = StyleSheet.create({
         marginBottom: responsiveHeight(1)
     },
     totalValue2ndSection: {
-        marginTop: responsiveHeight(1),
+        //marginTop: responsiveHeight(1),
         borderRadius: 10,
         padding: 10,
         flexDirection: 'row',
