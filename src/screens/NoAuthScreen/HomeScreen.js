@@ -443,41 +443,7 @@ export default function HomeScreen({ navigation }) {
       </View>
     </View>
   )
-  // const renderCustomerSpeaks = ({ item }) => (
-  //   <View style={styles.customerSpeaksView}>
-  //     <View style={styles.qouteImgView}>
-  //       <Image
-  //         source={qouteImg}
-  //         style={{ height: 20, width: 20, }}
-  //       />
-  //     </View>
-  //     <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2), }}>
-  //       <Text style={styles.quoteText}>
-  //         {item?.review}
-  //       </Text>
-  //     </View>
-  //     <View style={styles.quotepersonView}>
-  //       <Image
-  //         source={{ uri: item?.patient?.profile_pic }}
-  //         style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
-  //       />
-  //       <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
-  //       <View
-  //         style={styles.verticalLine}
-  //       />
-  //       <StarRating
-  //         disabled={true}
-  //         maxStars={5}
-  //         rating={item?.star}
-  //         selectedStar={(rating) => setStarCount(rating)}
-  //         fullStarColor={'#FFCB45'}
-  //         starSize={15}
-  //         starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
-  //       />
-  //     </View>
-  //   </View>
-  // )
-
+ 
   // Memoized CustomerSpeakItem component
 const CustomerSpeakItem = memo(({ item }) => (
   <View style={styles.customerSpeaksView}>

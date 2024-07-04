@@ -75,6 +75,13 @@ const TherapistList = ({ navigation, route }) => {
         // selectedFruits is array of { label, value }
         setSelectedExperience(selectedExperience);
     };
+
+    const [selectedType, setSelectedType] = useState([]);
+    const onSelectionsChangeType = (selectedType) => {
+        // selectedFruits is array of { label, value }
+        setSelectedType(selectedType);
+    };
+
     const [selectedRating, setSelectedRating] = useState([]);
     const onSelectionsChangeRating = (selectedRating) => {
         // selectedFruits is array of { label, value }
@@ -273,15 +280,15 @@ const TherapistList = ({ navigation, route }) => {
                 </View>
                 <View style={styles.totalValue2ndSection}>
                     <View style={styles.listButtonFirstSection}>
-                        {item?.instant_availability == 'on' ?
-                            // <TouchableOpacity onPress={() => toggleModal()}>
+                        {/* {item?.instant_availability == 'on' ?
+                             <TouchableOpacity onPress={() => toggleModal()}>
                                 <View style={styles.instantConnectView}>
                                     <Text style={styles.instantConnectText}>Instant Connect</Text>
                                 </View>
-                            // </TouchableOpacity>
+                              </TouchableOpacity>
                             :
-                            <></>
-                        }
+                            null
+                        } */}
                     </View>
                     <View style={styles.listButtonSecondSection}>
                         <View style={styles.iconView}>
@@ -554,6 +561,11 @@ const TherapistList = ({ navigation, route }) => {
                                         <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Experience</Text>
                                     </View>
                                 </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Type')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Type' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Type</Text>
+                                    </View>
+                                </TouchableOpacity>
                                 <TouchableOpacity onPress={() => setActiveTab('Rating')}>
                                     <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rating' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
                                         <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Rating</Text>
@@ -598,6 +610,15 @@ const TherapistList = ({ navigation, route }) => {
                                             items={Experience}
                                             selectedItems={selectedExperience}
                                             onSelectionsChange={onSelectionsChangeExperience}
+                                            rowStyle={styles.item}
+                                        />
+                                    </View>
+                                    : activeTab == 'Type' ?
+                                    <View style={{}}>
+                                        <SelectMultiple
+                                            items={dropdowndata}
+                                            selectedItems={selectedType}
+                                            onSelectionsChange={onSelectionsChangeType}
                                             rowStyle={styles.item}
                                         />
                                     </View>
@@ -668,7 +689,7 @@ const styles = StyleSheet.create({
     },
     filterSection: {
         marginBottom: responsiveHeight(0),
-        marginTop: responsiveHeight(2),
+        marginTop: responsiveHeight(1),
         paddingHorizontal: responsiveWidth(3)
     },
     filterSection1st: {
@@ -790,7 +811,7 @@ const styles = StyleSheet.create({
         width: responsiveWidth(62)
     },
     iconView: {
-        height: responsiveHeight(7),
+        height: responsiveHeight(5),
         width: responsiveWidth(17),
         backgroundColor: '#FFF',
         borderColor: '#417AA4',

@@ -441,12 +441,8 @@ const BookingSummary = ({ navigation, route }) => {
                         </View>
                         <View style={{ padding: 10, }}>
                             <View style={styles.total4ValueSection}>
-                                <Text style={styles.total4ValueSectiontext1}>Consult Fee</Text>
+                                <Text style={styles.total4ValueSectiontext1}>Consultation Fees</Text>
                                 <Text style={styles.total4ValueSectionvalue1}>₹{previousPageData?.transaction_amount}</Text>
-                            </View>
-                            <View style={styles.total4ValueSection}>
-                                <Text style={styles.total4ValueSectiontext1}>Applicable Taxes</Text>
-                                <Text style={styles.total4ValueSectionvalue1}>₹{taxableAmount}</Text>
                             </View>
                             {couponDeduction !== 0 ?
                                 <View style={styles.total4ValueSection}>
@@ -456,6 +452,10 @@ const BookingSummary = ({ navigation, route }) => {
                                     </TouchableOpacity>
                                     <Text style={styles.total4ValueSectionvalue1}>- ₹{couponDeduction}</Text>
                                 </View> : null}
+                            <View style={styles.total4ValueSection}>
+                                <Text style={styles.total4ValueSectiontext1}>Applicable Taxes</Text>
+                                <Text style={styles.total4ValueSectionvalue1}>₹{taxableAmount}</Text>
+                            </View>
                             {isEnabled && walletDeduction > 0 ?
                                 <View style={styles.total4ValueSection}>
                                     <Text style={styles.total4ValueSectiontext1}>Wallet Deduction</Text>
@@ -463,7 +463,7 @@ const BookingSummary = ({ navigation, route }) => {
                                 </View>
                                 : null}
                             <View style={styles.total4ValueSection}>
-                                <Text style={styles.total4ValueSectiontext2}>You Pay</Text>
+                                <Text style={styles.total4ValueSectiontext2}>Net Payable</Text>
                                 <Text style={styles.total4ValueSectiontext2}>₹{payableAmount}</Text>
                             </View>
                         </View>
@@ -477,7 +477,7 @@ const BookingSummary = ({ navigation, route }) => {
                     <Text style={styles.buttonwrapperText2}>₹ {payableAmount}</Text>
                 </View>
                 <View style={{ marginTop: responsiveHeight(1) }}>
-                    <CustomButton label={"Pay & Consult"}
+                    <CustomButton label={"Pay Now"}
                         onPress={() => handlePayment()}
                     />
                 </View>

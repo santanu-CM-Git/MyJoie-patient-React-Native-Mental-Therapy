@@ -75,6 +75,12 @@ const FreeTherapistList = ({ navigation, route }) => {
         // selectedFruits is array of { label, value }
         setSelectedExperience(selectedExperience);
     };
+
+    const [selectedType, setSelectedType] = useState([]);
+    const onSelectionsChangeType = (selectedType) => {
+        // selectedFruits is array of { label, value }
+        setSelectedType(selectedType);
+    };
     const [selectedRating, setSelectedRating] = useState([]);
     const onSelectionsChangeRating = (selectedRating) => {
         // selectedFruits is array of { label, value }
@@ -109,8 +115,8 @@ const FreeTherapistList = ({ navigation, route }) => {
     const fetchAllTherapist = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             const option = {
-                "flag" : 'free'
-              }
+                "flag": 'free'
+            }
             axios.post(`${API_URL}/patient/therapist-list`, option, {
                 headers: {
                     'Accept': 'application/json',
@@ -226,7 +232,7 @@ const FreeTherapistList = ({ navigation, route }) => {
     }
 
     const renderItem = ({ item }) => (
-        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id,mode:'free' })}>
+        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'free' })}>
             <View style={styles.totalValue}>
                 <View style={styles.totalValue1stSection}>
                     <View style={styles.profilePicSection}>
@@ -250,11 +256,11 @@ const FreeTherapistList = ({ navigation, route }) => {
                         <Text style={styles.contentStyleQualification}>{item?.qualification_list}</Text>
                         <Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text>
                         <Text style={styles.contentStyleLang}>Language : <Text style={styles.contentStyleLangValue}>{item?.languages_list}</Text></Text>
-                        <View style={{flexDirection:'row',}}>
-                        <Text style={[styles.contentStyleRate,{marginRight:5}]}>₹{item?.rate} for 15 Min</Text>
-                        <Text style={styles.contentStyleRateFree}>Free for 15 Min</Text>
+                        <View style={{ flexDirection: 'row', }}>
+                            <Text style={[styles.contentStyleRate, { marginRight: 5 }]}>₹{item?.rate} for 15 Min</Text>
+                            <Text style={styles.contentStyleRateFree}>Free for 15 Min</Text>
                         </View>
-                        
+
                         <Text style={styles.contentStyleAvailableSlot}>Next Avl. Slot : Today 09:00 PM</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
@@ -277,7 +283,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                 </View>
                 <View style={styles.totalValue2ndSection}>
                     <View style={styles.listButtonFirstSection}>
-                        {item?.instant_availability == 'yes' ?
+                        {/* {item?.instant_availability == 'yes' ?
                             <TouchableOpacity onPress={() => toggleModal()}>
                                 <View style={styles.instantConnectView}>
                                     <Text style={styles.instantConnectText}>Instant Connect</Text>
@@ -285,7 +291,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                             </TouchableOpacity>
                             :
                             <></>
-                        }
+                        } */}
                     </View>
                     <View style={styles.listButtonSecondSection}>
                         <View style={styles.iconView}>
@@ -550,6 +556,11 @@ const FreeTherapistList = ({ navigation, route }) => {
                                         <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Experience</Text>
                                     </View>
                                 </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Type')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Type' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Type</Text>
+                                    </View>
+                                </TouchableOpacity>
                                 <TouchableOpacity onPress={() => setActiveTab('Rating')}>
                                     <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rating' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
                                         <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Rating</Text>
@@ -597,36 +608,45 @@ const FreeTherapistList = ({ navigation, route }) => {
                                             rowStyle={styles.item}
                                         />
                                     </View>
-                                    : activeTab == 'Rating' ?
+                                    : activeTab == 'Type' ?
                                         <View style={{}}>
                                             <SelectMultiple
-                                                items={Rating}
-                                                selectedItems={selectedRating}
-                                                onSelectionsChange={onSelectionsChangeRating}
+                                                items={dropdowndata}
+                                                selectedItems={selectedType}
+                                                onSelectionsChange={onSelectionsChangeType}
                                                 rowStyle={styles.item}
                                             />
                                         </View>
-                                        : activeTab == 'Gender' ?
+                                        : activeTab == 'Rating' ?
                                             <View style={{}}>
                                                 <SelectMultiple
-                                                    items={Gender}
-                                                    selectedItems={selectedGender}
-                                                    onSelectionsChange={onSelectionsChangeGender}
+                                                    items={Rating}
+                                                    selectedItems={selectedRating}
+                                                    onSelectionsChange={onSelectionsChangeRating}
                                                     rowStyle={styles.item}
                                                 />
                                             </View>
-
-                                            : activeTab == 'Age' ?
+                                            : activeTab == 'Gender' ?
                                                 <View style={{}}>
                                                     <SelectMultiple
-                                                        items={Ages}
-                                                        selectedItems={selectedAge}
-                                                        onSelectionsChange={onSelectionsChangeAge}
+                                                        items={Gender}
+                                                        selectedItems={selectedGender}
+                                                        onSelectionsChange={onSelectionsChangeGender}
                                                         rowStyle={styles.item}
                                                     />
                                                 </View>
-                                                :
-                                                <></>
+
+                                                : activeTab == 'Age' ?
+                                                    <View style={{}}>
+                                                        <SelectMultiple
+                                                            items={Ages}
+                                                            selectedItems={selectedAge}
+                                                            onSelectionsChange={onSelectionsChangeAge}
+                                                            rowStyle={styles.item}
+                                                        />
+                                                    </View>
+                                                    :
+                                                    <></>
                                 }
                             </View>
                         </View>
@@ -664,7 +684,7 @@ const styles = StyleSheet.create({
     },
     filterSection: {
         marginBottom: responsiveHeight(0),
-        marginTop: responsiveHeight(2),
+        marginTop: responsiveHeight(1),
         paddingHorizontal: responsiveWidth(3)
     },
     filterSection1st: {
@@ -763,7 +783,7 @@ const styles = StyleSheet.create({
         marginBottom: responsiveHeight(1),
         textDecorationLine: 'line-through', textDecorationStyle: 'solid'
     },
-    contentStyleRateFree:{
+    contentStyleRateFree: {
         fontSize: responsiveFontSize(1.7),
         color: '#746868',
         fontFamily: 'DMSans-Bold',
@@ -776,7 +796,7 @@ const styles = StyleSheet.create({
         marginBottom: responsiveHeight(1)
     },
     totalValue2ndSection: {
-        marginTop: responsiveHeight(1),
+        marginTop: responsiveHeight(0),
         borderRadius: 10,
         padding: 10,
         flexDirection: 'row',
@@ -793,7 +813,7 @@ const styles = StyleSheet.create({
         width: responsiveWidth(62)
     },
     iconView: {
-        height: responsiveHeight(7),
+        height: responsiveHeight(5),
         width: responsiveWidth(17),
         backgroundColor: '#FFF',
         borderColor: '#417AA4',

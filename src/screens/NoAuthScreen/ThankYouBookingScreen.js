@@ -39,8 +39,12 @@ const ThankYouBookingScreen = ({ navigation, route }) => {
               <Text style={styles.detailValue}>{data[0]?.therapist.name}</Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Date</Text>
+              <Text style={styles.detailLabel}>Schedule Date</Text>
               <Text style={styles.detailValue}>{moment(data[0]?.date).format('dddd, D MMMM')}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Schedule Time</Text>
+              <Text style={styles.detailValue}>{moment(data[0]?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(data[0]?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
             </View>
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Appointment</Text>
