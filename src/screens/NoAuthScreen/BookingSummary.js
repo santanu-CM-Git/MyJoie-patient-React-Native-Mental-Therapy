@@ -20,6 +20,7 @@ const BookingSummary = ({ navigation, route }) => {
 
     const [couponCode, setCouponCode] = useState('');
     const [walletBalance, setWalletBalance] = useState(0);
+    const [gstPercentage, setGstPercentage] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isCouponLoading, setIsCouponLoading] = useState(false);
     const [starCount, setStarCount] = useState(4);
@@ -84,25 +85,33 @@ const BookingSummary = ({ navigation, route }) => {
         return { minStartTime, maxEndTime };
     };
 
-    const fetchWalletBalance = () => {
-        AsyncStorage.getItem('userToken', (err, usertoken) => {
-            axios.post(`${API_URL}/patient/wallet`, {}, {
+    const fetchWalletBalance = async () => {
+        try {
+            const usertoken = await AsyncStorage.getItem('userToken');
+            const response = await axios.post(`${API_URL}/patient/wallet`, {}, {
                 headers: {
                     "Authorization": `Bearer ${usertoken}`,
                     "Content-Type": 'application/json'
                 },
-            })
-                .then(res => {
-                    const userBalance = res.data.wallet_amount;
-                    console.log(userBalance, 'wallet balance');
-                    setWalletBalance(userBalance);
-                    setIsLoading(false);
-                })
-                .catch(e => {
-                    console.log(`Login error ${e}`);
-                    console.log(e.response?.data?.message);
-                });
-        });
+            });
+
+            const userBalance = response.data.wallet_amount;
+            const fetchedGstPercentage = response.data.gst_percentage;
+
+            console.log(userBalance, 'wallet balance');
+            console.log(fetchedGstPercentage, 'gst percentage');
+
+            setWalletBalance(userBalance);
+            setGstPercentage(fetchedGstPercentage);
+            setIsLoading(false);
+        } catch (error) {
+            setIsLoading(false);
+            console.error('Fetch wallet balance error:', error);
+            console.error(error.response?.data?.message);
+            Alert.alert('Oops..', error.response?.data?.message || 'Something went wrong', [
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        }
     };
 
     const handlePayment = () => {
@@ -242,14 +251,14 @@ const BookingSummary = ({ navigation, route }) => {
                         if (couponData.type === 'percentage') {
                             const couponAmount = (consultFees * couponData.discount_percentage) / 100;
                             setCouponDeduction(couponAmount);
-                            const tax = ((consultFees - couponAmount) * 18) / 100
+                            const tax = ((consultFees - couponAmount) * gstPercentage) / 100
                             setTaxableAmount(tax)
                             setPayableAmount(consultFees - couponAmount + tax - walletDeduction);
 
                         } else if (couponData.type === 'flat') {
                             const couponAmount = parseFloat(couponData.discount_percentage);
                             setCouponDeduction(couponAmount);
-                            const tax = ((consultFees - couponAmount) * 18) / 100
+                            const tax = ((consultFees - couponAmount) * gstPercentage) / 100
                             setTaxableAmount(tax)
                             setPayableAmount(consultFees - couponAmount + tax - walletDeduction);
                         }
@@ -292,41 +301,50 @@ const BookingSummary = ({ navigation, route }) => {
     const removeCoupon = () => {
         // Reset coupon deduction to 0
         setCouponDeduction(0);
-
-        // Recalculate payable amount based on original transaction amount and taxable amount
+        
+        // Recalculate taxable amount based on original amount and GST percentage
         const originalAmount = route?.params?.submitData?.transaction_amount || 0;
-        let newPayableAmount = originalAmount + taxableAmount;
-
-        // Adjust payable amount based on wallet deduction if applicable
+        const calculatedTaxableAmount = ((originalAmount) * gstPercentage) / 100;
+        console.log(calculatedTaxableAmount, 'taxable amount')
+        setTaxableAmount(calculatedTaxableAmount);
+    
+        // Calculate new payable amount
+        let newPayableAmount = originalAmount + calculatedTaxableAmount;
+    
+        // Deduct wallet balance if the switch is enabled
+        console.log(isEnabled, 'wallet balance check or not')
+        console.log(walletDeduction,'wallet balance')
         if (isEnabled) {
             newPayableAmount -= walletDeduction;
         }
-
+    
         // Ensure payable amount is not negative
         newPayableAmount = Math.max(newPayableAmount, 0);
-
-        // Update payable amount
+    
+        // Update payable amount state
         setPayableAmount(newPayableAmount);
     };
 
     useEffect(() => {
-        // Fetch wallet balance and set time bounds
         fetchWalletBalance();
-
-        const { minStartTime, maxEndTime } = findTimeBounds(route?.params?.selectedSlot);
-        setMinTime(minStartTime);
-        setMaxTime(maxEndTime);
-
-        const originalAmount = route?.params?.submitData?.transaction_amount || 0;
-
-        // Calculate taxable amount including coupon deduction
-        const calculatedTaxableAmount = ((originalAmount - couponDeduction) * 18) / 100;
-        setTaxableAmount(calculatedTaxableAmount);
-
-        const initialPayableAmount = originalAmount + calculatedTaxableAmount;
-        setPayableAmount(initialPayableAmount);
-    }, [couponDeduction]);
-
+      }, []);
+    
+      useEffect(() => {
+        if (gstPercentage !== null) {
+          const { minStartTime, maxEndTime } = findTimeBounds(route?.params?.selectedSlot);
+          setMinTime(minStartTime);
+          setMaxTime(maxEndTime);
+    
+          const originalAmount = route?.params?.submitData?.transaction_amount || 0;
+    
+          // Calculate taxable amount including coupon deduction
+          const calculatedTaxableAmount = ((originalAmount - couponDeduction) * gstPercentage) / 100;
+          setTaxableAmount(calculatedTaxableAmount);
+    
+          const initialPayableAmount = originalAmount + calculatedTaxableAmount;
+          setPayableAmount(initialPayableAmount);
+        }
+      }, [gstPercentage, route]);
 
 
     if (isLoading) {
@@ -532,9 +550,9 @@ const styles = StyleSheet.create({
     total2Value2ndSectionText: { color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2), marginRight: responsiveWidth(5) },
     total3Value: { width: responsiveWidth(89), height: responsiveHeight(15), backgroundColor: '#FFF', padding: 10, borderRadius: 15, elevation: 5, justifyContent: 'center', marginTop: responsiveHeight(2) },
     couponText: { color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), marginLeft: responsiveWidth(1) },
-    callCouponButton:{ position: 'absolute', right: 25, top: responsiveHeight(7) },
-    callCouponText:{ color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), },
-    callCouponText2:{ position: 'absolute', right: 25, top: responsiveHeight(7), color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), },
+    callCouponButton: { position: 'absolute', right: 25, top: responsiveHeight(7) },
+    callCouponText: { color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), },
+    callCouponText2: { position: 'absolute', right: 25, top: responsiveHeight(7), color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), },
     switchStyle: {
         transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]  // Adjust scale values as needed
     },
@@ -548,13 +566,13 @@ const styles = StyleSheet.create({
         marginTop: responsiveHeight(2),
         alignSelf: 'center'
     },
-    total4ValueHeader:{ flexDirection: 'row', height: responsiveHeight(7), backgroundColor: '#DEDEDE', borderTopRightRadius: 10, borderTopLeftRadius: 10, alignItems: 'center', },
-    total4ValueHeaderText:{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), fontWeight: 'bold', textAlign: 'center', marginLeft: responsiveWidth(2) },
-    total4ValueSection:{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) },
-    total4ValueSectiontext1:{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) },
-    total4ValueSectionvalue1:{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
-    removeButton:{ color: '#E1293B', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) },
-    total4ValueSectiontext2:{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7) },
+    total4ValueHeader: { flexDirection: 'row', height: responsiveHeight(7), backgroundColor: '#DEDEDE', borderTopRightRadius: 10, borderTopLeftRadius: 10, alignItems: 'center', },
+    total4ValueHeaderText: { color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2), fontWeight: 'bold', textAlign: 'center', marginLeft: responsiveWidth(2) },
+    total4ValueSection: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) },
+    total4ValueSectiontext1: { color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) },
+    total4ValueSectionvalue1: { color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
+    removeButton: { color: '#E1293B', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) },
+    total4ValueSectiontext2: { color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7) },
     buttonwrapper: {
         paddingHorizontal: 25,
         bottom: 5,
