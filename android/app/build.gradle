@@ -93,7 +93,7 @@ android {
         release {
             storeFile file('patientapp.keystore')
             storePassword 'patientappcm'
-            keyAlias 'your_key_alias'
+            keyAlias 'my-key-alias'
             keyPassword 'patientappcm'
         }
     }

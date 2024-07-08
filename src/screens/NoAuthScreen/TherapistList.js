@@ -197,7 +197,7 @@ const TherapistList = ({ navigation, route }) => {
                             Toast.show({
                                 type: 'success',
                                 text1: 'Hello',
-                                text2: "Successfully added to wishlist",
+                                text2: res.data.message,
                                 position: 'top',
                                 topOffset: Platform.OS == 'ios' ? 55 : 20
                             });

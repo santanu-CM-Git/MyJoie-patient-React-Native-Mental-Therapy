@@ -438,7 +438,7 @@ const ChatScreen = ({ navigation, route }) => {
     //     },
     //   },
     // ])
-    const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
+    const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId //if user to user specific chat
     const messageRef = firestore().collection('chatrooms')
       .doc(docid)
       .collection('messages')

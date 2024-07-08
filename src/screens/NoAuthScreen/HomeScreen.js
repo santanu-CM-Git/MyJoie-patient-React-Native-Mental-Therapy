@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect,memo } from 'react';
+import React, { useContext, useState, useEffect, memo } from 'react';
 import {
   View,
   Text,
@@ -298,7 +298,7 @@ export default function HomeScreen({ navigation }) {
       </View>
     )
   }
-  const renderTherapistItem = ({ item }) => (
+  const TherapistListItem = memo(({ item }) => (
     <View style={styles.therapistCardView}>
       <View style={{ flexDirection: 'row', padding: 15, }}>
 
@@ -342,8 +342,11 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
     </View>
-  )
-  const renderUpcomingBooking = ({ item }) => {
+  ))
+
+  const renderTherapistItem = ({ item }) => <TherapistListItem item={item} />;
+  // Memoized UpcomingBookingItem component
+  const UpcomingBookingItem = memo(({ item }) => {
     // const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
     // const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
     // const isButtonEnabled = currentDateTime >= twoMinutesBefore;
@@ -366,7 +369,7 @@ export default function HomeScreen({ navigation }) {
             onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
             disabled={!isButtonEnabled}
           >
-          {/* <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}> */}
+            {/* <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}> */}
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
         </View>
@@ -389,8 +392,12 @@ export default function HomeScreen({ navigation }) {
         </View>
       </View>
     )
-  }
-  const renderPreviousBooking = ({ item }) => (
+  })
+  // renderUpcomigBooking function
+  const renderUpcomingBooking = ({ item }) => <UpcomingBookingItem item={item} />;
+
+  // Memoized PreviousBookingItem component
+  const PreviousBookingItem = memo(({ item }) => (
     <View style={styles.previousTherapistView}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Image
@@ -442,51 +449,46 @@ export default function HomeScreen({ navigation }) {
         <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
       </View>
     </View>
-  )
- 
-  // Memoized CustomerSpeakItem component
-const CustomerSpeakItem = memo(({ item }) => (
-  <View style={styles.customerSpeaksView}>
-    <View style={styles.qouteImgView}>
-      <Image
-        source={qouteImg}
-        style={{ height: 20, width: 20 }}
-      />
-    </View>
-    <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
-      <Text style={styles.quoteText}>
-        {item?.review}
-      </Text>
-    </View>
-    <View style={styles.quotepersonView}>
-      <Image
-        source={{ uri: item?.patient?.profile_pic }}
-        style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
-      />
-      <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
-      <View style={styles.verticalLine} />
-      <StarRating
-        disabled={true}
-        maxStars={5}
-        rating={item?.star}
-        fullStarColor={'#FFCB45'}
-        starSize={15}
-        starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
-      />
-    </View>
-  </View>
-));
+  ))
+  // renderPreviousBooking function
+  const renderPreviousBooking = ({ item }) => <PreviousBookingItem item={item} />;
 
-// renderCustomerSpeaks function
-const renderCustomerSpeaks = ({ item }) => <CustomerSpeakItem item={item} />;
+  // Memoized CustomerSpeakItem component
+  const CustomerSpeakItem = memo(({ item }) => (
+    <View style={styles.customerSpeaksView}>
+      <View style={styles.qouteImgView}>
+        <Image
+          source={qouteImg}
+          style={{ height: 20, width: 20 }}
+        />
+      </View>
+      <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
+        <Text style={styles.quoteText}>
+          {item?.review}
+        </Text>
+      </View>
+      <View style={styles.quotepersonView}>
+        <Image
+          source={{ uri: item?.patient?.profile_pic }}
+          style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
+        />
+        <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
+        <View style={styles.verticalLine} />
+        <StarRating
+          disabled={true}
+          maxStars={5}
+          rating={item?.star}
+          fullStarColor={'#FFCB45'}
+          starSize={15}
+          starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
+        />
+      </View>
+    </View>
+  ));
+  // renderCustomerSpeaks function
+  const renderCustomerSpeaks = ({ item }) => <CustomerSpeakItem item={item} />;
 
   useEffect(() => {
-    // fetchProfileDetails()
-    // fetchBanner()
-    // fetchAllTherapist();
-    // fetchUpcomingBooking()
-    // fetchPreviousBooking()
-    // fetchCustomerSpeaks()
     const fetchData = async () => {
       setIsLoading(true);
       await Promise.all([fetchProfileDetails(), fetchBanner(), fetchCustomerSpeaks(), fetchPreviousBooking(), fetchUpcomingBooking(), fetchAllTherapist()]);
