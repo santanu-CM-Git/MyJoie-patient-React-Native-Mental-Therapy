@@ -283,32 +283,51 @@ const ScheduleScreen = ({ navigation, route }) => {
         const isButtonEnabled = currentDateTime >= twoMinutesBefore && currentDateTime <= endDateTime;
         return (
             <View style={styles.upcomingView}>
-                {/* <Pressable onPress={()=> cancelSchedule()} style={{ position: 'absolute', top: 5, right: 10 }} >
-                <Icon name="delete-forever" color={'red'} size={22} />
-            </Pressable> */}
-                <View style={styles.flexStyle}>
+                {(item?.status === 'scheduled' || item?.status === 'start') ? (
+                    <View style={styles.flexStyle}>
+                        {!focusedItemId || focusedItemId !== item.id ? (
+                            <Pressable onPress={() => setFocusedItemId(item.id)}>
+                                <Image
+                                    source={dotIcon}
+                                    style={{ height: 25, width: 25, resizeMode: 'contain' }}
+                                />
+                            </Pressable>
+                        ) : (
+                            <Icon name="cross" size={25} color="#B0B0B0" onPress={() => setFocusedItemId(null)} />
+                        )}
 
-                    {!focusedItemId || focusedItemId !== item.id ?
-                        <Pressable onPress={() => setFocusedItemId(item.id)}>
-                            <Image
-                                source={dotIcon}
-                                style={{ height: 25, width: 25, resizeMode: 'contain', }}
-                            />
-                        </Pressable> :
-                        <Icon name="cross" size={25} color="#B0B0B0" onPress={() => setFocusedItemId(null)} />
-                    }
-
-                    {focusedItemId === item.id &&
-                        <View style={{ width: responsiveWidth(53), backgroundColor: '#fff', height: responsiveHeight(8), position: 'absolute', right: 0, top: 30, zIndex: 10, padding: 10, borderRadius: 15, justifyContent: 'center', elevation: 5 }}>
-                            <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
-                                <TouchableOpacity onPress={() => confirmationBeforeCancel(item?.id)}>
-                                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(2), marginVertical: responsiveHeight(1) }}>Cancel the appointment</Text>
-                                </TouchableOpacity>
+                        {focusedItemId === item.id && (
+                            <View
+                                style={{
+                                    width: responsiveWidth(53),
+                                    backgroundColor: '#fff',
+                                    height: responsiveHeight(8),
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 30,
+                                    zIndex: 10,
+                                    padding: 10,
+                                    borderRadius: 15,
+                                    justifyContent: 'center',
+                                    elevation: 5
+                                }}>
+                                <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                                    <TouchableOpacity onPress={() => confirmationBeforeCancel(item?.id)}>
+                                        <Text
+                                            style={{
+                                                color: '#746868',
+                                                fontFamily: 'DMSans-Regular',
+                                                fontSize: responsiveFontSize(2),
+                                                marginVertical: responsiveHeight(1)
+                                            }}>
+                                            Cancel the appointment
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
-                    }
-
-                </View>
+                        )}
+                    </View>
+                ) : null}
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
 
                     <Image
@@ -323,12 +342,24 @@ const ScheduleScreen = ({ navigation, route }) => {
                             Therapist
                         </Text>
                     </View>
-                    <TouchableOpacity style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
-                        onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
-                        disabled={!isButtonEnabled}
-                    >
-                        <Text style={styles.joinNowText}>Join Now</Text>
-                    </TouchableOpacity>
+                    {item?.status === 'scheduled' || item?.status === 'start' ? (
+                        <TouchableOpacity
+                            style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
+                            onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
+                            disabled={!isButtonEnabled}
+                        >
+                            <Text style={styles.joinNowText}>Join Now</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={[styles.joinNowButton, { opacity: 0.5 }]}>
+                            <Text style={styles.joinNowText}>
+                                {item?.status === 'cancel' ? 'Canceled' :
+                                    item?.status === 'incomplete' ? 'Incomplete' :
+                                        item?.status === 'processing' ? 'Processing' :
+                                            null}
+                            </Text>
+                        </View>
+                    )}
                 </View>
                 <View style={styles.dateTimeView}>
                     <View style={styles.dateView1}>
@@ -514,7 +545,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#EEF8FF',
         borderColor: '#417AA4',
         borderWidth: 1,
-        padding: 10,
+        padding: 8,
         borderRadius: 20,
         flexDirection: 'row',
         justifyContent: 'center'

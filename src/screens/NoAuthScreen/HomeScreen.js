@@ -210,7 +210,10 @@ export default function HomeScreen({ navigation }) {
           //console.log(res.data,'user details')
           let upcomingBooking = res.data.data;
           console.log(upcomingBooking, 'upcomingBooking')
-          upcomingBooking.sort((a, b) => {
+          const filteredBookings = upcomingBooking.filter(booking => 
+            booking.status === "scheduled" || booking.status === "start"
+          );
+          filteredBookings.sort((a, b) => {
             let dateA = new Date(a.date);
             let dateB = new Date(b.date);
             if (dateA < dateB) return -1;
@@ -224,7 +227,7 @@ export default function HomeScreen({ navigation }) {
 
             return dateTimeA - dateTimeB;
           });
-          setUpcomingBooking(upcomingBooking)
+          setUpcomingBooking(filteredBookings)
           setIsLoading(false);
         })
         .catch(e => {
@@ -365,11 +368,11 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.nameText}>{item?.therapist?.name}</Text>
             <Text style={styles.namesubText}> Therapist</Text>
           </View>
-          <TouchableOpacity style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
+          {/* <TouchableOpacity style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
             onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
             disabled={!isButtonEnabled}
-          >
-            {/* <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}> */}
+          > */}
+            <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
         </View>
@@ -774,7 +777,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEF8FF',
     borderColor: '#417AA4',
     borderWidth: 1,
-    padding: 10,
+    padding: 8,
     borderRadius: 20,
     flexDirection: 'row',
     justifyContent: 'center'

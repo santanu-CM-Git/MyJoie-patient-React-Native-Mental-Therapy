@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, KeyboardAvoidingView, PermissionsAndroid, Alert,BackHandler } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, KeyboardAvoidingView, PermissionsAndroid, Alert, BackHandler } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
@@ -65,7 +65,7 @@ const ChatScreen = ({ navigation, route }) => {
   const [therapistProfilePic, setTherapistProfilePic] = useState(route?.params?.details?.therapist?.profile_pic)
   const [patientId, setPatientId] = useState(route?.params?.details?.patient?.id)
   const [patientProfilePic, setPatientProfilePic] = useState(route?.params?.details?.patient?.profile_pic)
-  const [chatgenidres, setChatgenidres] = useState('4');
+  const [chatgenidres, setChatgenidres] = useState(route?.params?.details?.booking_uuid);
   const [isAttachImage, setIsAttachImage] = useState(false);
   const [isAttachFile, setIsAttachFile] = useState(false);
   const [imagePath, setImagePath] = useState('');
@@ -222,7 +222,7 @@ const ChatScreen = ({ navigation, route }) => {
         .then(res => {
           console.log(res.data)
           if (res.data.response == true) {
-            navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id,therapistName: route?.params?.details?.therapist?.name,therapistPic:route?.params?.details?.therapist?.profile_pic})
+            navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id, therapistName: route?.params?.details?.therapist?.name, therapistPic: route?.params?.details?.therapist?.profile_pic })
           } else {
             console.log('not okk')
             setIsLoading(false)
@@ -438,7 +438,8 @@ const ChatScreen = ({ navigation, route }) => {
     //     },
     //   },
     // ])
-    const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId //if user to user specific chat
+    //const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId //if user to user specific chat
+    const docid = chatgenidres;
     const messageRef = firestore().collection('chatrooms')
       .doc(docid)
       .collection('messages')
@@ -533,8 +534,8 @@ const ChatScreen = ({ navigation, route }) => {
       createdAt: new Date()
     }
     setMessages(previousMessages => GiftedChat.append(previousMessages, mymsg))
-    const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
-
+    //const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
+    const docid = chatgenidres;
     firestore().collection('chatrooms')
       .doc(docid)
       .collection('messages')
@@ -761,7 +762,7 @@ const ChatScreen = ({ navigation, route }) => {
       {/* <CustomHeader commingFrom={'chat'} onPress={() => navigation.goBack()} title={'Admin Community'} /> */}
       <View style={styles.HeaderSection}>
         <View style={styles.HeaderSectionHalf}>
-          <Ionicons name="chevron-back" size={25} color="#000"/>
+          <Ionicons name="chevron-back" size={25} color="#000" />
           <View style={{ flexDirection: 'column', marginLeft: 10 }}>
             <Text style={styles.therapistName}>{route?.params?.details?.therapist?.name}</Text>
             <Text style={styles.therapistDesc}>Therapist</Text>
@@ -870,6 +871,7 @@ const ChatScreen = ({ navigation, route }) => {
               _id: patientId,
               //avatar: { uri: patientProfilePic },
             }}
+            renderAvatar={null}
           //user={user}
           />
           : activeTab == 'audio' ?
@@ -1067,23 +1069,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAECF0',
     paddingBottom: 10,
   },
-  HeaderSection:{ height: responsiveHeight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 5 },
-  HeaderSectionHalf:{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
-  therapistName:{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) },
-  therapistDesc:{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
-  timerText:{ color: '#CC2131', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(5) },
-  endButtonView:{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#53A39F', borderRadius: 15, marginLeft: responsiveWidth(2) },
-  endButtonText:{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) },
-  TabSection:{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 },
-  ButtonView:{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
-  ButtonImg:{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 },
-  ButtonText:{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
-  containSection:{ height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  AudioBackground:{ width: responsiveWidth(100), height: responsiveHeight(75), justifyContent: 'center', alignItems: 'center' },
-  buttonImage:{ height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
-  audioSectionTherapistName:{ color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
-  audioButtonSection:{ backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
-  iconStyle:{ height: 50, width: 50 },
+  HeaderSection: { height: responsiveHeight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 5 },
+  HeaderSectionHalf: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  therapistName: { color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) },
+  therapistDesc: { color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
+  timerText: { color: '#CC2131', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(5) },
+  endButtonView: { paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#53A39F', borderRadius: 15, marginLeft: responsiveWidth(2) },
+  endButtonText: { color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) },
+  TabSection: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 },
+  ButtonView: { width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  ButtonImg: { height: 20, width: 20, resizeMode: 'contain', marginRight: 5 },
+  ButtonText: { color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
+  containSection: { height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+  AudioBackground: { width: responsiveWidth(100), height: responsiveHeight(75), justifyContent: 'center', alignItems: 'center' },
+  buttonImage: { height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
+  audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
+  audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
+  iconStyle: { height: 50, width: 50 },
   messageContainer: {
     backgroundColor: 'red',
     height: responsiveHeight(70)
