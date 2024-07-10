@@ -9,7 +9,7 @@ import OfflineNotice from './src/utils/OfflineNotice'
 import Toast from 'react-native-toast-message';
 
 import firebase from '@react-native-firebase/app';
-import auth from '@react-native-firebase/auth';
+// import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PERMISSIONS, request, check } from 'react-native-permissions';

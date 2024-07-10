@@ -15,7 +15,7 @@ import { TabActions, useRoute } from '@react-navigation/native';
 // import { getDatabase, ref, onValue, push } from '@react-native-firebase/database';
 // import * as firebase from "firebase/app"
 import firebase from '@react-native-firebase/app';
-import auth from '@react-native-firebase/auth';
+// import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
 import firestore, { endBefore } from '@react-native-firebase/firestore'

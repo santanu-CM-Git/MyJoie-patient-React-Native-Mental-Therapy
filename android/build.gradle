@@ -2,16 +2,16 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "33.0.0"
-        minSdkVersion = 21
-        compileSdkVersion = 33
-        targetSdkVersion = 33
+        buildToolsVersion = "34.0.0"
+        minSdkVersion = 23
+        compileSdkVersion = 34
+        targetSdkVersion = 34
         playServicesLocationVersion = "21.0.1"
         // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
         ndkVersion = "23.1.7779620"
-        googlePlayServicesVersion = "16.1.0" // default: "+" //add for firebase push notification
-        googlePlayServicesIidVersion = "16.0.1" // default: "+" //add for firebase push notification
-        firebaseVersion = "17.3.4" // default: "+" //add for firebase push notification
+        googlePlayServicesVersion = "20.1.0" // default: "+" //add for firebase push notification
+        //googlePlayServicesIidVersion = "20.1.0" // default: "+" //add for firebase push notification
+        firebaseVersion = "20.1.0" // default: "+" //add for firebase push notification
     }
     repositories {
         google()

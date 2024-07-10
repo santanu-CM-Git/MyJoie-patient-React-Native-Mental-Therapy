@@ -19,7 +19,7 @@ import CustomButton from '../../components/CustomButton';
 import InputField from '../../components/InputField';
 import { AuthContext } from '../../context/AuthContext';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/Loader';
 import { CountryPicker } from "react-native-country-codes-picker";
 import LinearGradient from 'react-native-linear-gradient';
@@ -57,16 +57,16 @@ const PasswordChange = ({ navigation }) => {
     };
 
     useEffect(() => {
-        getDeviceInfo()
+        //getDeviceInfo()
         getFCMToken()
     }, [])
 
-    const getDeviceInfo = () => {
-        DeviceInfo.getUniqueId().then((deviceUniqueId) => {
-            console.log(deviceUniqueId)
-            setDeviceId(deviceUniqueId)
-        });
-    }
+    // const getDeviceInfo = () => {
+    //     DeviceInfo.getUniqueId().then((deviceUniqueId) => {
+    //         console.log(deviceUniqueId)
+    //         setDeviceId(deviceUniqueId)
+    //     });
+    // }
 
     const onChangeText = (text) => {
         const phoneRegex = /^\d{10}$/;

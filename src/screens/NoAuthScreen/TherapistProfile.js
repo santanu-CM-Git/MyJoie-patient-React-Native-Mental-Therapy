@@ -214,16 +214,42 @@ const TherapistProfile = ({ navigation, route }) => {
         });
     };
 
+    // const handleSlotSelect = (slot) => {
+    //     console.log(slot, 'selected slot data')
+    //     if (slot.booked_status === 0) {
+    //         setSelectedByUser((prevSelected) => {
+    //             if (prevSelected.includes(slot)) {
+    //                 // Deselect if already selected
+    //                 return prevSelected.filter(selectedSlot => selectedSlot !== slot);
+    //             } else {
+    //                 // Select the slot
+    //                 return [...prevSelected, slot];
+    //             }
+    //         });
+    //     }
+    // };
+
     const handleSlotSelect = (slot) => {
-        console.log(slot, 'selected slot data')
+        console.log(slot, 'selected slot data');
         if (slot.booked_status === 0) {
             setSelectedByUser((prevSelected) => {
+                const slotIndex = therapistAvailability.indexOf(slot);
+
                 if (prevSelected.includes(slot)) {
                     // Deselect if already selected
                     return prevSelected.filter(selectedSlot => selectedSlot !== slot);
                 } else {
-                    // Select the slot
-                    return [...prevSelected, slot];
+                    // Check if the new selection is continuous with the previous selections
+                    const lastSelectedIndex = therapistAvailability.indexOf(prevSelected[prevSelected.length - 1]);
+
+                    if (prevSelected.length === 0 || Math.abs(lastSelectedIndex - slotIndex) === 1) {
+                        // Select the slot if it's the first selection or if it's continuous
+                        return [...prevSelected, slot];
+                    } else {
+                        // Show alert if the new selection is not continuous
+                        Alert.alert('Selection Error', 'You can only select continuous slots.');
+                        return prevSelected;
+                    }
                 }
             });
         }
