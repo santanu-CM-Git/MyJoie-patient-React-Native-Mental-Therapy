@@ -832,7 +832,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     marginHorizontal: 15,
     borderRadius: 20,
-    marginTop: responsiveHeight(2),
+    marginTop: responsiveHeight(1),
     marginBottom: responsiveHeight(1),
     elevation: 5
   },
@@ -846,7 +846,7 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans-Regular',
     marginRight: 5,
     fontSize: responsiveFontSize(1.5),
-    marginBottom: 5,
+    marginBottom: responsiveHeight(0.5),
   },
   nameSubText3: {
     color: '#444343',
