@@ -328,7 +328,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                         )}
                     </View>
                 ) : null}
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
 
                     <Image
                         source={{ uri: item?.therapist?.profile_pic }}
@@ -356,6 +356,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                                 {item?.status === 'cancel' ? 'Canceled' :
                                     item?.status === 'incomplete' ? 'Incomplete' :
                                         item?.status === 'processing' ? 'Processing' :
+                                        item?.status === 'completed' ? 'Completed' :
                                             null}
                             </Text>
                         </View>
