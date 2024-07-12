@@ -4,7 +4,7 @@ import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State } from 'react-native-gesture-handler'
-import { deleteImg, editImg, milkImg, phoneImg, searchImg, userPhoto, wallet, walletCredit } from '../../utils/Images'
+import { deleteImg, editImg, milkImg, phoneImg, searchImg, userPhoto, wallet, walletCredit, walletDebit } from '../../utils/Images'
 import { API_URL } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -74,32 +74,56 @@ const WalletScreen = ({ navigation }) => {
         )
     }
 
-    const renderHistory = (item, index) => {
-        // console.log(item)
-        return (
-            <View style={styles.singleValue}>
-                <View style={styles.iconView}>
-                    <Image
-                        source={walletCredit}
-                        style={styles.iconStyle}
-                    />
-                </View>
-                <View style={styles.remarkView}>
-                    <Text style={styles.remarkText}>{item.item.remarks}</Text>
-                    <Text style={styles.remarkDate}>{moment(item.item.created_at).format('dddd, D MMMM')}</Text>
-                </View>
-                {item.item.status == 'credit' ?
-                    <View style={styles.remarkAmountView}>
-                        <Text style={[styles.remarkAmount, { color: '#19BF1F', }]}>+ ₹{item.item.amount}</Text>
-                    </View>
-                    :
-                    <View style={styles.remarkAmountView}>
-                        <Text style={[styles.remarkAmount, { color: '#E1293B', }]}>- ₹{item.item.amount}</Text>
-                    </View>
-                }
+    const renderPaymentTransaction = ({ item }) => (
+        <View style={styles.singleValue}>
+            <View style={styles.iconView}>
+                <Image
+                    source={walletDebit}
+                    style={styles.iconStyle}
+                />
             </View>
-        )
-    }
+            <View style={styles.remarkView}>
+                <Text style={styles.remarkText}>{item.gateway_name}</Text>
+                <Text style={styles.remarkDate}>{moment(item.created_at).format('dddd, D MMMM')}</Text>
+            </View>
+            <View style={styles.remarkAmountView}>
+                <Text style={[styles.remarkAmount, { color: '#E1293B', }]}>- ₹{item.transaction_amount}</Text>
+            </View>
+        </View>
+    );
+
+    const renderWalletTransaction = ({ item }) => (
+        <View style={styles.singleValue}>
+            <View style={styles.iconView}>
+                <Image
+                    source={item.status == 'credit' ? walletCredit : walletDebit}
+                    style={styles.iconStyle}
+                />
+            </View>
+            <View style={styles.remarkView}>
+                <Text style={styles.remarkText}>{item.remarks}</Text>
+                <Text style={styles.remarkDate}>{moment(item.created_at).format('dddd, D MMMM')}</Text>
+            </View>
+            {item.status == 'credit' ?
+                <View style={styles.remarkAmountView}>
+                    <Text style={[styles.remarkAmount, { color: '#19BF1F', }]}>+ ₹{item.amount}</Text>
+                </View>
+                :
+                <View style={styles.remarkAmountView}>
+                    <Text style={[styles.remarkAmount, { color: '#E1293B', }]}>- ₹{item.amount}</Text>
+                </View>
+            }
+        </View>
+    );
+
+    const renderItem = (item) => {
+        if (item.item.transaction_id) {
+            return renderPaymentTransaction(item);
+        } else if (item.item.wallet_id) {
+            return renderWalletTransaction(item);
+        }
+        return null;
+    };
 
     return (
         <SafeAreaView style={styles.Container}>
@@ -127,8 +151,8 @@ const WalletScreen = ({ navigation }) => {
                 <View style={styles.transactionList}>
                     <FlatList
                         data={WalletTransaction}
-                        renderItem={renderHistory}
-                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.transaction_id?.toString() || item.wallet_id?.toString()}
                         maxToRenderPerBatch={10}
                         windowSize={5}
                         initialNumToRender={10}
