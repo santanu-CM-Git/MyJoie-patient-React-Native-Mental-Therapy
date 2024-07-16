@@ -156,6 +156,20 @@ const ChatScreen = ({ navigation, route }) => {
             const timeDifferenceInSeconds = Math.max(0, Math.floor((endDate - currentDate) / 1000));
             // Set the timer state
             setTimer(timeDifferenceInSeconds);
+            if (route?.params?.details?.mode_of_conversation === 'chat') {
+              setActiveTab('chat')
+              setVideoCall(false)
+              leave()
+            } else if (route?.params?.details?.mode_of_conversation === 'audio') {
+              join()
+              setActiveTab('audio')
+              setVideoCall(false)
+            } else if (route?.params?.details?.mode_of_conversation === 'video') {
+              setActiveTab('video')
+              setVideoCall(true)
+              leave()
+            }
+
             setIsLoading(false)
           } else {
             console.log('not okk')
