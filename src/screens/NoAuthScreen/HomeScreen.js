@@ -126,7 +126,7 @@ export default function HomeScreen({ navigation }) {
         let banner = res.data.data;
         console.log(banner, 'banner data')
         setBannerData(banner)
-        setIsLoading(false);
+        //setIsLoading(false);
       })
       .catch(e => {
         console.log(`Login error ${e}`)
@@ -147,7 +147,7 @@ export default function HomeScreen({ navigation }) {
           let customerSpeak = res.data.data;
           console.log(customerSpeak, 'customer speaks data')
           setCustomerSpeaksData(customerSpeak)
-          setIsLoading(false);
+          //setIsLoading(false);
         })
         .catch(e => {
           console.log(`Login error ${e}`)
@@ -228,7 +228,7 @@ export default function HomeScreen({ navigation }) {
             return dateTimeA - dateTimeB;
           });
           setUpcomingBooking(filteredBookings)
-          setIsLoading(false);
+          //setIsLoading(false);
         })
         .catch(e => {
           console.log(`Login error ${e}`)
@@ -252,7 +252,7 @@ export default function HomeScreen({ navigation }) {
           console.log(JSON.stringify(res.data.data), 'fetch all therapist')
           if (res.data.response == true) {
             setTherapistData(res.data.data);
-            setIsLoading(false);
+            //setIsLoading(false);
 
           } else {
             console.log('not okk')
@@ -368,11 +368,11 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.nameText}>{item?.therapist?.name}</Text>
             <Text style={styles.namesubText}> Therapist</Text>
           </View>
-          <TouchableOpacity style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
+          {/* <TouchableOpacity style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
             onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
             disabled={!isButtonEnabled}
-          >
-            {/* <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}> */}
+          > */}
+            <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
         </View>

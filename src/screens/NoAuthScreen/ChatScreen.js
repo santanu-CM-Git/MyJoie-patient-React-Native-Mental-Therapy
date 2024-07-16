@@ -48,7 +48,6 @@ const ChatScreen = ({ navigation, route }) => {
   const [videoCall, setVideoCall] = useState(true);
   const connectionData = {
     appId: AGORA_APP_ID,
-    //appId: '8b2a5d01a4eb489682000abfc52cfc9c',
     channel: 'test',
     token: '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==',
   };
@@ -74,7 +73,7 @@ const ChatScreen = ({ navigation, route }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('chat')
   const [isLoading, setIsLoading] = useState(true)
-
+  const intervalRef = useRef(null);
   const [timer, setTimer] = useState(0);
 
   const toggleModal = () => {
@@ -100,24 +99,47 @@ const ChatScreen = ({ navigation, route }) => {
     }
   }, [routepage]);
 
+  // useEffect(() => {
+  //   // If timer is 0, return early
+  //   if (timer === 0) return;
+
+  //   // Create an interval that decrements the timer value every second
+  //   const interval = setInterval(() => {
+  //     setTimer((timer) => timer - 1);
+  //   }, 1000);
+
+  //   // Clear the interval if the component is unmounted or timer reaches 0
+  //   return () => clearInterval(interval);
+  // }, [timer]);
+
+  // const formatTime = (totalSeconds) => {
+  //   const minutes = Math.floor(totalSeconds / 60);
+  //   const seconds = totalSeconds % 60;
+  //   // Format the time to ensure it always shows two digits for minutes and seconds
+  //   return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  // };
+
   useEffect(() => {
-    // If timer is 0, return early
-    if (timer === 0) return;
-
-    // Create an interval that decrements the timer value every second
-    const interval = setInterval(() => {
-      setTimer((timer) => timer - 1);
-    }, 1000);
-
-    // Clear the interval if the component is unmounted or timer reaches 0
-    return () => clearInterval(interval);
-  }, [timer]);
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prevTimer) => {
+          if (prevTimer <= 1) {
+            clearInterval(interval);
+            handleTimerEnd();
+            return 0;
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+  
+      return () => clearInterval(interval);
+    }
+  }, [timer, handleTimerEnd]);
 
   const formatTime = (totalSeconds) => {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    // Format the time to ensure it always shows two digits for minutes and seconds
-    return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   useEffect(() => {
@@ -155,6 +177,7 @@ const ChatScreen = ({ navigation, route }) => {
             // Calculate the difference in seconds
             const timeDifferenceInSeconds = Math.max(0, Math.floor((endDate - currentDate) / 1000));
             // Set the timer state
+            console.log(timeDifferenceInSeconds,'timeDifferenceInSecondstimeDifferenceInSeconds');
             setTimer(timeDifferenceInSeconds);
             if (route?.params?.details?.mode_of_conversation === 'chat') {
               setActiveTab('chat')
@@ -200,23 +223,23 @@ const ChatScreen = ({ navigation, route }) => {
     });
   }
 
-  useEffect(() => {
-    if (timer > 0) {
-      const intervalId = setInterval(() => {
-        setTimer(prevTimer => {
-          if (prevTimer <= 1) {
-            clearInterval(intervalId);
-            handleTimerEnd();
-            return 0;
-          }
-          return prevTimer - 1;
-        });
-      }, 1000);
+  // useEffect(() => {
+  //   if (timer > 0) {
+  //     const intervalId = setInterval(() => {
+  //       setTimer(prevTimer => {
+  //         if (prevTimer <= 1) {
+  //           clearInterval(intervalId);
+  //           handleTimerEnd();
+  //           return 0;
+  //         }
+  //         return prevTimer - 1;
+  //       });
+  //     }, 1000);
 
-      // Cleanup the interval on component unmount
-      return () => clearInterval(intervalId);
-    }
-  }, [timer]);
+  //     // Cleanup the interval on component unmount
+  //     return () => clearInterval(intervalId);
+  //   }
+  // }, [timer]);
 
   const handleTimerEnd = () => {
     console.log('Timer has ended. Execute your function here.');

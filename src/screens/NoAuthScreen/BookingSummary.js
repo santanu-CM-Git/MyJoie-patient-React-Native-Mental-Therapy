@@ -4,8 +4,8 @@ import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State } from 'react-native-gesture-handler'
-import { bookmarkedFill, dateIcon, deleteImg, editImg, milkImg, phoneImg, searchImg, timeIcon, userPhoto, wallet, walletBlack, walletCredit } from '../../utils/Images'
-import { API_URL, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from '@env'
+import { logoIconImg, dateIcon, timeIcon, userPhoto, wallet, walletBlack, walletCredit } from '../../utils/Images'
+import { API_URL, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET,BASE_URL } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from '../../utils/Loader';
@@ -121,16 +121,17 @@ const BookingSummary = ({ navigation, route }) => {
         } else {
             const options = {
                 description: 'This is the description we need',
-                image: 'https://i.imgur.com/3g7nmJC.jpg',
+                //image: `${BASE_URL}/public/assets/dist/img/logo.jpg`,
+                image:`https://i.imgur.com/laTNSbz.png`,
                 currency: 'INR',
                 key: razorpayKeyId,
                 amount: totalAmount * 100,
-                name: 'Customer 1',
+                name: profileDetails?.user?.name,
                 order_id: '',
                 prefill: {
-                    email: 'xyz@example.com',
-                    contact: '9191919191',
-                    name: 'Person Name'
+                    email: profileDetails?.user?.email,
+                    contact: profileDetails?.user?.mobile,  
+                    name: profileDetails?.user?.name,
                 },
                 theme: { color: '#ECFCFA' }
             };
@@ -147,6 +148,7 @@ const BookingSummary = ({ navigation, route }) => {
     };
 
     const submitForm = (transactionId) => {
+        setIsLoading(true);
         const formData = new FormData();
         formData.append("therapist_id", previousPageData?.therapist_id);
         formData.append("slot_ids", previousPageData?.slot_ids);
