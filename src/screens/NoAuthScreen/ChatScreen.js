@@ -112,7 +112,7 @@ const ChatScreen = ({ navigation, route }) => {
   useEffect(() => {
     // //receivedMsg()
     KeepAwake.activate();
-    console.log(route?.params?.details, 'details from home page')
+    console.log(route?.params?.details, 'details from home page') 
 
     sessionStart()
   }, [])
