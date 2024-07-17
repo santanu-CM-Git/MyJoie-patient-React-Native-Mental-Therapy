@@ -9,6 +9,7 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import java.util.List;
+import com.corbt.keepawake.KCKeepAwakePackage; // for keep awake
 // import com.TruecallerAuthPackage; //add this line for truecaller login
 
 public class MainApplication extends Application implements ReactApplication {
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           //packages.add(new TruecallerAuthPackage()); //add for truecaller login
+          //packages.add(new KCKeepAwakePackage()); // for keep awake 
           return packages;
         }
 

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, KeyboardAvoidingView, PermissionsAndroid } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, KeyboardAvoidingView, PermissionsAndroid, Alert, BackHandler } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
@@ -9,6 +9,9 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as DocumentPicker from 'react-native-document-picker';
 import InChatFileTransfer from '../../components/InChatFileTransfer';
 import InChatViewFile from '../../components/InChatViewFile';
+import { API_URL, AGORA_APP_ID } from '@env'
+import { TabActions, useRoute } from '@react-navigation/native';
+import KeepAwake from 'react-native-keep-awake';
 // import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
 // import { getDatabase, ref, onValue, push } from '@react-native-firebase/database';
 // import * as firebase from "firebase/app"
@@ -16,7 +19,7 @@ import firebase from '@react-native-firebase/app';
 // import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
-import firestore from '@react-native-firebase/firestore'
+import firestore, { endBefore } from '@react-native-firebase/firestore'
 import RNFetchBlob from 'rn-fetch-blob'
 // import { CometChat } from '@cometchat/chat-sdk-react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -31,18 +34,21 @@ import {
   IRtcEngine,
   ChannelProfileType,
 } from 'react-native-agora';
+import moment from 'moment-timezone'
+import Loader from '../../utils/Loader'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios'
 // Define basic information
-const appId = '975e09acde854ac38b3304da072c111e';
+const appId = AGORA_APP_ID;
 const token = '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==';
 const channelName = 'test';
 const uid = 0; // Local user UID, no need to modify
 
 const ChatScreen = ({ navigation, route }) => {
-
+  const routepage = useRoute();
   const [videoCall, setVideoCall] = useState(true);
   const connectionData = {
-    appId: '975e09acde854ac38b3304da072c111e',
-    //appId: '8b2a5d01a4eb489682000abfc52cfc9c',
+    appId: AGORA_APP_ID,
     channel: 'test',
     token: '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==',
   };
@@ -59,7 +65,7 @@ const ChatScreen = ({ navigation, route }) => {
   const [therapistProfilePic, setTherapistProfilePic] = useState(route?.params?.details?.therapist?.profile_pic)
   const [patientId, setPatientId] = useState(route?.params?.details?.patient?.id)
   const [patientProfilePic, setPatientProfilePic] = useState(route?.params?.details?.patient?.profile_pic)
-  const [chatgenidres, setChatgenidres] = useState('4');
+  const [chatgenidres, setChatgenidres] = useState(route?.params?.details?.booking_uuid);
   const [isAttachImage, setIsAttachImage] = useState(false);
   const [isAttachFile, setIsAttachFile] = useState(false);
   const [imagePath, setImagePath] = useState('');
@@ -67,16 +73,223 @@ const ChatScreen = ({ navigation, route }) => {
   const [fileVisible, setFileVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('chat')
+  const [isLoading, setIsLoading] = useState(true)
+  const intervalRef = useRef(null);
+  const [timer, setTimer] = useState(0);
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
   useEffect(() => {
-    //receivedMsg()
+    console.log(routepage.name);
+    if (routepage.name === 'ChatScreen') {
+      const backAction = () => {
+        // Prevent the default back button action
+        return true;
+      };
+
+      // Add event listener to handle the back button
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction
+      );
+
+      // Clean up the event listener when the component unmounts
+      return () => backHandler.remove();
+    }
+  }, [routepage]);
+
+  // useEffect(() => {
+  //   // If timer is 0, return early
+  //   if (timer === 0) return;
+
+  //   // Create an interval that decrements the timer value every second
+  //   const interval = setInterval(() => {
+  //     setTimer((timer) => timer - 1);
+  //   }, 1000);
+
+  //   // Clear the interval if the component is unmounted or timer reaches 0
+  //   return () => clearInterval(interval);
+  // }, [timer]);
+
+  // const formatTime = (totalSeconds) => {
+  //   const minutes = Math.floor(totalSeconds / 60);
+  //   const seconds = totalSeconds % 60;
+  //   // Format the time to ensure it always shows two digits for minutes and seconds
+  //   return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  // };
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prevTimer) => {
+          if (prevTimer <= 1) {
+            clearInterval(interval);
+            handleTimerEnd();
+            return 0;
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+  
+      return () => clearInterval(interval);
+    }
+  }, [timer, handleTimerEnd]);
+
+  const formatTime = (totalSeconds) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
+    // //receivedMsg()
+    KeepAwake.activate();
     console.log(route?.params?.details, 'details from home page')
+
+    sessionStart()
   }, [])
 
+  const sessionStart = () => {
+    setIsLoading(true)
+    const currentTime = moment().format('HH:mm:ss');
+    const option = {
+      "booked_slot_id": route?.params?.details?.id,
+      "time": currentTime
+    }
+    console.log(option)
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+      axios.post(`${API_URL}/patient/slot-start`, option, {
+        headers: {
+          Accept: 'application/json',
+          "Authorization": 'Bearer ' + usertoken,
+        },
+      })
+        .then(res => {
+          console.log(res.data)
+          if (res.data.response == true) {
+            const endTime = route?.params?.details?.end_time;
+            // Get the current time using moment
+            const currentTime = moment().format('HH:mm:ss');
+            // Create a new Date object for the end time, assuming the date is today
+            const endDate = moment(endTime, 'HH:mm:ss').toDate();
+            // Create a new Date object for the current time
+            const currentDate = moment(currentTime, 'HH:mm:ss').toDate();
+            // Calculate the difference in seconds
+            const timeDifferenceInSeconds = Math.max(0, Math.floor((endDate - currentDate) / 1000));
+            // Set the timer state
+            console.log(timeDifferenceInSeconds,'timeDifferenceInSecondstimeDifferenceInSeconds');
+            setTimer(timeDifferenceInSeconds);
+            if (route?.params?.details?.mode_of_conversation === 'chat') {
+              setActiveTab('chat')
+              setVideoCall(false)
+              leave()
+            } else if (route?.params?.details?.mode_of_conversation === 'audio') {
+              join()
+              setActiveTab('audio')
+              setVideoCall(false)
+            } else if (route?.params?.details?.mode_of_conversation === 'video') {
+              setActiveTab('video')
+              setVideoCall(true)
+              leave()
+            }
 
+            setIsLoading(false)
+          } else {
+            console.log('not okk')
+            setIsLoading(false)
+            Alert.alert('Oops..', "Something went wrong", [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+          }
+        })
+        .catch(e => {
+          setIsLoading(false)
+          console.log(`user update error ${e}`)
+          console.log(e.response.data?.response.records)
+          Alert.alert('Oops..', e.response?.data?.message, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ]);
+        });
+    });
+  }
+
+  // useEffect(() => {
+  //   if (timer > 0) {
+  //     const intervalId = setInterval(() => {
+  //       setTimer(prevTimer => {
+  //         if (prevTimer <= 1) {
+  //           clearInterval(intervalId);
+  //           handleTimerEnd();
+  //           return 0;
+  //         }
+  //         return prevTimer - 1;
+  //       });
+  //     }, 1000);
+
+  //     // Cleanup the interval on component unmount
+  //     return () => clearInterval(intervalId);
+  //   }
+  // }, [timer]);
+
+  const handleTimerEnd = () => {
+    console.log('Timer has ended. Execute your function here.');
+    const currentTime = moment().format('HH:mm:ss');
+    const option = {
+      "booked_slot_id": route?.params?.details?.id,
+      "time": currentTime
+    }
+    console.log(option)
+    AsyncStorage.getItem('userToken', (err, usertoken) => {
+      axios.post(`${API_URL}/patient/slot-complete`, option, {
+        headers: {
+          Accept: 'application/json',
+          "Authorization": 'Bearer ' + usertoken,
+        },
+      })
+        .then(res => {
+          console.log(res.data)
+          if (res.data.response == true) {
+            navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id, therapistName: route?.params?.details?.therapist?.name, therapistPic: route?.params?.details?.therapist?.profile_pic })
+          } else {
+            console.log('not okk')
+            setIsLoading(false)
+            Alert.alert('Oops..', "Something went wrong", [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+          }
+        })
+        .catch(e => {
+          setIsLoading(false)
+          console.log(`user update error ${e}`)
+          console.log(e.response.data?.response.records)
+          Alert.alert('Oops..', e.response?.data?.message, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ]);
+        });
+    });
+  };
   const _pickDocument = async () => {
     try {
       const result = await DocumentPicker.pick({
@@ -264,7 +477,8 @@ const ChatScreen = ({ navigation, route }) => {
     //     },
     //   },
     // ])
-    const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
+    //const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId //if user to user specific chat
+    const docid = chatgenidres;
     const messageRef = firestore().collection('chatrooms')
       .doc(docid)
       .collection('messages')
@@ -359,8 +573,8 @@ const ChatScreen = ({ navigation, route }) => {
       createdAt: new Date()
     }
     setMessages(previousMessages => GiftedChat.append(previousMessages, mymsg))
-    const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
-
+    //const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
+    const docid = chatgenidres;
     firestore().collection('chatrooms')
       .doc(docid)
       .collection('messages')
@@ -576,91 +790,99 @@ const ChatScreen = ({ navigation, route }) => {
     // other configurations
   };
 
+  if (isLoading) {
+    return (
+      <Loader />
+    )
+  }
+
   return (
     <SafeAreaView style={styles.Container} behavior="padding" keyboardVerticalOffset={30} enabled>
       {/* <CustomHeader commingFrom={'chat'} onPress={() => navigation.goBack()} title={'Admin Community'} /> */}
-      <View style={{ height: responsiveHeight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 5 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Ionicons name="chevron-back" size={25} color="#000" onPress={() => navigation.goBack()} />
+      <View style={styles.HeaderSection}>
+        <View style={styles.HeaderSectionHalf}>
+          <Ionicons name="chevron-back" size={25} color="#000" />
           <View style={{ flexDirection: 'column', marginLeft: 10 }}>
-            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) }}>{route?.params?.details?.therapist?.name}</Text>
-            <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Therapist</Text>
+            <Text style={styles.therapistName}>{route?.params?.details?.therapist?.name}</Text>
+            <Text style={styles.therapistDesc}>Therapist</Text>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: '#CC2131', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(5) }}>14:59</Text>
-          <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#53A39F', borderRadius: 15, marginLeft: responsiveWidth(2) }}>
-            <Text style={{ color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) }}>End</Text>
-          </View>
+        <View style={styles.HeaderSectionHalf}>
+          <Text style={styles.timerText}>{formatTime(timer)}</Text>
+          <TouchableOpacity onPress={() => handleTimerEnd()}>
+            <View style={styles.endButtonView}>
+              <Text style={styles.endButtonText}>End</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+      <View style={styles.TabSection}>
         {activeTab == 'chat' ?
           <>
             <TouchableOpacity onPress={() => goingToactiveTab('audio')}>
-              <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <View style={styles.ButtonView}>
                 <Image
                   source={callIcon}
-                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                  style={styles.ButtonImg}
                 />
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Audio Call</Text>
+                <Text style={styles.ButtonText}>Switch to Audio Call</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => goingToactiveTab('video')}>
-              <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <View style={styles.ButtonView}>
                 <Image
                   source={videoIcon}
-                  style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                  style={styles.ButtonImg}
                 />
-                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Video Call</Text>
+                <Text style={styles.ButtonText}>Switch to Video Call</Text>
               </View>
             </TouchableOpacity>
           </>
           : activeTab == 'audio' ?
             <>
               <TouchableOpacity onPress={() => goingToactiveTab('chat')}>
-                <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.ButtonView}>
                   <Image
                     source={chatImg}
-                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                    style={styles.ButtonImg}
                   />
-                  <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Chat</Text>
+                  <Text style={styles.ButtonText}>Switch to Chat</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => goingToactiveTab('video')}>
-                <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.ButtonView}>
                   <Image
                     source={videoIcon}
-                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                    style={styles.ButtonImg}
                   />
-                  <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Video Call</Text>
+                  <Text style={styles.ButtonText}>Switch to Video Call</Text>
                 </View>
               </TouchableOpacity>
             </>
             :
             <>
               <TouchableOpacity onPress={() => goingToactiveTab('chat')}>
-                <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.ButtonView}>
                   <Image
                     source={chatImg}
-                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                    style={styles.ButtonImg}
                   />
-                  <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Chat</Text>
+                  <Text style={styles.ButtonText}>Switch to Chat</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => goingToactiveTab('audio')}>
-                <View style={{ width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.ButtonView}>
                   <Image
                     source={callIcon}
-                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
+                    style={styles.ButtonImg}
                   />
-                  <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Switch to Audio Call</Text>
+                  <Text style={styles.ButtonText}>Switch to Audio Call</Text>
                 </View>
               </TouchableOpacity>
             </>
         }
       </View>
-      <TouchableOpacity onPress={() => toggleModal()}>
+      {/* <TouchableOpacity onPress={() => toggleModal()}>
         <View style={{ width: responsiveWidth(95), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginTop: responsiveHeight(1) }}>
           <Image
             source={summaryIcon}
@@ -668,8 +890,8 @@ const ChatScreen = ({ navigation, route }) => {
           />
           <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Previous Session Summary</Text>
         </View>
-      </TouchableOpacity>
-      <View style={{ height: responsiveHeight(75), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+      </TouchableOpacity> */}
+      <View style={styles.containSection}>
         {activeTab == 'chat' ?
           <GiftedChat
             messages={messages}
@@ -688,6 +910,7 @@ const ChatScreen = ({ navigation, route }) => {
               _id: patientId,
               //avatar: { uri: patientProfilePic },
             }}
+            renderAvatar={null}
           //user={user}
           />
           : activeTab == 'audio' ?
@@ -721,43 +944,43 @@ const ChatScreen = ({ navigation, route }) => {
                 )}
                 <Text style={{color:'#000'}}>{message}</Text>
               </ScrollView> */}
-              <ImageBackground source={audioBgImg} blurRadius={10} style={{ width: responsiveWidth(100), height: responsiveHeight(75), justifyContent: 'center', alignItems: 'center' }}>
+              <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground}>
                 {route?.params?.details?.therapist?.profile_pic ?
                   <Image
                     source={{ uri: route?.params?.details?.therapist?.profile_pic }}
-                    style={{ height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) }}
+                    style={styles.buttonImage}
                   /> :
                   <Image
                     source={defaultUserImg}
-                    style={{ height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) }}
+                    style={styles.buttonImage}
                   />
                 }
-                <Text style={{ color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>{route?.params?.details?.therapist?.name}</Text>
-                <View style={{ backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                <Text style={styles.audioSectionTherapistName}>{route?.params?.details?.therapist?.name}</Text>
+                <View style={styles.audioButtonSection}>
                   {micOn ?
                     <TouchableOpacity onPress={() => toggleMic()}>
                       <Image
                         source={audiooffIcon}
-                        style={{ height: 50, width: 50 }}
+                        style={styles.iconStyle}
                       />
                     </TouchableOpacity> :
                     <TouchableOpacity onPress={() => toggleMic()}>
                       <Image
                         source={audioonIcon}
-                        style={{ height: 50, width: 50 }}
+                        style={styles.iconStyle}
                       />
                     </TouchableOpacity>}
                   {speakerOn ?
                     <TouchableOpacity onPress={() => toggleSpeaker()}>
                       <Image
                         source={speakeroffIcon}
-                        style={{ height: 50, width: 50 }}
+                        style={styles.iconStyle}
                       />
                     </TouchableOpacity> :
                     <TouchableOpacity onPress={() => toggleSpeaker()}>
                       <Image
                         source={speakeronIcon}
-                        style={{ height: 50, width: 50 }}
+                        style={styles.iconStyle}
                       />
                     </TouchableOpacity>}
                 </View>
@@ -885,6 +1108,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAECF0',
     paddingBottom: 10,
   },
+  HeaderSection: { height: responsiveHeight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 5 },
+  HeaderSectionHalf: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  therapistName: { color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(2) },
+  therapistDesc: { color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
+  timerText: { color: '#CC2131', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(5) },
+  endButtonView: { paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#53A39F', borderRadius: 15, marginLeft: responsiveWidth(2) },
+  endButtonText: { color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) },
+  TabSection: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 },
+  ButtonView: { width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  ButtonImg: { height: 20, width: 20, resizeMode: 'contain', marginRight: 5 },
+  ButtonText: { color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
+  containSection: { height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+  AudioBackground: { width: responsiveWidth(100), height: responsiveHeight(75), justifyContent: 'center', alignItems: 'center' },
+  buttonImage: { height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
+  audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
+  audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
+  iconStyle: { height: 50, width: 50 },
   messageContainer: {
     backgroundColor: 'red',
     height: responsiveHeight(70)

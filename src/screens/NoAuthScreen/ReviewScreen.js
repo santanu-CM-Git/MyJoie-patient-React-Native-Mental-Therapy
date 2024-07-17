@@ -26,35 +26,58 @@ const ReviewScreen = ({ navigation, route }) => {
 
 
     const submitForm = () => {
-        const option = {
-            "booked_slot_id": route?.params?.bookedId,
-            "review": address,
-            "star": starCount
-        }
-        setIsLoading(true)
-        AsyncStorage.getItem('userToken', (err, usertoken) => {
-            axios.post(`${API_URL}/patient/post-review`, option, {
-                headers: {
-                    Accept: 'application/json',
-                    "Authorization": `Bearer ${usertoken}`,
-                },
-            })
-                .then(res => {
-                    console.log(res.data)
-                    if (res.data.response == true) {
+        if(address == ''){
+            Toast.show({
+                type: 'error',
+                text1: 'Hello',
+                text2: "Please write some review",
+                position: 'top',
+                topOffset: Platform.OS == 'ios' ? 55 : 20
+            });
+        }else{
+            const option = {
+                "booked_slot_id": route?.params?.bookedId,
+                "review": address,
+                "star": starCount
+            }
+            setIsLoading(true)
+            AsyncStorage.getItem('userToken', (err, usertoken) => {
+                axios.post(`${API_URL}/patient/post-review`, option, {
+                    headers: {
+                        Accept: 'application/json',
+                        "Authorization": `Bearer ${usertoken}`,
+                    },
+                })
+                    .then(res => {
+                        console.log(res.data)
+                        if (res.data.response == true) {
+                            setIsLoading(false)
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Hello',
+                                text2: "Upload data Successfully",
+                                position: 'top',
+                                topOffset: Platform.OS == 'ios' ? 55 : 20
+                            });
+                            navigation.navigate('Home')
+                        } else {
+                            console.log('not okk')
+                            setIsLoading(false)
+                            Alert.alert('Oops..', "Something went wrong", [
+                                {
+                                    text: 'Cancel',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                },
+                                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                            ]);
+                        }
+                    })
+                    .catch(e => {
                         setIsLoading(false)
-                        Toast.show({
-                            type: 'success',
-                            text1: 'Hello',
-                            text2: "Upload data Successfully",
-                            position: 'top',
-                            topOffset: Platform.OS == 'ios' ? 55 : 20
-                        });
-                        navigation.navigate('Home')
-                    } else {
-                        console.log('not okk')
-                        setIsLoading(false)
-                        Alert.alert('Oops..', "Something went wrong", [
+                        console.log(`user register error ${e}`)
+                        console.log(e.response)
+                        Alert.alert('Oops..', e.response?.data?.message, [
                             {
                                 text: 'Cancel',
                                 onPress: () => console.log('Cancel Pressed'),
@@ -62,22 +85,10 @@ const ReviewScreen = ({ navigation, route }) => {
                             },
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
-                    }
-                })
-                .catch(e => {
-                    setIsLoading(false)
-                    console.log(`user register error ${e}`)
-                    console.log(e.response)
-                    Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
-                    ]);
-                });
-        });
+                    });
+            });
+        }
+        
     }
 
     if (isLoading) {

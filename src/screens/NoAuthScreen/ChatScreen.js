@@ -1,29 +1,16 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, KeyboardAvoidingView, PermissionsAndroid, Alert, BackHandler } from 'react-native'
-import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { GreenTick, audiooffIcon, audioonIcon, callIcon, chatImg, filesendImg, sendImg, speakeroffIcon, speakeronIcon, summaryIcon, userPhoto, videoIcon, audioBgImg, defaultUserImg } from '../../utils/Images'
 import { GiftedChat, InputToolbar, Bubble, Send, Composer } from 'react-native-gifted-chat'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import * as DocumentPicker from 'react-native-document-picker';
 import InChatFileTransfer from '../../components/InChatFileTransfer';
-import InChatViewFile from '../../components/InChatViewFile';
 import { API_URL, AGORA_APP_ID } from '@env'
 import { TabActions, useRoute } from '@react-navigation/native';
-// import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
-// import { getDatabase, ref, onValue, push } from '@react-native-firebase/database';
-// import * as firebase from "firebase/app"
-import firebase from '@react-native-firebase/app';
-// import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
-import storage from '@react-native-firebase/storage';
+import KeepAwake from 'react-native-keep-awake';
 import firestore, { endBefore } from '@react-native-firebase/firestore'
-import RNFetchBlob from 'rn-fetch-blob'
-// import { CometChat } from '@cometchat/chat-sdk-react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/Entypo';
-import Modal from "react-native-modal";
 import AgoraUIKit, { StreamFallbackOptions, PropsInterface, VideoRenderMode, RenderModeType } from 'agora-rn-uikit';
 console.log(RenderModeType.RenderModeFit, 'kkkkkkkkkkk')
 
@@ -37,6 +24,7 @@ import moment from 'moment-timezone'
 import Loader from '../../utils/Loader'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
+
 // Define basic information
 const appId = AGORA_APP_ID;
 const token = '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==';
@@ -144,6 +132,7 @@ const ChatScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     // //receivedMsg()
+    KeepAwake.activate();
     console.log(route?.params?.details, 'details from home page')
 
     sessionStart()
@@ -223,24 +212,6 @@ const ChatScreen = ({ navigation, route }) => {
     });
   }
 
-  // useEffect(() => {
-  //   if (timer > 0) {
-  //     const intervalId = setInterval(() => {
-  //       setTimer(prevTimer => {
-  //         if (prevTimer <= 1) {
-  //           clearInterval(intervalId);
-  //           handleTimerEnd();
-  //           return 0;
-  //         }
-  //         return prevTimer - 1;
-  //       });
-  //     }, 1000);
-
-  //     // Cleanup the interval on component unmount
-  //     return () => clearInterval(intervalId);
-  //   }
-  // }, [timer]);
-
   const handleTimerEnd = () => {
     console.log('Timer has ended. Execute your function here.');
     const currentTime = moment().format('HH:mm:ss');
@@ -287,36 +258,6 @@ const ChatScreen = ({ navigation, route }) => {
           ]);
         });
     });
-  };
-  const _pickDocument = async () => {
-    try {
-      const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
-        copyTo: 'documentDirectory',
-        mode: 'import',
-        allowMultiSelection: true,
-      });
-      const fileUri = result[0].fileCopyUri;
-      if (!fileUri) {
-        console.log('File URI is undefined or null');
-        return;
-      }
-      console.log(fileUri)
-      if (fileUri.indexOf('.png') !== -1 || fileUri.indexOf('.jpg') !== -1) {
-        setImagePath(fileUri);
-        setIsAttachImage(true);
-      } else {
-        setFilePath(fileUri);
-        setIsAttachFile(true);
-      }
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('User cancelled file picker');
-      } else {
-        console.log('DocumentPicker err => ', err);
-        throw err;
-      }
-    }
   };
 
   const renderChatFooter = useCallback(() => {
@@ -386,12 +327,6 @@ const ChatScreen = ({ navigation, route }) => {
     return (
 
       <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-        {/* <TouchableOpacity onPress={_pickDocument}>
-          <Image
-            source={filesendImg}
-            style={styles.imageView1}
-          />
-        </TouchableOpacity> */}
         <Send {...props}>
           <Image
             source={sendImg}
@@ -463,19 +398,6 @@ const ChatScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    // setMessages([
-    //   {
-    //     _id: 1,
-    //     text: 'Hello developer',
-    //     createdAt: new Date(),
-    //     user: {
-    //       _id: 2,
-    //       name: 'React Native',
-    //       avatar: require('../../assets/images/user-profile.jpg'),
-    //     },
-    //   },
-    // ])
-    //const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId //if user to user specific chat
     const docid = chatgenidres;
     const messageRef = firestore().collection('chatrooms')
       .doc(docid)
@@ -507,60 +429,6 @@ const ChatScreen = ({ navigation, route }) => {
     }
   }, [])
 
-  // const onSend = useCallback((messages = []) => {
-  //   const [messageToSend] = messages;
-  //   if (isAttachImage) {
-  //     const newMessage = {
-  //       _id: messages[0]._id + 1,
-  //       text: messageToSend.text,
-  //       timestamp: firebase.database.ServerValue.TIMESTAMP,
-  //       user: {
-  //         _id: 1,
-  //         avatar: require('../../assets/images/user-profile.jpg'),
-  //       },
-  //       codeSnippet: true,
-  //       image: imagePath,
-  //       file: {
-  //         url: ''
-  //       }
-  //     };
-  //     setMessages(previousMessages =>
-  //       GiftedChat.append(previousMessages, newMessage),
-  //     );
-  //     // messages.forEach(item => {
-  //     //   const message = newMessage
-  //     //   db.push(message);
-  //     // });
-  //     setImagePath('');
-  //     setIsAttachImage(false);
-  //   } else if (isAttachFile) {
-  //     const newMessage = {
-  //       _id: messages[0]._id + 1,
-  //       text: messageToSend.text,
-  //       createdAt: new Date(),
-  //       user: {
-  //         _id: 1,
-  //         avatar: require('../../assets/images/user-profile.jpg'),
-  //       },
-  //       image: '',
-  //       file: {
-  //         url: filePath
-  //       }
-  //     };
-  //     setMessages(previousMessages =>
-  //       GiftedChat.append(previousMessages, newMessage),
-  //     );
-  //     setFilePath('');
-  //     setIsAttachFile(false);
-  //   } else {
-  //     setMessages(previousMessages =>
-  //       GiftedChat.append(previousMessages, messages),
-  //     );
-  //   }
-  // },
-  //   [filePath, imagePath, isAttachFile, isAttachImage],
-  // );
-
   const onSend = (messageArray) => {
     console.log(messageArray)
     const msg = messageArray[0]
@@ -571,7 +439,6 @@ const ChatScreen = ({ navigation, route }) => {
       createdAt: new Date()
     }
     setMessages(previousMessages => GiftedChat.append(previousMessages, mymsg))
-    //const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
     const docid = chatgenidres;
     firestore().collection('chatrooms')
       .doc(docid)
@@ -880,15 +747,6 @@ const ChatScreen = ({ navigation, route }) => {
             </>
         }
       </View>
-      {/* <TouchableOpacity onPress={() => toggleModal()}>
-        <View style={{ width: responsiveWidth(95), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginTop: responsiveHeight(1) }}>
-          <Image
-            source={summaryIcon}
-            style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
-          />
-          <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Previous Session Summary</Text>
-        </View>
-      </TouchableOpacity> */}
       <View style={styles.containSection}>
         {activeTab == 'chat' ?
           <GiftedChat
@@ -913,35 +771,6 @@ const ChatScreen = ({ navigation, route }) => {
           />
           : activeTab == 'audio' ?
             <>
-              {/* <View style={styles.btnContainer}>
-                <Text onPress={join} style={{ color: '#000' }}>
-                  Join
-                </Text>
-                <Text onPress={leave} style={{ color: '#000' }}>
-                  Leave
-                </Text>
-                <Text onPress={toggleMic} style={{ color: '#000' }}>
-                  {micOn ? 'Mute Mic' : 'Unmute Mic'}
-                </Text>
-                <Text onPress={toggleSpeaker} style={{ color: '#000' }}>
-                  {speakerOn ? 'Disable Speaker' : 'Enable Speaker'}
-                </Text>
-              </View>
-              <ScrollView
-                style={styles.scroll}
-                contentContainerStyle={styles.scrollContainer}>
-                {isJoined ? (
-                  <Text style={{color:'#000'}}>Local user UID: {uid}</Text>
-                ) : (
-                  <Text style={{color:'#000'}}>Join a channel</Text>
-                )}
-                {isJoined && remoteUid !== 0 ? (
-                  <Text style={{color:'#000'}}>Remote user UID: {remoteUid}</Text>
-                ) : (
-                  <Text style={{color:'#000'}}>Waiting for remote users to join</Text>
-                )}
-                <Text style={{color:'#000'}}>{message}</Text>
-              </ScrollView> */}
               <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground}>
                 {route?.params?.details?.therapist?.profile_pic ?
                   <Image
@@ -1006,94 +835,6 @@ const ChatScreen = ({ navigation, route }) => {
             </>
         }
       </View>
-      <Modal
-        isVisible={isModalVisible}
-        // onBackdropPress={() => setIsFocus(false)} // modal off by clicking outside of the modal
-        style={{
-          margin: 0, // Add this line to remove the default margin
-          justifyContent: 'flex-end',
-        }}>
-        <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff', height: 50, width: 50, borderRadius: 25, position: 'absolute', bottom: '55%', left: '45%', right: '45%' }}>
-          <Icon name="cross" size={30} color="#B0B0B0" onPress={toggleModal} />
-        </View>
-        {/* <TouchableWithoutFeedback onPress={() => setIsFocus(false)} style={{  }}> */}
-        <View style={{ height: '50%', backgroundColor: '#fff', position: 'absolute', bottom: 0, width: '100%' }}>
-          <View style={{ padding: 20 }}>
-            <ScrollView horizontal={true}>
-              <View style={{ width: responsiveWidth(89), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2), marginRight: 5 }}>
-                <View style={{ padding: 15 }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Rohit Sharma</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                      <Image
-                        source={GreenTick}
-                        style={{ height: 20, width: 20, resizeMode: 'contain' }}
-                      />
-                      <Text style={{ color: '#444343', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-SemiBold', marginLeft: responsiveWidth(1) }}>Completed</Text>
-                    </View>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Order ID :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>1923659</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Date :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>24-02-2024, 09:30 PM</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Appointment Time :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>60 Min</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Rate :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Rs 1100 for 30 Min</Text>
-                  </View>
-                  <View style={{ marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Session Summary :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginTop: 5 }}>The consultation session focused on exploring and addressing the patient's mental health concerns. The patient expressed their struggles with anxiety and depressive symptoms, impacting various aspects of their daily life. The therapist employed a person-centered approach, providing a safe and non-judgmental space for the patient to share their experiences.</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={{ width: responsiveWidth(89), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2), marginRight: 5 }}>
-                <View style={{ padding: 15 }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Rohit Sharma</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                      <Image
-                        source={GreenTick}
-                        style={{ height: 20, width: 20, resizeMode: 'contain' }}
-                      />
-                      <Text style={{ color: '#444343', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-SemiBold', marginLeft: responsiveWidth(1) }}>Completed</Text>
-                    </View>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Order ID :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>1923659</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Date :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>24-02-2024, 09:30 PM</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Appointment Time :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>60 Min</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Rate :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Rs 1100 for 30 Min</Text>
-                  </View>
-                  <View style={{ marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Session Summary :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginTop: 5 }}>The consultation session focused on exploring and addressing the patient's mental health concerns. The patient expressed their struggles with anxiety and depressive symptoms, impacting various aspects of their daily life. The therapist employed a person-centered approach, providing a safe and non-judgmental space for the patient to share their experiences.</Text>
-                  </View>
-                </View>
-              </View>
-            </ScrollView>
-
-          </View>
-        </View>
-        {/* </TouchableWithoutFeedback> */}
-      </Modal>
     </SafeAreaView>
   )
 }
