@@ -3,7 +3,7 @@ import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Imag
 import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { notificationImg, notifyImg } from '../../utils/Images'
+// import { notificationImg, notifyImg } from '../../utils/Images'
 
 const NoNotification = ({ navigation }) => {
     return (
@@ -11,7 +11,7 @@ const NoNotification = ({ navigation }) => {
             <CustomHeader commingFrom={'Notification'} onPress={() => navigation.goBack()} title={'Notification'} />
             <ScrollView style={styles.wrapper}>
                 <View style={{justifyContent:'center',alignItems:'center',marginTop: responsiveHeight(15)}}>
-                    <Image source={notificationImg} style={styles.iconImage} tintColor={'#339999'} />
+                    {/* <Image source={notificationImg} style={styles.iconImage} tintColor={'#339999'} /> */}
                     <Text style={{color:'#3A3232',fontFamily:'Outfit-Medium',fontSize: responsiveFontSize(2),marginVertical: responsiveHeight(2)}}>No Notification Yet</Text>
                     <Text style={{color:'#949494',fontFamily:'Outfit-Medium',fontSize: responsiveFontSize(2),textAlign:'center'}}>No Notification right now. notifications about your activity will show up here</Text>
                 </View>

@@ -4,7 +4,7 @@ import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State } from 'react-native-gesture-handler'
-import { bookmarkedFill, dateIcon, deleteImg, editImg, milkImg, phoneImg, searchImg, timeIcon, userPhoto, wallet, walletBlack, walletCredit } from '../../utils/Images'
+import { dateIcon,timeIcon,walletBlack } from '../../utils/Images'
 import { API_URL, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";

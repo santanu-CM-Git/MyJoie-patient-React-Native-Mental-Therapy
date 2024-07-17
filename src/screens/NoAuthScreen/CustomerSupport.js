@@ -24,7 +24,7 @@ import { API_URL } from '@env'
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { add } from '../../store/cartSlice';
-import { chatImg, emailIcon, emailImg, facebookIcon, forwordImg, instagramIcon, phoneImg, pointerImg, whatsappIcon, youtubeIcon } from '../../utils/Images';
+import { emailIcon, facebookIcon, instagramIcon, whatsappIcon, youtubeIcon } from '../../utils/Images';
 import Loader from '../../utils/Loader';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import CustomHeader from '../../components/CustomHeader';

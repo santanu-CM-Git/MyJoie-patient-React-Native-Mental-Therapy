@@ -20,7 +20,7 @@ import DocumentPicker from 'react-native-document-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
-import { plus, uploadImg, uploadPicImg, userPhoto } from '../../utils/Images';
+import { plus, userPhoto } from '../../utils/Images';
 import { AuthContext } from '../../context/AuthContext';
 import Loader from '../../utils/Loader';
 import axios from 'axios';

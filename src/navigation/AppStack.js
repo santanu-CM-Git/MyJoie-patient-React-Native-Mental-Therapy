@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image} from 'react-native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import { homeImg, contactImg, helpImg, bankDetailsImg, documentImg , capacityImg, reviewImg, earningImg, acceptedOrderImg, completedOrderImg, availabilityImg, SessionIcon, PolicyIcon, availabilityBlackImg, earningBlackImg} from '../utils/Images';
+import { homeImg, helpImg, SessionIcon, PolicyIcon, availabilityBlackImg} from '../utils/Images';
 import CustomDrawer from '../components/CustomDrawer';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';

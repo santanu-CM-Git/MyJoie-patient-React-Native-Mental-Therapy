@@ -17,7 +17,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
 import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
-import { plus, uploadImg, uploadPicImg, userPhoto } from '../../utils/Images';
 import { AuthContext } from '../../context/AuthContext';
 import Loader from '../../utils/Loader';
 import axios from 'axios';
