@@ -60,7 +60,7 @@ const SplashScreen = ({ navigation }) => {
                         source={require('../../assets/images/splash_icon.png')}
                         style={[styles.image, { opacity: fadeAnim }]}
                     />
-                </Animated.View>
+                </Animated.View> 
             </LinearGradient>
         </View>
     );
