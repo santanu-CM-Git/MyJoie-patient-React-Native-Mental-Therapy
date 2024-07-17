@@ -62,12 +62,9 @@ const ChatScreen = ({ navigation, route }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('chat')
   const [isLoading, setIsLoading] = useState(true)
-  const intervalRef = useRef(null);
   const [timer, setTimer] = useState(0);
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+  const [endTime, setEndTime] = useState(null);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     console.log(routepage.name);
@@ -88,42 +85,23 @@ const ChatScreen = ({ navigation, route }) => {
     }
   }, [routepage]);
 
-  // useEffect(() => {
-  //   // If timer is 0, return early
-  //   if (timer === 0) return;
-
-  //   // Create an interval that decrements the timer value every second
-  //   const interval = setInterval(() => {
-  //     setTimer((timer) => timer - 1);
-  //   }, 1000);
-
-  //   // Clear the interval if the component is unmounted or timer reaches 0
-  //   return () => clearInterval(interval);
-  // }, [timer]);
-
-  // const formatTime = (totalSeconds) => {
-  //   const minutes = Math.floor(totalSeconds / 60);
-  //   const seconds = totalSeconds % 60;
-  //   // Format the time to ensure it always shows two digits for minutes and seconds
-  //   return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  // };
 
   useEffect(() => {
-    if (timer > 0) {
-      const interval = BackgroundTimer.setInterval(() => {
-        setTimer((prevTimer) => {
-          if (prevTimer <= 1) {
-            BackgroundTimer.clearInterval(interval);
-            handleTimerEnd();
-            return 0;
-          }
-          return prevTimer - 1;
-        });
+    if (endTime) {
+      intervalRef.current = BackgroundTimer.setInterval(() => {
+        const currentTime = new Date();
+        const endDate = moment(endTime, 'HH:mm:ss').toDate();
+        const timeDifferenceInSeconds = Math.max(0, Math.floor((endDate - currentTime) / 1000));
+        if (timeDifferenceInSeconds <= 0) {
+          BackgroundTimer.clearInterval(intervalRef.current);
+          handleTimerEnd();
+        }
+        setTimer(timeDifferenceInSeconds);
       }, 1000);
 
-      return () => BackgroundTimer.clearInterval(interval);
+      return () => BackgroundTimer.clearInterval(intervalRef.current);
     }
-  }, [timer, handleTimerEnd]);
+  }, [endTime]);
 
   const formatTime = (totalSeconds) => {
     const minutes = Math.floor(totalSeconds / 60);
@@ -139,79 +117,59 @@ const ChatScreen = ({ navigation, route }) => {
     sessionStart()
   }, [])
 
-  const sessionStart = () => {
-    setIsLoading(true)
+  const sessionStart = async () => {
+    setIsLoading(true);
     const currentTime = moment().format('HH:mm:ss');
     const option = {
       "booked_slot_id": route?.params?.details?.id,
-      "time": currentTime
-    }
-    console.log(option)
-    AsyncStorage.getItem('userToken', (err, usertoken) => {
-      axios.post(`${API_URL}/patient/slot-start`, option, {
+      "time": currentTime,
+    };
+    console.log(option);
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      const res = await axios.post(`${API_URL}/patient/slot-start`, option, {
         headers: {
           Accept: 'application/json',
-          "Authorization": 'Bearer ' + usertoken,
+          "Authorization": 'Bearer ' + userToken,
         },
-      })
-        .then(res => {
-          console.log(res.data)
-          if (res.data.response == true) {
-            const endTime = route?.params?.details?.end_time;
-            // Get the current time using moment
-            const currentTime = moment().format('HH:mm:ss');
-            // Create a new Date object for the end time, assuming the date is today
-            const endDate = moment(endTime, 'HH:mm:ss').toDate();
-            // Create a new Date object for the current time
-            const currentDate = moment(currentTime, 'HH:mm:ss').toDate();
-            // Calculate the difference in seconds
-            const timeDifferenceInSeconds = Math.max(0, Math.floor((endDate - currentDate) / 1000));
-            // Set the timer state
-            console.log(timeDifferenceInSeconds,'timeDifferenceInSecondstimeDifferenceInSeconds');
-            setTimer(timeDifferenceInSeconds);
-            if (route?.params?.details?.mode_of_conversation === 'chat') {
-              setActiveTab('chat')
-              setVideoCall(false)
-              leave()
-            } else if (route?.params?.details?.mode_of_conversation === 'audio') {
-              join()
-              setActiveTab('audio')
-              setVideoCall(false)
-            } else if (route?.params?.details?.mode_of_conversation === 'video') {
-              setActiveTab('video')
-              setVideoCall(true)
-              leave()
-            }
+      });
 
-            setIsLoading(false)
-          } else {
-            console.log('not okk')
-            setIsLoading(false)
-            Alert.alert('Oops..', "Something went wrong", [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ]);
-          }
-        })
-        .catch(e => {
-          setIsLoading(false)
-          console.log(`user update error ${e}`)
-          console.log(e.response.data?.response.records)
-          Alert.alert('Oops..', e.response?.data?.message, [
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            { text: 'OK', onPress: () => console.log('OK Pressed') },
-          ]);
-        });
-    });
-  }
+      if (res.data.response === true) {
+        const endTime = route?.params?.details?.end_time;
+        setEndTime(endTime); // Set the end time
+
+        if (route?.params?.details?.mode_of_conversation === 'chat') {
+          setActiveTab('chat');
+          setVideoCall(false);
+          leave();
+        } else if (route?.params?.details?.mode_of_conversation === 'audio') {
+          join();
+          setActiveTab('audio');
+          setVideoCall(false);
+        } else if (route?.params?.details?.mode_of_conversation === 'video') {
+          setActiveTab('video');
+          setVideoCall(true);
+          leave();
+        }
+        setIsLoading(false);
+      } else {
+        console.log('not okk');
+        setIsLoading(false);
+        Alert.alert('Oops..', "Something went wrong", [
+          { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+      }
+    } catch (e) {
+      setIsLoading(false);
+      console.log(`user update error ${e}`);
+      console.log(e.response?.data?.response.records);
+      Alert.alert('Oops..', e.response?.data?.message, [
+        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+    }
+  };
 
   const handleTimerEnd = () => {
     console.log('Timer has ended. Execute your function here.');
