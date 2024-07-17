@@ -24,6 +24,7 @@ import moment from 'moment-timezone'
 import Loader from '../../utils/Loader'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
+import BackgroundTimer from 'react-native-background-timer';
 
 // Define basic information
 const appId = AGORA_APP_ID;
@@ -109,18 +110,18 @@ const ChatScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     if (timer > 0) {
-      const interval = setInterval(() => {
+      const interval = BackgroundTimer.setInterval(() => {
         setTimer((prevTimer) => {
           if (prevTimer <= 1) {
-            clearInterval(interval);
+            BackgroundTimer.clearInterval(interval);
             handleTimerEnd();
             return 0;
           }
           return prevTimer - 1;
         });
       }, 1000);
-  
-      return () => clearInterval(interval);
+
+      return () => BackgroundTimer.clearInterval(interval);
     }
   }, [timer, handleTimerEnd]);
 
