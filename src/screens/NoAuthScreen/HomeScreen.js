@@ -24,7 +24,7 @@ import CustomButton from '../../components/CustomButton'
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { add } from '../../store/cartSlice';
-import { dateIcon, timeIcon,yellowStarImg, qouteImg } from '../../utils/Images';
+import { dateIcon, timeIcon, yellowStarImg, qouteImg } from '../../utils/Images';
 import Loader from '../../utils/Loader';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import CustomHeader from '../../components/CustomHeader';
@@ -111,7 +111,7 @@ export default function HomeScreen({ navigation }) {
           setuserInfo(userInfo)
         })
         .catch(e => {
-          console.log(`Profile error ${e}`)
+          console.log(`Profile error from home page ${e}`)
         });
     });
   }
@@ -129,7 +129,7 @@ export default function HomeScreen({ navigation }) {
         //setIsLoading(false);
       })
       .catch(e => {
-        console.log(`Login error ${e}`)
+        console.log(`fetch banner error ${e}`)
         console.log(e.response?.data?.message)
         setIsLoading(false);
       });
@@ -150,7 +150,7 @@ export default function HomeScreen({ navigation }) {
           //setIsLoading(false);
         })
         .catch(e => {
-          console.log(`Login error ${e}`)
+          console.log(`fetch customer speak error ${e}`)
           console.log(e.response?.data?.message)
           setIsLoading(false);
         });
@@ -190,7 +190,7 @@ export default function HomeScreen({ navigation }) {
 
       setPreviousBooking(previousBooking);
     } catch (error) {
-      console.log(`Login error ${error}`);
+      console.log(`fetch previous booking error ${error}`);
       if (error.response && error.response.data && error.response.data.message) {
         console.log(error.response.data.message);
       }
@@ -210,7 +210,7 @@ export default function HomeScreen({ navigation }) {
           //console.log(res.data,'user details')
           let upcomingBooking = res.data.data;
           console.log(upcomingBooking, 'upcomingBooking')
-          const filteredBookings = upcomingBooking.filter(booking => 
+          const filteredBookings = upcomingBooking.filter(booking =>
             booking.status === "scheduled" || booking.status === "start"
           );
           filteredBookings.sort((a, b) => {
@@ -231,7 +231,7 @@ export default function HomeScreen({ navigation }) {
           //setIsLoading(false);
         })
         .catch(e => {
-          console.log(`Login error ${e}`)
+          console.log(`fetch upcoming booking error ${e}`)
           console.log(e.response?.data?.message)
         });
     });
@@ -269,7 +269,7 @@ export default function HomeScreen({ navigation }) {
         })
         .catch(e => {
           setIsLoading(false)
-          console.log(`user register error ${e}`)
+          console.log(`fetch all therapist error ${e}`)
           console.log(e.response)
           Alert.alert('Oops..', e.response?.data?.message, [
             {
@@ -335,15 +335,15 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
       </View>
-      <View style={styles.bookapointView}>
-        <Image
-          source={dateIcon}
-          style={{ height: 20, width: 20, }}
-        />
-        <TouchableOpacity onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
+      <TouchableOpacity onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
+        <View style={styles.bookapointView}>
+          <Image
+            source={dateIcon}
+            style={{ height: 20, width: 20, }}
+          />
           <Text style={styles.bookapointText}>Book Appointment</Text>
-        </TouchableOpacity>
-      </View>
+        </View>
+      </TouchableOpacity>
     </View>
   ))
 
@@ -372,7 +372,7 @@ export default function HomeScreen({ navigation }) {
             onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
             disabled={!isButtonEnabled}
           > */}
-            <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
+          <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
         </View>

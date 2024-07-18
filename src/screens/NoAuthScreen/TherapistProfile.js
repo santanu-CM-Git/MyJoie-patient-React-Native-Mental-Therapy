@@ -200,7 +200,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 })
                 .catch(e => {
                     setIsLoading(false);
-                    console.log(`user register error ${e}`);
+                    console.log(`Available slot error ${e}`);
                     console.log(e.response);
                     Alert.alert('Oops..', e.response?.data?.message, [
                         {
@@ -289,7 +289,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 })
                 .catch(e => {
                     setIsLoading(false)
-                    console.log(`user register error ${e}`)
+                    console.log(`fetch therapist data error ${e}`)
                     console.log(e.response)
                     Alert.alert('Oops..', e.response?.data?.message, [
                         {
@@ -516,7 +516,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             })
                             .catch(e => {
                                 setIsLoading(false)
-                                console.log(`user register error ${e}`)
+                                console.log(`slot booking error ${e}`)
                                 console.log(e.response)
                                 Alert.alert('Oops..', e.response?.data?.message, [
                                     {
@@ -677,7 +677,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     })
                     .catch(e => {
                         setIsLoading(false)
-                        console.log(`user register error ${e}`)
+                        console.log(`bookmarked error ${e}`)
                         console.log(e.response)
                         Alert.alert('Oops..', e.response?.data?.message, [
                             {

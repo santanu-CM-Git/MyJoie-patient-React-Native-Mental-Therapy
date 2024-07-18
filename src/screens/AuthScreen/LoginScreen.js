@@ -130,7 +130,7 @@ const LoginScreen = ({ navigation }) => {
           })
           .catch(e => {
             setIsLoading(false)
-            console.log(`user register error ${e}`)
+            console.log(`user login error ${e}`)
             console.log(e.response)
             Alert.alert('Oops..', e.response?.data?.message, [
               {

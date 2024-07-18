@@ -137,7 +137,7 @@ const OtpScreen = ({ navigation, route }) => {
             })
             .catch(e => {
                 setIsLoading(false)
-                console.log(`user register error ${e}`)
+                console.log(`resend otp error ${e}`)
                 console.log(e.response)
                 Alert.alert('Oops..', e.response?.data?.message, [
                     {
