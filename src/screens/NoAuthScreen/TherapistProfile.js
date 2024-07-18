@@ -247,7 +247,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         return [...prevSelected, slot];
                     } else {
                         // Show alert if the new selection is not continuous
-                        Alert.alert('Selection Error', 'You can only select continuous slots.');
+                        Alert.alert('Selection Error', 'You can only select continuous slots in one booking, if you want to book non continuous slots then you can do that with  two different bookings.');
                         return prevSelected;
                     }
                 }

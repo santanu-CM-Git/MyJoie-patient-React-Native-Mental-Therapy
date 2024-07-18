@@ -177,60 +177,6 @@ const ChatScreen = ({ navigation, route }) => {
     }
   };
 
-  // const sessionStart = async () => {
-  //   setIsLoading(true);
-  //   const currentTime = moment().format('HH:mm:ss');
-  //   const option = {
-  //     "booked_slot_id": route?.params?.details?.id,
-  //     "time": currentTime,
-  //   };
-  //   console.log(option);
-  //   try {
-  //     const userToken = await AsyncStorage.getItem('userToken');
-  //     const res = await axios.post(`${API_URL}/patient/slot-start`, option, {
-  //       headers: {
-  //         Accept: 'application/json',
-  //         "Authorization": 'Bearer ' + userToken,
-  //       },
-  //     });
-
-  //     if (res.data.response === true) {
-  //       const endTime = route?.params?.details?.end_time;
-  //       setEndTime(endTime); // Set the end time
-
-  //       if (route?.params?.details?.mode_of_conversation === 'chat') {
-  //         setActiveTab('chat');
-  //         setVideoCall(false);
-  //         leave();
-  //       } else if (route?.params?.details?.mode_of_conversation === 'audio') {
-  //         join();
-  //         setActiveTab('audio');
-  //         setVideoCall(false);
-  //       } else if (route?.params?.details?.mode_of_conversation === 'video') {
-  //         setActiveTab('video');
-  //         setVideoCall(true);
-  //         leave();
-  //       }
-  //       setIsLoading(false);
-  //     } else {
-  //       console.log('not okk');
-  //       setIsLoading(false);
-  //       Alert.alert('Oops..', "Something went wrong", [
-  //         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-  //         { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //       ]);
-  //     }
-  //   } catch (e) {
-  //     setIsLoading(false);
-  //     console.log(`user update error ${e}`);
-  //     console.log(e.response?.data?.response.records);
-  //     Alert.alert('Oops..', e.response?.data?.message, [
-  //       { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-  //       { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //     ]);
-  //   }
-  // };
-
   const handleTimerEnd = () => {
     console.log('Timer has ended. Execute your function here.');
     const currentTime = moment().format('HH:mm:ss');

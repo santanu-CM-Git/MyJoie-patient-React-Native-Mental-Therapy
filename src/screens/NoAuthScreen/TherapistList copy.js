@@ -533,151 +533,151 @@ const TherapistList = ({ navigation, route }) => {
                         </View>
                     </View>
                     {/* <ScrollView style={{ marginBottom: responsiveHeight(0) }} > */}
-                    <View style={{ borderTopColor: '#E3E3E3', borderTopWidth: 1, flexDirection: 'row' }}>
-                        <View style={{ width: responsiveWidth(41), backgroundColor: '#FFF', borderRightColor: '#E3E3E3', borderRightWidth: 1 }}>
-                            <TouchableOpacity onPress={() => setActiveTab('Experience')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Experience' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Experience</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Type')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Type' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Type</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Rating')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rating' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Rating</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Gender')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Gender' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Gender</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Age')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Age' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Age</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Qualification')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Qualification' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Qualification</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Language')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Language' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Language</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Rate')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rate' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Price</Text>
-                                </View>
-                            </TouchableOpacity>
-                            {/* <TouchableOpacity onPress={() => setActiveTab('Availability')}>
+                        <View style={{ borderTopColor: '#E3E3E3', borderTopWidth: 1, flexDirection: 'row' }}>
+                            <View style={{ width: responsiveWidth(41), backgroundColor: '#FFF', borderRightColor: '#E3E3E3', borderRightWidth: 1 }}>
+                                <TouchableOpacity onPress={() => setActiveTab('Experience')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Experience' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Experience</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Type')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Type' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Type</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Rating')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rating' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Rating</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Gender')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Gender' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Gender</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Age')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Age' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Age</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Qualification')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Qualification' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Qualification</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Language')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Language' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Language</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Rate')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rate' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Price</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                {/* <TouchableOpacity onPress={() => setActiveTab('Availability')}>
                                     <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Availability' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
                                         <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Availability</Text>
                                     </View>
                                 </TouchableOpacity> */}
-                        </View>
-                        <View style={{ padding: 20, width: responsiveWidth(59), }}>
-                            {/* Experience */}
-                            {activeTab == 'Experience' ?
-                                <View style={{}}>
-                                    <SelectMultiple
-                                        items={Experience}
-                                        selectedItems={selectedExperience}
-                                        onSelectionsChange={onSelectionsChangeExperience}
-                                        rowStyle={styles.item}
-                                        labelStyle={styles.itemText}
-                                    />
-                                </View>
-                                : activeTab == 'Type' ?
+                            </View>
+                            <View style={{ padding: 20, width: responsiveWidth(59), }}>
+                                {/* Experience */}
+                                {activeTab == 'Experience' ?
                                     <View style={{}}>
                                         <SelectMultiple
-                                            items={qualificationitemsType}
-                                            selectedItems={selectedType}
-                                            onSelectionsChange={onSelectionsChangeType}
+                                            items={Experience}
+                                            selectedItems={selectedExperience}
+                                            onSelectionsChange={onSelectionsChangeExperience}
                                             rowStyle={styles.item}
                                             labelStyle={styles.itemText}
                                         />
                                     </View>
-                                    : activeTab == 'Rating' ?
+                                    : activeTab == 'Type' ?
                                         <View style={{}}>
                                             <SelectMultiple
-                                                items={Rating}
-                                                selectedItems={selectedRating}
-                                                onSelectionsChange={onSelectionsChangeRating}
+                                                items={qualificationitemsType}
+                                                selectedItems={selectedType}
+                                                onSelectionsChange={onSelectionsChangeType}
                                                 rowStyle={styles.item}
                                                 labelStyle={styles.itemText}
                                             />
                                         </View>
-                                        : activeTab == 'Gender' ?
+                                        : activeTab == 'Rating' ?
                                             <View style={{}}>
                                                 <SelectMultiple
-                                                    items={Gender}
-                                                    selectedItems={selectedGender}
-                                                    onSelectionsChange={onSelectionsChangeGender}
+                                                    items={Rating}
+                                                    selectedItems={selectedRating}
+                                                    onSelectionsChange={onSelectionsChangeRating}
                                                     rowStyle={styles.item}
                                                     labelStyle={styles.itemText}
                                                 />
                                             </View>
-
-                                            : activeTab == 'Age' ?
+                                            : activeTab == 'Gender' ?
                                                 <View style={{}}>
                                                     <SelectMultiple
-                                                        items={Ages}
-                                                        selectedItems={selectedAge}
-                                                        onSelectionsChange={onSelectionsChangeAge}
+                                                        items={Gender}
+                                                        selectedItems={selectedGender}
+                                                        onSelectionsChange={onSelectionsChangeGender}
                                                         rowStyle={styles.item}
                                                         labelStyle={styles.itemText}
                                                     />
                                                 </View>
-                                                : activeTab == 'Qualification' ?
+
+                                                : activeTab == 'Age' ?
                                                     <View style={{}}>
                                                         <SelectMultiple
-                                                            items={qualificationitems}
-                                                            selectedItems={selectedQualification}
-                                                            onSelectionsChange={onSelectionsChangeQualification}
+                                                            items={Ages}
+                                                            selectedItems={selectedAge}
+                                                            onSelectionsChange={onSelectionsChangeAge}
                                                             rowStyle={styles.item}
                                                             labelStyle={styles.itemText}
                                                         />
                                                     </View>
-                                                    : activeTab == 'Language' ?
+                                                    : activeTab == 'Qualification' ?
                                                         <View style={{}}>
                                                             <SelectMultiple
-                                                                items={qualificationitemsLanguage}
-                                                                selectedItems={selectedLanguage}
-                                                                onSelectionsChange={onSelectionsChangeLanguage}
+                                                                items={qualificationitems}
+                                                                selectedItems={selectedQualification}
+                                                                onSelectionsChange={onSelectionsChangeQualification}
                                                                 rowStyle={styles.item}
                                                                 labelStyle={styles.itemText}
                                                             />
                                                         </View>
-                                                        : activeTab == 'Rate' ?
-                                                            <View style={{ alignItems: 'center', marginTop: 50 }}>
-                                                                <RangeSlider
-                                                                    style={styles.slider}
-                                                                    min={0}
-                                                                    max={100}
-                                                                    step={1}
-                                                                    floatingLabel
-                                                                    renderThumb={renderThumb}
-                                                                    renderRail={renderRail}
-                                                                    renderRailSelected={renderRailSelected}
-                                                                    renderLabel={renderLabel}
-                                                                    renderNotch={renderNotch}
-                                                                    onValueChanged={handleValueChange}
+                                                        : activeTab == 'Language' ?
+                                                            <View style={{}}>
+                                                                <SelectMultiple
+                                                                    items={qualificationitemsLanguage}
+                                                                    selectedItems={selectedLanguage}
+                                                                    onSelectionsChange={onSelectionsChangeLanguage}
+                                                                    rowStyle={styles.item}
+                                                                    labelStyle={styles.itemText}
                                                                 />
-                                                                <Text style={{ color: '#000' }}>Low: {low}</Text>
-                                                                <Text style={{ color: '#000' }}>High: {high}</Text>
                                                             </View>
-                                                            :
+                                                            : activeTab == 'Rate' ?
+                                                                <View style={{ alignItems: 'center',marginTop:50 }}>
+                                                                    <RangeSlider
+                                                                        style={styles.slider}
+                                                                        min={0}
+                                                                        max={100}
+                                                                        step={1}
+                                                                        floatingLabel
+                                                                        renderThumb={renderThumb}
+                                                                        renderRail={renderRail}
+                                                                        renderRailSelected={renderRailSelected}
+                                                                        renderLabel={renderLabel}
+                                                                        renderNotch={renderNotch}
+                                                                        onValueChanged={handleValueChange}
+                                                                    />
+                                                                    <Text style={{color:'#000'}}>Low: {low}</Text>
+                                                                    <Text style={{color:'#000'}}>High: {high}</Text>
+                                                                </View>
+                                                                :
 
-                                                            <></>
-                            }
+                                                                <></>
+                                }
+                            </View>
                         </View>
-                    </View>
                     {/* </ScrollView> */}
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', bottom: 0, width: responsiveWidth(100), paddingHorizontal: 10, borderTopColor: '#E3E3E3', borderTopWidth: 1 }}>
                         <View style={{ width: responsiveWidth(45), marginTop: responsiveHeight(2) }}>
@@ -876,8 +876,8 @@ const styles = StyleSheet.create({
     item: {
         borderBottomWidth: 0,
     },
-    itemText: {
-        color: '#444343',
+    itemText:{
+        color:'#444343',
         fontFamily: 'DMSans-Bold',
         fontSize: responsiveFontSize(2),
     },
