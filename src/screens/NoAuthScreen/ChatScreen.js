@@ -11,6 +11,7 @@ import { TabActions, useRoute } from '@react-navigation/native';
 import KeepAwake from 'react-native-keep-awake';
 import firestore, { endBefore } from '@react-native-firebase/firestore'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import ScreenRecorder from 'react-native-screen-mic-recorder'
 import AgoraUIKit, { StreamFallbackOptions, PropsInterface, VideoRenderMode, RenderModeType } from 'agora-rn-uikit';
 console.log(RenderModeType.RenderModeFit, 'kkkkkkkkkkk')
 
@@ -26,20 +27,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import BackgroundTimer from 'react-native-background-timer';
 
-// Define basic information
-const appId = AGORA_APP_ID;
-const token = '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==';
-const channelName = 'test';
-const uid = 0; // Local user UID, no need to modify
+
 
 const ChatScreen = ({ navigation, route }) => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedURL, setRecordedURL] = useState(null);
+
   const routepage = useRoute();
   const [videoCall, setVideoCall] = useState(true);
   const connectionData = {
     appId: AGORA_APP_ID,
-    channel: 'test',
-    token: '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==',
+     channel: route?.params?.details?.agora_channel_id,
+     token: route?.params?.details?.agora_token,
+    //channel: 'test',
+    //token: '007eJxTYDAVFbklH3aK66/wmnl3vGvZ91vrH36+Q87qq2NNcPAViQ8KDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapJ2RmpTUEMjJwH5VmYWSAQBCfhaEktbiEgQEA75keUg=='
   };
+  // Define basic information
+  const appId = AGORA_APP_ID;
+   const token = route?.params?.details?.agora_token;
+   const channelName = route?.params?.details?.agora_channel_id;
+  //const token = '007eJxTYDAVFbklH3aK66/wmnl3vGvZ91vrH36+Q87qq2NNcPAViQ8KDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapJ2RmpTUEMjJwH5VmYWSAQBCfhaEktbiEgQEA75keUg==';
+  //const channelName = 'test';
+  const uid = 0; // Local user UID, no need to modify
+
   const rtcCallbacks = {
     EndCall: () => {
       setVideoCall(false);
@@ -65,6 +75,38 @@ const ChatScreen = ({ navigation, route }) => {
   const [timer, setTimer] = useState(0);
   const [endTime, setEndTime] = useState(null);
   const intervalRef = useRef(null);
+
+  const startRecording = async () => {
+    try {
+      const recordingStatus = await ScreenRecorder.startRecording().catch((error) => {
+        console.warn(error); // handle native error
+      });
+      if (recordingStatus === 'started') {
+        setIsRecording(true);
+        console.log('Recording has started...');
+      } else if (recordingStatus === 'userDeniedPermission') {
+        Alert.alert('Please grant permission in order to record screen');
+      }
+    } catch (error) {
+      console.error('Error starting recording:', error);
+    }
+  };
+
+  const stopRecording = async () => {
+    console.log('Stopping recording...');
+    try {
+      const uri = await ScreenRecorder.stopRecording().catch((error) => {
+        console.warn(error); // handle native error
+      });
+      if (uri) {
+        setRecordedURL(uri);
+        console.log('Recording stopped. URI:', uri);
+      }
+      setIsRecording(false);
+    } catch (error) {
+      console.error('Error stopping recording:', error);
+    }
+  };
 
   useEffect(() => {
     console.log(routepage.name);
@@ -112,6 +154,7 @@ const ChatScreen = ({ navigation, route }) => {
   useEffect(() => {
     // //receivedMsg()
     KeepAwake.activate();
+    startRecording();
     console.log(route?.params?.details, 'details from home page')
 
     sessionStart()
@@ -195,6 +238,7 @@ const ChatScreen = ({ navigation, route }) => {
         .then(res => {
           console.log(res.data)
           if (res.data.response == true) {
+            stopRecording()
             navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id, therapistName: route?.params?.details?.therapist?.name, therapistPic: route?.params?.details?.therapist?.profile_pic })
           } else {
             console.log('not okk')

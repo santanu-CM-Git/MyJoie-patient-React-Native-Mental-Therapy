@@ -20,13 +20,7 @@ import SelectMultiple from 'react-native-select-multiple'
 import { Dropdown } from 'react-native-element-dropdown';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-import RangeSlider from 'rn-range-slider';
-
-const renderThumb = () => <View style={styles.thumb} />;
-const renderRail = () => <View style={styles.rail} />;
-const renderRailSelected = () => <View style={styles.railSelected} />;
-const renderLabel = (value) => <Text style={styles.label}>{value}</Text>;
-const renderNotch = () => <View style={styles.notch} />;
+import Slider from '@react-native-community/slider';
 
 // const dropdowndata = [
 //     { label: 'All therapist', value: 'All' },
@@ -82,13 +76,8 @@ const TherapistList = ({ navigation, route }) => {
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     const [activeTab, setActiveTab] = useState('Experience')
     const [searchValue, setSearchValue] = useState('');
-    const [low, setLow] = useState(0);
-    const [high, setHigh] = useState(0);
-
-    const handleValueChange = (low, high) => {
-        setLow(low);
-        setHigh(high);
-    };
+    const [slidervalueStart, setSliderValueStart] = useState(0);
+    const [slidervalueEnd, setSliderValueEnd] = useState(0);
 
     // Experience
     const [selectedExperience, setSelectedExperience] = useState([]);
@@ -158,7 +147,7 @@ const TherapistList = ({ navigation, route }) => {
                     value: item.content,
                 }));
                 setqualificationitemsLanguage(languageInfo)
-                setIsLoading(false);
+                //setIsLoading(false);
             })
             .catch(e => {
                 console.log(`Language fetch error ${e}`)
@@ -176,7 +165,7 @@ const TherapistList = ({ navigation, route }) => {
                     value: item.content,
                 }));
                 setqualificationitems(qualificationInfo)
-                setIsLoading(false);
+                //setIsLoading(false);
             })
             .catch(e => {
                 console.log(`qualification fetch error ${e}`)
@@ -194,7 +183,7 @@ const TherapistList = ({ navigation, route }) => {
                     value: item.type,
                 }));
                 setqualificationitemsType(therapyTypeInfo)
-                setIsLoading(false);
+                //setIsLoading(false);
             })
             .catch(e => {
                 console.log(`therapytype fetch error ${e}`)
@@ -203,17 +192,22 @@ const TherapistList = ({ navigation, route }) => {
 
 
     useEffect(() => {
-        fetchAllTherapist();
-        fetchLanguage();
-        fetchQualification();
-        fetchTherapyType();
+        const fetchData = async () => {
+            setIsLoading(true);
+            await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
+            setIsLoading(false);
+        };
+
+        fetchData();
     }, [])
     useFocusEffect(
         React.useCallback(() => {
-            fetchAllTherapist()
-            fetchLanguage();
-            fetchQualification();
-            fetchTherapyType();
+            const fetchData = async () => {
+                await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
+                setIsLoading(false);
+            };
+
+            fetchData();
         }, [])
     )
     const toggleModal = () => {
@@ -240,7 +234,7 @@ const TherapistList = ({ navigation, route }) => {
                     if (res.data.response == true) {
                         setTherapistData(res.data.data);
                         setTherapistFilterData(res.data.data)
-                        setIsLoading(false);
+                        //setIsLoading(false);
 
                     } else {
                         console.log('not okk')
@@ -440,12 +434,22 @@ const TherapistList = ({ navigation, route }) => {
         setTherapistFilterData(filteredData);
     }
 
+    const resetValueOfFilter = () => {
+
+    }
+
     const submitForFilter = () => {
         console.log('hello')
-        console.log(selectedExperience)
-        console.log(selectedRating);
-        console.log(selectedGender);
-        console.log(selectedAge);
+        console.log(selectedExperience,'experience')
+        console.log(selectedType, 'type');
+        console.log(selectedRating, 'rating');
+        console.log(selectedGender, 'gender');
+        console.log(selectedAge, 'age');
+        console.log(selectedQualification, 'qualification');
+        console.log(selectedLanguage, 'language');
+        console.log(slidervalueStart, 'slider start value');
+        console.log(slidervalueEnd, 'slider end value');
+
     }
 
 
@@ -655,22 +659,38 @@ const TherapistList = ({ navigation, route }) => {
                                                             />
                                                         </View>
                                                         : activeTab == 'Rate' ?
-                                                            <View style={{ alignItems: 'center', marginTop: 50 }}>
-                                                                <RangeSlider
+                                                            <View style={{ marginTop: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                                                <Text style={styles.valueTextValue}>Start Price</Text>
+                                                                <Slider
                                                                     style={styles.slider}
-                                                                    min={0}
-                                                                    max={100}
+                                                                    minimumValue={0}
+                                                                    maximumValue={10000}
+                                                                    value={slidervalueStart}
+                                                                    onValueChange={(sliderValue) => setSliderValueStart(sliderValue)}
+                                                                    minimumTrackTintColor="#417AA4"
+                                                                    maximumTrackTintColor="#000000"
+                                                                    thumbTintColor="#417AA4"
                                                                     step={1}
-                                                                    floatingLabel
-                                                                    renderThumb={renderThumb}
-                                                                    renderRail={renderRail}
-                                                                    renderRailSelected={renderRailSelected}
-                                                                    renderLabel={renderLabel}
-                                                                    renderNotch={renderNotch}
-                                                                    onValueChanged={handleValueChange}
+                                                                    trackStyle={styles.track}
+                                                                    thumbStyle={styles.thumb}
                                                                 />
-                                                                <Text style={{ color: '#000' }}>Low: {low}</Text>
-                                                                <Text style={{ color: '#000' }}>High: {high}</Text>
+                                                                <Text style={styles.valueText}>Price per minute: <Text style={styles.valueTextValue}>{slidervalueStart}</Text></Text>
+
+                                                                <Text style={[styles.valueTextValue, { marginTop: responsiveHeight(5) }]}>End Price</Text>
+                                                                <Slider
+                                                                    style={styles.slider}
+                                                                    minimumValue={0}
+                                                                    maximumValue={10000}
+                                                                    value={slidervalueEnd}
+                                                                    onValueChange={(sliderValue) => setSliderValueEnd(sliderValue)}
+                                                                    minimumTrackTintColor="#417AA4"
+                                                                    maximumTrackTintColor="#000000"
+                                                                    thumbTintColor="#417AA4"
+                                                                    step={1}
+                                                                    trackStyle={styles.track}
+                                                                    thumbStyle={styles.thumb}
+                                                                />
+                                                                <Text style={styles.valueText}>Price per minute: <Text style={styles.valueTextValue}>{slidervalueEnd}</Text></Text>
                                                             </View>
                                                             :
 
@@ -683,7 +703,7 @@ const TherapistList = ({ navigation, route }) => {
                         <View style={{ width: responsiveWidth(45), marginTop: responsiveHeight(2) }}>
                             <CustomButton label={"Cancel"}
                                 buttonColor={'gray'}
-                                onPress={null}
+                                onPress={() => resetValueOfFilter()}
                             />
                         </View>
                         <View style={{ width: responsiveWidth(45), marginTop: responsiveHeight(2) }}>
@@ -909,41 +929,29 @@ const styles = StyleSheet.create({
 
     //range slider
     slider: {
-        width: responsiveWidth(45),
-        height: responsiveHeight(5),
+        width: responsiveWidth(50),
+        height: responsiveWidth(10),
+    },
+    valueText: {
+        fontSize: responsiveFontSize(2),
+        marginBottom: 10,
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Regular'
+    },
+    valueTextValue: {
+        fontSize: responsiveFontSize(2),
+        marginBottom: 10,
+        color: '#2D2D2D',
+        fontFamily: 'DMSans-Bold'
+    },
+    track: {
+        height: 10,
+        borderRadius: 5,
     },
     thumb: {
         width: 20,
         height: 20,
-        backgroundColor: '#566D7E',
         borderRadius: 10,
-    },
-    rail: {
-        flex: 1,
-        height: 4,
-        backgroundColor: 'gray',
-        borderRadius: 2,
-    },
-    railSelected: {
-        height: 4,
-        backgroundColor: '#566D7E',
-        borderRadius: 2,
-    },
-    label: {
-        alignSelf: 'center',
-        paddingHorizontal: 8,
-        paddingVertical: 3,
-        backgroundColor: '#566D7E',
-        color: '#fff',
-        borderRadius: 4,
-    },
-    notch: {
-        width: 8,
-        height: 8,
-        backgroundColor: '#000',
-        borderColor: 'blue',
-        borderWidth: 1,
-        borderRadius: 4,
     },
 
 });
