@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, KeyboardAvoidingView, PermissionsAndroid, Alert, BackHandler } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, PermissionsAndroid, Alert, BackHandler, Platform } from 'react-native'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { GreenTick, audiooffIcon, audioonIcon, callIcon, chatImg, filesendImg, sendImg, speakeroffIcon, speakeronIcon, summaryIcon, userPhoto, videoIcon, audioBgImg, defaultUserImg } from '../../utils/Images'
@@ -37,17 +37,17 @@ const ChatScreen = ({ navigation, route }) => {
   const [videoCall, setVideoCall] = useState(true);
   const connectionData = {
     appId: AGORA_APP_ID,
-     channel: route?.params?.details?.agora_channel_id,
-     token: route?.params?.details?.agora_token,
-    //channel: 'test',
-    //token: '007eJxTYDAVFbklH3aK66/wmnl3vGvZ91vrH36+Q87qq2NNcPAViQ8KDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapJ2RmpTUEMjJwH5VmYWSAQBCfhaEktbiEgQEA75keUg=='
+    // channel: route?.params?.details?.agora_channel_id,
+    // token: route?.params?.details?.agora_token,
+    channel: 'test',
+    token: '007eJxTYDAVFbklH3aK66/wmnl3vGvZ91vrH36+Q87qq2NNcPAViQ8KDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapJ2RmpTUEMjJwH5VmYWSAQBCfhaEktbiEgQEA75keUg=='
   };
   // Define basic information
   const appId = AGORA_APP_ID;
-   const token = route?.params?.details?.agora_token;
-   const channelName = route?.params?.details?.agora_channel_id;
-  //const token = '007eJxTYDAVFbklH3aK66/wmnl3vGvZ91vrH36+Q87qq2NNcPAViQ8KDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapJ2RmpTUEMjJwH5VmYWSAQBCfhaEktbiEgQEA75keUg==';
-  //const channelName = 'test';
+  // const token = route?.params?.details?.agora_token;
+  // const channelName = route?.params?.details?.agora_channel_id;
+  const token = '007eJxTYDAVFbklH3aK66/wmnl3vGvZ91vrH36+Q87qq2NNcPAViQ8KDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapJ2RmpTUEMjJwH5VmYWSAQBCfhaEktbiEgQEA75keUg==';
+  const channelName = 'test';
   const uid = 0; // Local user UID, no need to modify
 
   const rtcCallbacks = {
@@ -76,6 +76,25 @@ const ChatScreen = ({ navigation, route }) => {
   const [endTime, setEndTime] = useState(null);
   const intervalRef = useRef(null);
 
+  const requestExternalStoragePermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'External Storage Permission',
+          message: 'This app needs access to your storage to read/write files.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  };
+
   const startRecording = async () => {
     try {
       const recordingStatus = await ScreenRecorder.startRecording().catch((error) => {
@@ -95,16 +114,45 @@ const ChatScreen = ({ navigation, route }) => {
   const stopRecording = async () => {
     console.log('Stopping recording...');
     try {
+      if (Platform.OS === 'android') {
+        const hasPermission = await requestExternalStoragePermission();
+        if (!hasPermission) {
+          throw new Error('Storage permission denied');
+        }
+      }
       const uri = await ScreenRecorder.stopRecording().catch((error) => {
         console.warn(error); // handle native error
       });
       if (uri) {
         setRecordedURL(uri);
         console.log('Recording stopped. URI:', uri);
+        const formData = new FormData();
+        formData.append('file', {
+          uri: Platform.OS === 'android' ? uri : uri.replace('file://', ''),
+          name: 'recording.mp4',
+          type: 'video/mp4',
+        });
+
+        // Upload the file to the server using axios
+        const response = await axios.post('http://162.215.253.89/swastilife/api/file-upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        const result = response.data;
+        console.log('File uploaded successfully:', result);
       }
       setIsRecording(false);
     } catch (error) {
       console.error('Error stopping recording:', error);
+      if (error.response) {
+        console.error('Server response:', error.response.data);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error setting up request:', error.message);
+      }
     }
   };
 
@@ -154,7 +202,7 @@ const ChatScreen = ({ navigation, route }) => {
   useEffect(() => {
     // //receivedMsg()
     KeepAwake.activate();
-    startRecording();
+    //startRecording();
     console.log(route?.params?.details, 'details from home page')
 
     sessionStart()
@@ -238,7 +286,7 @@ const ChatScreen = ({ navigation, route }) => {
         .then(res => {
           console.log(res.data)
           if (res.data.response == true) {
-            stopRecording()
+            //stopRecording()
             navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id, therapistName: route?.params?.details?.therapist?.name, therapistPic: route?.params?.details?.therapist?.profile_pic })
           } else {
             console.log('not okk')

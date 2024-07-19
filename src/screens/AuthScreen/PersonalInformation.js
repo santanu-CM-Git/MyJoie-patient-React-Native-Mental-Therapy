@@ -102,7 +102,7 @@ const PersonalInformation = ({ navigation, route }) => {
   const changeEmail = (text) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     if (reg.test(text) === false) {
-      console.log("Email is Not Correct");
+      //console.log("Email is Not Correct");
       setEmail(text)
       setEmailError('Please enter correct Email Id')
       return false;
@@ -164,7 +164,7 @@ const PersonalInformation = ({ navigation, route }) => {
 
     if (!email) {
       setEmailError('Please enter Email Id');
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/.test(email)) {
       setEmailError('Please enter a valid Email Id');
     } else {
       setEmailError('');

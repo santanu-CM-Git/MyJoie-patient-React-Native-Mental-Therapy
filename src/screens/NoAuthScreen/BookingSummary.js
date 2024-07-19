@@ -5,7 +5,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State } from 'react-native-gesture-handler'
 import { logoIconImg, dateIcon, timeIcon, userPhoto, wallet, walletBlack, walletCredit } from '../../utils/Images'
-import { API_URL, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET,BASE_URL } from '@env'
+import { API_URL, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, BASE_URL } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from '../../utils/Loader';
@@ -35,6 +35,7 @@ const BookingSummary = ({ navigation, route }) => {
     const [couponDeduction, setCouponDeduction] = useState(0);
     const [couponId, setCouponId] = useState(null)
     const [walletDeduction, setWalletDeduction] = useState(0);
+    const [patientDetails, setPatientDetails] = useState(null)
 
     const toggleSwitch = () => {
         setIsEnabled((prevIsEnabled) => {
@@ -122,16 +123,16 @@ const BookingSummary = ({ navigation, route }) => {
             const options = {
                 description: 'This is the description we need',
                 //image: `${BASE_URL}/public/assets/dist/img/logo.jpg`,
-                image:`https://i.imgur.com/laTNSbz.png`,
+                image: `https://i.imgur.com/laTNSbz.png`,
                 currency: 'INR',
                 key: razorpayKeyId,
                 amount: totalAmount * 100,
-                name: profileDetails?.user?.name,
+                name: patientDetails?.name,
                 order_id: '',
                 prefill: {
-                    email: profileDetails?.user?.email,
-                    contact: profileDetails?.user?.mobile,  
-                    name: profileDetails?.user?.name,
+                    email: patientDetails?.email,
+                    contact: patientDetails?.mobile,
+                    name: patientDetails?.name,
                 },
                 theme: { color: '#ECFCFA' }
             };
@@ -303,50 +304,62 @@ const BookingSummary = ({ navigation, route }) => {
     const removeCoupon = () => {
         // Reset coupon deduction to 0
         setCouponDeduction(0);
-        
+
         // Recalculate taxable amount based on original amount and GST percentage
         const originalAmount = route?.params?.submitData?.transaction_amount || 0;
         const calculatedTaxableAmount = ((originalAmount) * gstPercentage) / 100;
         console.log(calculatedTaxableAmount, 'taxable amount')
         setTaxableAmount(calculatedTaxableAmount);
-    
+
         // Calculate new payable amount
         let newPayableAmount = originalAmount + calculatedTaxableAmount;
-    
+
         // Deduct wallet balance if the switch is enabled
         console.log(isEnabled, 'wallet balance check or not')
-        console.log(walletDeduction,'wallet balance')
+        console.log(walletDeduction, 'wallet balance')
         if (isEnabled) {
             newPayableAmount -= walletDeduction;
         }
-    
+
         // Ensure payable amount is not negative
         newPayableAmount = Math.max(newPayableAmount, 0);
-    
+
         // Update payable amount state
         setPayableAmount(newPayableAmount);
     };
 
     useEffect(() => {
-        fetchWalletBalance();
-      }, []);
-    
-      useEffect(() => {
+        const fetchUserInfoAndBalance = async () => {
+            try {
+                const userInfo = await AsyncStorage.getItem('userInfo');
+                if (userInfo !== null) {
+                    setPatientDetails(JSON.parse(userInfo));
+                }
+                fetchWalletBalance();
+            } catch (error) {
+                console.error("Failed to load user info", error);
+            }
+        };
+
+        fetchUserInfoAndBalance();
+    }, []);
+
+    useEffect(() => {
         if (gstPercentage !== null) {
-          const { minStartTime, maxEndTime } = findTimeBounds(route?.params?.selectedSlot);
-          setMinTime(minStartTime);
-          setMaxTime(maxEndTime);
-    
-          const originalAmount = route?.params?.submitData?.transaction_amount || 0;
-    
-          // Calculate taxable amount including coupon deduction
-          const calculatedTaxableAmount = ((originalAmount - couponDeduction) * gstPercentage) / 100;
-          setTaxableAmount(calculatedTaxableAmount);
-    
-          const initialPayableAmount = originalAmount + calculatedTaxableAmount;
-          setPayableAmount(initialPayableAmount);
+            const { minStartTime, maxEndTime } = findTimeBounds(route?.params?.selectedSlot);
+            setMinTime(minStartTime);
+            setMaxTime(maxEndTime);
+
+            const originalAmount = route?.params?.submitData?.transaction_amount || 0;
+
+            // Calculate taxable amount including coupon deduction
+            const calculatedTaxableAmount = ((originalAmount - couponDeduction) * gstPercentage) / 100;
+            setTaxableAmount(calculatedTaxableAmount);
+
+            const initialPayableAmount = originalAmount + calculatedTaxableAmount;
+            setPayableAmount(initialPayableAmount);
         }
-      }, [gstPercentage, route]);
+    }, [gstPercentage, route]);
 
 
     if (isLoading) {
