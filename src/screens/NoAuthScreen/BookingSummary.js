@@ -134,7 +134,7 @@ const BookingSummary = ({ navigation, route }) => {
                     contact: patientDetails?.mobile,
                     name: patientDetails?.name,
                 },
-                theme: { color: '#ECFCFA' }
+                theme: { color: '#519ED8' }
             };
             RazorpayCheckout.open(options).then((data) => {
                 console.log(data, 'data');
