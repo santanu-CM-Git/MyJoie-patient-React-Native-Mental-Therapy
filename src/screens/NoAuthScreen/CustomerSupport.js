@@ -141,19 +141,19 @@ export default function CustomerSupport({ navigation }) {
             <View style={{ position: 'absolute', bottom: 30, alignSelf: 'center' }}>
                 <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2), lineHeight: responsiveHeight(2.5) }}>Stay Connected Online</Text>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center',marginTop: responsiveHeight(1) }}>
-                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#ECFCFA',borderColor:'#87ADA8',borderWidth:1, justifyContent: 'center', alignItems: 'center',marginHorizontal: responsiveWidth(2) }}>
+                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF',borderColor:'#417AA4',borderWidth:1, justifyContent: 'center', alignItems: 'center',marginHorizontal: responsiveWidth(2) }}>
                         <Image
                             source={facebookIcon}
                             style={{ height: 20, width: 20, resizeMode: 'contain', }}
                         />
                     </View>
-                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#ECFCFA',borderColor:'#87ADA8',borderWidth:1, justifyContent: 'center', alignItems: 'center',marginHorizontal: responsiveWidth(2) }}>
+                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF',borderColor:'#417AA4',borderWidth:1, justifyContent: 'center', alignItems: 'center',marginHorizontal: responsiveWidth(2) }}>
                         <Image
                             source={instagramIcon}
                             style={{ height: 20, width: 20, resizeMode: 'contain', }}
                         />
                     </View>
-                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#ECFCFA',borderColor:'#87ADA8',borderWidth:1, justifyContent: 'center', alignItems: 'center',marginHorizontal: responsiveWidth(2) }}>
+                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF',borderColor:'#417AA4',borderWidth:1, justifyContent: 'center', alignItems: 'center',marginHorizontal: responsiveWidth(2) }}>
                         <Image
                             source={youtubeIcon}
                             style={{ height: 20, width: 20, resizeMode: 'contain', }}
