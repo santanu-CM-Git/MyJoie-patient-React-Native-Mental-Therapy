@@ -1,10 +1,10 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State, TouchableWithoutFeedback } from 'react-native-gesture-handler'
-import { bookmarkedFill, bookmarkedNotFill, cameraColor, chatColor, checkedImg, filterImg, phoneColor, uncheckedImg } from '../../utils/Images'
+import { bookmarkedFill, bookmarkedNotFill, cameraColor, chatColor, checkedImg, filterImg, phoneColor, uncheckedImg} from '../../utils/Images'
 import { API_URL } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,21 +20,19 @@ import SelectMultiple from 'react-native-select-multiple'
 import { Dropdown } from 'react-native-element-dropdown';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-import Slider from '@react-native-community/slider';
 
-// const dropdowndata = [
-//     { label: 'All therapist', value: 'All' },
-//     { label: 'Individual', value: 'Individual' },
-//     { label: 'Couple', value: 'Couple' },
-//     { label: 'Child', value: 'Child' },
-// ];
+const dropdowndata = [
+    { label: 'All therapist', value: 'All' },
+    { label: 'Individual', value: 'Individual' },
+    { label: 'Couple', value: 'Couple' },
+    { label: 'Child', value: 'Child' },
+];
 const Experience = [
     { label: '0 - 2 Years', value: '1' },
     { label: '3 - 5 Years', value: '2' },
     { label: '6 - 8 Years', value: '3' },
     { label: '9 - 12 Years', value: '4' },
-    { label: '13 - 15 Years', value: '5' },
-    { label: '15+ Years', value: '6' }
+    { label: '13 - 15 Years', value: '5' }
 ]
 const Rating = [
     { label: '1 Star', value: '1' },
@@ -46,7 +44,6 @@ const Rating = [
 const Gender = [
     { label: 'Male', value: '1' },
     { label: 'Female', value: '2' },
-    { label: 'Others', value: '3' }
 ]
 const Ages = [
     { label: '20 - 30', value: '1' },
@@ -55,159 +52,57 @@ const Ages = [
     { label: '50 - 60', value: '4' },
     { label: '60 above', value: '5' },
 ]
-const Rate = [
-    { label: 'below 300', value: '1' },
-    { label: 'below 500', value: '2' },
-    { label: 'below 1000', value: '3' },
-    { label: 'below 2000', value: '4' },
-    { label: 'above 2000', value: '5' },
-]
 
 
-const TherapistList = ({ navigation, route }) => {
+const FreeTherapistList = ({ navigation, route }) => {
 
     const [value, setValue] = useState('All');
     const [isFocus, setIsFocus] = useState(false);
     const [therapistData, setTherapistData] = React.useState([])
     const [therapistFilterData, setTherapistFilterData] = React.useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [starCount, setStarCount] = useState(4)
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const [isModalVisible, setModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     const [activeTab, setActiveTab] = useState('Experience')
     const [searchValue, setSearchValue] = useState('');
-    const [slidervalueStart, setSliderValueStart] = useState(0);
-    const [slidervalueEnd, setSliderValueEnd] = useState(0);
 
-    // Experience
     const [selectedExperience, setSelectedExperience] = useState([]);
     const onSelectionsChangeExperience = (selectedExperience) => {
         // selectedFruits is array of { label, value }
         setSelectedExperience(selectedExperience);
     };
 
-    // Type
-    const [qualificationitemsType, setqualificationitemsType] = useState([])
     const [selectedType, setSelectedType] = useState([]);
     const onSelectionsChangeType = (selectedType) => {
         // selectedFruits is array of { label, value }
         setSelectedType(selectedType);
     };
-
-    // Rating
     const [selectedRating, setSelectedRating] = useState([]);
     const onSelectionsChangeRating = (selectedRating) => {
         // selectedFruits is array of { label, value }
         setSelectedRating(selectedRating);
     };
-    // Gender
     const [selectedGender, setSelectedGender] = useState([]);
     const onSelectionsChangeGender = (selectedGender) => {
         // selectedFruits is array of { label, value }
         setSelectedGender(selectedGender);
     };
-    // Age
     const [selectedAge, setSelectedAge] = useState([]);
     const onSelectionsChangeAge = (selectedAge) => {
         // selectedFruits is array of { label, value }
         setSelectedAge(selectedAge);
     };
-    // Qualification
-    const [qualificationitems, setqualificationitems] = useState([])
-    const [selectedQualification, setSelectedQualification] = useState([]);
-    const onSelectionsChangeQualification = (selectedQualification) => {
-        // selectedFruits is array of { label, value }
-        setSelectedQualification(selectedQualification);
-    };
-    // Language
-    const [qualificationitemsLanguage, setqualificationitemsLanguage] = useState([])
-    const [selectedLanguage, setSelectedLanguage] = useState([]);
-    const onSelectionsChangeLanguage = (selectedLanguage) => {
-        // selectedFruits is array of { label, value }
-        setSelectedLanguage(selectedLanguage);
-    };
-    // Rate
-    const [selectedRate, setSelectedRate] = useState([]);
-    const onSelectionsChangeRate = (selectedRate) => {
-        // selectedFruits is array of { label, value }
-        setSelectedRate(selectedRate);
-    };
-
-    const fetchLanguage = () => {
-        axios.get(`${API_URL}/languages`, {
-            headers: {
-                "Content-Type": 'application/json'
-            },
-        })
-            .then(res => {
-                //console.log(languageInfo, 'bbbbbbb')
-                console.log(res.data.data, 'languageeeeeeee')
-                const languageInfo = res.data.data.map(item => ({
-                    label: item.content,
-                    value: item.content,
-                }));
-                setqualificationitemsLanguage(languageInfo)
-                //setIsLoading(false);
-            })
-            .catch(e => {
-                console.log(`Language fetch error ${e}`)
-            });
-    }
-    const fetchQualification = () => {
-        axios.get(`${API_URL}/qualifications`, {
-            headers: {
-                "Content-Type": 'application/json'
-            },
-        })
-            .then(res => {
-                const qualificationInfo = res.data.data.map(item => ({
-                    label: item.content,
-                    value: item.content,
-                }));
-                setqualificationitems(qualificationInfo)
-                //setIsLoading(false);
-            })
-            .catch(e => {
-                console.log(`qualification fetch error ${e}`)
-            });
-    }
-    const fetchTherapyType = () => {
-        axios.get(`${API_URL}/therapy-type`, {
-            headers: {
-                "Content-Type": 'application/json'
-            },
-        })
-            .then(res => {
-                const therapyTypeInfo = res.data.data.map(item => ({
-                    label: item.type,
-                    value: item.type,
-                }));
-                setqualificationitemsType(therapyTypeInfo)
-                //setIsLoading(false);
-            })
-            .catch(e => {
-                console.log(`therapytype fetch error ${e}`)
-            });
-    }
-
 
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
-            setIsLoading(false);
-        };
-
-        fetchData();
+        fetchAllTherapist();
     }, [])
     useFocusEffect(
         React.useCallback(() => {
-            const fetchData = async () => {
-                await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
-                setIsLoading(false);
-            };
-
-            fetchData();
+            fetchAllTherapist()
         }, [])
     )
     const toggleModal = () => {
@@ -220,7 +115,7 @@ const TherapistList = ({ navigation, route }) => {
     const fetchAllTherapist = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             const option = {
-                "flag": 'paid'
+                "flag": 'free'
             }
             axios.post(`${API_URL}/patient/therapist-list`, option, {
                 headers: {
@@ -234,7 +129,7 @@ const TherapistList = ({ navigation, route }) => {
                     if (res.data.response == true) {
                         setTherapistData(res.data.data);
                         setTherapistFilterData(res.data.data)
-                        //setIsLoading(false);
+                        setIsLoading(false);
 
                     } else {
                         console.log('not okk')
@@ -251,7 +146,7 @@ const TherapistList = ({ navigation, route }) => {
                 })
                 .catch(e => {
                     setIsLoading(false)
-                    console.log(`fetch all therapist error ${e}`)
+                    console.log(`user register error ${e}`)
                     console.log(e.response)
                     Alert.alert('Oops..', e.response?.data?.message, [
                         {
@@ -301,7 +196,7 @@ const TherapistList = ({ navigation, route }) => {
                             Toast.show({
                                 type: 'success',
                                 text1: 'Hello',
-                                text2: res.data.message,
+                                text2: "Successfully added to wishlist",
                                 position: 'top',
                                 topOffset: Platform.OS == 'ios' ? 55 : 20
                             });
@@ -321,7 +216,7 @@ const TherapistList = ({ navigation, route }) => {
                     })
                     .catch(e => {
                         setIsLoading(false)
-                        console.log(`bookmarked error ${e}`)
+                        console.log(`user register error ${e}`)
                         console.log(e.response)
                         Alert.alert('Oops..', e.response?.data?.message, [
                             {
@@ -337,7 +232,7 @@ const TherapistList = ({ navigation, route }) => {
     }
 
     const renderItem = ({ item }) => (
-        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
+        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'free' })}>
             <View style={styles.totalValue}>
                 <View style={styles.totalValue1stSection}>
                     <View style={styles.profilePicSection}>
@@ -361,7 +256,11 @@ const TherapistList = ({ navigation, route }) => {
                         <Text style={styles.contentStyleQualification}>{item?.qualification_list}</Text>
                         <Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text>
                         <Text style={styles.contentStyleLang}>Language : <Text style={styles.contentStyleLangValue}>{item?.languages_list}</Text></Text>
-                        <Text style={styles.contentStyleRate}>₹{item?.rate} for 30 Min</Text>
+                        <View style={{ flexDirection: 'row', }}>
+                            <Text style={[styles.contentStyleRate, { marginRight: 5 }]}>₹{item?.rate} for 15 Min</Text>
+                            <Text style={styles.contentStyleRateFree}>Free for 15 Min</Text>
+                        </View>
+
                         <Text style={styles.contentStyleAvailableSlot}>Next Avl. Slot : Today 09:00 PM</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
@@ -384,14 +283,14 @@ const TherapistList = ({ navigation, route }) => {
                 </View>
                 <View style={styles.totalValue2ndSection}>
                     <View style={styles.listButtonFirstSection}>
-                        {/* {item?.instant_availability == 'on' ?
-                             <TouchableOpacity onPress={() => toggleModal()}>
+                        {/* {item?.instant_availability == 'yes' ?
+                            <TouchableOpacity onPress={() => toggleModal()}>
                                 <View style={styles.instantConnectView}>
                                     <Text style={styles.instantConnectText}>Instant Connect</Text>
                                 </View>
-                              </TouchableOpacity>
+                            </TouchableOpacity>
                             :
-                            null
+                            <></>
                         } */}
                     </View>
                     <View style={styles.listButtonSecondSection}>
@@ -434,33 +333,6 @@ const TherapistList = ({ navigation, route }) => {
         setTherapistFilterData(filteredData);
     }
 
-    const resetValueOfFilter = () => {
-        setSelectedExperience([])
-        setSelectedType([])
-        setSelectedRating([])
-        setSelectedGender([])
-        setSelectedAge([])
-        setSelectedQualification([])
-        setSelectedLanguage([])
-        setSliderValueStart(0)
-        setSliderValueEnd(0)
-        toggleFilterModal()
-    }
-
-    const submitForFilter = () => {
-        console.log('hello')
-        console.log(selectedExperience,'experience')
-        console.log(selectedType, 'type');
-        console.log(selectedRating, 'rating');
-        console.log(selectedGender, 'gender');
-        console.log(selectedAge, 'age');
-        console.log(selectedQualification, 'qualification');
-        console.log(selectedLanguage, 'language');
-        console.log(slidervalueStart, 'slider start value');
-        console.log(slidervalueEnd, 'slider end value');
-
-    }
-
 
     return (
         <SafeAreaView style={styles.Container}>
@@ -475,7 +347,7 @@ const TherapistList = ({ navigation, route }) => {
                                 selectedTextStyle={styles.selectedTextStyle}
                                 inputSearchStyle={styles.inputSearchStyle}
                                 itemTextStyle={styles.selectedTextStyle}
-                                data={qualificationitemsType}
+                                data={dropdowndata}
                                 //search
                                 maxHeight={300}
                                 labelField="label"
@@ -490,7 +362,6 @@ const TherapistList = ({ navigation, route }) => {
                                 }}
                             />
                             {/* <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Type for therapy</Text> */}
-
                         </View>
                         <TouchableWithoutFeedback onPress={() => toggleFilterModal()}>
                             <View style={styles.filterIconView}>
@@ -513,6 +384,17 @@ const TherapistList = ({ navigation, route }) => {
                         onChangeText={(text) => changeSearchValue(text)}
                     />
                 </View>
+                {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                        <View style={{ height: responsiveHeight(5), width: responsiveWidth(27), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Individual</Text>
+                        </View>
+                        <View style={{ height: responsiveHeight(5), width: responsiveWidth(27), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Couple</Text>
+                        </View>
+                        <View style={{ height: responsiveHeight(5), width: responsiveWidth(27), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Child</Text>
+                        </View>
+                    </View> */}
                 <View style={{ alignSelf: 'center' }}>
                     <FlatList
                         data={therapistFilterData}
@@ -528,6 +410,127 @@ const TherapistList = ({ navigation, route }) => {
                 </View>
 
             </ScrollView>
+            <Modal
+                isVisible={isModalVisible}
+                // onBackdropPress={() => setIsFocus(false)} // modal off by clicking outside of the modal
+                style={{
+                    margin: 0, // Add this line to remove the default margin
+                    justifyContent: 'flex-end',
+                }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff', height: 50, width: 50, borderRadius: 25, position: 'absolute', bottom: '91%', left: '45%', right: '45%' }}>
+                    <Icon name="cross" size={30} color="#B0B0B0" onPress={toggleModal} />
+                </View>
+                {/* <TouchableWithoutFeedback onPress={() => setIsFocus(false)} style={{  }}> */}
+                <View style={{ height: '88%', backgroundColor: '#fff', position: 'absolute', bottom: 0, width: '100%' }}>
+                    <View style={{ padding: 20 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2) }}>
+                            <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Select Date</Text>
+                        </View>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{}}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
+                                    <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Fri</Text>
+                                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>23</Text>
+                                </View>
+                                <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#ECFCFA', borderRadius: 30, borderColor: '#87ADA8', borderWidth: 1, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
+                                    <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Sat</Text>
+                                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>24</Text>
+                                </View>
+                                <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
+                                    <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Sun</Text>
+                                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>25</Text>
+                                </View>
+                                <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
+                                    <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Mon</Text>
+                                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>26</Text>
+                                </View>
+                                <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
+                                    <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Tue</Text>
+                                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>27</Text>
+                                </View>
+                                <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
+                                    <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Wed</Text>
+                                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>28</Text>
+                                </View>
+                                <View style={{ height: responsiveHeight(10), width: responsiveWidth(13.5), backgroundColor: '#EEE', borderRadius: 30, marginRight: responsiveWidth(3), flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
+                                    <Text style={{ color: '#746868', fontSize: responsiveFontSize(1.8), fontFamily: 'DMSans-Regular', }}>Thr</Text>
+                                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2.3), fontFamily: 'DMSans-Bold', }}>29</Text>
+                                </View>
+                            </View>
+                        </ScrollView>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: responsiveHeight(2), marginTop: responsiveHeight(2) }}>
+                            <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Select Time</Text>
+                        </View>
+                        <View style={{ height: responsiveHeight(8), width: responsiveWidth(90), backgroundColor: '#33D1C3', borderRadius: 15, justifyContent: 'center', padding: 10 }}>
+                            <Text style={{ color: '#FFF', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(2) }}>We recommend booking one hour (two continuous slots)</Text>
+                        </View>
+                        <View style={{ width: responsiveWidth(90), marginTop: responsiveHeight(2), flexDirection: 'row', flexWrap: 'wrap' }}>
+                            <View style={{ height: responsiveHeight(5), padding: 10, backgroundColor: '#EAECF0', justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10 }}>
+                                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>07:00 - 07:30 PM</Text>
+                            </View>
+                            <View style={{ height: responsiveHeight(5), padding: 10, backgroundColor: '#EAECF0', justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10 }}>
+                                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>08:00 - 08:30 PM</Text>
+                            </View>
+                            <View style={{ height: responsiveHeight(5), padding: 10, backgroundColor: '#EAECF0', justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10 }}>
+                                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>10:45 - 11:15 AM</Text>
+                            </View>
+                            <View style={{ height: responsiveHeight(5), padding: 10, backgroundColor: '#EAECF0', justifyContent: 'center', alignItems: 'center', borderRadius: 20, marginRight: 10, marginBottom: 10 }}>
+                                <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>10:45 - 11:15 AM </Text>
+                            </View>
+                        </View>
+                        <View style={styles.totalValue3}>
+                            <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Select Mode</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
+                                <View style={{ height: responsiveHeight(11), width: responsiveWidth(25), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, padding: 5 }}>
+                                    <Image
+                                        source={checkedImg}
+                                        style={{ height: 25, width: 25, resizeMode: 'contain', alignSelf: 'flex-end' }}
+                                    />
+                                    <Image
+                                        source={cameraColor}
+                                        style={{ height: 30, width: 30, resizeMode: 'contain', alignSelf: 'center' }}
+                                    />
+                                </View>
+                                <View style={{ height: responsiveHeight(11), width: responsiveWidth(25), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, padding: 5 }}>
+                                    <Image
+                                        source={uncheckedImg}
+                                        style={{ height: 25, width: 25, resizeMode: 'contain', alignSelf: 'flex-end' }}
+                                    />
+                                    <Image
+                                        source={phoneColor}
+                                        style={{ height: 30, width: 30, resizeMode: 'contain', alignSelf: 'center' }}
+                                    />
+                                </View>
+                                <View style={{ height: responsiveHeight(11), width: responsiveWidth(25), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, padding: 5 }}>
+                                    <Image
+                                        source={uncheckedImg}
+                                        style={{ height: 25, width: 25, resizeMode: 'contain', alignSelf: 'flex-end' }}
+                                    />
+                                    <Image
+                                        source={chatColor}
+                                        style={{ height: 30, width: 30, resizeMode: 'contain', alignSelf: 'center' }}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', width: responsiveWidth(86), marginTop: responsiveHeight(2) }}>
+                            <CheckBox
+                                disabled={false}
+                                value={toggleCheckBox}
+                                onValueChange={(newValue) => setToggleCheckBox(newValue)}
+                            />
+                            <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.7) }}>I give my consent to the app and therapists to access my past medical history available on the platform </Text>
+                        </View>
+                        <View style={{ marginTop: responsiveHeight(2) }}>
+                            <CustomButton label={"Book Appointment"}
+                                // onPress={() => { login() }}
+                                onPress={() => { submitForm() }}
+                            />
+                        </View>
+                    </View>
+                </View>
+                {/* </TouchableWithoutFeedback> */}
+            </Modal>
             <Modal
                 isVisible={isFilterModalVisible}
                 // onBackdropPress={() => setIsFocus(false)} // modal off by clicking outside of the modal
@@ -545,179 +548,119 @@ const TherapistList = ({ navigation, route }) => {
                             <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Filter</Text>
                         </View>
                     </View>
-                    {/* <ScrollView style={{ marginBottom: responsiveHeight(0) }} > */}
-                    <View style={{ borderTopColor: '#E3E3E3', borderTopWidth: 1, flexDirection: 'row' }}>
-                        <View style={{ width: responsiveWidth(41), backgroundColor: '#FFF', borderRightColor: '#E3E3E3', borderRightWidth: 1 }}>
-                            <TouchableOpacity onPress={() => setActiveTab('Experience')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Experience' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Experience</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Type')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Type' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Type</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Rating')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rating' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Rating</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Gender')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Gender' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Gender</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Age')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Age' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Age</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Qualification')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Qualification' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Qualification</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Language')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Language' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Language</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setActiveTab('Rate')}>
-                                <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rate' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Price</Text>
-                                </View>
-                            </TouchableOpacity>
-                            {/* <TouchableOpacity onPress={() => setActiveTab('Availability')}>
+                    <ScrollView style={{ marginBottom: responsiveHeight(0) }}>
+                        <View style={{ borderTopColor: '#E3E3E3', borderTopWidth: 1, flexDirection: 'row' }}>
+                            <View style={{ width: responsiveWidth(41), backgroundColor: '#FFF', borderRightColor: '#E3E3E3', borderRightWidth: 1 }}>
+                                <TouchableOpacity onPress={() => setActiveTab('Experience')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Experience' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Experience</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Type')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Type' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Type</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Rating')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rating' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Rating</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Gender')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Gender' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Gender</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Age')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Age' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Age</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Qualification')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Qualification' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Qualification</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Language')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Language' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Language</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Rate')}>
+                                    <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Rate' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Rate</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setActiveTab('Availability')}>
                                     <View style={{ width: responsiveWidth(40), height: responsiveHeight(8), borderBottomColor: '#E3E3E3', backgroundColor: activeTab == 'Availability' ? '#EEF8FF' : '#fff', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
                                         <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2) }}>Availability</Text>
                                     </View>
-                                </TouchableOpacity> */}
-                        </View>
-                        <View style={{ padding: 20, width: responsiveWidth(59), }}>
-                            {/* Experience */}
-                            {activeTab == 'Experience' ?
-                                <View style={{}}>
-                                    <SelectMultiple
-                                        items={Experience}
-                                        selectedItems={selectedExperience}
-                                        onSelectionsChange={onSelectionsChangeExperience}
-                                        rowStyle={styles.item}
-                                        labelStyle={styles.itemText}
-                                    />
-                                </View>
-                                : activeTab == 'Type' ?
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ padding: 20, width: responsiveWidth(59), }}>
+                                {/* Experience */}
+                                {activeTab == 'Experience' ?
                                     <View style={{}}>
                                         <SelectMultiple
-                                            items={qualificationitemsType}
-                                            selectedItems={selectedType}
-                                            onSelectionsChange={onSelectionsChangeType}
+                                            items={Experience}
+                                            selectedItems={selectedExperience}
+                                            onSelectionsChange={onSelectionsChangeExperience}
                                             rowStyle={styles.item}
-                                            labelStyle={styles.itemText}
                                         />
                                     </View>
-                                    : activeTab == 'Rating' ?
+                                    : activeTab == 'Type' ?
                                         <View style={{}}>
                                             <SelectMultiple
-                                                items={Rating}
-                                                selectedItems={selectedRating}
-                                                onSelectionsChange={onSelectionsChangeRating}
+                                                items={dropdowndata}
+                                                selectedItems={selectedType}
+                                                onSelectionsChange={onSelectionsChangeType}
                                                 rowStyle={styles.item}
-                                                labelStyle={styles.itemText}
                                             />
                                         </View>
-                                        : activeTab == 'Gender' ?
+                                        : activeTab == 'Rating' ?
                                             <View style={{}}>
                                                 <SelectMultiple
-                                                    items={Gender}
-                                                    selectedItems={selectedGender}
-                                                    onSelectionsChange={onSelectionsChangeGender}
+                                                    items={Rating}
+                                                    selectedItems={selectedRating}
+                                                    onSelectionsChange={onSelectionsChangeRating}
                                                     rowStyle={styles.item}
-                                                    labelStyle={styles.itemText}
                                                 />
                                             </View>
-
-                                            : activeTab == 'Age' ?
+                                            : activeTab == 'Gender' ?
                                                 <View style={{}}>
                                                     <SelectMultiple
-                                                        items={Ages}
-                                                        selectedItems={selectedAge}
-                                                        onSelectionsChange={onSelectionsChangeAge}
+                                                        items={Gender}
+                                                        selectedItems={selectedGender}
+                                                        onSelectionsChange={onSelectionsChangeGender}
                                                         rowStyle={styles.item}
-                                                        labelStyle={styles.itemText}
                                                     />
                                                 </View>
-                                                : activeTab == 'Qualification' ?
+
+                                                : activeTab == 'Age' ?
                                                     <View style={{}}>
                                                         <SelectMultiple
-                                                            items={qualificationitems}
-                                                            selectedItems={selectedQualification}
-                                                            onSelectionsChange={onSelectionsChangeQualification}
+                                                            items={Ages}
+                                                            selectedItems={selectedAge}
+                                                            onSelectionsChange={onSelectionsChangeAge}
                                                             rowStyle={styles.item}
-                                                            labelStyle={styles.itemText}
                                                         />
                                                     </View>
-                                                    : activeTab == 'Language' ?
-                                                        <View style={{}}>
-                                                            <SelectMultiple
-                                                                items={qualificationitemsLanguage}
-                                                                selectedItems={selectedLanguage}
-                                                                onSelectionsChange={onSelectionsChangeLanguage}
-                                                                rowStyle={styles.item}
-                                                                labelStyle={styles.itemText}
-                                                            />
-                                                        </View>
-                                                        : activeTab == 'Rate' ?
-                                                            <View style={{ marginTop: 50, justifyContent: 'center', alignItems: 'center' }}>
-                                                                <Text style={styles.valueTextValue}>Start Price</Text>
-                                                                <Slider
-                                                                    style={styles.slider}
-                                                                    minimumValue={0}
-                                                                    maximumValue={10000}
-                                                                    value={slidervalueStart}
-                                                                    onValueChange={(sliderValue) => setSliderValueStart(sliderValue)}
-                                                                    minimumTrackTintColor="#417AA4"
-                                                                    maximumTrackTintColor="#000000"
-                                                                    thumbTintColor="#417AA4"
-                                                                    step={1}
-                                                                    trackStyle={styles.track}
-                                                                    thumbStyle={styles.thumb}
-                                                                />
-                                                                <Text style={styles.valueText}>Price per minute: <Text style={styles.valueTextValue}>{slidervalueStart}</Text></Text>
-
-                                                                <Text style={[styles.valueTextValue, { marginTop: responsiveHeight(5) }]}>End Price</Text>
-                                                                <Slider
-                                                                    style={styles.slider}
-                                                                    minimumValue={0}
-                                                                    maximumValue={10000}
-                                                                    value={slidervalueEnd}
-                                                                    onValueChange={(sliderValue) => setSliderValueEnd(sliderValue)}
-                                                                    minimumTrackTintColor="#417AA4"
-                                                                    maximumTrackTintColor="#000000"
-                                                                    thumbTintColor="#417AA4"
-                                                                    step={1}
-                                                                    trackStyle={styles.track}
-                                                                    thumbStyle={styles.thumb}
-                                                                />
-                                                                <Text style={styles.valueText}>Price per minute: <Text style={styles.valueTextValue}>{slidervalueEnd}</Text></Text>
-                                                            </View>
-                                                            :
-
-                                                            <></>
-                            }
+                                                    :
+                                                    <></>
+                                }
+                            </View>
                         </View>
-                    </View>
-                    {/* </ScrollView> */}
+                    </ScrollView>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', bottom: 0, width: responsiveWidth(100), paddingHorizontal: 10, borderTopColor: '#E3E3E3', borderTopWidth: 1 }}>
                         <View style={{ width: responsiveWidth(45), marginTop: responsiveHeight(2) }}>
-                            <CustomButton label={"Reset"}
+                            <CustomButton label={"Cancel"}
                                 buttonColor={'gray'}
-                                onPress={() => resetValueOfFilter()}
+                                onPress={() => submitReview()}
                             />
                         </View>
                         <View style={{ width: responsiveWidth(45), marginTop: responsiveHeight(2) }}>
                             <CustomButton label={"Apply"}
-                                onPress={() => submitForFilter()}
+                                onPress={() => submitReview()}
                             />
                         </View>
                     </View>
@@ -728,7 +671,7 @@ const TherapistList = ({ navigation, route }) => {
     )
 }
 
-export default TherapistList
+export default FreeTherapistList
 
 const styles = StyleSheet.create({
     Container: {
@@ -837,7 +780,14 @@ const styles = StyleSheet.create({
         fontSize: responsiveFontSize(1.7),
         color: '#746868',
         fontFamily: 'DMSans-Medium',
-        marginBottom: responsiveHeight(1)
+        marginBottom: responsiveHeight(1),
+        textDecorationLine: 'line-through', textDecorationStyle: 'solid'
+    },
+    contentStyleRateFree: {
+        fontSize: responsiveFontSize(1.7),
+        color: '#746868',
+        fontFamily: 'DMSans-Bold',
+        marginBottom: responsiveHeight(1),
     },
     contentStyleAvailableSlot: {
         fontSize: responsiveFontSize(1.5),
@@ -846,7 +796,7 @@ const styles = StyleSheet.create({
         marginBottom: responsiveHeight(1)
     },
     totalValue2ndSection: {
-        //marginTop: responsiveHeight(1),
+        marginTop: responsiveHeight(0),
         borderRadius: 10,
         padding: 10,
         flexDirection: 'row',
@@ -903,12 +853,7 @@ const styles = StyleSheet.create({
         elevation: 5
     },
     item: {
-        borderBottomWidth: 0,
-    },
-    itemText: {
-        color: '#444343',
-        fontFamily: 'DMSans-Bold',
-        fontSize: responsiveFontSize(2),
+        borderBottomWidth: 0
     },
     // dropdown
     dropdown: {
@@ -934,33 +879,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#2D2D2D',
         fontFamily: 'DMSans-Regular'
-    },
-
-    //range slider
-    slider: {
-        width: responsiveWidth(50),
-        height: responsiveWidth(10),
-    },
-    valueText: {
-        fontSize: responsiveFontSize(2),
-        marginBottom: 10,
-        color: '#2D2D2D',
-        fontFamily: 'DMSans-Regular'
-    },
-    valueTextValue: {
-        fontSize: responsiveFontSize(2),
-        marginBottom: 10,
-        color: '#2D2D2D',
-        fontFamily: 'DMSans-Bold'
-    },
-    track: {
-        height: 10,
-        borderRadius: 5,
-    },
-    thumb: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
     },
 
 });

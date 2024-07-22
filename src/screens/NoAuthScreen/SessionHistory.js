@@ -94,7 +94,7 @@ const SessionHistory = ({ navigation }) => {
             </View>
             <View style={styles.singleViewcoloumn}>
                 <Text style={styles.singleViewColumnHeader}>Order ID :</Text>
-                <Text style={styles.singleViewColomnValue}>{item?.id}</Text>
+                <Text style={styles.singleViewColomnValue}>{item?.order_id}</Text>
             </View>
             <View style={styles.singleViewcoloumn}>
                 <Text style={styles.singleViewColumnHeader}>Date :</Text>
