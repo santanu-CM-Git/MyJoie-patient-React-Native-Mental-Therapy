@@ -40,13 +40,13 @@ const ChatScreen = ({ navigation, route }) => {
     // channel: route?.params?.details?.agora_channel_id,
     // token: route?.params?.details?.agora_token,
     channel: 'test',
-    token: '007eJxTYDAVFbklH3aK66/wmnl3vGvZ91vrH36+Q87qq2NNcPAViQ8KDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapJ2RmpTUEMjJwH5VmYWSAQBCfhaEktbiEgQEA75keUg=='
+    token: '007eJxTYLi9V+/EE5nsrwsCzfXFjc9fFy0Te8+wfvnth0++1lWVBT1UYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZI/aQ/L60hkJHhbzQfKyMDBIL4LAwlqcUlDAwA6gwhww=='
   };
   // Define basic information
   const appId = AGORA_APP_ID;
   // const token = route?.params?.details?.agora_token;
   // const channelName = route?.params?.details?.agora_channel_id;
-  const token = '007eJxTYDAVFbklH3aK66/wmnl3vGvZ91vrH36+Q87qq2NNcPAViQ8KDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapJ2RmpTUEMjJwH5VmYWSAQBCfhaEktbiEgQEA75keUg==';
+  const token = '007eJxTYLi9V+/EE5nsrwsCzfXFjc9fFy0Te8+wfvnth0++1lWVBT1UYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZI/aQ/L60hkJHhbzQfKyMDBIL4LAwlqcUlDAwA6gwhww==';
   const channelName = 'test';
   const uid = 0; // Local user UID, no need to modify
 
@@ -266,6 +266,24 @@ const ChatScreen = ({ navigation, route }) => {
         { text: 'OK', onPress: () => console.log('OK Pressed') },
       ]);
     }
+  };
+
+  const confirmEnd = () => {
+    Alert.alert(
+      'Confirm End',
+      'Are you sure you want to end this session?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => handleTimerEnd(),
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const handleTimerEnd = () => {
@@ -699,6 +717,7 @@ const ChatScreen = ({ navigation, route }) => {
     },
   };
 
+
   const agoraConfig = {
     appId: connectionData.appId,
     channelProfile: 1, // Live broadcasting profile
@@ -731,7 +750,7 @@ const ChatScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.HeaderSectionHalf}>
           <Text style={styles.timerText}>{formatTime(timer)}</Text>
-          <TouchableOpacity onPress={() => handleTimerEnd()}>
+          <TouchableOpacity onPress={() => confirmEnd()}>
             <View style={styles.endButtonView}>
               <Text style={styles.endButtonText}>End</Text>
             </View>
@@ -876,9 +895,12 @@ const ChatScreen = ({ navigation, route }) => {
               {videoCall ? (
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
-                  <View style={{ height: responsiveHeight(75), }}>
-                    <AgoraUIKit connectionData={connectionData} rtcCallbacks={rtcCallbacks}
-                      styleProps={customPropsStyle} agoraConfig={agoraConfig}
+                  <View style={{ height: route?.params?.details?.prescription_checked === 'yes' ? responsiveHeight(75) : responsiveHeight(80), width: '100%' }}>
+                    <AgoraUIKit
+                      connectionData={connectionData}
+                      rtcCallbacks={rtcCallbacks}
+                      styleProps={customPropsStyle}
+                      agoraConfig={agoraConfig}
                     />
                   </View>
                 </SafeAreaView>

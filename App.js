@@ -26,7 +26,7 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
-    }, 3000);
+    }, 2000);
   }, [])
 
   const requestLocationPermission = async () => {
@@ -57,42 +57,56 @@ function App() {
 
 
   useEffect(() => {
-    if (Platform.OS == 'android') {
+    if (Platform.OS === 'android') {
       const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
-        Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-        console.log('Received foreground message:', JSON.stringify(remoteMessage));
-        setNotifications(prevNotifications => {
-          const newNotifications = [...prevNotifications, remoteMessage];
-          AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
-          setnotifyStatus(true)
-          return newNotifications;
-        });
+        handleNotification(remoteMessage);
       });
 
-      const unsubscribeBackground = messaging().setBackgroundMessageHandler(async remoteMessage => {
-        console.log('Received background message:', remoteMessage);
-        setNotifications(prevNotifications => {
-          const newNotifications = [...prevNotifications, remoteMessage];
-          AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
-          setnotifyStatus(true)
-          return newNotifications;
-        });
-      });
-
-      // Load notifications from AsyncStorage when component mounts
-      AsyncStorage.getItem('notifications').then((value) => {
-        if (value !== null) {
-          setNotifications(JSON.parse(value));
-          setnotifyStatus(true)
-        }
+      // Set up background message handler
+      messaging().setBackgroundMessageHandler(async remoteMessage => {
+        handleNotification(remoteMessage);
       });
 
       return () => {
         unsubscribeForeground();
-        //unsubscribeBackground();
       };
     }
-  }, [])
+  }, []);
+
+  const handleNotification = (remoteMessage) => {
+    Alert.alert('A new FCM message arrived!!!', JSON.stringify(remoteMessage));
+    console.log('Received message:', JSON.stringify(remoteMessage));
+    
+    const action = remoteMessage?.data?.action;
+    if (action) {
+      handleAction(action, remoteMessage);
+    } else {
+      setNotifications(prevNotifications => {
+        const newNotifications = [...prevNotifications, remoteMessage];
+        // AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
+        setnotifyStatus(true);
+        return newNotifications;
+      });
+    }
+  };
+  
+  const handleAction = (action, remoteMessage) => {
+    switch (action) {
+      case 'reply':
+        // Handle reply action
+        console.log('User chose to reply to the message:', remoteMessage);
+        // Implement reply functionality
+        break;
+      case 'mark_as_read':
+        // Handle mark as read action
+        console.log('User chose to mark the message as read:', remoteMessage);
+        // Implement mark as read functionality
+        break;
+      default:
+        console.log('Unknown action:', action);
+        break;
+    }
+  };
 
   return (
     <Provider store={store}>

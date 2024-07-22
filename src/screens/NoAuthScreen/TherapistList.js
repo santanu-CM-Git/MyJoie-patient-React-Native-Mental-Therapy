@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, TextInput, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
-import { TextInput, LongPressGestureHandler, State, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { LongPressGestureHandler, State, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { bookmarkedFill, bookmarkedNotFill, cameraColor, chatColor, checkedImg, filterImg, phoneColor, uncheckedImg } from '../../utils/Images'
 import { API_URL } from '@env'
 import axios from 'axios';
@@ -78,6 +78,7 @@ const TherapistList = ({ navigation, route }) => {
     const [searchValue, setSearchValue] = useState('');
     const [slidervalueStart, setSliderValueStart] = useState(0);
     const [slidervalueEnd, setSliderValueEnd] = useState(0);
+    const searchInputRef = useRef(null);
 
     // Experience
     const [selectedExperience, setSelectedExperience] = useState([]);
@@ -199,15 +200,26 @@ const TherapistList = ({ navigation, route }) => {
         };
 
         fetchData();
+        console.log(route?.params?.comingFrom,'nnnnnnnnnnnnnnnnnnn');
+        if (route?.params?.comingFrom === 'search') {
+            setTimeout(() => {
+                if (searchInputRef.current) {
+                    searchInputRef.current.focus();
+                }
+            }, 100);
+        }
+
     }, [])
     useFocusEffect(
         React.useCallback(() => {
             const fetchData = async () => {
                 await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
-                setIsLoading(false);
             };
 
             fetchData();
+            if (searchInputRef.current) {
+                searchInputRef.current.focus();
+            }
         }, [])
     )
     const toggleModal = () => {
@@ -449,7 +461,7 @@ const TherapistList = ({ navigation, route }) => {
 
     const submitForFilter = () => {
         console.log('hello')
-        console.log(selectedExperience,'experience')
+        console.log(selectedExperience, 'experience')
         console.log(selectedType, 'type');
         console.log(selectedRating, 'rating');
         console.log(selectedGender, 'gender');
@@ -503,14 +515,24 @@ const TherapistList = ({ navigation, route }) => {
                         </TouchableWithoutFeedback>
                     </View>
                 </View>
-                <View style={{ alignSelf: 'center' }}>
-                    <InputField
+                <View style={{ alignSelf: 'center', marginBottom: 10 }}>
+                    {/* <InputField
+                        ref={searchInputRef}
                         label={'Search by therapist name'}
                         keyboardType=" "
                         value={searchValue}
                         //helperText={'Please enter lastname'}
-                        inputType={'others'}
+                        inputType={'searchable'}
                         onChangeText={(text) => changeSearchValue(text)}
+                    /> */}
+                    <TextInput
+                        style={styles.editinput}
+                        onChangeText={(text) => changeSearchValue(text)}
+                        value={searchValue}
+                        ref={route?.params?.comingFrom === 'search' ? searchInputRef : null}
+                        placeholder={'Search by therapist name'}
+                        keyboardType={''}
+                        placeholderTextColor="#808080"
                     />
                 </View>
                 <View style={{ alignSelf: 'center' }}>
@@ -961,6 +983,19 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
         borderRadius: 10,
+    },
+    editinput: {
+        color: '#808080',
+        fontFamily: 'DMSans-Regular',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: responsiveHeight(1),
+        paddingLeft: responsiveHeight(1),
+        borderColor: '#E0E0E0',
+        borderWidth: 1,
+        borderRadius: 8,
+        width: responsiveWidth(88),
+        height: responsiveHeight(7),
     },
 
 });

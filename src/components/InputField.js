@@ -15,7 +15,8 @@ export default function InputField({
   onChangeText,
   helperText,
   error,
-  inputFieldType
+  inputFieldType,
+  ref
 }) {
   //console.log(inputType, 'dddd')
   return (
@@ -76,6 +77,18 @@ export default function InputField({
           style={styles.editinput}
           onChangeText={onChangeText}
           value={value}
+          placeholder={label}
+          keyboardType={keyboardType}
+          editable={inputType == 'nonedit' ? false : true}
+          multiline={inputFieldType == 'address' ? true : false}
+          placeholderTextColor="#808080"
+        />
+      ) : inputType == 'searchable' ? (
+        <TextInput
+          style={styles.editinput}
+          onChangeText={onChangeText}
+          value={value}
+          ref={ref}
           placeholder={label}
           keyboardType={keyboardType}
           editable={inputType == 'nonedit' ? false : true}

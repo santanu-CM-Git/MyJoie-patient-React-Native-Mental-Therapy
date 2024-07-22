@@ -82,13 +82,13 @@ export default function HomeScreen({ navigation }) {
     if (Platform.OS == 'android') {
       /* this is app foreground notification */
       const unsubscribe = messaging().onMessage(async remoteMessage => {
-        Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-        console.log('Received background message:', JSON.stringify(remoteMessage));
+        // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+        // console.log('Received background message:', JSON.stringify(remoteMessage));
         setNotificationStatus(true)
       });
       /* This is for handling background messages */
       messaging().setBackgroundMessageHandler(async remoteMessage => {
-        console.log('Received background message:', remoteMessage);
+        // console.log('Received background message:', remoteMessage);
         // Handle background message here
         setNotificationStatus(true)
       });
@@ -227,7 +227,6 @@ export default function HomeScreen({ navigation }) {
 
             return dateTimeA - dateTimeB;
           });
-          filteredBookings = filteredBookings.slice(0, 5);
           setUpcomingBooking(filteredBookings)
           //setIsLoading(false);
         })

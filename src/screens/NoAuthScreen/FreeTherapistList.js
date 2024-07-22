@@ -220,7 +220,7 @@ const TherapistList = ({ navigation, route }) => {
     const fetchAllTherapist = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             const option = {
-                "flag": 'paid'
+                "flag": 'free'
             }
             axios.post(`${API_URL}/patient/therapist-list`, option, {
                 headers: {
