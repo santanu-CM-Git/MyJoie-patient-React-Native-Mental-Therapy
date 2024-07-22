@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image} from 'react-native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import { homeImg, helpImg, SessionIcon, PolicyIcon, availabilityBlackImg} from '../utils/Images';
+import { homeImg, helpImg, SessionIcon, PolicyIcon, availabilityBlackImg, bookmarkedNotFill, chatImg, transactionIconImg} from '../utils/Images';
 import CustomDrawer from '../components/CustomDrawer';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,19 +10,13 @@ import CustomerSupport from '../screens/NoAuthScreen/CustomerSupport';
 
 import TabNavigator from './TabNavigator';
 import PrivacyPolicy from '../screens//NoAuthScreen/PrivacyPolicy';
-
 import SessionHistory from '../screens/NoAuthScreen/SessionHistory';
-import NoNotification from '../screens/NoAuthScreen/NoNotification';
-import UploadSessionSummary from '../screens/NoAuthScreen/UploadSessionSummary';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
 import WalletScreen from '../screens/NoAuthScreen/WalletScreen';
-import ReviewScreen from '../screens/NoAuthScreen/ReviewScreen';
 import Bookmarked from '../screens/NoAuthScreen/Bookmarked';
-import ThankYouBookingScreen from '../screens/NoAuthScreen/ThankYouBookingScreen';
-import BookingSummary from '../screens/NoAuthScreen/BookingSummary';
 import TherapistList from '../screens/NoAuthScreen/TherapistList';
-import TherapistProfile from '../screens/NoAuthScreen/TherapistProfile';
 import TestPage from '../screens/NoAuthScreen/TestPage';
+import { responsiveFontSize } from 'react-native-responsive-dimensions';
 
 const Drawer = createDrawerNavigator();
 
@@ -38,7 +32,7 @@ const AuthStack = () => {
         drawerLabelStyle: {
           marginLeft: -25,
           fontFamily: 'DMSans-Medium',
-          fontSize: 15,
+          fontSize: responsiveFontSize(1.8),
         },
         //swipeEdgeWidth: 0, //for off the drawer swipe
       }}>
@@ -53,12 +47,32 @@ const AuthStack = () => {
         }}
       />
       <Drawer.Screen
-        name="  Availability"
+        name="  Upcoming Appointments"
         component={ScheduleScreen}
         options={{
           drawerIcon: ({color}) => (
             // <Ionicons name="home-outline" size={22} color={color} />
             <Image source={availabilityBlackImg} style={{ width: 25,height: 25,}} color={color}/>
+          ),
+        }}
+      />
+       <Drawer.Screen
+        name="  Talk to Therapist"
+        component={TherapistList}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={chatImg} style={{ width: 25,height: 25}} color={color}/>
+          ),
+        }}
+      />
+       <Drawer.Screen
+        name="  Bookmarked Therapist"
+        component={Bookmarked}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={bookmarkedNotFill} style={{ width: 25,height: 25}} color={color}/>
           ),
         }}
       />
@@ -82,66 +96,17 @@ const AuthStack = () => {
           ),
         }}
       />
-       <Drawer.Screen
-        name="  Review"
-        component={ReviewScreen}
+      
+      <Drawer.Screen
+        name="  Transaction"
+        component={WalletScreen}
         options={{
           drawerIcon: ({color}) => (
             // <Ionicons name="settings-outline" size={22} color={color} />
-            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
+            <Image source={transactionIconImg} style={{ width: 25,height: 25}} color={color}/>
           ),
         }}
       />
-       <Drawer.Screen
-        name="  Bookmarked Therapist"
-        component={Bookmarked}
-        options={{
-          drawerIcon: ({color}) => (
-            // <Ionicons name="settings-outline" size={22} color={color} />
-            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
-          ),
-        }}
-      />
-      {/* <Drawer.Screen
-        name="  Thankyou"
-        component={ThankYouBookingScreen}
-        options={{
-          drawerIcon: ({color}) => (
-            // <Ionicons name="settings-outline" size={22} color={color} />
-            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
-          ),
-        }}
-      /> */}
-       {/* <Drawer.Screen
-        name="  Summary"
-        component={BookingSummary}
-        options={{
-          drawerIcon: ({color}) => (
-            // <Ionicons name="settings-outline" size={22} color={color} />
-            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
-          ),
-        }}
-      /> */}
-        <Drawer.Screen
-        name="  Therapist"
-        component={TherapistList}
-        options={{
-          drawerIcon: ({color}) => (
-            // <Ionicons name="settings-outline" size={22} color={color} />
-            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
-          ),
-        }}
-      />
-       {/* <Drawer.Screen
-        name="  Therapist Profile"
-        component={TherapistProfile}
-        options={{
-          drawerIcon: ({color}) => (
-            // <Ionicons name="settings-outline" size={22} color={color} />
-            <Image source={helpImg} style={{ width: 25,height: 25}} color={color}/>
-          ),
-        }}
-      /> */}
       <Drawer.Screen
         name="  Privacy Policy"
         component={PrivacyPolicy}
@@ -152,17 +117,7 @@ const AuthStack = () => {
           ),
         }}
       />
-      <Drawer.Screen
-        name="  Session Summary"
-        component={UploadSessionSummary}
-        options={{
-          drawerIcon: ({color}) => (
-            // <Ionicons name="settings-outline" size={22} color={color} />
-            <Image source={PolicyIcon} style={{ width: 25,height: 25}} color={color}/>
-          ),
-        }}
-      />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="  testtttt"
         component={TestPage}
         options={{
@@ -171,7 +126,7 @@ const AuthStack = () => {
             <Image source={PolicyIcon} style={{ width: 25,height: 25}} color={color}/>
           ),
         }}
-      />
+      /> */}
     </Drawer.Navigator>
   );
 };

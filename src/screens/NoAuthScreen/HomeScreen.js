@@ -146,7 +146,8 @@ export default function HomeScreen({ navigation }) {
           //console.log(res.data,'user details')
           let customerSpeak = res.data.data;
           console.log(customerSpeak, 'customer speaks data')
-          setCustomerSpeaksData(customerSpeak)
+          const limitedData = customerSpeak.slice(0, 5);
+          setCustomerSpeaksData(limitedData)
           //setIsLoading(false);
         })
         .catch(e => {
@@ -157,7 +158,6 @@ export default function HomeScreen({ navigation }) {
     });
   }
   const fetchPreviousBooking = async () => {
-    setIsLoading(true);
     try {
       const usertoken = await AsyncStorage.getItem('userToken');
       if (!usertoken) {
@@ -186,7 +186,7 @@ export default function HomeScreen({ navigation }) {
       });
 
       // Get the last 5 entries
-      previousBooking = previousBooking.slice(0, 10);
+      previousBooking = previousBooking.slice(0, 5);
 
       setPreviousBooking(previousBooking);
     } catch (error) {
@@ -227,6 +227,7 @@ export default function HomeScreen({ navigation }) {
 
             return dateTimeA - dateTimeB;
           });
+          filteredBookings = filteredBookings.slice(0, 5);
           setUpcomingBooking(filteredBookings)
           //setIsLoading(false);
         })
