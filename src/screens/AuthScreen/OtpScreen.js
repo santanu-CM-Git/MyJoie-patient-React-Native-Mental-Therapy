@@ -19,6 +19,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import Loader from '../../utils/Loader';
 import Toast from 'react-native-toast-message';
+// import OTPVerify from 'react-native-otp-verify';
 
 const OtpScreen = ({ navigation, route }) => {
     const [otp, setOtp] = useState('');
@@ -26,6 +27,7 @@ const OtpScreen = ({ navigation, route }) => {
     const [errors, setError] = useState(true)
     const [errorText, setErrorText] = useState('Please enter OTP')
     const [isLoading, setIsLoading] = useState(false)
+    const [isResendDisabled, setIsResendDisabled] = useState(true);
 
     const { login, userToken } = useContext(AuthContext);
 
@@ -33,7 +35,10 @@ const OtpScreen = ({ navigation, route }) => {
     const [timer, setTimer] = useState(60 * 1);
     useEffect(() => {
         // If timer is 0, return early
-        if (timer === 0) return;
+        if (timer === 0) {
+            setIsResendDisabled(false);
+            return;
+        }
 
         // Create an interval that decrements the timer value every second
         const interval = setInterval(() => {
@@ -50,6 +55,23 @@ const OtpScreen = ({ navigation, route }) => {
         // Format the time to ensure it always shows two digits for minutes and seconds
         return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
+
+    // useEffect(() => {
+    //     // Start listening for OTP messages
+    //     OTPVerify.getOtp()
+    //       .then(promise => {
+    //         // Start listening for OTP
+    //         OTPVerify.addListener(message => {
+    //         const otp = /(\d{4})/g.exec(message)[1];
+    //           console.log('OTP received:', otp);
+    //           setOtp(otp);
+    //         });
+    
+    //         // Stop listening when component unmounts
+    //         return () => OTPVerify.removeListener();
+    //       })
+    //       .catch(error => console.error('Error setting up OTP listener:', error));
+    //   }, []);
 
     const onChangeCode = (code) => {
         setOtp(code)
@@ -121,6 +143,7 @@ const OtpScreen = ({ navigation, route }) => {
                     });
                     setComingOTP(res.data.otp)
                     setTimer(60 * 1)
+                    setIsResendDisabled(true);
                     setOtp('')
                 } else {
                     console.log('not okk')
@@ -199,10 +222,11 @@ const OtpScreen = ({ navigation, route }) => {
                 }
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={styles.otpText}>Didn’t receive OTP?</Text>
-                    <TouchableOpacity onPress={() => resendOtp()}>
-                        <Text style={styles.resendText}>Resend OTP</Text>
-                    </TouchableOpacity>
                     <Text style={styles.timerText}>{formatTime(timer)}</Text>
+                    <TouchableOpacity onPress={() => resendOtp()} disabled={isResendDisabled}>
+                        <Text style={[styles.resendText, isResendDisabled && { color: '#808080' }]}>Resend OTP</Text>
+                    </TouchableOpacity>
+                    
                 </View>
 
             </View>
