@@ -336,6 +336,17 @@ const TherapistList = ({ navigation, route }) => {
         });
     }
 
+    const getNextAvailableSlot = (slot) => {
+        if (!slot) return 'No Available Slot For Today';
+        const now = moment();
+        const slotTime = moment(slot, 'HH:mm:ss');
+        if (slotTime.isBefore(now, 'minute')) {
+            return `Next Avl. Slot : Tomorrow ${slotTime.format('hh:mm A')}`;
+        } else {
+            return `Next Avl. Slot : Today ${slotTime.format('hh:mm A')}`;
+        }
+    };
+
     const renderItem = ({ item }) => (
         <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'free' })}>
             <View style={styles.totalValue}>
@@ -366,7 +377,7 @@ const TherapistList = ({ navigation, route }) => {
                             <Text style={styles.contentStyleRateFree}>Free for 15 Min</Text>
                         </View>
 
-                        <Text style={styles.contentStyleAvailableSlot}>Next Avl. Slot : Today 09:00 PM</Text>
+                        <Text style={styles.contentStyleAvailableSlot}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
                         {item?.wishlistcount == 'yes' ?
