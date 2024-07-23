@@ -508,7 +508,7 @@ export default function HomeScreen({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        await Promise.all([fetchProfileDetails(), fetchBanner(), fetchCustomerSpeaks(), fetchPreviousBooking(), fetchUpcomingBooking(), fetchAllTherapist()]);
+        await Promise.all([fetchProfileDetails(),fetchPreviousBooking(), fetchUpcomingBooking()]);
       };
 
       fetchData();

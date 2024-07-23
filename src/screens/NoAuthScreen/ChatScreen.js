@@ -37,17 +37,17 @@ const ChatScreen = ({ navigation, route }) => {
   const [videoCall, setVideoCall] = useState(true);
   const connectionData = {
     appId: AGORA_APP_ID,
-    // channel: route?.params?.details?.agora_channel_id,
-    // token: route?.params?.details?.agora_token,
-    channel: 'test',
-    token: '007eJxTYLi9V+/EE5nsrwsCzfXFjc9fFy0Te8+wfvnth0++1lWVBT1UYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZI/aQ/L60hkJHhbzQfKyMDBIL4LAwlqcUlDAwA6gwhww=='
+    channel: route?.params?.details?.agora_channel_id,
+    token: route?.params?.details?.agora_token,
+    //channel: 'channelName',
+    //token: '007eJxTYKhv3naKifdhNNu05Kz5/3q7Lkc0KT94sd6geParN75Wc/crMJiZphmZpCWmJKcaGpmYp1laJFukmSebmycaGRulJluk/pgzP42DnYGhIdmWgREIWYD4gfqCNCYwyQwmWcAkN0NyRmJeXmqOX2JuKiODAQDcyytA'
   };
   // Define basic information
   const appId = AGORA_APP_ID;
-  // const token = route?.params?.details?.agora_token;
-  // const channelName = route?.params?.details?.agora_channel_id;
-  const token = '007eJxTYLi9V+/EE5nsrwsCzfXFjc9fFy0Te8+wfvnth0++1lWVBT1UYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZI/aQ/L60hkJHhbzQfKyMDBIL4LAwlqcUlDAwA6gwhww==';
-  const channelName = 'test';
+  const token = route?.params?.details?.agora_token;
+  const channelName = route?.params?.details?.agora_channel_id;
+  //const token = '007eJxTYKhv3naKifdhNNu05Kz5/3q7Lkc0KT94sd6geParN75Wc/crMJiZphmZpCWmJKcaGpmYp1laJFukmSebmycaGRulJluk/pgzP42DnYGhIdmWgREIWYD4gfqCNCYwyQwmWcAkN0NyRmJeXmqOX2JuKiODAQDcyytA';
+  //const channelName = 'channelName';
   const uid = 0; // Local user UID, no need to modify
 
   const rtcCallbacks = {
@@ -895,7 +895,7 @@ const ChatScreen = ({ navigation, route }) => {
               {videoCall ? (
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
-                  <View style={{ height: route?.params?.details?.prescription_checked === 'yes' ? responsiveHeight(75) : responsiveHeight(80), width: '100%' }}>
+                  <View style={{ height: responsiveHeight(80), width: '100%' }}>
                     <AgoraUIKit
                       connectionData={connectionData}
                       rtcCallbacks={rtcCallbacks}
