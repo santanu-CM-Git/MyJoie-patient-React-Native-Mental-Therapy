@@ -39,15 +39,15 @@ const ChatScreen = ({ navigation, route }) => {
     appId: AGORA_APP_ID,
     channel: route?.params?.details?.agora_channel_id,
     token: route?.params?.details?.agora_token,
-    //channel: 'channelName',
-    //token: '007eJxTYKhv3naKifdhNNu05Kz5/3q7Lkc0KT94sd6geParN75Wc/crMJiZphmZpCWmJKcaGpmYp1laJFukmSebmycaGRulJluk/pgzP42DnYGhIdmWgREIWYD4gfqCNCYwyQwmWcAkN0NyRmJeXmqOX2JuKiODAQDcyytA'
+    //channel: 'testChannel',
+    //token: '007eJxTYPA0+xLFlXWof37KbOsr+4LuSTEUTr6c5PZlXsLFM7dLl81QYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZIXbZ4QVpDICND9ZNMZkYGCATxuRlKUotLnDMS8/JScxgYAMU4JJ8='
   };
   // Define basic information
   const appId = AGORA_APP_ID;
   const token = route?.params?.details?.agora_token;
   const channelName = route?.params?.details?.agora_channel_id;
-  //const token = '007eJxTYKhv3naKifdhNNu05Kz5/3q7Lkc0KT94sd6geParN75Wc/crMJiZphmZpCWmJKcaGpmYp1laJFukmSebmycaGRulJluk/pgzP42DnYGhIdmWgREIWYD4gfqCNCYwyQwmWcAkN0NyRmJeXmqOX2JuKiODAQDcyytA';
-  //const channelName = 'channelName';
+  //const token = '007eJxTYPA0+xLFlXWof37KbOsr+4LuSTEUTr6c5PZlXsLFM7dLl81QYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZIXbZ4QVpDICND9ZNMZkYGCATxuRlKUotLnDMS8/JScxgYAMU4JJ8=';
+  //const channelName = 'testChannel';
   const uid = 0; // Local user UID, no need to modify
 
   const rtcCallbacks = {
@@ -238,15 +238,15 @@ const ChatScreen = ({ navigation, route }) => {
         if (mode === 'chat') {
           setActiveTab('chat');
           setVideoCall(false);
-          leave();
+          await leave();
         } else if (mode === 'audio') {
-          join();
+          await join();
           setActiveTab('audio');
           setVideoCall(false);
         } else if (mode === 'video') {
           setActiveTab('video');
           setVideoCall(true);
-          leave();
+          await leave();
         }
         setIsLoading(false);
       } else {
@@ -286,53 +286,121 @@ const ChatScreen = ({ navigation, route }) => {
     );
   };
 
-  const handleTimerEnd = () => {
+  // const handleTimerEnd = () => {
+  //   console.log('Timer has ended. Execute your function here.');
+  //   const currentTime = moment().format('HH:mm:ss');
+  //   const option = {
+  //     "booked_slot_id": route?.params?.details?.id,
+  //     "time": currentTime
+  //   }
+  //   console.log(option)
+  //   AsyncStorage.getItem('userToken', (err, usertoken) => {
+  //     axios.post(`${API_URL}/patient/slot-complete`, option, {
+  //       headers: {
+  //         Accept: 'application/json',
+  //         "Authorization": 'Bearer ' + usertoken,
+  //       },
+  //     })
+  //       .then(res => {
+  //         console.log(res.data)
+  //         if (res.data.response == true) {
+  //           //stopRecording()
+  //           setVideoCall(false)
+  //           leave()
+  //           navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id, therapistName: route?.params?.details?.therapist?.name, therapistPic: route?.params?.details?.therapist?.profile_pic })
+  //         } else {
+  //           console.log('not okk')
+  //           setIsLoading(false)
+  //           Alert.alert('Oops..', "Something went wrong", [
+  //             {
+  //               text: 'Cancel',
+  //               onPress: () => console.log('Cancel Pressed'),
+  //               style: 'cancel',
+  //             },
+  //             { text: 'OK', onPress: () => console.log('OK Pressed') },
+  //           ]);
+  //         }
+  //       })
+  //       .catch(e => {
+  //         setIsLoading(false)
+  //         console.log(`user update error ${e}`) 
+  //         console.log(e.response.data?.response.records)
+  //         Alert.alert('Oops..', e.response?.data?.message, [
+  //           {
+  //             text: 'Cancel',
+  //             onPress: () => console.log('Cancel Pressed'),
+  //             style: 'cancel',
+  //           },
+  //           { text: 'OK', onPress: () => console.log('OK Pressed') },
+  //         ]);
+  //       });
+  //   });
+  // };
+
+  const handleTimerEnd = async () => {
     console.log('Timer has ended. Execute your function here.');
     const currentTime = moment().format('HH:mm:ss');
     const option = {
       "booked_slot_id": route?.params?.details?.id,
       "time": currentTime
-    }
-    console.log(option)
-    AsyncStorage.getItem('userToken', (err, usertoken) => {
-      axios.post(`${API_URL}/patient/slot-complete`, option, {
+    };
+    console.log(option);
+  
+    try {
+      // Retrieve user token
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (!userToken) {
+        throw new Error('User token is missing');
+      }
+  
+      // Make API request
+      const res = await axios.post(`${API_URL}/patient/slot-complete`, option, {
         headers: {
           Accept: 'application/json',
-          "Authorization": 'Bearer ' + usertoken,
+          "Authorization": 'Bearer ' + userToken,
         },
-      })
-        .then(res => {
-          console.log(res.data)
-          if (res.data.response == true) {
-            //stopRecording()
-            navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id, therapistName: route?.params?.details?.therapist?.name, therapistPic: route?.params?.details?.therapist?.profile_pic })
-          } else {
-            console.log('not okk')
-            setIsLoading(false)
-            Alert.alert('Oops..', "Something went wrong", [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ]);
-          }
-        })
-        .catch(e => {
-          setIsLoading(false)
-          console.log(`user update error ${e}`)
-          console.log(e.response.data?.response.records)
-          Alert.alert('Oops..', e.response?.data?.message, [
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            { text: 'OK', onPress: () => console.log('OK Pressed') },
-          ]);
+      });
+  
+      console.log(res.data);
+  
+      if (res.data.response === true) {
+        // Uncomment and use if needed
+        // stopRecording();
+  
+        setVideoCall(false);
+        await leave(); // Ensure leave completes before navigating
+        navigation.navigate('ReviewScreen', {
+          bookedId: route?.params?.details?.id,
+          therapistName: route?.params?.details?.therapist?.name,
+          therapistPic: route?.params?.details?.therapist?.profile_pic
         });
-    });
+      } else {
+        console.log('Response not OK');
+        setIsLoading(false);
+        Alert.alert('Oops..', "Something went wrong", [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+      }
+    } catch (e) {
+      setIsLoading(false);
+      console.error('Error during handleTimerEnd:', e);
+  
+      // Handle specific API errors if available
+      const errorMessage = e.response?.data?.message || 'An unexpected error occurred';
+      Alert.alert('Oops..', errorMessage, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+    }
   };
 
   const renderChatFooter = useCallback(() => {
@@ -619,11 +687,11 @@ const ChatScreen = ({ navigation, route }) => {
     }
     try {
       // Set the channel profile type to communication after joining the channel
-      agoraEngineRef.current?.setChannelProfile(
+      await agoraEngineRef.current?.setChannelProfile(
         ChannelProfileType.ChannelProfileCommunication,
       );
       // Call the joinChannel method to join the channel
-      agoraEngineRef.current?.joinChannel(token, channelName, uid, {
+      await agoraEngineRef.current?.joinChannel(token, channelName, uid, {
         // Set the user role to broadcaster
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
       });
@@ -632,10 +700,9 @@ const ChatScreen = ({ navigation, route }) => {
     }
   };
   // Define the leave method called after clicking the leave channel button
-  const leave = () => {
+  const leave = async () => {
     try {
-      // Call the leaveChannel method to leave the channel
-      agoraEngineRef.current?.leaveChannel();
+      await agoraEngineRef.current?.leaveChannel();
       setRemoteUid(0);
       setIsJoined(false);
       showMessage('Left the channel');
@@ -644,25 +711,21 @@ const ChatScreen = ({ navigation, route }) => {
     }
   };
 
-  const goingToactiveTab = (name) => {
-
-    if (name == 'audio') {
-      //setupVoiceSDKEngine()
-      join()
-      setActiveTab('audio')
-      setVideoCall(false)
-    } else if (name == 'video') {
-      setActiveTab('video')
-      setVideoCall(true)
-      leave()
-    } else if (name == 'chat') {
-      setActiveTab('chat')
-      setVideoCall(false)
-      leave()
+  const goingToactiveTab = async (name) => {
+    if (name === 'audio') {
+      await join();
+      setActiveTab('audio');
+      setVideoCall(false);
+    } else if (name === 'video') {
+      await leave();
+      setActiveTab('video');
+      setVideoCall(true);
+    } else if (name === 'chat') {
+      await leave();
+      setActiveTab('chat');
+      setVideoCall(false);
     }
-
-
-  }
+  };
 
   const customPropsStyle = {
     localBtnStyles: {
@@ -938,7 +1001,7 @@ const styles = StyleSheet.create({
   ButtonImg: { height: 20, width: 20, resizeMode: 'contain', marginRight: 5 },
   ButtonText: { color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
   containSection: { height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  AudioBackground: { width: responsiveWidth(100), height: responsiveHeight(75), justifyContent: 'center', alignItems: 'center' },
+  AudioBackground: { width: responsiveWidth(100), height: responsiveHeight(80), justifyContent: 'center', alignItems: 'center' },
   buttonImage: { height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
   audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
   audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
