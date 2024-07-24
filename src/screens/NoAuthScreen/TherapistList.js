@@ -29,12 +29,13 @@ import Slider from '@react-native-community/slider';
 //     { label: 'Child', value: 'Child' },
 // ];
 const Experience = [
-    { label: '0 - 2 Years', value: '1' },
-    { label: '3 - 5 Years', value: '2' },
-    { label: '6 - 8 Years', value: '3' },
-    { label: '9 - 12 Years', value: '4' },
-    { label: '13 - 15 Years', value: '5' },
-    { label: '15+ Years', value: '6' }
+    { label: '0 - 2 Years', value: '0-2' },
+    { label: '3 - 5 Years', value: '2-5' },
+    { label: '6 - 8 Years', value: '6-8' },
+    { label: '9 - 12 Years', value: '9-12' },
+    { label: '13 - 15 Years', value: '13-15' },
+    { label: '15 - 20 Years', value: '15-20' },
+    { label: '20+ Years', value: '20-100' }
 ]
 const Rating = [
     { label: '1 Star', value: '1' },
@@ -44,24 +45,24 @@ const Rating = [
     { label: '5 Star', value: '5' }
 ]
 const Gender = [
-    { label: 'Male', value: '1' },
-    { label: 'Female', value: '2' },
-    { label: 'Others', value: '3' }
+    { label: 'Male', value: 'Male' },
+    { label: 'Female', value: 'Female' },
+    { label: 'Others', value: 'Others' }
 ]
 const Ages = [
-    { label: '20 - 30', value: '1' },
-    { label: '30 - 40', value: '2' },
-    { label: '40 - 50', value: '3' },
-    { label: '50 - 60', value: '4' },
-    { label: '60 above', value: '5' },
+    { label: '20 - 30', value: '20-30' },
+    { label: '30 - 40', value: '30-40' },
+    { label: '40 - 50', value: '40-50' },
+    { label: '50 - 60', value: '50-60' },
+    { label: '60 above', value: '60-100' },
 ]
-const Rate = [
-    { label: 'below 300', value: '1' },
-    { label: 'below 500', value: '2' },
-    { label: 'below 1000', value: '3' },
-    { label: 'below 2000', value: '4' },
-    { label: 'above 2000', value: '5' },
-]
+// const Rate = [
+//     { label: 'below 300', value: '1' },
+//     { label: 'below 500', value: '2' },
+//     { label: 'below 1000', value: '3' },
+//     { label: 'below 2000', value: '4' },
+//     { label: 'above 2000', value: '5' },
+// ]
 
 
 const TherapistList = ({ navigation, route }) => {
@@ -142,10 +143,10 @@ const TherapistList = ({ navigation, route }) => {
         })
             .then(res => {
                 //console.log(languageInfo, 'bbbbbbb')
-                console.log(res.data.data, 'languageeeeeeee')
+                //console.log(res.data.data, 'languageeeeeeee')
                 const languageInfo = res.data.data.map(item => ({
                     label: item.content,
-                    value: item.content,
+                    value: item.id,
                 }));
                 setqualificationitemsLanguage(languageInfo)
                 //setIsLoading(false);
@@ -163,7 +164,7 @@ const TherapistList = ({ navigation, route }) => {
             .then(res => {
                 const qualificationInfo = res.data.data.map(item => ({
                     label: item.content,
-                    value: item.content,
+                    value: item.id,
                 }));
                 setqualificationitems(qualificationInfo)
                 //setIsLoading(false);
@@ -179,9 +180,10 @@ const TherapistList = ({ navigation, route }) => {
             },
         })
             .then(res => {
+                //console.log(res.data.data,'typeeeee')
                 const therapyTypeInfo = res.data.data.map(item => ({
                     label: item.type,
-                    value: item.type,
+                    value: item.id,
                 }));
                 setqualificationitemsType(therapyTypeInfo)
                 //setIsLoading(false);
@@ -200,7 +202,7 @@ const TherapistList = ({ navigation, route }) => {
         };
 
         fetchData();
-        console.log(route?.params?.comingFrom,'nnnnnnnnnnnnnnnnnnn');
+        console.log(route?.params?.comingFrom, 'nnnnnnnnnnnnnnnnnnn');
         if (route?.params?.comingFrom === 'search') {
             setTimeout(() => {
                 if (searchInputRef.current) {
@@ -349,7 +351,7 @@ const TherapistList = ({ navigation, route }) => {
     }
 
     const getNextAvailableSlot = (slot) => {
-        if (!slot) return 'No Available Slot';
+        if (!slot) return '';
         const now = moment();
         const slotTime = moment(slot, 'HH:mm:ss');
         if (slotTime.isBefore(now, 'minute')) {
@@ -385,7 +387,7 @@ const TherapistList = ({ navigation, route }) => {
                         <Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text>
                         <Text style={styles.contentStyleLang}>Language : <Text style={styles.contentStyleLangValue}>{item?.languages_list}</Text></Text>
                         <Text style={styles.contentStyleRate}>₹{item?.rate} for 30 Min</Text>
-                        <Text style={styles.contentStyleAvailableSlot}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
+                        <Text style={[styles.contentStyleAvailableSlot,{color: item?.instant_availability == 'on'?'#417AA4':'#444343',}]}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
                         {item?.wishlistcount == 'yes' ?
@@ -468,21 +470,82 @@ const TherapistList = ({ navigation, route }) => {
         setSliderValueStart(0)
         setSliderValueEnd(0)
         toggleFilterModal()
+        setTherapistFilterData(therapistData);
     }
 
-    const submitForFilter = () => {
-        console.log('hello')
-        console.log(selectedExperience, 'experience')
-        console.log(selectedType, 'type');
-        console.log(selectedRating, 'rating');
-        console.log(selectedGender, 'gender');
-        console.log(selectedAge, 'age');
-        console.log(selectedQualification, 'qualification');
-        console.log(selectedLanguage, 'language');
-        console.log(slidervalueStart, 'slider start value');
-        console.log(slidervalueEnd, 'slider end value');
+    const submitForFilter = async () => {
+        // console.log('hello')
+        // console.log(selectedExperience, 'experience')
+        // console.log(selectedType, 'type');
+        // console.log(selectedRating, 'rating');
+        // console.log(selectedGender, 'gender');
+        // console.log(selectedAge, 'age');
+        // console.log(selectedQualification, 'qualification');
+        // console.log(selectedLanguage, 'language');
+        // console.log(slidervalueStart, 'slider start value');
+        // console.log(slidervalueEnd, 'slider end value');
+        setIsLoading(true);
+        try {
+            const experienceRanges = selectedExperience.map(exp => exp.value.split('-').map(Number));
+            const type = selectedType.map(t => t.value);
+            const rating = selectedRating.map(r => Number(r.value));
+            const gender = selectedGender.map(g => g.value);
+            const ageranges = selectedAge.map(age => age.value.split('-').map(Number));
+            const qualification = selectedQualification.map(q => q.value);
+            const language = selectedLanguage.map(lang => lang.value);
+            const pricerange = (slidervalueStart === 0 && slidervalueEnd === 0) ? [] : [slidervalueStart, slidervalueEnd];
 
-    }
+            const filteredData = {
+                experienceRanges,
+                type,
+                rating,
+                gender,
+                ageranges,
+                qualification,
+                language,
+                pricerange
+            };
+
+            console.log(filteredData);
+
+            const userToken = await AsyncStorage.getItem('userToken');
+            if (!userToken) {
+                throw new Error('User token not found');
+            }
+
+            const response = await axios.post(`${API_URL}/patient/therapist-filter`, filteredData, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                }
+            });
+
+            const data = response.data;
+            console.log(data, 'filterd therapist data');
+            if (data.response) {
+                setTherapistFilterData(data.therapists);
+                toggleFilterModal()
+                setIsLoading(false);
+            } else {
+                throw new Error('Response not OK');
+            }
+        } catch (error) {
+            setIsLoading(false);
+            console.error('Error fetching therapists:', error);
+
+            Alert.alert('Oops..', error.response?.data?.message || 'Something went wrong', [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
 
 
     return (
@@ -547,6 +610,7 @@ const TherapistList = ({ navigation, route }) => {
                     />
                 </View>
                 <View style={{ alignSelf: 'center' }}>
+                    {therapistFilterData.length !== 0 ?
                     <FlatList
                         data={therapistFilterData}
                         renderItem={renderItem}
@@ -558,6 +622,10 @@ const TherapistList = ({ navigation, route }) => {
                             { length: 50, offset: 50 * index, index }
                         )}
                     />
+                    :
+                    <View style={[styles.totalValue,{justifyContent:'center',alignItems:'center'}]}>
+                      <Text style={styles.contentStyleName}>No Therapist Found</Text>
+                    </View>}
                 </View>
 
             </ScrollView>
@@ -874,7 +942,6 @@ const styles = StyleSheet.create({
     },
     contentStyleAvailableSlot: {
         fontSize: responsiveFontSize(1.5),
-        color: '#444343',
         fontFamily: 'DMSans-Medium',
         marginBottom: responsiveHeight(1)
     },

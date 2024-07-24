@@ -460,21 +460,81 @@ const TherapistList = ({ navigation, route }) => {
         setSliderValueStart(0)
         setSliderValueEnd(0)
         toggleFilterModal()
+        setTherapistFilterData(therapistData);
     }
 
-    const submitForFilter = () => {
-        console.log('hello')
-        console.log(selectedExperience,'experience')
-        console.log(selectedType, 'type');
-        console.log(selectedRating, 'rating');
-        console.log(selectedGender, 'gender');
-        console.log(selectedAge, 'age');
-        console.log(selectedQualification, 'qualification');
-        console.log(selectedLanguage, 'language');
-        console.log(slidervalueStart, 'slider start value');
-        console.log(slidervalueEnd, 'slider end value');
+    const submitForFilter = async () => {
+        // console.log('hello')
+        // console.log(selectedExperience, 'experience')
+        // console.log(selectedType, 'type');
+        // console.log(selectedRating, 'rating');
+        // console.log(selectedGender, 'gender');
+        // console.log(selectedAge, 'age');
+        // console.log(selectedQualification, 'qualification');
+        // console.log(selectedLanguage, 'language');
+        // console.log(slidervalueStart, 'slider start value');
+        // console.log(slidervalueEnd, 'slider end value');
+        setIsLoading(true);
+        try {
+            const experienceRanges = selectedExperience.map(exp => exp.value.split('-').map(Number));
+            const type = selectedType.map(t => t.value);
+            const rating = selectedRating.map(r => Number(r.value));
+            const gender = selectedGender.map(g => g.value);
+            const ageranges = selectedAge.map(age => age.value.split('-').map(Number));
+            const qualification = selectedQualification.map(q => q.value);
+            const language = selectedLanguage.map(lang => lang.value);
+            const pricerange = (slidervalueStart === 0 && slidervalueEnd === 0) ? [] : [slidervalueStart, slidervalueEnd];
 
-    }
+            const filteredData = {
+                experienceRanges,
+                type,
+                rating,
+                gender,
+                ageranges,
+                qualification,
+                language,
+                pricerange
+            };
+
+            console.log(filteredData);
+
+            const userToken = await AsyncStorage.getItem('userToken');
+            if (!userToken) {
+                throw new Error('User token not found');
+            }
+
+            const response = await axios.post(`${API_URL}/patient/therapist-filter`, filteredData, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                }
+            });
+
+            const data = response.data;
+            console.log(data, 'filterd therapist data');
+            if (data.response) {
+                setTherapistFilterData(data.therapists);
+                toggleFilterModal()
+                setIsLoading(false);
+            } else {
+                throw new Error('Response not OK');
+            }
+        } catch (error) {
+            setIsLoading(false);
+            console.error('Error fetching therapists:', error);
+
+            Alert.alert('Oops..', error.response?.data?.message || 'Something went wrong', [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
 
     return (
