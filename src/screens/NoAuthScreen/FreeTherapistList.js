@@ -20,7 +20,6 @@ import SelectMultiple from 'react-native-select-multiple'
 import { Dropdown } from 'react-native-element-dropdown';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-import Slider from '@react-native-community/slider';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 // const dropdowndata = [
@@ -78,8 +77,6 @@ const TherapistList = ({ navigation, route }) => {
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     const [activeTab, setActiveTab] = useState('Experience')
     const [searchValue, setSearchValue] = useState('');
-    const [slidervalueStart, setSliderValueStart] = useState(0);
-    const [slidervalueEnd, setSliderValueEnd] = useState(0);
     const [sliderValuesForPrice, setSliderValuesForPrice] = useState([0, 2000]);
     const sliderValuesChange = (values) => {
         setSliderValuesForPrice(values);
