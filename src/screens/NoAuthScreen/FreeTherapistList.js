@@ -555,7 +555,7 @@ const TherapistList = ({ navigation, route }) => {
                                 maxHeight={300}
                                 labelField="label"
                                 valueField="value"
-                                placeholder={!isFocus ? 'Select item' : '...'}
+                                placeholder={!isFocus ? 'Sort by Type' : '...'}
                                 searchPlaceholder="Search..."
                                 value={value}
                                 onFocus={() => setIsFocus(true)}

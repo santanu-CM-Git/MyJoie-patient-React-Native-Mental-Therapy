@@ -44,8 +44,8 @@ const ChatScreen = ({ navigation, route }) => {
   };
   // Define basic information
   const appId = AGORA_APP_ID;
-  const token = route?.params?.details?.agora_token;
-  const channelName = route?.params?.details?.agora_channel_id;
+  const token = route?.params?.details?.agora_token2;
+  const channelName = route?.params?.details?.agora_channel_id2;
   //const token = '007eJxTYPA0+xLFlXWof37KbOsr+4LuSTEUTr6c5PZlXsLFM7dLl81QYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZIXbZ4QVpDICND9ZNMZkYGCATxuRlKUotLnDMS8/JScxgYAMU4JJ8=';
   //const channelName = 'testChannel';
   const uid = 0; // Local user UID, no need to modify
