@@ -21,6 +21,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import Slider from '@react-native-community/slider';
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 // const dropdowndata = [
 //     { label: 'All therapist', value: 'All' },
@@ -79,6 +80,14 @@ const TherapistList = ({ navigation, route }) => {
     const [searchValue, setSearchValue] = useState('');
     const [slidervalueStart, setSliderValueStart] = useState(0);
     const [slidervalueEnd, setSliderValueEnd] = useState(0);
+    const [sliderValuesForPrice, setSliderValuesForPrice] = useState([0, 2000]);
+    const sliderValuesChange = (values) => {
+        setSliderValuesForPrice(values);
+    };
+    const [sliderValuesForAge, setSliderValuesForAge] = useState([0, 100]);
+    const sliderValuesChangeForAge = (values) => {
+        setSliderValuesForAge(values);
+    };
 
     // Experience
     const [selectedExperience, setSelectedExperience] = useState([]);
@@ -88,6 +97,7 @@ const TherapistList = ({ navigation, route }) => {
     };
 
     // Type
+    const [qualificationitemsTypeForDropdown, setqualificationitemsTypeForDropdown] = useState([])
     const [qualificationitemsType, setqualificationitemsType] = useState([])
     const [selectedType, setSelectedType] = useState([]);
     const onSelectionsChangeType = (selectedType) => {
@@ -184,6 +194,13 @@ const TherapistList = ({ navigation, route }) => {
                     value: item.id,
                 }));
                 setqualificationitemsType(therapyTypeInfo)
+                const therapyTypeInfoForDropdown = res.data.data.map(item => ({
+                    label: item.type,
+                    value: item.type,
+                }));
+                const allOption = { label: "All therapist", value: "All" };
+                therapyTypeInfoForDropdown.unshift(allOption);
+                setqualificationitemsTypeForDropdown(therapyTypeInfoForDropdown)
                 //setIsLoading(false);
             })
             .catch(e => {
@@ -338,7 +355,7 @@ const TherapistList = ({ navigation, route }) => {
     }
 
     const getNextAvailableSlot = (slot) => {
-        if (!slot) return '';
+        if (!slot) return 'Next Avl. Slot : Check availability';
         const now = moment();
         const slotTime = moment(slot, 'HH:mm:ss');
         if (slotTime.isBefore(now, 'minute')) {
@@ -372,13 +389,16 @@ const TherapistList = ({ navigation, route }) => {
                         <Text style={styles.contentStyleName}>{item?.user?.name}</Text>
                         <Text style={styles.contentStyleQualification}>{item?.qualification_list}</Text>
                         <Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text>
-                        <Text style={styles.contentStyleLang}>Language : <Text style={styles.contentStyleLangValue}>{item?.languages_list}</Text></Text>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.contentStyleLang}>Language :</Text>
+                            <Text style={styles.contentStyleLangValue}> {item?.languages_list.replace(/,/g, ', ')}</Text>
+                        </View>
                         <View style={{ flexDirection: 'row', }}>
                             <Text style={[styles.contentStyleRate, { marginRight: 5 }]}>₹{item?.rate} for 15 Min</Text>
                             <Text style={styles.contentStyleRateFree}>Free for 15 Min</Text>
                         </View>
 
-                        <Text style={[styles.contentStyleAvailableSlot,{color: item?.instant_availability == 'on'?'#417AA4':'#444343',}]}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
+                        <Text style={[styles.contentStyleAvailableSlot, { color: item?.instant_availability == 'on' ? '#417AA4' : '#444343', }]}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
                         {item?.wishlistcount == 'yes' ?
@@ -455,11 +475,10 @@ const TherapistList = ({ navigation, route }) => {
         setSelectedType([])
         setSelectedRating([])
         setSelectedGender([])
-        setSelectedAge([])
+        setSliderValuesForAge([0, 100])
         setSelectedQualification([])
         setSelectedLanguage([])
-        setSliderValueStart(0)
-        setSliderValueEnd(0)
+        setSliderValuesForPrice([0, 2000])
         toggleFilterModal()
         setTherapistFilterData(therapistData);
     }
@@ -481,10 +500,11 @@ const TherapistList = ({ navigation, route }) => {
             const type = selectedType.map(t => t.value);
             const rating = selectedRating.map(r => Number(r.value));
             const gender = selectedGender.map(g => g.value);
-            const ageranges = selectedAge.map(age => age.value.split('-').map(Number));
+            //const ageranges = selectedAge.map(age => age.value.split('-').map(Number));
+            const ageranges = sliderValuesForAge;
             const qualification = selectedQualification.map(q => q.value);
             const language = selectedLanguage.map(lang => lang.value);
-            const pricerange = (slidervalueStart === 0 && slidervalueEnd === 0) ? [] : [slidervalueStart, slidervalueEnd];
+            const pricerange = sliderValuesForPrice;
 
             const filteredData = {
                 experienceRanges,
@@ -552,7 +572,7 @@ const TherapistList = ({ navigation, route }) => {
                                 selectedTextStyle={styles.selectedTextStyle}
                                 inputSearchStyle={styles.inputSearchStyle}
                                 itemTextStyle={styles.selectedTextStyle}
-                                data={qualificationitemsType}
+                                data={qualificationitemsTypeForDropdown}
                                 //search
                                 maxHeight={300}
                                 labelField="label"
@@ -591,22 +611,22 @@ const TherapistList = ({ navigation, route }) => {
                     />
                 </View>
                 <View style={{ alignSelf: 'center' }}>
-                {therapistFilterData.length !== 0 ?
-                    <FlatList
-                        data={therapistFilterData}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id.toString()}
-                        maxToRenderPerBatch={10}
-                        windowSize={5}
-                        initialNumToRender={10}
-                        getItemLayout={(therapistFilterData, index) => (
-                            { length: 50, offset: 50 * index, index }
-                        )}
-                    />
-                    :
-                    <View style={[styles.totalValue,{justifyContent:'center',alignItems:'center'}]}>
-                      <Text style={styles.contentStyleName}>No Therapist Found</Text>
-                    </View>}
+                    {therapistFilterData.length !== 0 ?
+                        <FlatList
+                            data={therapistFilterData}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id.toString()}
+                            maxToRenderPerBatch={10}
+                            windowSize={5}
+                            initialNumToRender={10}
+                            getItemLayout={(therapistFilterData, index) => (
+                                { length: 50, offset: 50 * index, index }
+                            )}
+                        />
+                        :
+                        <View style={[styles.totalValue, { justifyContent: 'center', alignItems: 'center' }]}>
+                            <Text style={styles.contentStyleName}>No Therapist Found</Text>
+                        </View>}
                 </View>
 
             </ScrollView>
@@ -720,14 +740,39 @@ const TherapistList = ({ navigation, route }) => {
                                             </View>
 
                                             : activeTab == 'Age' ?
-                                                <View style={{}}>
-                                                    <SelectMultiple
-                                                        items={Ages}
-                                                        selectedItems={selectedAge}
-                                                        onSelectionsChange={onSelectionsChangeAge}
-                                                        rowStyle={styles.item}
-                                                        labelStyle={styles.itemText}
+                                                // <View style={{}}>
+                                                //     <SelectMultiple
+                                                //         items={Ages}
+                                                //         selectedItems={selectedAge}
+                                                //         onSelectionsChange={onSelectionsChangeAge}
+                                                //         rowStyle={styles.item}
+                                                //         labelStyle={styles.itemText}
+                                                //     />
+                                                // </View>
+                                                <View style={{ marginTop: 50, justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
+                                                    <MultiSlider
+                                                        values={sliderValuesForAge}
+                                                        sliderLength={180}
+                                                        onValuesChange={sliderValuesChangeForAge}
+                                                        min={0}
+                                                        max={100}
+                                                        step={1}
+                                                        allowOverlap={false}
+                                                        snapped
+                                                        selectedStyle={{
+                                                            backgroundColor: '#417AA4',
+                                                        }}
+                                                        unselectedStyle={{
+                                                            backgroundColor: 'gray',
+                                                        }}
+                                                        markerStyle={{
+                                                            backgroundColor: '#417AA4',
+                                                            height: 15,
+                                                            width: 15,
+                                                            borderRadius: 15 / 2,
+                                                        }}
                                                     />
+                                                    <Text style={styles.valueText}>Age Range: ₹{sliderValuesForAge[0]} - ₹{sliderValuesForAge[1]}</Text>
                                                 </View>
                                                 : activeTab == 'Qualification' ?
                                                     <View style={{}}>
@@ -750,38 +795,30 @@ const TherapistList = ({ navigation, route }) => {
                                                             />
                                                         </View>
                                                         : activeTab == 'Rate' ?
-                                                            <View style={{ marginTop: 50, justifyContent: 'center', alignItems: 'center' }}>
-                                                                <Text style={styles.valueTextValue}>Start Price</Text>
-                                                                <Slider
-                                                                    style={styles.slider}
-                                                                    minimumValue={0}
-                                                                    maximumValue={5000}
-                                                                    value={slidervalueStart}
-                                                                    onValueChange={(sliderValue) => setSliderValueStart(sliderValue)}
-                                                                    minimumTrackTintColor="#417AA4"
-                                                                    maximumTrackTintColor="#000000"
-                                                                    thumbTintColor="#417AA4"
+                                                            <View style={{ marginTop: 50, justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
+                                                                <MultiSlider
+                                                                    values={sliderValuesForPrice}
+                                                                    sliderLength={180}
+                                                                    onValuesChange={sliderValuesChange}
+                                                                    min={0}
+                                                                    max={2000}
                                                                     step={1}
-                                                                    trackStyle={styles.track}
-                                                                    thumbStyle={styles.thumb}
+                                                                    allowOverlap={false}
+                                                                    snapped
+                                                                    selectedStyle={{
+                                                                        backgroundColor: '#417AA4',
+                                                                    }}
+                                                                    unselectedStyle={{
+                                                                        backgroundColor: 'gray',
+                                                                    }}
+                                                                    markerStyle={{
+                                                                        backgroundColor: '#417AA4',
+                                                                        height: 15,
+                                                                        width: 15,
+                                                                        borderRadius: 15 / 2,
+                                                                    }}
                                                                 />
-                                                                <Text style={styles.valueText}>Price per minute: <Text style={styles.valueTextValue}>{slidervalueStart}</Text></Text>
-
-                                                                <Text style={[styles.valueTextValue, { marginTop: responsiveHeight(5) }]}>End Price</Text>
-                                                                <Slider
-                                                                    style={styles.slider}
-                                                                    minimumValue={0}
-                                                                    maximumValue={10000}
-                                                                    value={slidervalueEnd}
-                                                                    onValueChange={(sliderValue) => setSliderValueEnd(sliderValue)}
-                                                                    minimumTrackTintColor="#417AA4"
-                                                                    maximumTrackTintColor="#000000"
-                                                                    thumbTintColor="#417AA4"
-                                                                    step={1}
-                                                                    trackStyle={styles.track}
-                                                                    thumbStyle={styles.thumb}
-                                                                />
-                                                                <Text style={styles.valueText}>Price per minute: <Text style={styles.valueTextValue}>{slidervalueEnd}</Text></Text>
+                                                                <Text style={styles.valueText}>Price Range: ₹{sliderValuesForPrice[0]} - ₹{sliderValuesForPrice[1]}</Text>
                                                             </View>
                                                             :
 
@@ -883,7 +920,7 @@ const styles = StyleSheet.create({
     },
     contentStyle: {
         flexDirection: 'column',
-        width: responsiveWidth(47),
+        width: responsiveWidth(49),
         //height: responsiveHeight(10)
     },
     contentStyleName: {

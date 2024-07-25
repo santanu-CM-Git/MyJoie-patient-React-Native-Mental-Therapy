@@ -108,12 +108,12 @@ const SessionHistory = ({ navigation }) => {
                 <Text style={styles.singleViewColumnHeader}>Rate :</Text>
                 <Text style={styles.singleViewColomnValue}>Rs {item?.therapist_details?.rate} for 30 Min</Text>
             </View>
-            <View style={{ marginTop: responsiveHeight(1.5) }}>
+            {/* <View style={{ marginTop: responsiveHeight(1.5) }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Text style={styles.singleViewColumnHeader}>Session Summary :</Text>
                 </View>
                 <Text style={styles.summaryValue}>{item?.prescription_content}</Text>
-            </View>
+            </View> */}
             <View style={{ marginTop: responsiveHeight(2) }}>
                 <CustomButton buttonColor={''} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
             </View>
@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: 20,
         marginTop: responsiveHeight(2),
+        paddingBottom: -responsiveHeight(1),
         borderColor: '#F4F5F5',
         borderWidth: 2,
     },

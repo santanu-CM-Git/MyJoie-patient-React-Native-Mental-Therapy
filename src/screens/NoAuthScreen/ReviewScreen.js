@@ -19,7 +19,7 @@ const ReviewScreen = ({ navigation, route }) => {
 
     const [walletHistory, setWalletHistory] = React.useState([])
     const [isLoading, setIsLoading] = useState(false)
-    const [starCount, setStarCount] = useState(0)
+    const [starCount, setStarCount] = useState(5)
     const [address, setaddress] = useState('');
     const [addressError, setaddressError] = useState('')
 
