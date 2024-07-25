@@ -119,6 +119,7 @@ const TherapistList = ({ navigation, route }) => {
     const [selectedQualification, setSelectedQualification] = useState([]);
     const onSelectionsChangeQualification = (selectedQualification) => {
         // selectedFruits is array of { label, value }
+        console.log(selectedQualification,'jjjjjjjjj')
         setSelectedQualification(selectedQualification);
     };
     // Language
@@ -495,6 +496,7 @@ const TherapistList = ({ navigation, route }) => {
             const language = selectedLanguage.map(lang => lang.value);
             const pricerange = (slidervalueStart === 0 && slidervalueEnd === 0) ? [] : [slidervalueStart, slidervalueEnd];
 
+
             const filteredData = {
                 experienceRanges,
                 type,
@@ -503,7 +505,8 @@ const TherapistList = ({ navigation, route }) => {
                 ageranges,
                 qualification,
                 language,
-                pricerange
+                pricerange,
+                flag: "paid"
             };
 
             console.log(filteredData);
@@ -790,7 +793,7 @@ const TherapistList = ({ navigation, route }) => {
                                                                 <Slider
                                                                     style={styles.slider}
                                                                     minimumValue={0}
-                                                                    maximumValue={10000}
+                                                                    maximumValue={5000}
                                                                     value={slidervalueEnd}
                                                                     onValueChange={(sliderValue) => setSliderValueEnd(sliderValue)}
                                                                     minimumTrackTintColor="#417AA4"

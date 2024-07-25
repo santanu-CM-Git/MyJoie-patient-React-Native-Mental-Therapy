@@ -29,12 +29,13 @@ import Slider from '@react-native-community/slider';
 //     { label: 'Child', value: 'Child' },
 // ];
 const Experience = [
-    { label: '0 - 2 Years', value: '1' },
-    { label: '3 - 5 Years', value: '2' },
-    { label: '6 - 8 Years', value: '3' },
-    { label: '9 - 12 Years', value: '4' },
-    { label: '13 - 15 Years', value: '5' },
-    { label: '15+ Years', value: '6' }
+    { label: '0 - 2 Years', value: '0-2' },
+    { label: '3 - 5 Years', value: '2-5' },
+    { label: '6 - 8 Years', value: '6-8' },
+    { label: '9 - 12 Years', value: '9-12' },
+    { label: '13 - 15 Years', value: '13-15' },
+    { label: '15 - 20 Years', value: '15-20' },
+    { label: '20+ Years', value: '20-100' }
 ]
 const Rating = [
     { label: '1 Star', value: '1' },
@@ -44,24 +45,24 @@ const Rating = [
     { label: '5 Star', value: '5' }
 ]
 const Gender = [
-    { label: 'Male', value: '1' },
-    { label: 'Female', value: '2' },
-    { label: 'Others', value: '3' }
+    { label: 'Male', value: 'Male' },
+    { label: 'Female', value: 'Female' },
+    { label: 'Others', value: 'Others' }
 ]
 const Ages = [
-    { label: '20 - 30', value: '1' },
-    { label: '30 - 40', value: '2' },
-    { label: '40 - 50', value: '3' },
-    { label: '50 - 60', value: '4' },
-    { label: '60 above', value: '5' },
+    { label: '20 - 30', value: '20-30' },
+    { label: '30 - 40', value: '30-40' },
+    { label: '40 - 50', value: '40-50' },
+    { label: '50 - 60', value: '50-60' },
+    { label: '60 above', value: '60-100' },
 ]
-const Rate = [
-    { label: 'below 300', value: '1' },
-    { label: 'below 500', value: '2' },
-    { label: 'below 1000', value: '3' },
-    { label: 'below 2000', value: '4' },
-    { label: 'above 2000', value: '5' },
-]
+// const Rate = [
+//     { label: 'below 300', value: '1' },
+//     { label: 'below 500', value: '2' },
+//     { label: 'below 1000', value: '3' },
+//     { label: 'below 2000', value: '4' },
+//     { label: 'above 2000', value: '5' },
+// ]
 
 
 const TherapistList = ({ navigation, route }) => {
@@ -144,7 +145,7 @@ const TherapistList = ({ navigation, route }) => {
                 console.log(res.data.data, 'languageeeeeeee')
                 const languageInfo = res.data.data.map(item => ({
                     label: item.content,
-                    value: item.content,
+                    value: item.id,
                 }));
                 setqualificationitemsLanguage(languageInfo)
                 //setIsLoading(false);
@@ -162,7 +163,7 @@ const TherapistList = ({ navigation, route }) => {
             .then(res => {
                 const qualificationInfo = res.data.data.map(item => ({
                     label: item.content,
-                    value: item.content,
+                    value: item.id,
                 }));
                 setqualificationitems(qualificationInfo)
                 //setIsLoading(false);
@@ -180,7 +181,7 @@ const TherapistList = ({ navigation, route }) => {
             .then(res => {
                 const therapyTypeInfo = res.data.data.map(item => ({
                     label: item.type,
-                    value: item.type,
+                    value: item.id,
                 }));
                 setqualificationitemsType(therapyTypeInfo)
                 //setIsLoading(false);
@@ -337,7 +338,7 @@ const TherapistList = ({ navigation, route }) => {
     }
 
     const getNextAvailableSlot = (slot) => {
-        if (!slot) return 'No Available Slot For Today';
+        if (!slot) return '';
         const now = moment();
         const slotTime = moment(slot, 'HH:mm:ss');
         if (slotTime.isBefore(now, 'minute')) {
@@ -377,7 +378,7 @@ const TherapistList = ({ navigation, route }) => {
                             <Text style={styles.contentStyleRateFree}>Free for 15 Min</Text>
                         </View>
 
-                        <Text style={styles.contentStyleAvailableSlot}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
+                        <Text style={[styles.contentStyleAvailableSlot,{color: item?.instant_availability == 'on'?'#417AA4':'#444343',}]}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
                         {item?.wishlistcount == 'yes' ?
@@ -493,7 +494,8 @@ const TherapistList = ({ navigation, route }) => {
                 ageranges,
                 qualification,
                 language,
-                pricerange
+                pricerange,
+                flag: "free"
             };
 
             console.log(filteredData);
@@ -589,6 +591,7 @@ const TherapistList = ({ navigation, route }) => {
                     />
                 </View>
                 <View style={{ alignSelf: 'center' }}>
+                {therapistFilterData.length !== 0 ?
                     <FlatList
                         data={therapistFilterData}
                         renderItem={renderItem}
@@ -600,6 +603,10 @@ const TherapistList = ({ navigation, route }) => {
                             { length: 50, offset: 50 * index, index }
                         )}
                     />
+                    :
+                    <View style={[styles.totalValue,{justifyContent:'center',alignItems:'center'}]}>
+                      <Text style={styles.contentStyleName}>No Therapist Found</Text>
+                    </View>}
                 </View>
 
             </ScrollView>
@@ -748,7 +755,7 @@ const TherapistList = ({ navigation, route }) => {
                                                                 <Slider
                                                                     style={styles.slider}
                                                                     minimumValue={0}
-                                                                    maximumValue={10000}
+                                                                    maximumValue={5000}
                                                                     value={slidervalueStart}
                                                                     onValueChange={(sliderValue) => setSliderValueStart(sliderValue)}
                                                                     minimumTrackTintColor="#417AA4"
