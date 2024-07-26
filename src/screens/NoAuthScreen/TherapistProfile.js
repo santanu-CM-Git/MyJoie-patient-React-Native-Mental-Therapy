@@ -1069,7 +1069,7 @@ const styles = StyleSheet.create({
     },
     totalValuedetailsView: {
         flexDirection: 'column',
-        width: responsiveWidth(49),
+        width: responsiveWidth(50),
         height: responsiveHeight(13),
     },
     totalValueDetailsName: {

@@ -48,6 +48,7 @@
     "react-native-document-picker": "^9.0.1",
     "react-native-dotenv": "^3.4.9",
     "react-native-element-dropdown": "^2.10.0",
+    "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-gifted-chat": "^2.4.0",
     "react-native-keep-awake": "^4.0.0",

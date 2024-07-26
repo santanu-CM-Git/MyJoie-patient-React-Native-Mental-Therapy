@@ -17,14 +17,13 @@ import {
 import Modal from "react-native-modal";
 import { AuthContext } from '../../context/AuthContext';
 import { getProducts } from '../../store/productSlice'
-import Icon from 'react-native-vector-icons/Entypo';
-import { Calendar, LocaleConfig } from 'react-native-calendars';
+import FastImage from 'react-native-fast-image';
 import moment from 'moment';
 import CustomButton from '../../components/CustomButton'
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { add } from '../../store/cartSlice';
-import { dateIcon, timeIcon, yellowStarImg, qouteImg } from '../../utils/Images';
+import { dateIcon, timeIcon, yellowStarImg, qouteImg, bannerPlaceHolder } from '../../utils/Images';
 import Loader from '../../utils/Loader';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import CustomHeader from '../../components/CustomHeader';
@@ -36,6 +35,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import messaging from '@react-native-firebase/messaging';
 import LinearGradient from 'react-native-linear-gradient';
 import StarRating from 'react-native-star-rating';
+
 const data = [
   { label: 'Today', value: '1' },
   { label: 'Date Wise', value: '2' },
@@ -126,6 +126,9 @@ export default function HomeScreen({ navigation }) {
         let banner = res.data.data;
         console.log(banner, 'banner data')
         setBannerData(banner)
+        banner.forEach(item => {
+          Image.prefetch(item.banner_image);
+        });
         //setIsLoading(false);
       })
       .catch(e => {
@@ -287,9 +290,10 @@ export default function HomeScreen({ navigation }) {
     //console.log(item, 'banner itemmm')
     return (
       <View style={styles.bannaerContainer}>
-        <Image
+        <FastImage
           source={{ uri: item.banner_image }}
           style={styles.bannerBg}
+          resizeMode={FastImage.resizeMode.contain}
         />
         {/* <View style={styles.textWrap}>
           {item?.banner_title && <Text style={styles.bannerText}>{item?.banner_title}</Text>}
@@ -316,7 +320,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.nameSubText2}>
             Therapist
           </Text>
-          <View style={{ marginBottom: 5, width: responsiveWidth(25)}}>
+          <View style={{ marginBottom: 5, width: responsiveWidth(25) }}>
             <StarRating
               disabled={true}
               maxStars={5}
@@ -477,15 +481,15 @@ export default function HomeScreen({ navigation }) {
         />
         <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
         <View style={styles.verticalLine} />
-        <View style={{ width: responsiveWidth(12)}}>
-        <StarRating
-          disabled={true}
-          maxStars={5}
-          rating={item?.star}
-          fullStarColor={'#FFCB45'}
-          starSize={15}
-          starStyle={{ marginHorizontal: responsiveWidth(0.3) }}
-        />
+        <View style={{ width: responsiveWidth(12) }}>
+          <StarRating
+            disabled={true}
+            maxStars={5}
+            rating={item?.star}
+            fullStarColor={'#FFCB45'}
+            starSize={15}
+            starStyle={{ marginHorizontal: responsiveWidth(0.3) }}
+          />
         </View>
       </View>
     </View>

@@ -135,6 +135,17 @@ const Bookmarked = ({ navigation }) => {
         });
     }
 
+    const getNextAvailableSlot = (slot) => {
+        if (!slot) return 'Next Avl. Slot : Check availability';
+        const now = moment();
+        const slotTime = moment(slot, 'HH:mm:ss');
+        if (slotTime.isBefore(now, 'minute')) {
+            return `Next Avl. Slot : Tomorrow ${slotTime.format('hh:mm A')}`;
+        } else {
+            return `Next Avl. Slot : Today ${slotTime.format('hh:mm A')}`;
+        }
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.totalValue}>
             <View style={styles.totalValue1stView}>
@@ -157,9 +168,9 @@ const Bookmarked = ({ navigation }) => {
                 <View style={styles.totalValuedetailsView}>
                     <Text style={styles.totalValueDetailsName}>{item?.user?.name}</Text>
                     <Text style={styles.totalValueDetails}>Therapist</Text>
-                    <Text style={styles.totalValueDetails}>{item?.qualification_list}</Text>
-                    <Text style={styles.totalValueDetails}>{item?.experience} Year Experience</Text>
-                    <Text style={styles.totalValueDetails}>Language : <Text style={styles.totalValueDetailsLan}>{item?.languages_list}</Text></Text>
+                    <Text style={styles.totalValueDetails}>{item?.qualification_list.replace(/,/g, ', ')}</Text>
+                    <Text style={styles.totalValueDetails}>{item?.experience} Years Experience</Text>
+                    <Text style={styles.totalValueDetails}>Language : <Text style={styles.totalValueDetailsLan}>{item?.languages_list.replace(/,/g, ', ')}</Text></Text>
                 </View>
                 <View style={{ width: responsiveWidth(8), }}>
                     {item?.wishlistcount == 'yes' ?
@@ -180,7 +191,7 @@ const Bookmarked = ({ navigation }) => {
                 </View>
             </View>
             <View style={styles.profilebooking}>
-                <Text style={styles.profilebookingText}>₹{item?.rate} for 30 Min Booking</Text>
+                <Text style={styles.profilebookingText}>₹{item?.rate} for 30 Min</Text>
                 <View
                     style={{
                         height: '80%',
@@ -190,10 +201,10 @@ const Bookmarked = ({ navigation }) => {
                         marginRight: 5,
                     }}
                 />
-                <Text style={styles.profilebookingText}>Avl. Slot : Today 09:00 PM</Text>
+                <Text style={styles.profilebookingText}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
             </View>
             <View style={{ marginTop: responsiveHeight(2),marginBottom: -responsiveHeight(1) }}>
-                <CustomButton label={"Book Now"}
+                <CustomButton label={"Book Now"} buttonColor={'small'} 
                     onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id })}
                 />
             </View>
@@ -328,8 +339,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 2,
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 15,
     },
     profilebookingRateView: {
         flexDirection: 'row',
