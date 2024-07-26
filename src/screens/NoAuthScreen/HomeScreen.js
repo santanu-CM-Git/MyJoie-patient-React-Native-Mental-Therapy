@@ -23,7 +23,7 @@ import CustomButton from '../../components/CustomButton'
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { add } from '../../store/cartSlice';
-import { dateIcon, timeIcon, yellowStarImg, qouteImg, bannerPlaceHolder } from '../../utils/Images';
+import { dateIcon, timeIcon, yellowStarImg, qouteImg, bannerPlaceHolder, freebannerPlaceHolder } from '../../utils/Images';
 import Loader from '../../utils/Loader';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import CustomHeader from '../../components/CustomHeader';
@@ -291,7 +291,8 @@ export default function HomeScreen({ navigation }) {
     return (
       <View style={styles.bannaerContainer}>
         <FastImage
-          source={{ uri: item.banner_image }}
+          //source={{ uri: item.banner_image }}
+          source={freebannerPlaceHolder}
           style={styles.bannerBg}
           resizeMode={FastImage.resizeMode.contain}
         />
@@ -603,7 +604,7 @@ export default function HomeScreen({ navigation }) {
             <TouchableOpacity onPress={() => navigation.navigate('FreeTherapistList')}>
               <View style={styles.freebannerContainer}>
                 <Image
-                  source={require('../../assets/images/freeconsultation.png')}
+                  source={freebannerPlaceHolder}
                   style={styles.freebannerImg}
                 />
               </View>
@@ -719,7 +720,8 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.5)
   },
   bannaerContainer: {
-    width: responsiveWidth(89),
+    flex:1,
+    width: responsiveWidth(90),
     height: responsiveHeight(20),
     backgroundColor: '#fff',
     borderRadius: 10,
@@ -881,7 +883,7 @@ const styles = StyleSheet.create({
     marginLeft: responsiveWidth(2)
   },
   freebannerContainer: {
-    marginTop: responsiveHeight(3),
+    marginTop: responsiveHeight(1),
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -889,8 +891,8 @@ const styles = StyleSheet.create({
   freebannerImg: {
     height: responsiveHeight(20), // Adjust height based on desired aspect ratio
     width: responsiveWidth(92),   // 92% of the screen width
-    borderRadius: 10,
-    resizeMode: 'cover',
+    //borderRadius: 10,
+    resizeMode: 'contain',
   },
   previousTherapistView: {
     height: responsiveHeight(30),
