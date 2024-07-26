@@ -82,6 +82,7 @@ export default function InputField({
           editable={inputType == 'nonedit' ? false : true}
           multiline={inputFieldType == 'address' ? true : false}
           placeholderTextColor="#808080"
+          selectionColor="#808080"
         />
       ) : inputType == 'searchable' ? (
         <TextInput

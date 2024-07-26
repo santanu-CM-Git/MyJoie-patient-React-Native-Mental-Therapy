@@ -172,13 +172,14 @@ const LoginScreen = ({ navigation }) => {
           <View style={{ marginBottom: responsiveHeight(2) }}>
             <Text style={styles.headerText}>Let’s get started! Enter your mobile number</Text>
           </View>
+          {mobileError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{mobileError}</Text> : <></>}
           <View style={styles.textinputview}>
             {/* <InputField
             value={'  +91'}
             inputType={'code'}
             keyboardType="numeric"
           /> */}
-            <View style={styles.countryModal}>
+            {/* <View style={styles.countryModal}>
               <TouchableOpacity
                 onPress={() => setShow(true)}
                 style={styles.countryInputView}
@@ -203,12 +204,12 @@ const LoginScreen = ({ navigation }) => {
                   },
                 }}
               />
-            </View>
+            </View> */}
             <InputField
               label={'Mobile Number'}
               keyboardType="numeric"
               value={phone}
-              inputType={''}
+              inputType={'others'}
               onChangeText={(text) => onChangeText(text)}
               helperText={mobileError}
             />
