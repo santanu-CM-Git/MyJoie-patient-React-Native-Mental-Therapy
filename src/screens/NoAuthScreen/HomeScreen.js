@@ -316,19 +316,19 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.nameSubText2}>
             Therapist
           </Text>
-          <View style={{ marginBottom: 5, width: responsiveWidth(30), }}>
+          <View style={{ marginBottom: 5, width: responsiveWidth(25)}}>
             <StarRating
               disabled={true}
               maxStars={5}
               rating={item?.display_rating}
               selectedStar={(rating) => setStarCount(rating)}
               fullStarColor={'#FFCB45'}
-              starSize={20}
+              starSize={15}
             //starStyle={{ marginHorizontal: responsiveWidth(2) }}
             />
           </View>
           <Text style={styles.nameSubText3}>
-            {item?.qualification_list}
+            {item?.qualification_list.replace(/,/g, ', ')}
           </Text>
           <Text style={styles.nameSubText2}>
             {item?.experience} Years Experience
@@ -477,14 +477,16 @@ export default function HomeScreen({ navigation }) {
         />
         <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
         <View style={styles.verticalLine} />
+        <View style={{ width: responsiveWidth(12)}}>
         <StarRating
           disabled={true}
           maxStars={5}
           rating={item?.star}
           fullStarColor={'#FFCB45'}
           starSize={15}
-          starStyle={{ marginHorizontal: responsiveWidth(0.5) }}
+          starStyle={{ marginHorizontal: responsiveWidth(0.3) }}
         />
+        </View>
       </View>
     </View>
   ));
@@ -508,7 +510,7 @@ export default function HomeScreen({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        await Promise.all([fetchProfileDetails(),fetchPreviousBooking(), fetchUpcomingBooking()]);
+        await Promise.all([fetchProfileDetails(), fetchPreviousBooking(), fetchUpcomingBooking()]);
       };
 
       fetchData();

@@ -396,9 +396,9 @@ const BookingSummary = ({ navigation, route }) => {
                             <View style={styles.profileDetailsView}>
                                 <Text style={styles.textStyle1}>{profileDetails?.user?.name}</Text>
                                 <Text style={styles.textStyle2}>Therapist</Text>
-                                <Text style={styles.textStyle2}>{profileDetails?.qualification_list}</Text>
+                                <Text style={styles.textStyle2}>{profileDetails?.qualification_list ? profileDetails.qualification_list.replace(/,/g, ', ') : ''}</Text>
                                 <Text style={styles.textStyle2}>{profileDetails?.experience} Year Experience</Text>
-                                <Text style={styles.textStyle2}>Language : <Text style={styles.innerText}>{profileDetails?.languages_list}</Text></Text>
+                                <Text style={styles.textStyle2}>Language : <Text style={styles.innerText}>{profileDetails?.languages_list ? profileDetails.languages_list.replace(/,/g, ', ') : ''}</Text></Text>
                             </View>
 
                         </View>

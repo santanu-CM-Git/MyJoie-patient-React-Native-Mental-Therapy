@@ -115,7 +115,7 @@ const SessionHistory = ({ navigation }) => {
                 <Text style={styles.summaryValue}>{item?.prescription_content}</Text>
             </View> */}
             <View style={{ marginTop: responsiveHeight(2) }}>
-                <CustomButton buttonColor={''} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
+                <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
             </View>
         </View>
     )
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     wrapper: {
-        padding: 15,
+        paddingHorizontal: 15,
         //marginBottom: responsiveHeight(1)
     },
     singleView: {

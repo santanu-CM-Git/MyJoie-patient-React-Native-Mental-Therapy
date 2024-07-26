@@ -402,7 +402,7 @@ const ScheduleScreen = ({ navigation, route }) => {
             </View>
             <View style={styles.previousBookingContentView}>
                 <Text style={styles.previousBookingContentHeader}>Order ID :</Text>
-                <Text style={styles.previousBookingContentValue}>{item?.id}</Text>
+                <Text style={styles.previousBookingContentValue}>{item?.order_id}</Text>
             </View>
             <View style={styles.previousBookingContentView}>
                 <Text style={styles.previousBookingContentHeader}>Date :</Text>
@@ -417,7 +417,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                 <Text style={styles.previousBookingContentValue}>Rs {item?.therapist_details?.rate} for 30 Min</Text>
             </View>
             <View style={{ marginTop: responsiveHeight(2) }}>
-                <CustomButton buttonColor={''} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
+                <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
             </View>
         </View>
     )
@@ -515,9 +515,9 @@ const styles = StyleSheet.create({
         //marginBottom: responsiveHeight(1)
     },
     upcomingView: {
-        width: responsiveWidth(89),
+        width: '99%',
         backgroundColor: '#FFF',
-        paddingVertical: 20,
+        paddingVertical: 15,
         paddingHorizontal: 15,
         borderRadius: 20,
         marginTop: responsiveHeight(1),
@@ -592,11 +592,14 @@ const styles = StyleSheet.create({
     previousBookingView: {
         width: '99%',
         backgroundColor: '#FFF',
-        padding: 15,
+        paddingVertical: 15,
+        paddingHorizontal: 15,
         borderRadius: 20,
-        marginTop: responsiveHeight(2),
+        marginTop: responsiveHeight(1),
+        marginBottom: responsiveHeight(1),
         borderColor: '#F4F5F5',
         borderWidth: 2,
+        paddingBottom: -responsiveHeight(1),
     },
     previousBooking1stRow: {
         flexDirection: 'row',

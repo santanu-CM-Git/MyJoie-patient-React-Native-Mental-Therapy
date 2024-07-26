@@ -4,7 +4,7 @@ import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TextInput, LongPressGestureHandler, State } from 'react-native-gesture-handler'
-import { bookmarkedFill, bookmarkedNotFill, cameraColor, chatColor, checkedImg, phoneColor, uncheckedImg,} from '../../utils/Images'
+import { bookmarkedFill, bookmarkedNotFill, cameraColor, chatColor, checkedImg, phoneColor, uncheckedImg, } from '../../utils/Images'
 import { API_URL, } from '@env'
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -335,7 +335,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     console.log(JSON.stringify(res.data.data), 'fetch all reviews')
                     if (res.data.response == true) {
                         setAllreview(res.data.data);
-                        setIsLoading(false);
+                        //setIsLoading(false);
 
                     } else {
                         console.log('not okk')
@@ -364,6 +364,12 @@ const TherapistProfile = ({ navigation, route }) => {
                     ]);
                 });
         });
+    }
+
+    const generateUniqueOrderId = () => {
+        const timestamp = Date.now(); // Current timestamp in milliseconds
+        const randomNum = Math.floor(Math.random() * 100000); // Random number between 0 and 99999
+        return `ORD-${timestamp}-${randomNum}`;
     }
 
     const submitForm = () => {
@@ -433,7 +439,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     "prescription_checked": prescription_checked,
                     "transaction_amount": totalAmount,
                     "payment_status": 'paid',
-                    "order_id": '37866876'
+                    "order_id": generateUniqueOrderId()
                 }
                 navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
             } else {
@@ -469,6 +475,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     formData.append("therapist_id", profileDetails?.user_id);
                     formData.append("slot_ids", JSON.stringify(ids));
                     formData.append("date", selectedDate);
+                    formData.append("coupon_id", '');
                     formData.append("purpose", 'purpose');
                     formData.append("mode_of_conversation", mode);
                     formData.append("payment_mode", 'free');
@@ -476,9 +483,13 @@ const TherapistProfile = ({ navigation, route }) => {
                     formData.append("prescription_checked", prescription_checked);
                     formData.append("transaction_amount", "0");
                     formData.append("payment_status", 'free');
-                    formData.append("order_id", "0");
+                    formData.append("order_id", generateUniqueOrderId());
                     formData.append("transaction_no", "0");
                     formData.append("wallet_deduction", "0");
+                    formData.append("amount", "0");
+                    formData.append("coupon_deduction", "0");
+                    formData.append("gst_amount", "0");
+
 
                     console.log(formData)
                     AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -765,9 +776,11 @@ const TherapistProfile = ({ navigation, route }) => {
                             </View>
                             <View style={styles.totalValuedetailsView}>
                                 <Text style={styles.totalValueDetailsName}>{profileDetails?.user?.name}</Text>
-                                <Text style={styles.totalValueDetails}>{profileDetails?.qualification_list}</Text>
-                                <Text style={styles.totalValueDetails}>{profileDetails?.experience} Year Experience</Text>
-                                <Text style={styles.totalValueDetails}>Language : <Text style={styles.totalValueDetailsLan}>{profileDetails?.languages_list}</Text></Text>
+                                <Text style={styles.totalValueDetails}>{profileDetails?.qualification_list ? profileDetails.qualification_list.replace(/,/g, ', ') : ''}</Text>
+                                <Text style={styles.totalValueDetails}>{profileDetails?.experience} Years Experience</Text>
+                                <Text style={styles.totalValueDetails}>Language :
+                                    <Text style={styles.totalValueDetailsLan}> {profileDetails?.languages_list ? profileDetails.languages_list.replace(/,/g, ', ') : ''}</Text>
+                                </Text>
                             </View>
                             <View style={{ width: responsiveWidth(6), }}>
                                 {profileDetails?.wishlistcount == 'yes' ?
@@ -1056,8 +1069,8 @@ const styles = StyleSheet.create({
     },
     totalValuedetailsView: {
         flexDirection: 'column',
-        width: responsiveWidth(47),
-        height: responsiveHeight(10)
+        width: responsiveWidth(49),
+        height: responsiveHeight(13),
     },
     totalValueDetailsName: {
         fontSize: responsiveFontSize(2),

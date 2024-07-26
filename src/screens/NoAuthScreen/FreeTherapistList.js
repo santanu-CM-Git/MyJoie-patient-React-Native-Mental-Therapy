@@ -384,7 +384,7 @@ const TherapistList = ({ navigation, route }) => {
                     </View>
                     <View style={styles.contentStyle}>
                         <Text style={styles.contentStyleName}>{item?.user?.name}</Text>
-                        <Text style={styles.contentStyleQualification}>{item?.qualification_list}</Text>
+                        <Text style={styles.contentStyleQualification}>{item?.qualification_list.replace(/,/g, ', ')}</Text>
                         <Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.contentStyleLang}>Language :</Text>
