@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
         //marginBottom: responsiveHeight(1)
     },
     singleView: {
-        width: '99%',
+        width: '100%',
         backgroundColor: '#FFF',
         padding: 20,
         borderRadius: 20,

@@ -43,8 +43,6 @@ const data = [
 const BannerWidth = Dimensions.get('window').width;
 const { height, width } = Dimensions.get('screen')
 const sliderWidth = Dimensions.get('window').width;
-const itemWidth = Math.round(sliderWidth * 0.7);
-const itemHeight = Dimensions.get('window').height;
 
 export default function HomeScreen({ navigation }) {
 
@@ -669,16 +667,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingTop: responsiveHeight(1),
   },
-  bannerBg: {
-    flex: 1,
-    position: 'absolute',
-    right: 0,
-    // bottom: 20,
-    height: '100%',
-    width: '100%',
-    resizeMode: 'cover',
-    borderRadius: 10
-  },
+  
   textWrap: {
     flex: 1,
     display: 'flex',
@@ -721,8 +710,9 @@ const styles = StyleSheet.create({
   },
   bannaerContainer: {
     flex:1,
-    width: responsiveWidth(90),
-    height: responsiveHeight(20),
+    justifyContent:'center',
+    width: responsiveWidth(92),
+    height: responsiveHeight(18),
     backgroundColor: '#fff',
     borderRadius: 10,
     // shadowColor: "#000",
@@ -734,10 +724,20 @@ const styles = StyleSheet.create({
     // //shadowRadius: 4.65,
     // elevation: 7,
   },
+  bannerBg: {
+    flex: 1,
+    //position: 'absolute',
+    //right: 0,
+    // bottom: 20,
+    height: '100%',
+    width: responsiveWidth(92),
+    resizeMode: 'contain',
+    borderRadius: 10
+  },
   carouselView: {
-    marginBottom: responsiveHeight(2),
+    marginBottom: responsiveHeight(1),
     marginTop: responsiveHeight(2),
-    marginHorizontal: 20,
+    marginHorizontal: 15,
   },
   sectionHeaderView: {
     flexDirection: 'row',

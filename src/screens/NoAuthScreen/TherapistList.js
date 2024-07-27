@@ -81,7 +81,7 @@ const TherapistList = ({ navigation, route }) => {
     const sliderValuesChange = (values) => {
         setSliderValuesForPrice(values);
     };
-    const [sliderValuesForAge, setSliderValuesForAge] = useState([0, 100]);
+    const [sliderValuesForAge, setSliderValuesForAge] = useState([18, 100]);
     const sliderValuesChangeForAge = (values) => {
         setSliderValuesForAge(values);
     };
@@ -643,7 +643,7 @@ const TherapistList = ({ navigation, route }) => {
                         />
                         :
                         <View style={[styles.totalValue, { justifyContent: 'center', alignItems: 'center' }]}>
-                            <Text style={styles.contentStyleName}>No Therapist Found</Text>
+                            <Text style={[styles.contentStyleName, { marginTop: responsiveHeight(1) }]}>No Therapist Found</Text>
                         </View>}
                 </View>
 
@@ -833,7 +833,7 @@ const TherapistList = ({ navigation, route }) => {
                                                                         backgroundColor: '#417AA4',
                                                                         height: 15,
                                                                         width: 15,
-                                                                        borderRadius: 15/2,
+                                                                        borderRadius: 15 / 2,
                                                                     }}
                                                                 />
                                                                 <Text style={styles.valueText}>Price Range: ₹{sliderValuesForPrice[0]} - ₹{sliderValuesForPrice[1]}</Text>

@@ -590,7 +590,7 @@ const styles = StyleSheet.create({
         fontSize: responsiveFontSize(1.5)
     },
     previousBookingView: {
-        width: '99%',
+        width: '100%',
         backgroundColor: '#FFF',
         paddingVertical: 15,
         paddingHorizontal: 15,

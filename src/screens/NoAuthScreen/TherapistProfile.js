@@ -435,7 +435,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     "purpose": 'purpose',
                     "mode_of_conversation": mode,
                     "payment_mode": 'online',
-                    "gateway_name": 'Razorpay',
+                    "gateway_name": 'Payment From Razorpay',
                     "prescription_checked": prescription_checked,
                     "transaction_amount": totalAmount,
                     "payment_status": 'paid',
@@ -479,7 +479,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     formData.append("purpose", 'purpose');
                     formData.append("mode_of_conversation", mode);
                     formData.append("payment_mode", 'free');
-                    formData.append("gateway_name", 'free');
+                    formData.append("gateway_name", 'Free Slot Booking');
                     formData.append("prescription_checked", prescription_checked);
                     formData.append("transaction_amount", "0");
                     formData.append("payment_status", 'free');
