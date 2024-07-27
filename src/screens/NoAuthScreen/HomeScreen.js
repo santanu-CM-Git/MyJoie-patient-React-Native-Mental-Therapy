@@ -731,7 +731,7 @@ const styles = StyleSheet.create({
   bannerImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'container',
+    resizeMode: 'contain',
   },
   sectionHeaderView: {
     flexDirection: 'row',
