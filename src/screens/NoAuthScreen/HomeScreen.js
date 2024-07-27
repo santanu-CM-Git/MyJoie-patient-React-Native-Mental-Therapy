@@ -41,8 +41,12 @@ const data = [
   { label: 'Date Wise', value: '2' },
 ];
 const BannerWidth = Dimensions.get('window').width;
+const BannerHeight = 170;
 const { height, width } = Dimensions.get('screen')
 const sliderWidth = Dimensions.get('window').width;
+const paddingHorizontal = 10;
+const itemWidth = sliderWidth - (2 * paddingHorizontal);
+
 
 export default function HomeScreen({ navigation }) {
 
@@ -286,21 +290,23 @@ export default function HomeScreen({ navigation }) {
 
   const CarouselCardItem = ({ item, index }) => {
     //console.log(item, 'banner itemmm')
-    return (
-      <View style={styles.bannaerContainer}>
-        <FastImage
-          //source={{ uri: item.banner_image }}
-          source={freebannerPlaceHolder}
-          style={styles.bannerBg}
-          resizeMode={FastImage.resizeMode.contain}
-        />
-        {/* <View style={styles.textWrap}>
+    {/* <View style={styles.textWrap}>
           {item?.banner_title && <Text style={styles.bannerText}>{item?.banner_title}</Text>}
           {item?.banner_description && <Text style={styles.bannerSubText} numberOfLines={4}>{item?.banner_description}</Text>}
           <View style={styles.bannerButtonView}>
             <Text style={styles.bannerButtonText}>Call Us Today!</Text>
           </View>
         </View> */}
+    return (
+      <View style={styles.bannerContainer}>
+      <FastImage
+        //source={{ uri: item.banner_image }}
+        source={bannerPlaceHolder}
+        //source={freebannerPlaceHolder}
+        //style={{ width: BannerWidth, height: BannerHeight }}
+        style={styles.bannerImage}
+        resizeMode={FastImage.resizeMode.contain}
+      />
       </View>
     )
   }
@@ -542,7 +548,7 @@ export default function HomeScreen({ navigation }) {
               showsPageIndicator={true}
               pageSize={BannerWidth}
               sliderWidth={sliderWidth}
-              itemWidth={sliderWidth}
+              itemWidth={itemWidth}
               autoplay={true}
               autoplayTimeout={5000}
               autoplayInterval={5000}
@@ -667,7 +673,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingTop: responsiveHeight(1),
   },
-  
+
   textWrap: {
     flex: 1,
     display: 'flex',
@@ -708,36 +714,24 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans-Bold',
     fontSize: responsiveFontSize(1.5)
   },
-  bannaerContainer: {
-    flex:1,
-    justifyContent:'center',
-    width: responsiveWidth(92),
-    height: responsiveHeight(18),
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    // shadowColor: "#000",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 3,
-    // },
-    // shadowOpacity: 0.29,
-    // //shadowRadius: 4.65,
-    // elevation: 7,
-  },
-  bannerBg: {
-    flex: 1,
-    //position: 'absolute',
-    //right: 0,
-    // bottom: 20,
-    height: '100%',
-    width: responsiveWidth(92),
-    resizeMode: 'contain',
-    borderRadius: 10
-  },
   carouselView: {
-    marginBottom: responsiveHeight(1),
-    marginTop: responsiveHeight(2),
-    marginHorizontal: 15,
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    marginTop: responsiveHeight(1)
+  },
+  bannerContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: BannerHeight,
+    //backgroundColor: 'red',
+    overflow: 'hidden',
+  },
+  bannerImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'container',
   },
   sectionHeaderView: {
     flexDirection: 'row',
@@ -891,7 +885,7 @@ const styles = StyleSheet.create({
   freebannerImg: {
     height: responsiveHeight(20), // Adjust height based on desired aspect ratio
     width: responsiveWidth(92),   // 92% of the screen width
-    //borderRadius: 10,
+    borderRadius: 10,
     resizeMode: 'contain',
   },
   previousTherapistView: {

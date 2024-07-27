@@ -57,5 +57,5 @@ export const audioBgImg = require("../assets/images/audio-bg.png");
 export const defaultUserImg = require("../assets/images/default-user.png");
 export const logoIconImg = require("../assets/images/logo.png");
 export const transactionIconImg = require("../assets/images/transactionIcon.png");
-export const bannerPlaceHolder = require("../assets/images/banner-placeholder.jpeg");
+export const bannerPlaceHolder = require("../assets/images/banner-placeholder.png");
 export const freebannerPlaceHolder = require("../assets/images/freeconsultation.png");
