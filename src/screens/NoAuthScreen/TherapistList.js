@@ -462,7 +462,7 @@ const TherapistList = ({ navigation, route }) => {
                             <Text style={styles.contentStyleLangValue}> {item?.languages_list.replace(/,/g, ', ')}</Text>
                         </View>
                         <Text style={styles.contentStyleRate}>₹{item?.rate} for 30 Min</Text>
-                        <Text style={[styles.contentStyleAvailableSlot, { color: item?.instant_availability == 'on' ? '#417AA4' : '#444343', }]}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
+                        <Text style={[styles.contentStyleAvailableSlot, { color: '#417AA4' }]}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
                         {item?.wishlistcount == 'yes' ?
@@ -824,7 +824,7 @@ const TherapistList = ({ navigation, route }) => {
                                                 //         labelStyle={styles.itemText}
                                                 //     />
                                                 // </View>
-                                                <View style={{ marginTop: responsiveHeight(20), justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50)}}>
+                                                <View style={{ marginTop: responsiveHeight(20), justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
                                                     <MultiSlider
                                                         values={sliderValuesForAge}
                                                         sliderLength={180}

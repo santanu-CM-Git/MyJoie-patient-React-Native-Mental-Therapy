@@ -395,7 +395,7 @@ const TherapistList = ({ navigation, route }) => {
                             <Text style={styles.contentStyleRateFree}>Free for 15 Min</Text>
                         </View>
 
-                        <Text style={[styles.contentStyleAvailableSlot, { color: item?.instant_availability == 'on' ? '#417AA4' : '#444343', }]}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
+                        <Text style={[styles.contentStyleAvailableSlot, { color: '#417AA4' }]}>{getNextAvailableSlot(item?.firstAvailableSlot)}</Text>
                     </View>
                     <View style={{ width: responsiveWidth(6), }}>
                         {item?.wishlistcount == 'yes' ?
@@ -622,7 +622,7 @@ const TherapistList = ({ navigation, route }) => {
                         />
                         :
                         <View style={[styles.totalValue, { justifyContent: 'center', alignItems: 'center' }]}>
-                            <Text style={[styles.contentStyleName,{marginTop: responsiveHeight(1)}]}>No Therapist Found</Text>
+                            <Text style={[styles.contentStyleName, { marginTop: responsiveHeight(1) }]}>No Therapist Found</Text>
                         </View>}
                 </View>
 
@@ -746,14 +746,15 @@ const TherapistList = ({ navigation, route }) => {
                                                 //         labelStyle={styles.itemText}
                                                 //     />
                                                 // </View>
-                                                <View style={{ marginTop: 50, justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
+                                                <View style={{ marginTop: responsiveHeight(20), justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
                                                     <MultiSlider
                                                         values={sliderValuesForAge}
                                                         sliderLength={180}
                                                         onValuesChange={sliderValuesChangeForAge}
-                                                        min={0}
+                                                        min={18}
                                                         max={100}
                                                         step={1}
+                                                        vertical={true}
                                                         allowOverlap={false}
                                                         snapped
                                                         selectedStyle={{
@@ -769,7 +770,7 @@ const TherapistList = ({ navigation, route }) => {
                                                             borderRadius: 15 / 2,
                                                         }}
                                                     />
-                                                    <Text style={styles.valueText}>Age Range: ₹{sliderValuesForAge[0]} - ₹{sliderValuesForAge[1]}</Text>
+                                                    <Text style={styles.valueText}>Age Range: {sliderValuesForAge[0]} - {sliderValuesForAge[1]}</Text>
                                                 </View>
                                                 : activeTab == 'Qualification' ?
                                                     <View style={{}}>
@@ -792,7 +793,7 @@ const TherapistList = ({ navigation, route }) => {
                                                             />
                                                         </View>
                                                         : activeTab == 'Rate' ?
-                                                            <View style={{ marginTop: 50, justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
+                                                            <View style={{ marginTop: responsiveHeight(20), justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
                                                                 <MultiSlider
                                                                     values={sliderValuesForPrice}
                                                                     sliderLength={180}
@@ -800,6 +801,7 @@ const TherapistList = ({ navigation, route }) => {
                                                                     min={0}
                                                                     max={2000}
                                                                     step={1}
+                                                                    vertical={true}
                                                                     allowOverlap={false}
                                                                     snapped
                                                                     selectedStyle={{
@@ -1068,7 +1070,8 @@ const styles = StyleSheet.create({
         fontSize: responsiveFontSize(2),
         marginBottom: 10,
         color: '#2D2D2D',
-        fontFamily: 'DMSans-Regular'
+        fontFamily: 'DMSans-Regular',
+        marginTop: responsiveHeight(15)
     },
     valueTextValue: {
         fontSize: responsiveFontSize(2),

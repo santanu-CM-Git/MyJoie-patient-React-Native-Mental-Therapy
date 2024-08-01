@@ -316,7 +316,7 @@ export default function HomeScreen({ navigation }) {
 
         <Image
           source={{ uri: item?.user?.profile_pic }}
-          style={styles.cardImg}
+          style={styles.cardImgForTherapist}
         />
         <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
           <Text style={styles.nameText}>
@@ -830,7 +830,7 @@ const styles = StyleSheet.create({
     marginRight: 5
   },
   therapistCardView: {
-    width: responsiveWidth(70),
+    width: responsiveWidth(76),
     backgroundColor: '#FFF',
     marginHorizontal: 15,
     borderRadius: 20,
@@ -842,6 +842,11 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 25
+  },
+  cardImgForTherapist: {
+    height: 70,
+    width: 70,
+    borderRadius: 70/2
   },
   nameSubText2: {
     color: '#746868',
