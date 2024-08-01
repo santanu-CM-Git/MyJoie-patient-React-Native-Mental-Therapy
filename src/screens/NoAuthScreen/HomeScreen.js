@@ -300,8 +300,8 @@ export default function HomeScreen({ navigation }) {
     return (
       <View style={styles.bannerContainer}>
       <FastImage
-        //source={{ uri: item.banner_image }}
-        source={bannerPlaceHolder}
+        source={{ uri: item.banner_image }}
+        //source={bannerPlaceHolder}
         //source={freebannerPlaceHolder}
         //style={{ width: BannerWidth, height: BannerHeight }}
         style={styles.bannerImage}
