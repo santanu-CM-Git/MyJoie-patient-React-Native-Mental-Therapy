@@ -824,7 +824,7 @@ const TherapistList = ({ navigation, route }) => {
                                                 //         labelStyle={styles.itemText}
                                                 //     />
                                                 // </View>
-                                                <View style={{ marginTop: 50, justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
+                                                <View style={{ marginTop: responsiveHeight(20), justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50)}}>
                                                     <MultiSlider
                                                         values={sliderValuesForAge}
                                                         sliderLength={180}
@@ -832,6 +832,7 @@ const TherapistList = ({ navigation, route }) => {
                                                         min={18}
                                                         max={100}
                                                         step={1}
+                                                        vertical={true}
                                                         allowOverlap={false}
                                                         snapped
                                                         selectedStyle={{
@@ -847,8 +848,10 @@ const TherapistList = ({ navigation, route }) => {
                                                             borderRadius: 15 / 2,
                                                         }}
                                                     />
-                                                    <Text style={styles.valueText}>Age Range: ₹{sliderValuesForAge[0]} - ₹{sliderValuesForAge[1]}</Text>
+                                                    <Text style={styles.valueText}>Age Range: {sliderValuesForAge[0]} - {sliderValuesForAge[1]}</Text>
                                                 </View>
+
+
                                                 : activeTab == 'Qualification' ?
                                                     <View style={{}}>
                                                         <SelectMultiple
@@ -870,7 +873,7 @@ const TherapistList = ({ navigation, route }) => {
                                                             />
                                                         </View>
                                                         : activeTab == 'Rate' ?
-                                                            <View style={{ marginTop: 50, justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
+                                                            <View style={{ marginTop: responsiveHeight(20), justifyContent: 'center', alignItems: 'center', width: responsiveWidth(50) }}>
                                                                 <MultiSlider
                                                                     values={sliderValuesForPrice}
                                                                     sliderLength={180}
@@ -878,6 +881,7 @@ const TherapistList = ({ navigation, route }) => {
                                                                     min={0}
                                                                     max={2000}
                                                                     step={1}
+                                                                    vertical={true}
                                                                     allowOverlap={false}
                                                                     snapped
                                                                     selectedStyle={{
@@ -1139,7 +1143,8 @@ const styles = StyleSheet.create({
         fontSize: responsiveFontSize(2),
         marginBottom: 10,
         color: '#2D2D2D',
-        fontFamily: 'DMSans-Regular'
+        fontFamily: 'DMSans-Regular',
+        marginTop: responsiveHeight(15)
     },
     valueTextValue: {
         fontSize: responsiveFontSize(2),
