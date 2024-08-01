@@ -151,7 +151,7 @@ const TherapistList = ({ navigation, route }) => {
         })
             .then(res => {
                 //console.log(languageInfo, 'bbbbbbb')
-                //console.log(res.data.data, 'languageeeeeeee')
+                console.log(res.data.data, 'fetch language')
                 const languageInfo = res.data.data.map(item => ({
                     label: item.content,
                     value: item.id,
@@ -170,6 +170,7 @@ const TherapistList = ({ navigation, route }) => {
             },
         })
             .then(res => {
+                console.log(res.data.data, 'fetch qualification')
                 const qualificationInfo = res.data.data.map(item => ({
                     label: item.content,
                     value: item.id,
@@ -188,7 +189,7 @@ const TherapistList = ({ navigation, route }) => {
             },
         })
             .then(res => {
-                console.log(res.data.data, 'typeeeee')
+                console.log(res.data.data, 'fetch therapist type')
                 const therapyTypeInfo = res.data.data.map(item => ({
                     label: item.type,
                     value: item.id,
@@ -209,14 +210,45 @@ const TherapistList = ({ navigation, route }) => {
     }
 
 
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         setIsLoading(true);
+    //         await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
+    //         setIsLoading(false);
+    //     };
+
+    //     fetchData();
+    //     console.log(route?.params?.comingFrom, 'nnnnnnnnnnnnnnnnnnn');
+    //     if (route?.params?.comingFrom === 'search') {
+    //         setTimeout(() => {
+    //             if (searchInputRef.current) {
+    //                 searchInputRef.current.focus();
+    //             }
+    //         }, 100);
+    //     }
+
+    // }, [])
     useEffect(() => {
         const fetchData = async () => {
-            setIsLoading(true);
-            await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
-            setIsLoading(false);
+            try {
+                setIsLoading(true);
+                // Wait for all the fetch calls to complete
+                await Promise.all([
+                    fetchAllTherapist(),
+                    fetchLanguage(),
+                    fetchQualification(),
+                    fetchTherapyType()
+                ]);
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+            } finally {
+                // Ensure the loader is turned off
+                setIsLoading(false);
+            }
         };
 
         fetchData();
+
         console.log(route?.params?.comingFrom, 'nnnnnnnnnnnnnnnnnnn');
         if (route?.params?.comingFrom === 'search') {
             setTimeout(() => {
@@ -226,19 +258,44 @@ const TherapistList = ({ navigation, route }) => {
             }, 100);
         }
 
-    }, [])
+    }, []);
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         const fetchData = async () => {
+    //             await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
+    //         };
+
+    //         fetchData();
+    //         if (searchInputRef.current) {
+    //             searchInputRef.current.focus();
+    //         }
+    //     }, [])
+    // )
     useFocusEffect(
         React.useCallback(() => {
             const fetchData = async () => {
-                await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
+                try {
+                    setIsLoading(true);
+                    await Promise.all([
+                        fetchAllTherapist(),
+                        fetchLanguage(),
+                        fetchQualification(),
+                        fetchTherapyType()
+                    ]);
+                } catch (error) {
+                    console.error("Error fetching data: ", error);
+                } finally {
+                    setIsLoading(false);
+                }
             };
 
             fetchData();
+
             if (searchInputRef.current) {
                 searchInputRef.current.focus();
             }
         }, [])
-    )
+    );
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
@@ -772,7 +829,7 @@ const TherapistList = ({ navigation, route }) => {
                                                         values={sliderValuesForAge}
                                                         sliderLength={180}
                                                         onValuesChange={sliderValuesChangeForAge}
-                                                        min={0}
+                                                        min={18}
                                                         max={100}
                                                         step={1}
                                                         allowOverlap={false}

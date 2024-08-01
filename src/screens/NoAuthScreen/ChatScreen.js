@@ -710,18 +710,21 @@ const ChatScreen = ({ navigation, route }) => {
       console.log(e);
     }
   };
-
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
   const goingToactiveTab = async (name) => {
     if (name === 'audio') {
+      await delay(200); // Add a delay to ensure state is properly updated
       await join();
       setActiveTab('audio');
       setVideoCall(false);
     } else if (name === 'video') {
       await leave();
+      await delay(200); // Add a delay to ensure state is properly updated
       setActiveTab('video');
       setVideoCall(true);
     } else if (name === 'chat') {
       await leave();
+      await delay(200); // Add a delay to ensure state is properly updated
       setActiveTab('chat');
       setVideoCall(false);
     }
