@@ -39,15 +39,15 @@ const ChatScreen = ({ navigation, route }) => {
     appId: AGORA_APP_ID,
     channel: route?.params?.details?.agora_channel_id,
     token: route?.params?.details?.agora_token,
-    //channel: 'testChannel',
-    //token: '007eJxTYPA0+xLFlXWof37KbOsr+4LuSTEUTr6c5PZlXsLFM7dLl81QYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZIXbZ4QVpDICND9ZNMZkYGCATxuRlKUotLnDMS8/JScxgYAMU4JJ8='
+    //channel: 'test',
+    //token: '007eJxTYDBXvZ6w7M65+9tzI0+ensOX8svb0bfQKNty5a9lPyoPtHAqMJiZphmZpCWmJKcaGpmYp1laJFukmSebmycaGRulJlukfhfelNYQyMhgmvafiZEBAkF8FoaS1OISBgYA4Oohog=='
   };
   // Define basic information
   const appId = AGORA_APP_ID;
   const token = route?.params?.details?.agora_token2;
   const channelName = route?.params?.details?.agora_channel_id2;
-  //const token = '007eJxTYPA0+xLFlXWof37KbOsr+4LuSTEUTr6c5PZlXsLFM7dLl81QYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZIXbZ4QVpDICND9ZNMZkYGCATxuRlKUotLnDMS8/JScxgYAMU4JJ8=';
-  //const channelName = 'testChannel';
+  //const token = '007eJxTYDBXvZ6w7M65+9tzI0+ensOX8svb0bfQKNty5a9lPyoPtHAqMJiZphmZpCWmJKcaGpmYp1laJFukmSebmycaGRulJlukfhfelNYQyMhgmvafiZEBAkF8FoaS1OISBgYA4Oohog==';
+  //const channelName = 'test';
   const uid = 0; // Local user UID, no need to modify
 
   const rtcCallbacks = {
@@ -345,14 +345,14 @@ const ChatScreen = ({ navigation, route }) => {
       "time": currentTime
     };
     console.log(option);
-  
+
     try {
       // Retrieve user token
       const userToken = await AsyncStorage.getItem('userToken');
       if (!userToken) {
         throw new Error('User token is missing');
       }
-  
+
       // Make API request
       const res = await axios.post(`${API_URL}/patient/slot-complete`, option, {
         headers: {
@@ -360,13 +360,13 @@ const ChatScreen = ({ navigation, route }) => {
           "Authorization": 'Bearer ' + userToken,
         },
       });
-  
+
       console.log(res.data);
-  
+
       if (res.data.response === true) {
         // Uncomment and use if needed
         // stopRecording();
-  
+
         setVideoCall(false);
         await leave(); // Ensure leave completes before navigating
         navigation.navigate('ReviewScreen', {
@@ -389,7 +389,7 @@ const ChatScreen = ({ navigation, route }) => {
     } catch (e) {
       setIsLoading(false);
       console.error('Error during handleTimerEnd:', e);
-  
+
       // Handle specific API errors if available
       const errorMessage = e.response?.data?.message || 'An unexpected error occurred';
       Alert.alert('Oops..', errorMessage, [

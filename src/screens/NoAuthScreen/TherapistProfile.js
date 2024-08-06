@@ -453,6 +453,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ]);
                 } else {
+                    setIsLoading(true)
                     console.log(selectedByUser)
                     const ids = selectedByUser.flatMap(item => [item.id.toString()]);
                     console.log(ids)
@@ -482,7 +483,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     formData.append("gateway_name", 'Free Slot Booking');
                     formData.append("prescription_checked", prescription_checked);
                     formData.append("transaction_amount", "0");
-                    formData.append("payment_status", 'free');
+                    formData.append("payment_status", 'pending');
                     formData.append("order_id", generateUniqueOrderId());
                     formData.append("transaction_no", "0");
                     formData.append("wallet_deduction", "0");

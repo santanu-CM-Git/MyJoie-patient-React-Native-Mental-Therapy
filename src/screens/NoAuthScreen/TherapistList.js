@@ -564,7 +564,7 @@ const TherapistList = ({ navigation, route }) => {
             const type = selectedType.map(t => t.value);
             const rating = selectedRating.map(r => Number(r.value));
             const gender = selectedGender.map(g => g.value);
-            const ageranges = selectedAge.map(age => age.value.split('-').map(Number));
+            const ageranges = sliderValuesForAge;
             const qualification = selectedQualification.map(q => q.value);
             const language = selectedLanguage.map(lang => lang.value);
             const pricerange = sliderValuesForPrice;
