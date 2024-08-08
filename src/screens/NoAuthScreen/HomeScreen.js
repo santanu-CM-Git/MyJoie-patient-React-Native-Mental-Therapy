@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, memo } from 'react';
+import React, { useContext, useMemo, useState, useEffect, memo } from 'react';
 import {
   View,
   Text,
@@ -141,16 +141,15 @@ export default function HomeScreen({ navigation }) {
   }
   const fetchCustomerSpeaks = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
-      axios.post(`${API_URL}/patient/good-reviews`, {}, {
+      axios.get(`${API_URL}/patient/customer-speaks`, {
         headers: {
           "Authorization": `Bearer ${usertoken}`,
           "Content-Type": 'application/json'
         },
       })
         .then(res => {
-          //console.log(res.data,'user details')
           let customerSpeak = res.data.data;
-          console.log(customerSpeak, 'customer speaks data')
+          //console.log(customerSpeak, 'customer speaks data')
           const limitedData = customerSpeak.slice(0, 5);
           setCustomerSpeaksData(limitedData)
           //setIsLoading(false);
@@ -298,62 +297,66 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View> */}
     return (
-      <View style={styles.bannerContainer}>
-      <FastImage
-        source={{ uri: item.banner_image }}
-        //source={bannerPlaceHolder}
-        //source={freebannerPlaceHolder}
-        //style={{ width: BannerWidth, height: BannerHeight }}
-        style={styles.bannerImage}
-        resizeMode={FastImage.resizeMode.contain}
-      />
-      </View>
+      <Pressable onPress={() => navigation.navigate('Customer Support')}>
+        <View style={styles.bannerContainer}>
+          <FastImage
+            source={{ uri: item.banner_image }}
+            //source={bannerPlaceHolder}
+            //source={freebannerPlaceHolder}
+            //style={{ width: BannerWidth, height: BannerHeight }}
+            style={styles.bannerImage}
+            resizeMode={FastImage.resizeMode.contain}
+          />
+        </View>
+      </Pressable>
     )
   }
   const TherapistListItem = memo(({ item }) => (
-    <View style={styles.therapistCardView}>
-      <View style={{ flexDirection: 'row', padding: 15, }}>
+    <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
+      <View style={styles.therapistCardView}>
+        <View style={{ flexDirection: 'row', padding: 15, }}>
 
-        <Image
-          source={{ uri: item?.user?.profile_pic }}
-          style={styles.cardImgForTherapist}
-        />
-        <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
-          <Text style={styles.nameText}>
-            {item?.user?.name}
-          </Text>
-          <Text style={styles.nameSubText2}>
-            Therapist
-          </Text>
-          <View style={{ marginBottom: 5, width: responsiveWidth(25) }}>
-            <StarRating
-              disabled={true}
-              maxStars={5}
-              rating={item?.display_rating}
-              selectedStar={(rating) => setStarCount(rating)}
-              fullStarColor={'#FFCB45'}
-              starSize={15}
-            //starStyle={{ marginHorizontal: responsiveWidth(2) }}
-            />
-          </View>
-          <Text style={styles.nameSubText3}>
-            {item?.qualification_list.replace(/,/g, ', ')}
-          </Text>
-          <Text style={styles.nameSubText2}>
-            {item?.experience} Years Experience
-          </Text>
-        </View>
-      </View>
-      <TouchableOpacity onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
-        <View style={styles.bookapointView}>
           <Image
-            source={dateIcon}
-            style={{ height: 20, width: 20, }}
+            source={{ uri: item?.user?.profile_pic }}
+            style={styles.cardImgForTherapist}
           />
-          <Text style={styles.bookapointText}>Book Appointment</Text>
+          <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3) }}>
+            <Text style={styles.nameText}>
+              {item?.user?.name}
+            </Text>
+            <Text style={styles.nameSubText2}>
+              Therapist
+            </Text>
+            <View style={{ marginBottom: 5, width: responsiveWidth(25) }}>
+              <StarRating
+                disabled={true}
+                maxStars={5}
+                rating={item?.display_rating}
+                selectedStar={(rating) => setStarCount(rating)}
+                fullStarColor={'#FFCB45'}
+                starSize={15}
+              //starStyle={{ marginHorizontal: responsiveWidth(2) }}
+              />
+            </View>
+            <Text style={styles.nameSubText3}>
+              {item?.qualification_list.replace(/,/g, ', ')}
+            </Text>
+            <Text style={styles.nameSubText2}>
+              {item?.experience} Years Experience
+            </Text>
+          </View>
         </View>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
+          <View style={styles.bookapointView}>
+            <Image
+              source={dateIcon}
+              style={{ height: 20, width: 20, }}
+            />
+            <Text style={styles.bookapointText}>Book Appointment</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    </Pressable>
   ))
 
   const renderTherapistItem = ({ item }) => <TherapistListItem item={item} />;
@@ -381,7 +384,7 @@ export default function HomeScreen({ navigation }) {
             onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
             disabled={!isButtonEnabled}
           >
-          {/* <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}> */}
+            {/* <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}> */}
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
         </View>
@@ -465,40 +468,50 @@ export default function HomeScreen({ navigation }) {
   // renderPreviousBooking function
   const renderPreviousBooking = ({ item }) => <PreviousBookingItem item={item} />;
 
+
+  const calculateCardHeight = (quote) => {
+    const baseHeight = responsiveHeight(20); // Minimum height for short quotes
+    const additionalHeight = quote.length > 50 ? responsiveHeight(2) * Math.ceil((quote.length - 50) / 50) : 0;
+    return baseHeight + additionalHeight;
+  };
   // Memoized CustomerSpeakItem component
-  const CustomerSpeakItem = memo(({ item }) => (
-    <View style={styles.customerSpeaksView}>
-      <View style={styles.qouteImgView}>
-        <Image
-          source={qouteImg}
-          style={{ height: 20, width: 20 }}
-        />
-      </View>
-      <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
-        <Text style={styles.quoteText}>
-          {item?.review}
-        </Text>
-      </View>
-      <View style={styles.quotepersonView}>
-        <Image
-          source={{ uri: item?.patient?.profile_pic }}
-          style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
-        />
-        <Text style={styles.quotepersonName}>{item?.patient?.name}</Text>
-        <View style={styles.verticalLine} />
-        <View style={{ width: responsiveWidth(12) }}>
-          <StarRating
-            disabled={true}
-            maxStars={5}
-            rating={item?.star}
-            fullStarColor={'#FFCB45'}
-            starSize={15}
-            starStyle={{ marginHorizontal: responsiveWidth(0.3) }}
+  const CustomerSpeakItem = memo(({ item }) => {
+    const cardHeight = useMemo(() => calculateCardHeight(item?.quote), [item?.quote]);
+    return (
+      <View style={[styles.customerSpeaksView, { height: cardHeight }]}>
+        <View style={styles.qouteImgView}>
+          <Image
+            source={qouteImg}
+            style={{ height: 20, width: 20 }}
           />
         </View>
+        <View style={{ marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) }}>
+          <Text style={styles.quoteText}>
+            {item?.quote}
+          </Text>
+        </View>
+        <View style={styles.quotepersonView}>
+          <Image
+            source={{ uri: item?.user_photo }}
+            style={{ height: 40, width: 40, borderRadius: 40 / 2 }}
+          />
+          <Text style={styles.quotepersonName}>{item?.user_name}</Text>
+          <View style={styles.verticalLine} />
+          <View style={{ width: responsiveWidth(12) }}>
+            <StarRating
+              disabled={true}
+              maxStars={5}
+              rating={item?.star}
+              fullStarColor={'#FFCB45'}
+              starSize={15}
+              starStyle={{ marginHorizontal: responsiveWidth(0.3) }}
+            />
+          </View>
+        </View>
       </View>
-    </View>
-  ));
+    )
+
+  });
   // renderCustomerSpeaks function
   const renderCustomerSpeaks = ({ item }) => <CustomerSpeakItem item={item} />;
 
@@ -846,7 +859,7 @@ const styles = StyleSheet.create({
   cardImgForTherapist: {
     height: 70,
     width: 70,
-    borderRadius: 70/2
+    borderRadius: 70 / 2
   },
   nameSubText2: {
     color: '#746868',
@@ -976,7 +989,10 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 5
+    alignSelf: 'center',
+    padding: 5,
+    position: 'absolute',
+    bottom: 10
   },
   quotepersonName: {
     color: '#444343',

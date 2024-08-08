@@ -35,9 +35,9 @@ const TherapistProfile = ({ navigation, route }) => {
     const [addressError, setaddressError] = useState('')
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-    const [toggleCheckBox, setToggleCheckBox] = useState(false)
+    const [toggleCheckBox, setToggleCheckBox] = useState(true)
     const [selectedDay, setSelectedDay] = useState(null);
-    const [selectedItem, setSelectedItem] = useState(1);
+    const [selectedItem, setSelectedItem] = useState(3);
 
     const getNextSevenDays = () => {
         const days = [];
@@ -376,87 +376,19 @@ const TherapistProfile = ({ navigation, route }) => {
         console.log(selectedByUser.length, 'no of selected slot')
         console.log(profileDetails?.rate, 'rate of the therapist')
         console.log(route?.params?.mode, 'type')
-        if (selectedByUser.length === 0) {
-            Alert.alert('Oops..', 'You need to select at least one slot.', [
-                {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
-                { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ]);
-        } else {
-            if (route?.params?.mode === 'paid') {
-                const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
-                var mode = ''
-                if (selectedItem == 1) {
-                    mode = "chat"
-                } else if (selectedItem == 2) {
-                    mode = "audio"
-                } else if (selectedItem == 3) {
-                    mode = "video"
-                }
-                var prescription_checked = ''
-                if (toggleCheckBox) {
-                    prescription_checked = 'yes'
-                } else {
-                    prescription_checked = 'no'
-                }
-                const totalAmount = (selectedByUser.length * profileDetails?.rate)
-
-                console.log(profileDetails?.user_id, "therapist_id")
-                console.log(ids, 'slot_ids')
-                console.log(selectedDate, 'date')
-                console.log('purpose', 'purpose')
-                console.log(mode, 'mode_of_conversation')
-                console.log("online", 'payment_mode')
-                console.log("Razorpay", "gateway_name")
-                console.log(prescription_checked, "prescription_checked")
-                console.log(totalAmount, 'transaction_amount')
-                // const formData = new FormData();
-                // formData.append("therapist_id", profileDetails?.user_id);
-                // formData.append("slot_ids", JSON.stringify(ids));
-                // formData.append("date", selectedDate);
-                // formData.append("purpose", 'purpose');
-                // formData.append("mode_of_conversation", mode);
-                // formData.append("payment_mode", 'online');
-                // formData.append("gateway_name", 'Razorpay');
-                // formData.append("prescription_checked", prescription_checked);
-                // formData.append("transaction_amount", totalAmount);
-                // formData.append("payment_status", 'paid');
-                // formData.append("order_id", '37866876');
-                //formData.append("transaction_no", transactionId);
-                //formData.append("wallet_deduction", walletAmount);
-                //console.log(formData)
-                const option = {
-                    "therapist_id": profileDetails?.user_id,
-                    "slot_ids": JSON.stringify(ids),
-                    "date": selectedDate,
-                    "purpose": 'purpose',
-                    "mode_of_conversation": mode,
-                    "payment_mode": 'online',
-                    "gateway_name": 'Payment From Razorpay',
-                    "prescription_checked": prescription_checked,
-                    "transaction_amount": totalAmount,
-                    "payment_status": 'paid',
-                    "order_id": generateUniqueOrderId()
-                }
-                navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
+        if(toggleCheckBox === true){
+            if (selectedByUser.length === 0) {
+                Alert.alert('Oops..', 'You need to select at least one slot.', [
+                    {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                    },
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ]);
             } else {
-                if (selectedByUser.length > 1) {
-                    Alert.alert('Sorry..', 'You need to choose only one slot for a free session.', [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
-                    ]);
-                } else {
-                    setIsLoading(true)
-                    console.log(selectedByUser)
-                    const ids = selectedByUser.flatMap(item => [item.id.toString()]);
-                    console.log(ids)
+                if (route?.params?.mode === 'paid') {
+                    const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
                     var mode = ''
                     if (selectedItem == 1) {
                         mode = "chat"
@@ -471,52 +403,135 @@ const TherapistProfile = ({ navigation, route }) => {
                     } else {
                         prescription_checked = 'no'
                     }
-
-                    const formData = new FormData();
-                    formData.append("therapist_id", profileDetails?.user_id);
-                    formData.append("slot_ids", JSON.stringify(ids));
-                    formData.append("date", selectedDate);
-                    formData.append("coupon_id", '');
-                    formData.append("purpose", 'purpose');
-                    formData.append("mode_of_conversation", mode);
-                    formData.append("payment_mode", 'free');
-                    formData.append("gateway_name", 'Free Slot Booking');
-                    formData.append("prescription_checked", prescription_checked);
-                    formData.append("transaction_amount", "0");
-                    formData.append("payment_status", 'pending');
-                    formData.append("order_id", generateUniqueOrderId());
-                    formData.append("transaction_no", "0");
-                    formData.append("wallet_deduction", "0");
-                    formData.append("amount", "0");
-                    formData.append("coupon_deduction", "0");
-                    formData.append("gst_amount", "0");
-
-
-                    console.log(formData)
-                    AsyncStorage.getItem('userToken', (err, usertoken) => {
-                        axios.post(`${API_URL}/patient/slot-book`, formData, {
-                            headers: {
-                                Accept: 'application/json',
-                                'Content-Type': 'multipart/form-data',
-                                "Authorization": `Bearer ${usertoken}`,
+                    const totalAmount = (selectedByUser.length * profileDetails?.rate)
+    
+                    console.log(profileDetails?.user_id, "therapist_id")
+                    console.log(ids, 'slot_ids')
+                    console.log(selectedDate, 'date')
+                    console.log('purpose', 'purpose')
+                    console.log(mode, 'mode_of_conversation')
+                    console.log("online", 'payment_mode')
+                    console.log("Razorpay", "gateway_name")
+                    console.log(prescription_checked, "prescription_checked")
+                    console.log(totalAmount, 'transaction_amount')
+                    // const formData = new FormData();
+                    // formData.append("therapist_id", profileDetails?.user_id);
+                    // formData.append("slot_ids", JSON.stringify(ids));
+                    // formData.append("date", selectedDate);
+                    // formData.append("purpose", 'purpose');
+                    // formData.append("mode_of_conversation", mode);
+                    // formData.append("payment_mode", 'online');
+                    // formData.append("gateway_name", 'Razorpay');
+                    // formData.append("prescription_checked", prescription_checked);
+                    // formData.append("transaction_amount", totalAmount);
+                    // formData.append("payment_status", 'paid');
+                    // formData.append("order_id", '37866876');
+                    //formData.append("transaction_no", transactionId);
+                    //formData.append("wallet_deduction", walletAmount);
+                    //console.log(formData)
+                    const option = {
+                        "therapist_id": profileDetails?.user_id,
+                        "slot_ids": JSON.stringify(ids),
+                        "date": selectedDate,
+                        "purpose": 'purpose',
+                        "mode_of_conversation": mode,
+                        "payment_mode": 'online',
+                        "gateway_name": 'Payment From Razorpay',
+                        "prescription_checked": prescription_checked,
+                        "transaction_amount": totalAmount,
+                        "payment_status": 'paid',
+                        "order_id": generateUniqueOrderId()
+                    }
+                    navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
+                } else {
+                    if (selectedByUser.length > 1) {
+                        Alert.alert('Sorry..', 'You need to choose only one slot for a free session.', [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
                             },
-                        })
-                            .then(res => {
-                                console.log(JSON.stringify(res.data.data), 'submit form response')
-                                if (res.data.response == true) {
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    } else {
+                        setIsLoading(true)
+                        console.log(selectedByUser)
+                        const ids = selectedByUser.flatMap(item => [item.id.toString()]);
+                        console.log(ids)
+                        var mode = ''
+                        if (selectedItem == 1) {
+                            mode = "chat"
+                        } else if (selectedItem == 2) {
+                            mode = "audio"
+                        } else if (selectedItem == 3) {
+                            mode = "video"
+                        }
+                        var prescription_checked = ''
+                        if (toggleCheckBox) {
+                            prescription_checked = 'yes'
+                        } else {
+                            prescription_checked = 'no'
+                        }
+    
+                        const formData = new FormData();
+                        formData.append("therapist_id", profileDetails?.user_id);
+                        formData.append("slot_ids", JSON.stringify(ids));
+                        formData.append("date", selectedDate);
+                        formData.append("coupon_id", '');
+                        formData.append("purpose", 'purpose');
+                        formData.append("mode_of_conversation", mode);
+                        formData.append("payment_mode", 'free');
+                        formData.append("gateway_name", 'Free Slot Booking');
+                        formData.append("prescription_checked", prescription_checked);
+                        formData.append("transaction_amount", "0");
+                        formData.append("payment_status", 'pending');
+                        formData.append("order_id", generateUniqueOrderId());
+                        formData.append("transaction_no", "0");
+                        formData.append("wallet_deduction", "0");
+                        formData.append("amount", "0");
+                        formData.append("coupon_deduction", "0");
+                        formData.append("gst_amount", "0");
+    
+    
+                        console.log(formData)
+                        AsyncStorage.getItem('userToken', (err, usertoken) => {
+                            axios.post(`${API_URL}/patient/slot-book`, formData, {
+                                headers: {
+                                    Accept: 'application/json',
+                                    'Content-Type': 'multipart/form-data',
+                                    "Authorization": `Bearer ${usertoken}`,
+                                },
+                            })
+                                .then(res => {
+                                    console.log(JSON.stringify(res.data.data), 'submit form response')
+                                    if (res.data.response == true) {
+                                        setIsLoading(false)
+                                        Alert.alert('Oops..', res.data.message, [
+                                            {
+                                                text: 'Cancel',
+                                                onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }),
+                                                style: 'cancel',
+                                            },
+                                            { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
+                                        ]);
+                                    } else {
+                                        console.log('not okk')
+                                        setIsLoading(false)
+                                        Alert.alert('Oops..', "Something went wrong", [
+                                            {
+                                                text: 'Cancel',
+                                                onPress: () => console.log('Cancel Pressed'),
+                                                style: 'cancel',
+                                            },
+                                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                        ]);
+                                    }
+                                })
+                                .catch(e => {
                                     setIsLoading(false)
-                                    Alert.alert('Oops..', res.data.message, [
-                                        {
-                                            text: 'Cancel',
-                                            onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }),
-                                            style: 'cancel',
-                                        },
-                                        { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
-                                    ]);
-                                } else {
-                                    console.log('not okk')
-                                    setIsLoading(false)
-                                    Alert.alert('Oops..', "Something went wrong", [
+                                    console.log(`slot booking error ${e}`)
+                                    console.log(e.response)
+                                    Alert.alert('Oops..', e.response?.data?.message, [
                                         {
                                             text: 'Cancel',
                                             onPress: () => console.log('Cancel Pressed'),
@@ -524,86 +539,24 @@ const TherapistProfile = ({ navigation, route }) => {
                                         },
                                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                                     ]);
-                                }
-                            })
-                            .catch(e => {
-                                setIsLoading(false)
-                                console.log(`slot booking error ${e}`)
-                                console.log(e.response)
-                                Alert.alert('Oops..', e.response?.data?.message, [
-                                    {
-                                        text: 'Cancel',
-                                        onPress: () => console.log('Cancel Pressed'),
-                                        style: 'cancel',
-                                    },
-                                    { text: 'OK', onPress: () => console.log('OK Pressed') },
-                                ]);
-                            });
-                    });
+                                });
+                        });
+                    }
+    
                 }
-
+    
             }
-
+        }else{
+            Alert.alert('Oops..', 'You need to provide your consent to access your past medical history in order to book the appointment.', [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
         }
-
-
-        // AsyncStorage.getItem('userToken', (err, usertoken) => {
-        //     axios.post(`${API_URL}/patient/slot-book`, formData, {
-        //         headers: {
-        //             Accept: 'application/json',
-        //             'Content-Type': 'multipart/form-data',
-        //             "Authorization": `Bearer ${usertoken}`,
-        //         },
-        //     })
-        //         .then(res => {
-        //             console.log(res.data)
-        //             if (res.data.response == true) {
-        //                 setIsLoading(false)
-        //                 setSelectedByUser([])
-        //                 fetchTherapistData()
-        //                 const formattedDate = moment().format('YYYY-MM-DD');
-        //                 const dayOfWeek = moment().format('dddd');
-        //                 const index = 0;
-        //                 console.log(formattedDate);
-        //                 console.log(dayOfWeek)
-        //                 selectedDateChange(index, dayOfWeek, formattedDate)
-        //                 Alert.alert('Oops..', res.data.message, [
-        //                     {
-        //                         text: 'Cancel',
-        //                         onPress: () => console.log('Cancel Pressed'),
-        //                         style: 'cancel',
-        //                     },
-        //                     { text: 'OK', onPress: () => console.log('OK Pressed') },
-        //                 ]);
-        //             } else {
-        //                 console.log('not okk')
-        //                 setSelectedByUser([])
-        //                 setIsLoading(false)
-        //                 Alert.alert('Oops..', "Something went wrong", [
-        //                     {
-        //                         text: 'Cancel',
-        //                         onPress: () => console.log('Cancel Pressed'),
-        //                         style: 'cancel',
-        //                     },
-        //                     { text: 'OK', onPress: () => console.log('OK Pressed') },
-        //                 ]);
-        //             }
-        //         })
-        //         .catch(e => {
-        //             setIsLoading(false)
-        //             setSelectedByUser([])
-        //             console.log(`user register error ${e}`)
-        //             console.log(e.response)
-        //             Alert.alert('Oops..', e.response?.data?.message, [
-        //                 {
-        //                     text: 'Cancel',
-        //                     onPress: () => console.log('Cancel Pressed'),
-        //                     style: 'cancel',
-        //                 },
-        //                 { text: 'OK', onPress: () => console.log('OK Pressed') },
-        //             ]);
-        //         });
-        // });
+   
 
     }
 
@@ -743,7 +696,7 @@ const TherapistProfile = ({ navigation, route }) => {
         if (therapistAvailability.length === 0) {
             return responsiveHeight(10); // Set a fixed height for the "No slots available" message
         }
-        const itemHeight = responsiveHeight(5) + 20; // Item height + padding and margin
+        const itemHeight = responsiveHeight(5) + 25; // Item height + padding and margin
         const itemsPerRow = 3; // Number of items per row
         const rows = Math.ceil(therapistAvailability.length / itemsPerRow);
         const maxHeight = responsiveHeight(40); // Maximum height for the ScrollView
@@ -754,7 +707,7 @@ const TherapistProfile = ({ navigation, route }) => {
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.goBack()} title={'Therapist'} />
-            <ScrollView style={styles.wrapper}>
+            <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
                 <View style={{ alignSelf: 'center', marginTop: responsiveHeight(2) }}>
 
                     <View style={styles.totalValue}>
@@ -855,7 +808,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             <Text style={styles.warningText}>We recommend booking one hour (two continuous slots)</Text>
                         </View> : <></>}
                     <View style={styles.availableSlotView}>
-                        <ScrollView nestedScrollEnabled={true} style={{ width: responsiveWidth(90), height: calculateHeight() }}>
+                        <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={true} style={{ width: responsiveWidth(90), height: calculateHeight() }}>
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                 {therapistAvailability.length === 0 ? (
                                     <View style={styles.noSlotView}>

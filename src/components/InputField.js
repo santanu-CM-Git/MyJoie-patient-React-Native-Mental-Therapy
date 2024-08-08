@@ -84,6 +84,18 @@ export default function InputField({
           placeholderTextColor="#808080"
           selectionColor="#808080"
         />
+      )  : inputType == 'login' ? (
+        <TextInput
+          style={styles.logininput}
+          onChangeText={onChangeText}
+          value={value}
+          placeholder={label}
+          keyboardType={keyboardType}
+          editable={inputType == 'nonedit' ? false : true}
+          multiline={inputFieldType == 'address' ? true : false}
+          placeholderTextColor="#808080"
+          selectionColor="#808080"
+        />
       ) : inputType == 'searchable' ? (
         <TextInput
           style={styles.editinput}
@@ -212,6 +224,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     width: responsiveWidth(88),
+    height: responsiveHeight(7),
+  },
+  logininput:{
+    color: '#808080',
+    fontFamily: 'DMSans-Regular',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: responsiveHeight(1),
+    paddingLeft: responsiveHeight(1),
+    borderColor: '#E0E0E0',
+    borderWidth: 1,
+    borderRadius: 8,
+    width: responsiveWidth(70),
     height: responsiveHeight(7),
   },
   editinputforCupon: {
