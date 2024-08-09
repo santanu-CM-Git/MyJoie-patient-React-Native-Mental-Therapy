@@ -59,11 +59,13 @@ function App() {
   useEffect(() => {
     if (Platform.OS === 'android') {
       const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
+        console.log('Received foreground message:', JSON.stringify(remoteMessage));
         handleNotification(remoteMessage);
       });
 
       // Set up background message handler
       messaging().setBackgroundMessageHandler(async remoteMessage => {
+        console.log('Received background message:', JSON.stringify(remoteMessage));
         handleNotification(remoteMessage);
       });
 
@@ -75,8 +77,7 @@ function App() {
 
   const handleNotification = (remoteMessage) => {
     Alert.alert('A new FCM message arrived!!!', JSON.stringify(remoteMessage));
-    console.log('Received message:', JSON.stringify(remoteMessage));
-    
+
     const action = remoteMessage?.data?.action;
     if (action) {
       handleAction(action, remoteMessage);
@@ -89,7 +90,7 @@ function App() {
       });
     }
   };
-  
+
   const handleAction = (action, remoteMessage) => {
     switch (action) {
       case 'reply':
