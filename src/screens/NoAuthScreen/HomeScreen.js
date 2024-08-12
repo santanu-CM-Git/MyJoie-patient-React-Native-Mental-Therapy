@@ -857,9 +857,11 @@ const styles = StyleSheet.create({
     borderRadius: 25
   },
   cardImgForTherapist: {
-    height: 70,
+    height: 90,
     width: 70,
-    borderRadius: 70 / 2
+    borderRadius: 15,
+    resizeMode: 'contain',
+    //borderRadius: 70 / 2
   },
   nameSubText2: {
     color: '#746868',
