@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
-import { StatusBar, View, Text, LogBox, Alert } from 'react-native';
+import { StatusBar, View, Text, LogBox, Alert,Linking } from 'react-native';
 import { AuthProvider } from './src/context/AuthContext';
 import AppNav from './src/navigation/AppNav';
 import store from './src/store/store';
@@ -55,6 +55,10 @@ function App() {
     return result;
   };
 
+  const openSettings = () => {
+    Linking.openSettings();
+  };
+
   const requestPermission = async () => {
     const checkPermission = await checkNotificationPermission();
     if (checkPermission !== RESULTS.GRANTED) {
@@ -62,6 +66,11 @@ function App() {
       if (request !== RESULTS.GRANTED) {
         // permission not granted
         console.log('permission not given.')
+        Alert.alert(
+          'Notification Permission Required',
+          'Please enable notifications to stay updated.',
+          [{ text: 'OK', onPress: openSettings }]
+        );
       }
     }
   };
