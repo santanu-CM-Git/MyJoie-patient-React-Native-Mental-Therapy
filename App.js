@@ -12,11 +12,10 @@ import firebase from '@react-native-firebase/app';
 // import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PERMISSIONS, request, check } from 'react-native-permissions';
+import { PERMISSIONS, request, check, RESULTS } from 'react-native-permissions';
 import LinearGradient from 'react-native-linear-gradient';
 import { responsiveHeight } from 'react-native-responsive-dimensions';
 import SplashScreen from 'react-native-splash-screen';
-
 
 
 function App() {
@@ -46,12 +45,33 @@ function App() {
     }
   };
 
+  const requestNotificationPermission = async () => {
+    const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+    return result;
+  };
+
+  const checkNotificationPermission = async () => {
+    const result = await check(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+    return result;
+  };
+
+  const requestPermission = async () => {
+    const checkPermission = await checkNotificationPermission();
+    if (checkPermission !== RESULTS.GRANTED) {
+      const request = await requestNotificationPermission();
+      if (request !== RESULTS.GRANTED) {
+        // permission not granted
+        console.log('permission not given.')
+      }
+    }
+  };
+
   useEffect(() => {
     // Your existing useEffect code
-    // if (Platform.OS == 'android') {
-    //   requestLocationPermission();
-    //   // Your existing code continues...
-    // }
+    if (Platform.OS == 'android') {
+      requestPermission();
+      // Your existing code continues...
+    }
   }, []);
 
 
