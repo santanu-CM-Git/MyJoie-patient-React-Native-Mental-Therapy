@@ -91,6 +91,7 @@ const LoginScreen = ({ navigation }) => {
         console.log(fcmToken, 'firebase token')
         console.log(deviceId, 'device id')
         const option = {
+          //"code": countryCode,
           "mobile": phone,
           "firebase_token": fcmToken,
           //"deviceid": deviceId,
@@ -114,7 +115,7 @@ const LoginScreen = ({ navigation }) => {
               });
               alert(res.data?.otp)
               // login(res.data.token)
-              navigation.navigate('Otp', { phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name })
+              navigation.navigate('Otp', {countrycode:countryCode, phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name })
             } else {
               console.log('not okk')
               setIsLoading(false)

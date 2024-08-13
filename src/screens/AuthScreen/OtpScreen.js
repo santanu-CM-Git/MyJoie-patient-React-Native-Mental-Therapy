@@ -195,7 +195,7 @@ const OtpScreen = ({ navigation, route }) => {
                 </Text>
                 <Text
                     style={styles.subheadernum}>
-                   {route?.params?.phone}
+                   {route?.params?.countrycode} {route?.params?.phone}
                 </Text>
                 {/* <Text
                     style={styles.subheader}>
