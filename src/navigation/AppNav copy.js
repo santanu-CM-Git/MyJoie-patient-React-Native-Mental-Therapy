@@ -7,7 +7,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthStack from './AuthStack';
 import AppStack from './AppStack';
 import { AuthContext } from '../context/AuthContext';
-import { getNavigationRef } from './NavigationService'; // Import the navigation ref
 
 const AppNav = () => {
     const { isLoading, userToken } = useContext(AuthContext)
@@ -21,7 +20,7 @@ const AppNav = () => {
     }
     
     return (
-        <NavigationContainer ref={getNavigationRef()}>
+        <NavigationContainer>
             {userToken != null ? <AppStack /> : <AuthStack />}
         </NavigationContainer>
     );

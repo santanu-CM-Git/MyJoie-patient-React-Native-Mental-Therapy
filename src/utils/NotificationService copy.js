@@ -63,8 +63,8 @@ const handleAction = (action, remoteMessage, navigation) => {
       break;
     default:
       console.log('Unknown action:', action);
-      if (navigation && navigation.current) {
-        navigation.current.navigate('ScheduleScreen');
+      if (navigation) {
+        navigation.navigate('ScheduleScreen');
       }
       break;
   }
