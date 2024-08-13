@@ -37,17 +37,17 @@ const ChatScreen = ({ navigation, route }) => {
   const [videoCall, setVideoCall] = useState(true);
   const connectionData = {
     appId: AGORA_APP_ID,
-    channel: route?.params?.details?.agora_channel_id,
-    token: route?.params?.details?.agora_token,
-    //channel: 'test',
-    //token: '007eJxTYDBXvZ6w7M65+9tzI0+ensOX8svb0bfQKNty5a9lPyoPtHAqMJiZphmZpCWmJKcaGpmYp1laJFukmSebmycaGRulJlukfhfelNYQyMhgmvafiZEBAkF8FoaS1OISBgYA4Oohog=='
+    //channel: route?.params?.details?.agora_channel_id,
+    //token: route?.params?.details?.agora_token,
+    channel: 'myjoie',
+    token: '007eJxTYPh2p08w6VWvZvDl/3IyU4w/9Po8djOcdZnnunNOZ3Cb9zMFBjPTNCOTtMSU5FRDIxPzNEuLZIs082Rz80QjY6PUZIvUjV92pTUEMjLsFCxlYIRCEJ+NIbcyKz8zlYEBAP2XIgM='
   };
   // Define basic information
   const appId = AGORA_APP_ID;
-  const token = route?.params?.details?.agora_token2;
-  const channelName = route?.params?.details?.agora_channel_id2;
-  //const token = '007eJxTYDBXvZ6w7M65+9tzI0+ensOX8svb0bfQKNty5a9lPyoPtHAqMJiZphmZpCWmJKcaGpmYp1laJFukmSebmycaGRulJlukfhfelNYQyMhgmvafiZEBAkF8FoaS1OISBgYA4Oohog==';
-  //const channelName = 'test';
+  // const token = route?.params?.details?.agora_token2;
+  // const channelName = route?.params?.details?.agora_channel_id2;
+  const token = '007eJxTYPh2p08w6VWvZvDl/3IyU4w/9Po8djOcdZnnunNOZ3Cb9zMFBjPTNCOTtMSU5FRDIxPzNEuLZIs082Rz80QjY6PUZIvUjV92pTUEMjLsFCxlYIRCEJ+NIbcyKz8zlYEBAP2XIgM=';
+  const channelName = 'myjoie';
   const uid = 0; // Local user UID, no need to modify
 
   const rtcCallbacks = {
@@ -285,57 +285,6 @@ const ChatScreen = ({ navigation, route }) => {
       { cancelable: false }
     );
   };
-
-  // const handleTimerEnd = () => {
-  //   console.log('Timer has ended. Execute your function here.');
-  //   const currentTime = moment().format('HH:mm:ss');
-  //   const option = {
-  //     "booked_slot_id": route?.params?.details?.id,
-  //     "time": currentTime
-  //   }
-  //   console.log(option)
-  //   AsyncStorage.getItem('userToken', (err, usertoken) => {
-  //     axios.post(`${API_URL}/patient/slot-complete`, option, {
-  //       headers: {
-  //         Accept: 'application/json',
-  //         "Authorization": 'Bearer ' + usertoken,
-  //       },
-  //     })
-  //       .then(res => {
-  //         console.log(res.data)
-  //         if (res.data.response == true) {
-  //           //stopRecording()
-  //           setVideoCall(false)
-  //           leave()
-  //           navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id, therapistName: route?.params?.details?.therapist?.name, therapistPic: route?.params?.details?.therapist?.profile_pic })
-  //         } else {
-  //           console.log('not okk')
-  //           setIsLoading(false)
-  //           Alert.alert('Oops..', "Something went wrong", [
-  //             {
-  //               text: 'Cancel',
-  //               onPress: () => console.log('Cancel Pressed'),
-  //               style: 'cancel',
-  //             },
-  //             { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //           ]);
-  //         }
-  //       })
-  //       .catch(e => {
-  //         setIsLoading(false)
-  //         console.log(`user update error ${e}`) 
-  //         console.log(e.response.data?.response.records)
-  //         Alert.alert('Oops..', e.response?.data?.message, [
-  //           {
-  //             text: 'Cancel',
-  //             onPress: () => console.log('Cancel Pressed'),
-  //             style: 'cancel',
-  //           },
-  //           { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //         ]);
-  //       });
-  //   });
-  // };
 
   const handleTimerEnd = async () => {
     console.log('Timer has ended. Execute your function here.');
@@ -682,6 +631,8 @@ const ChatScreen = ({ navigation, route }) => {
   };
   // Define the join method called after clicking the join channel button
   const join = async () => {
+    console.log(isJoined, 'isJoinedisJoinedisJoinedisJoined');
+
     if (isJoined) {
       return;
     }
@@ -696,7 +647,7 @@ const ChatScreen = ({ navigation, route }) => {
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
       });
     } catch (e) {
-      console.log(e);
+      console.log(e, 'join channel error');
     }
   };
   // Define the leave method called after clicking the leave channel button
@@ -707,12 +658,14 @@ const ChatScreen = ({ navigation, route }) => {
       setIsJoined(false);
       showMessage('Left the channel');
     } catch (e) {
-      console.log(e);
+      console.log(e, 'leave channel error');
     }
   };
   const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
   const goingToactiveTab = async (name) => {
     if (name === 'audio') {
+      await leave();
       await delay(200); // Add a delay to ensure state is properly updated
       await join();
       setActiveTab('audio');
@@ -729,6 +682,37 @@ const ChatScreen = ({ navigation, route }) => {
       setVideoCall(false);
     }
   };
+
+  // const goingToactiveTab = (name) => {
+  //   if (name === 'audio') {
+  //     leave()
+  //       .then(() => delay(200))
+  //       .then(() => join())
+  //       .then(() => {
+  //         setActiveTab('audio');
+  //         setVideoCall(false);
+  //       })
+  //       .catch(error => console.error(error));
+  //   } else if (name === 'video') {
+  //     leave()
+  //       .then(() => delay(200))
+  //       .then(() => {
+  //         setActiveTab('video');
+  //         setVideoCall(true);
+  //       })
+  //       .catch(error => console.error(error));
+  //   } else if (name === 'chat') {
+  //     leave()
+  //       .then(() => delay(200))
+  //       .then(() => {
+  //         setActiveTab('chat');
+  //         setVideoCall(false);
+  //       })
+  //       .catch(error => console.error(error));
+  //   }
+  // };
+
+
 
   const customPropsStyle = {
     localBtnStyles: {
