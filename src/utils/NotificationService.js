@@ -24,33 +24,71 @@ export const openSettings = () => {
   Linking.openSettings();
 };
 
+// export const requestPermission = async () => {
+//   const checkPermission = await checkNotificationPermission();
+
+//   if (checkPermission === RESULTS.GRANTED) {
+//     console.log('Notification permission already granted.');
+//     return;
+//   }
+
+//   const request = await requestNotificationPermission();
+
+//   if (request !== RESULTS.GRANTED) {
+//     Alert.alert(
+//       'Notification Permission Required',
+//       'Please enable notifications to stay updated.',
+//       [{ text: 'OK', onPress: openSettings }]
+//     );
+//   }
+// };
 export const requestPermission = async () => {
   const checkPermission = await checkNotificationPermission();
-  if (checkPermission !== RESULTS.GRANTED) {
-    const request = await requestNotificationPermission();
-    if (request !== RESULTS.GRANTED) {
-      Alert.alert(
-        'Notification Permission Required',
-        'Please enable notifications to stay updated.',
-        [{ text: 'OK', onPress: openSettings }]
-      );
-    }
+
+  console.log('Current notification permission status:', checkPermission);
+
+  if (checkPermission === RESULTS.GRANTED) {
+    console.log('Notification permission already granted.');
+    return;
+  }
+
+  if (checkPermission === RESULTS.BLOCKED) {
+    console.log('Notification permission is blocked.');
+    Alert.alert(
+      'Notification Permission Blocked',
+      'Notifications are currently blocked. Please enable them in your device settings.',
+      [{ text: 'OK', onPress: openSettings }]
+    );
+    return;
+  }
+
+  const request = await requestNotificationPermission();
+
+  console.log('Request notification permission status:', request);
+
+  if (request !== RESULTS.GRANTED) {
+    Alert.alert(
+      'Notification Permission Required',
+      'Please enable notifications to stay updated.',
+      [{ text: 'OK', onPress: openSettings }]
+    );
   }
 };
+
 
 export const handleNotification = (remoteMessage, setNotifications, setnotifyStatus, navigation) => {
   Alert.alert('A new FCM message arrived!!!', JSON.stringify(remoteMessage));
 
-  const action = remoteMessage?.data?.action;
-  if (action) {
-    handleAction(action, remoteMessage, navigation);
-  } else {
-    setNotifications(prevNotifications => {
-      const newNotifications = [...prevNotifications, remoteMessage];
-      setnotifyStatus(true);
-      return newNotifications;
-    });
-  }
+  // const action = remoteMessage?.data?.action;
+  // if (action) {
+  //   handleAction(action, remoteMessage, navigation);
+  // } else {
+  //   setNotifications(prevNotifications => {
+  //     const newNotifications = [...prevNotifications, remoteMessage];
+  //     setnotifyStatus(true);
+  //     return newNotifications;
+  //   });
+  // }
 };
 
 const handleAction = (action, remoteMessage, navigation) => {
