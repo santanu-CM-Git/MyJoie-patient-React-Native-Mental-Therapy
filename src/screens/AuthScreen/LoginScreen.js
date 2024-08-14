@@ -91,7 +91,7 @@ const LoginScreen = ({ navigation }) => {
         console.log(fcmToken, 'firebase token')
         console.log(deviceId, 'device id')
         const option = {
-          //"code": countryCode,
+          //"country_code": countryCode,
           "mobile": phone,
           "firebase_token": fcmToken,
           //"deviceid": deviceId,
