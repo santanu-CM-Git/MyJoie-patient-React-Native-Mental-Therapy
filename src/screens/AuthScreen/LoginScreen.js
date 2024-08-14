@@ -83,6 +83,8 @@ const LoginScreen = ({ navigation }) => {
     const phoneRegex = /^\d{10}$/;
     if (!phone) {
       setMobileError('Please enter Mobile no')
+    }else if(!countryCode){
+      setMobileError('Please enter Country Code.')
     } else if (!phoneRegex.test(phone)) {
       setMobileError('Please enter a 10-digit number.')
     } else {
