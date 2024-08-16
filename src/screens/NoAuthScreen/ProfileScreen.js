@@ -52,6 +52,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const concatNo = route?.params?.countrycode + '-' + route?.params?.phoneno;
   const [firstname, setFirstname] = useState('Jennifer Kourtney');
   const [firstNameError, setFirstNameError] = useState('')
+  const [countryCode, setCountryCode] = useState('')
   const [phoneno, setPhoneno] = useState('');
   const [phonenoError, setphonenoError] = useState('')
   const [email, setEmail] = useState('');
@@ -246,6 +247,7 @@ const ProfileScreen = ({ navigation, route }) => {
           console.log(userInfo, 'user data from profile api ')
           setFirstname(userInfo?.name)
           setEmail(userInfo?.email)
+          setCountryCode(userInfo?.country_code)
           setPhoneno(userInfo?.mobile)
           setDate(userInfo?.dob)
           setYearValue(userInfo?.gender)
@@ -435,7 +437,7 @@ const ProfileScreen = ({ navigation, route }) => {
               <InputField
                 label={'Mobile Number'}
                 keyboardType=" "
-                value={phoneno}
+                value={countryCode + '' + phoneno}
                 //helperText={'Please enter lastname'}
                 inputType={'nonedit'}
                 onChangeText={(text) => changePhone(text)}
@@ -587,8 +589,8 @@ const styles = StyleSheet.create({
     color: '#2F2F2F',
     marginBottom: responsiveHeight(1),
   },
-  dateView:{ height: responsiveHeight(7), width: responsiveWidth(88), borderRadius: 10, borderWidth: 1, borderColor: '#E0E0E0', marginBottom: responsiveHeight(2), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 },
-  dayname:{
+  dateView: { height: responsiveHeight(7), width: responsiveWidth(88), borderRadius: 10, borderWidth: 1, borderColor: '#E0E0E0', marginBottom: responsiveHeight(2), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 },
+  dayname: {
     fontFamily: 'DMSans-Regular',
     fontSize: responsiveFontSize(1.8),
     color: '#808080',
