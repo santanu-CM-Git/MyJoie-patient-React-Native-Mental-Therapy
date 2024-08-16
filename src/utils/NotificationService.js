@@ -77,7 +77,7 @@ export const requestPermission = async () => {
 
 
 export const handleNotification = (remoteMessage, setNotifications, setnotifyStatus, navigation) => {
-  Alert.alert('A new FCM message arrived!!!', JSON.stringify(remoteMessage));
+  //Alert.alert('A new FCM message arrived!!!', JSON.stringify(remoteMessage));
 
   // const action = remoteMessage?.data?.action;
   // if (action) {
