@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, TextInput, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, TextInput, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
-import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { LongPressGestureHandler, State, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { bookmarkedFill, bookmarkedNotFill, cameraColor, chatColor, checkedImg, filterImg, phoneColor, uncheckedImg } from '../../utils/Images'
@@ -22,12 +21,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
-// const dropdowndata = [
-//     { label: 'All therapist', value: 'All' },
-//     { label: 'Individual', value: 'Individual' },
-//     { label: 'Couple', value: 'Couple' },
-//     { label: 'Child', value: 'Child' },
-// ];
 const Experience = [
     { label: '0 - 2 Years', value: '0-2' },
     { label: '3 - 5 Years', value: '2-5' },
@@ -56,17 +49,11 @@ const Ages = [
     { label: '50 - 60', value: '50-60' },
     { label: '60 above', value: '60-100' },
 ]
-// const Rate = [
-//     { label: 'below 300', value: '1' },
-//     { label: 'below 500', value: '2' },
-//     { label: 'below 1000', value: '3' },
-//     { label: 'below 2000', value: '4' },
-//     { label: 'above 2000', value: '5' },
-// ]
 
 
 const TherapistList = ({ navigation, route }) => {
 
+    const [refreshing, setRefreshing] = useState(false);
     const [value, setValue] = useState('All');
     const [isFocus, setIsFocus] = useState(false);
     const [therapistData, setTherapistData] = React.useState([])
@@ -259,7 +246,7 @@ const TherapistList = ({ navigation, route }) => {
         }
 
     }, []);
-   
+
     // useFocusEffect(
     //     React.useCallback(() => {
     //         const fetchData = async () => {
@@ -310,7 +297,7 @@ const TherapistList = ({ navigation, route }) => {
                         setTherapistData(res.data.data);
                         setTherapistFilterData(res.data.data)
                         //setIsLoading(false);
-
+                        setRefreshing(false)
                     } else {
                         console.log('not okk')
                         setIsLoading(false)
@@ -445,7 +432,7 @@ const TherapistList = ({ navigation, route }) => {
                     <View style={styles.contentStyle}>
                         <Text style={styles.contentStyleName}>{item?.user?.name}</Text>
                         <Text style={styles.contentStyleQualification}>{item?.qualification_list.replace(/,/g, ', ')}</Text>
-                        {item?.experience?<Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text>:null}
+                        {item?.experience ? <Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text> : null}
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.contentStyleLang}>Language :</Text>
                             <Text style={styles.contentStyleLangValue}> {item?.languages_list.replace(/,/g, ', ')}</Text>
@@ -611,7 +598,14 @@ const TherapistList = ({ navigation, route }) => {
         }
     };
 
-
+    const onRefresh = () => {
+        setRefreshing(true);
+        // Call your function here to refresh the data
+        fetchAllTherapist();
+        fetchLanguage();
+        fetchQualification();
+        fetchTherapyType();
+      };
 
     return (
         <SafeAreaView style={styles.Container}>
@@ -686,6 +680,9 @@ const TherapistList = ({ navigation, route }) => {
                             getItemLayout={(therapistFilterData, index) => (
                                 { length: 50, offset: 50 * index, index }
                             )}
+                            refreshControl={
+                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
+                            }
                         />
                         :
                         <View style={[styles.totalValue, { justifyContent: 'center', alignItems: 'center' }]}>

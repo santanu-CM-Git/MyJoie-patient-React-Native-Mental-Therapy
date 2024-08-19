@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Alert } from 'react-native'
+import React, { useState, useMemo, useEffect,useCallback } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -18,6 +18,7 @@ import Toast from 'react-native-toast-message';
 
 const Bookmarked = ({ navigation }) => {
 
+    const [refreshing, setRefreshing] = useState(false);
     const [walletHistory, setWalletHistory] = React.useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [starCount, setStarCount] = useState(4)
@@ -32,6 +33,13 @@ const Bookmarked = ({ navigation }) => {
             fetchBookmarkedTherapist()
         }, [])
     )
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchBookmarkedTherapist()
+    
+        setRefreshing(false);
+      }, []);
 
     const fetchBookmarkedTherapist = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -222,7 +230,9 @@ const Bookmarked = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Bookmarked Therapist'} onPress={() => navigation.goBack()} title={'Bookmarked Therapist'} />
-            <ScrollView style={styles.wrapper}>
+            <ScrollView style={styles.wrapper} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
+            }>
                 <View style={styles.listSection}>
                     {therapistData.length != 0 ?
                         <FlatList

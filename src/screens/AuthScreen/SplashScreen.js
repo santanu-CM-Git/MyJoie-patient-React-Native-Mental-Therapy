@@ -57,7 +57,7 @@ const SplashScreen = ({ navigation }) => {
             >
                 <Animated.View style={[styles.logoContainer, { marginLeft: moveAnim }]}>
                     <Animated.Image
-                        source={require('../../assets/images/splash_icon.png')}
+                        source={require('../../assets/images/icon.png')}
                         style={[styles.image, { opacity: fadeAnim }]}
                     />
                 </Animated.View> 
@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
     image: {
         width: 100,
         height: 100,
+        resizeMode:'contain'
     },
     logoContainer: {
         flexDirection: 'row',

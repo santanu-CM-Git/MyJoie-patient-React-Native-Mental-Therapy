@@ -1,11 +1,11 @@
-import React, { useContext, useMemo, useState, useEffect, memo } from 'react';
+import React, { useContext, useMemo, useState, useEffect, memo, useCallback } from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   ScrollView,
   Image,
-  TextInput,
+  RefreshControl,
   TouchableOpacity,
   TouchableWithoutFeedback,
   FlatList,
@@ -53,6 +53,7 @@ export default function HomeScreen({ navigation }) {
   const dispatch = useDispatch();
   const { data: products, status } = useSelector(state => state.products)
   // const { userInfo } = useContext(AuthContext)
+  const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true)
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [therapistData, setTherapistData] = React.useState([])
@@ -543,6 +544,16 @@ export default function HomeScreen({ navigation }) {
     }, [])
   )
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchAllTherapist();
+    fetchProfileDetails();
+    fetchPreviousBooking();
+    fetchUpcomingBooking();
+
+    setRefreshing(false);
+  }, []);
+
   if (isLoading) {
     return (
       <Loader />
@@ -552,7 +563,9 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.Container}>
       <CustomHeader commingFrom={'Home'} onPressProfile={() => navigation.navigate('Profile')} />
-      <ScrollView>
+      <ScrollView refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
+      }>
         <View style={{ marginBottom: 10 }}>
           <View style={styles.carouselView}>
             <Carousel
@@ -617,7 +630,7 @@ export default function HomeScreen({ navigation }) {
               )}
             />
           </View>
-          {userInfo?.patient_details?.free_session === 'no' ?
+          {(userInfo?.patient_details?.free_session === 'no' && parseInt(userInfo?.offer_for_free) > 0) ? (
             <TouchableOpacity onPress={() => navigation.navigate('FreeTherapistList')}>
               <View style={styles.freebannerContainer}>
                 <Image
@@ -626,8 +639,7 @@ export default function HomeScreen({ navigation }) {
                 />
               </View>
             </TouchableOpacity>
-            : <></>
-          }
+          ) : null}
           {previousBooking.length !== 0 ?
             <View style={styles.sectionHeaderView}>
               <Text style={styles.sectionHeaderText}>Previous Therapists</Text>

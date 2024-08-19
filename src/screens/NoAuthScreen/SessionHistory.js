@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, Platform, Alert, FlatList } from 'react-native'
+import React, { useContext, useState, useEffect,useCallback } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, Image, Platform, Alert, FlatList } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
@@ -15,6 +15,7 @@ import moment from 'moment-timezone';
 
 const SessionHistory = ({ navigation }) => {
 
+    const [refreshing, setRefreshing] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [previousBooking, setPreviousBooking] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
@@ -73,6 +74,13 @@ const SessionHistory = ({ navigation }) => {
         }, [])
     )
 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchPreviousBooking()
+    
+        setRefreshing(false);
+      }, []);
+
     const renderPrevious = ({ item }) => (
 
         <View style={styles.singleView}>
@@ -128,7 +136,9 @@ const SessionHistory = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Session History'} onPress={() => navigation.goBack()} title={'Session History'} />
-            <ScrollView style={styles.wrapper}>
+            <ScrollView style={styles.wrapper} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
+            }>
                 <View style={{ marginBottom: responsiveHeight(3) }}>
                     {previousBooking.length !== 0 ?
                         <FlatList

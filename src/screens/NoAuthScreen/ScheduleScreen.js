@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, Switch, Image, Platform, Alert, FlatList, Pressable } from 'react-native'
+import React, { useContext, useState, useEffect, useRef,useCallback } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, Image, Platform, Alert, FlatList, Pressable } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import CustomButton from '../../components/CustomButton';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -22,6 +22,7 @@ import Toast from 'react-native-toast-message';
 
 const ScheduleScreen = ({ navigation, route }) => {
     const timerRef = useRef(null);
+    const [refreshing, setRefreshing] = useState(false);
     const [activeTab, setActiveTab] = useState('Upcoming')
     const [activeButtonNo, setActiveButtonNo] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
@@ -273,6 +274,21 @@ const ScheduleScreen = ({ navigation, route }) => {
         }, [])
     )
 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        if (route?.params?.activeTab === 'Upcoming' || route?.params?.activeTab === undefined) {
+            setActiveTab('Upcoming');
+            setActiveButtonNo(0);
+        } else {
+            setActiveTab('Previous');
+            setActiveButtonNo(1);
+        }
+        fetchUpcomingBooking();
+        fetchPreviousBooking();
+    
+        setRefreshing(false);
+      }, []);
+
     const renderUpcoming = ({ item }) => {
         // const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
         // const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
@@ -356,8 +372,8 @@ const ScheduleScreen = ({ navigation, route }) => {
                                 {item?.status === 'cancel' ? 'Canceled' :
                                     item?.status === 'incomplete' ? 'Incomplete' :
                                         item?.status === 'processing' ? 'Processing' :
-                                        item?.status === 'completed' ? 'Completed' :
-                                            null}
+                                            item?.status === 'completed' ? 'Completed' :
+                                                null}
                             </Text>
                         </View>
                     )}
@@ -428,10 +444,14 @@ const ScheduleScreen = ({ navigation, route }) => {
         )
     }
 
+
+
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Schedule'} onPress={() => navigation.goBack()} title={'Schedule'} />
-            <ScrollView style={styles.wrapper}>
+            <ScrollView style={styles.wrapper} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
+            }>
                 <View style={{ marginBottom: responsiveHeight(3) }}>
                     <SwitchSelector
                         initial={activeButtonNo}

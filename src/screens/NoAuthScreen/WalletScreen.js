@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions } from 'react-native'
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -13,7 +13,7 @@ import moment from "moment"
 
 
 const WalletScreen = ({ navigation }) => {
-
+    const [refreshing, setRefreshing] = useState(false);
     const [walletBalance, setWalletBalance] = React.useState(0)
     const [WalletTransaction, setWalletTransaction] = useState([])
     const [isLoading, setIsLoading] = useState(true)
@@ -22,6 +22,14 @@ const WalletScreen = ({ navigation }) => {
         fetchWalletBalance();
         fetchWalletTransaction()
     }, [])
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchWalletBalance();
+        fetchWalletTransaction();
+        setRefreshing(false);
+    }, []);
+
 
     const fetchWalletBalance = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -129,7 +137,9 @@ const WalletScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Wallet'} onPress={() => navigation.goBack()} title={'Wallet'} />
-            <ScrollView style={styles.wrapper}>
+            <ScrollView style={styles.wrapper} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
+            }>
                 <View style={{ marginBottom: responsiveHeight(5), alignSelf: 'center', marginTop: responsiveHeight(2) }}>
                     <View style={styles.totalValue}>
 

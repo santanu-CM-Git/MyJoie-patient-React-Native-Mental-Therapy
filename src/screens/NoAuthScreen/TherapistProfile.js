@@ -819,11 +819,11 @@ const TherapistProfile = ({ navigation, route }) => {
                             <Text style={styles.warningText}>We recommend booking one hour (two continuous slots)</Text>
                         </View> : <></>}
                     <View style={styles.availableSlotView}>
-                        <ScrollView nestedScrollEnabled={true} indicatorStyle='black' showsVerticalScrollIndicator={true} style={{ width: responsiveWidth(92),backgroundColor:'#EEF8FF',paddingHorizontal:5,paddingVertical:10, height: calculateHeight() }}>
+                        <ScrollView nestedScrollEnabled={true} indicatorStyle='black' showsVerticalScrollIndicator={true} style={{ width: responsiveWidth(100), backgroundColor: therapistAvailability.length === 0 ? '' : '#EAECF0', paddingHorizontal: 5, paddingVertical: 10, height: calculateHeight() }}>
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                 {therapistAvailability.length === 0 ? (
                                     <View style={styles.noSlotView}>
-                                        <Text style={styles.noSlotText}>No slots available for this date</Text>
+                                        <Text style={styles.noSlotText}>No slots available</Text>
                                     </View>
                                 ) : (
                                     therapistAvailability.map((slot, index) => {
@@ -860,62 +860,10 @@ const TherapistProfile = ({ navigation, route }) => {
                         </ScrollView>
                     </View>
                 </View>
-                {/* <View style={{ padding: responsiveWidth(2), alignSelf: 'center' }}>
-                    <View style={styles.totalValue}>
-                        <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7) }}>Appointment Time :</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
-                                <Image
-                                    source={dateIcon}
-                                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
-                                />
-                                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>Monday, 26 April</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', width: responsiveWidth(35) }}>
-                                <Image
-                                    source={timeIcon}
-                                    style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) }}
-                                />
-                                <Text style={{ color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) }}>09:00 PM</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View> */}
+
                 <View style={styles.selectedItemSection}>
                     <View style={styles.totalValue}>
                         <Text style={styles.modeText}>Select Mode</Text>
-                        {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: responsiveHeight(2) }}>
-                            <View style={{ height: responsiveHeight(11), width: responsiveWidth(25), backgroundColor: '#ECFCFA', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, padding: 5 }}>
-                                <Image
-                                    source={checkedImg}
-                                    style={{ height: 25, width: 25, resizeMode: 'contain', alignSelf: 'flex-end' }}
-                                />
-                                <Image
-                                    source={cameraColor}
-                                    style={{ height: 30, width: 30, resizeMode: 'contain', alignSelf: 'center' }}
-                                />
-                            </View>
-                            <View style={{ height: responsiveHeight(11), width: responsiveWidth(25), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, padding: 5 }}>
-                                <Image
-                                    source={uncheckedImg}
-                                    style={{ height: 25, width: 25, resizeMode: 'contain', alignSelf: 'flex-end' }}
-                                />
-                                <Image
-                                    source={phoneColor}
-                                    style={{ height: 30, width: 30, resizeMode: 'contain', alignSelf: 'center' }}
-                                />
-                            </View>
-                            <View style={{ height: responsiveHeight(11), width: responsiveWidth(25), backgroundColor: '#FFF', borderColor: '#87ADA8', borderWidth: 1, borderRadius: 10, padding: 5 }}>
-                                <Image
-                                    source={uncheckedImg}
-                                    style={{ height: 25, width: 25, resizeMode: 'contain', alignSelf: 'flex-end' }}
-                                />
-                                <Image
-                                    source={chatColor}
-                                    style={{ height: 30, width: 30, resizeMode: 'contain', alignSelf: 'center' }}
-                                />
-                            </View>
-                        </View> */}
                         <View style={styles.modeContainer}>
                             {items.map(item => (
                                 <TouchableOpacity
@@ -1120,7 +1068,7 @@ const styles = StyleSheet.create({
     },
     noSlotView: {
         height: responsiveHeight(5),
-        width: responsiveWidth(90),
+        width: responsiveWidth(85),
         padding: 10,
         backgroundColor: '#FFFFFF',
         borderColor: '#E1293B',
@@ -1128,7 +1076,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 20,
-        marginRight: 10,
+        //marginRight: 10,
         marginBottom: 10,
         alignSelf: 'center'
     },
