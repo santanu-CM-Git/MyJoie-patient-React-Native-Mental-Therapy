@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Alert } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -305,6 +305,22 @@ const TherapistProfile = ({ navigation, route }) => {
         });
     }
 
+    const handleBackButton = () => {
+        // Custom logic to handle the back button
+        navigation.navigate('TherapistList')
+        return true; // Returning true indicates that the back press is handled
+    };
+
+    useEffect(() => {
+        // Add the event listener
+        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+        // Remove the event listener on cleanup
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+        };
+    }, []);
+
 
     useEffect(() => {
         // console.log(route?.params?.detailsData, 'vvvvvvv')
@@ -317,7 +333,7 @@ const TherapistProfile = ({ navigation, route }) => {
         console.log(dayOfWeek)
         selectedDateChange(index, dayOfWeek, formattedDate)
         getAllReviewForTherapist()
-    }, [])
+    }, [route?.params?.therapistId])
 
     const getAllReviewForTherapist = () => {
         const option = {
@@ -701,7 +717,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.goBack()} title={'Therapist'} />
+            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('TherapistList')} title={'Therapist'} />
             <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
                 <View style={{ alignSelf: 'center', marginTop: responsiveHeight(2) }}>
 
@@ -803,7 +819,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             <Text style={styles.warningText}>We recommend booking one hour (two continuous slots)</Text>
                         </View> : <></>}
                     <View style={styles.availableSlotView}>
-                        <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={true} style={{ width: responsiveWidth(90), height: calculateHeight() }}>
+                        <ScrollView nestedScrollEnabled={true} indicatorStyle='black' showsVerticalScrollIndicator={true} style={{ width: responsiveWidth(92),backgroundColor:'#EEF8FF',paddingHorizontal:5,paddingVertical:10, height: calculateHeight() }}>
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                 {therapistAvailability.length === 0 ? (
                                     <View style={styles.noSlotView}>
@@ -1288,7 +1304,7 @@ const styles = StyleSheet.create({
         marginBottom: responsiveHeight(2),
         marginTop: responsiveHeight(2)
     },
-    permissionErrorStyle:{
+    permissionErrorStyle: {
         padding: responsiveWidth(2),
         marginLeft: responsiveWidth(8),
         color: '#E1293B',

@@ -312,7 +312,7 @@ export default function HomeScreen({ navigation }) {
     )
   }
   const TherapistListItem = memo(({ item }) => (
-    <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
+    <Pressable onPress={() => navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.user_id, mode: 'paid' } })}>
       <View style={styles.therapistCardView}>
         <View style={{ flexDirection: 'row', padding: 15, }}>
 
@@ -471,7 +471,7 @@ export default function HomeScreen({ navigation }) {
 
   const calculateCardHeight = (quote) => {
     const baseHeight = responsiveHeight(20); // Minimum height for short quotes
-    const additionalHeight = quote.length > 50 ? responsiveHeight(2) * Math.ceil((quote.length - 50) / 50) : 0;
+    const additionalHeight = quote.length > 50 ? responsiveHeight(2.2) * Math.ceil((quote.length - 50) / 50) : 0;
     return baseHeight + additionalHeight;
   };
   // Memoized CustomerSpeakItem component
@@ -846,7 +846,7 @@ const styles = StyleSheet.create({
     width: responsiveWidth(76),
     backgroundColor: '#FFF',
     marginHorizontal: 15,
-    borderRadius: 20,
+    borderRadius: 10,
     marginTop: responsiveHeight(1),
     marginBottom: responsiveHeight(1),
     elevation: 5
@@ -914,7 +914,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     marginHorizontal: 15,
     padding: 15,
-    borderRadius: 20,
+    borderRadius: 10,
     marginTop: responsiveHeight(2),
     marginBottom: responsiveHeight(1),
     elevation: 5
@@ -962,7 +962,7 @@ const styles = StyleSheet.create({
     width: responsiveWidth(80),
     backgroundColor: '#FFF',
     marginHorizontal: 15,
-    borderRadius: 20,
+    borderRadius: 10,
     marginTop: responsiveHeight(3),
     marginBottom: responsiveHeight(1),
     elevation: 5
