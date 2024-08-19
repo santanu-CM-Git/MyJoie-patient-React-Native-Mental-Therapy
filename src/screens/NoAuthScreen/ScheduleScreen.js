@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
         paddingVertical: 15,
         paddingHorizontal: 15,
-        borderRadius: 20,
+        borderRadius: 10,
         marginTop: responsiveHeight(1),
         marginBottom: responsiveHeight(1),
         elevation: 5,

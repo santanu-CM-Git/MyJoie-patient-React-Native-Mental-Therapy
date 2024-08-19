@@ -35,19 +35,20 @@ const ChatScreen = ({ navigation, route }) => {
 
   const routepage = useRoute();
   const [videoCall, setVideoCall] = useState(true);
+  // For video call
   const connectionData = {
     appId: AGORA_APP_ID,
-    //channel: route?.params?.details?.agora_channel_id,
-    //token: route?.params?.details?.agora_token,
-    channel: 'myjoie',
-    token: '007eJxTYPh2p08w6VWvZvDl/3IyU4w/9Po8djOcdZnnunNOZ3Cb9zMFBjPTNCOTtMSU5FRDIxPzNEuLZIs082Rz80QjY6PUZIvUjV92pTUEMjLsFCxlYIRCEJ+NIbcyKz8zlYEBAP2XIgM='
+    channel: route?.params?.details?.agora_channel_id,
+    token: route?.params?.details?.agora_token,
+    //channel: 'channel_1724075003_6ec1d41b-4866-4ec0-ac75-1cd044d97d6e',
+    //token: '007eJxTYMh3Writ8n5BH9vFmXar9rrWW+Qek53nsKVVM7Nl18G7/bEKDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapv70Pp3GwMzDIbdRkZGRgZGAB4hdhh9OYwCQzmGQBk+YMyRmJeXmpOfGG5kYmBuamBgbG8WapyYYpJoZJuiYWZma6JqnJBrqJyeamuobJKQYmJimW5ilmqYwMBgAKcDZq'
   };
-  // Define basic information
+  // For audio call
   const appId = AGORA_APP_ID;
-  // const token = route?.params?.details?.agora_token2;
-  // const channelName = route?.params?.details?.agora_channel_id2;
-  const token = '007eJxTYPh2p08w6VWvZvDl/3IyU4w/9Po8djOcdZnnunNOZ3Cb9zMFBjPTNCOTtMSU5FRDIxPzNEuLZIs082Rz80QjY6PUZIvUjV92pTUEMjLsFCxlYIRCEJ+NIbcyKz8zlYEBAP2XIgM=';
-  const channelName = 'myjoie';
+  const token = route?.params?.details?.agora_token;
+  const channelName = route?.params?.details?.agora_channel_id;
+  //const token = '007eJxTYMh3Writ8n5BH9vFmXar9rrWW+Qek53nsKVVM7Nl18G7/bEKDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapv70Pp3GwMzDIbdRkZGRgZGAB4hdhh9OYwCQzmGQBk+YMyRmJeXmpOfGG5kYmBuamBgbG8WapyYYpJoZJuiYWZma6JqnJBrqJyeamuobJKQYmJimW5ilmqYwMBgAKcDZq';
+  //const channelName = 'channel_1724075003_6ec1d41b-4866-4ec0-ac75-1cd044d97d6e';
   const uid = 0; // Local user UID, no need to modify
 
   const rtcCallbacks = {
@@ -913,26 +914,26 @@ const ChatScreen = ({ navigation, route }) => {
                   {micOn ?
                     <TouchableOpacity onPress={() => toggleMic()}>
                       <Image
-                        source={audiooffIcon}
+                        source={audioonIcon}
                         style={styles.iconStyle}
                       />
                     </TouchableOpacity> :
                     <TouchableOpacity onPress={() => toggleMic()}>
                       <Image
-                        source={audioonIcon}
+                        source={audiooffIcon}
                         style={styles.iconStyle}
                       />
                     </TouchableOpacity>}
                   {speakerOn ?
                     <TouchableOpacity onPress={() => toggleSpeaker()}>
                       <Image
-                        source={speakeroffIcon}
+                        source={speakeronIcon}
                         style={styles.iconStyle}
                       />
                     </TouchableOpacity> :
                     <TouchableOpacity onPress={() => toggleSpeaker()}>
                       <Image
-                        source={speakeronIcon}
+                        source={speakeroffIcon}
                         style={styles.iconStyle}
                       />
                     </TouchableOpacity>}

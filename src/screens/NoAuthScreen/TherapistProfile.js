@@ -737,7 +737,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                     starSize={12}
                                     starStyle={styles.starStyle}
                                 />
-                                <Text style={styles.reviewCount}>{profileDetails?.review_counter} Reviews</Text>
+                                {/* <Text style={styles.reviewCount}>{profileDetails?.review_counter} Reviews</Text> */}
                             </View>
                             <View style={styles.totalValuedetailsView}>
                                 <Text style={styles.totalValueDetailsName}>{profileDetails?.user?.name}</Text>
