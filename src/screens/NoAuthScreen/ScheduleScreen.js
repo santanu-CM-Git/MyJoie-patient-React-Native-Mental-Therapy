@@ -469,7 +469,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                             />
                             :
                             <View style={styles.upcomingView}>
-                                <Text style={styles.nodataText}>No upcoming appointment yet</Text>
+                                <Text style={styles.nodataText}>No upcoming appointments</Text>
                             </View>
                         }
                     </View>
@@ -490,7 +490,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                             />
                             :
                             <View style={styles.upcomingView}>
-                                <Text style={styles.nodataText}>No previous booking yet</Text>
+                                <Text style={styles.nodataText}>No previous appointment found</Text>
                             </View>
                         }
                     </View>

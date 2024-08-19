@@ -572,30 +572,30 @@ export default function HomeScreen({ navigation }) {
               activePageIndicatorStyle={{ backgroundColor: 'red' }}
             />
           </View>
-          <View style={styles.sectionHeaderView}>
-            <Text style={styles.sectionHeaderText}>Upcoming Appointment</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('ScheduleScreen', { activeTab: 'Upcoming' })}>
-              <Text style={styles.seeallText}>See All</Text>
-            </TouchableOpacity>
-          </View>
           {upcomingBooking.length !== 0 ?
-            <FlatList
-              data={upcomingBooking}
-              renderItem={renderUpcomingBooking}
-              keyExtractor={(item) => item.id.toString()}
-              maxToRenderPerBatch={10}
-              windowSize={5}
-              initialNumToRender={10}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              getItemLayout={(upcomingBooking, index) => (
-                { length: 50, offset: 50 * index, index }
-              )}
-            />
-            :
-            <View style={styles.upcomingView}>
-              <Text style={styles.nodataText}>No upcoming appointment yet</Text>
-            </View>}
+            <>
+              <View style={styles.sectionHeaderView}>
+                <Text style={styles.sectionHeaderText}>Upcoming Appointment</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('ScheduleScreen', { activeTab: 'Upcoming' })}>
+                  <Text style={styles.seeallText}>See All</Text>
+                </TouchableOpacity>
+              </View>
+
+              <FlatList
+                data={upcomingBooking}
+                renderItem={renderUpcomingBooking}
+                keyExtractor={(item) => item.id.toString()}
+                maxToRenderPerBatch={10}
+                windowSize={5}
+                initialNumToRender={10}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                getItemLayout={(upcomingBooking, index) => (
+                  { length: 50, offset: 50 * index, index }
+                )}
+              />
+            </>
+            : null}
           <View style={styles.sectionHeaderView}>
             <Text style={styles.sectionHeaderText}>Therapist</Text>
             <TouchableOpacity onPress={() => navigation.navigate('TherapistList')}>

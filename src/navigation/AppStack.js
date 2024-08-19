@@ -10,6 +10,8 @@ import CustomerSupport from '../screens/NoAuthScreen/CustomerSupport';
 
 import TabNavigator from './TabNavigator';
 import PrivacyPolicy from '../screens//NoAuthScreen/PrivacyPolicy';
+import CancellationPolicy from '../screens//NoAuthScreen/CancellationPolicy';
+import Termsofuse from '../screens//NoAuthScreen/Termsofuse';
 import SessionHistory from '../screens/NoAuthScreen/SessionHistory';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
 import WalletScreen from '../screens/NoAuthScreen/WalletScreen';
@@ -110,6 +112,26 @@ const AuthStack = () => {
       <Drawer.Screen
         name="Privacy Policy"
         component={PrivacyPolicy}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={PolicyIcon} style={{ width: 25,height: 25,marginRight:5}} color={color}/>
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Cancellation Policy"
+        component={CancellationPolicy}
+        options={{
+          drawerIcon: ({color}) => (
+            // <Ionicons name="settings-outline" size={22} color={color} />
+            <Image source={PolicyIcon} style={{ width: 25,height: 25,marginRight:5}} color={color}/>
+          ),
+        }}
+      />
+       <Drawer.Screen
+        name="Terms of use"
+        component={Termsofuse}
         options={{
           drawerIcon: ({color}) => (
             // <Ionicons name="settings-outline" size={22} color={color} />

@@ -83,7 +83,7 @@ const LoginScreen = ({ navigation }) => {
     const phoneRegex = /^\d{10}$/;
     if (!phone) {
       setMobileError('Please enter Mobile no')
-    }else if(!countryCode){
+    } else if (!countryCode) {
       setMobileError('Please enter Country Code.')
     } else if (!phoneRegex.test(phone)) {
       setMobileError('Please enter a 10-digit number.')
@@ -117,7 +117,7 @@ const LoginScreen = ({ navigation }) => {
               });
               alert(res.data?.otp)
               // login(res.data.token)
-              navigation.navigate('Otp', {countrycode:countryCode, phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name })
+              navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name })
             } else {
               console.log('not okk')
               setIsLoading(false)
@@ -212,9 +212,24 @@ const LoginScreen = ({ navigation }) => {
         //onPress={() => { navigation.push('Otp', { phoneno: phone }) }}
         />
       </View>
+
       <View style={styles.termsView}>
-        <Text style={styles.termsText}>By signing in you agree to our Terms & Condition and Privacy Policy</Text>
+        <Text style={styles.termsText}>
+          By signing in you agree to our{' '}
+          <Text
+            style={styles.termsLinkText}
+            onPress={() => navigation.navigate('Termsofuse')}>
+            Terms & Condition
+          </Text>{' '}
+          and{' '}
+          <Text
+            style={styles.termsLinkText}
+            onPress={() => navigation.navigate('PrivacyPolicy')}>
+            Privacy Policy
+          </Text>.
+        </Text>
       </View>
+
       {/* <Image
         source={orImg}
         style={styles.orImg}
@@ -293,13 +308,20 @@ const styles = StyleSheet.create({
   termsView: {
     marginBottom: responsiveHeight(5),
     paddingHorizontal: 20,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   termsText: {
     color: '#746868',
     fontFamily: 'DMSans-Regular',
     fontSize: responsiveFontSize(1.5),
-    textAlign: 'center'
+    textAlign: 'center',
+  },
+  termsLinkText: {
+    color: '#746868',
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.5),
+    textAlign: 'center',
+    textDecorationLine: 'underline', // Optional: to make the link look more like a link
   },
   orImg: {
     height: responsiveHeight(4),

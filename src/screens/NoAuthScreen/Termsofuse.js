@@ -8,17 +8,17 @@ import { WebView } from 'react-native-webview';
 import CustomHeader from '../../components/CustomHeader';
 import Loader from '../../utils/Loader';
 
-export default function PrivacyPolicy({ navigation }) {
+export default function Termsofuse({ navigation }) {
 
     const [isLoading, setIsLoading] = useState(false);
     const { width } = useWindowDimensions();
-    const privacyPolicyUrl = "https://www.myjoie.app/privacy-policy";
+    const privacyPolicyUrl = "https://www.myjoie.app/terms-of-use";
 
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader
-                commingFrom={'Privacy Policy'}
-                title={'Privacy Policy'}
+                commingFrom={'Terms of use'}
+                title={'Terms of use'}
                 onPress={() => navigation.goBack()}
                 onPressProfile={() => navigation.navigate('Profile')}
             />

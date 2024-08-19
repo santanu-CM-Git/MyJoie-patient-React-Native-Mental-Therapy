@@ -259,43 +259,32 @@ const TherapistList = ({ navigation, route }) => {
         }
 
     }, []);
+   
     // useFocusEffect(
     //     React.useCallback(() => {
     //         const fetchData = async () => {
-    //             await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
+    //             try {
+    //                 setIsLoading(true);
+    //                 await Promise.all([
+    //                     fetchAllTherapist(),
+    //                     fetchLanguage(),
+    //                     fetchQualification(),
+    //                     fetchTherapyType()
+    //                 ]);
+    //             } catch (error) {
+    //                 console.error("Error fetching data: ", error);
+    //             } finally {
+    //                 setIsLoading(false);
+    //             }
     //         };
 
     //         fetchData();
+
     //         if (searchInputRef.current) {
     //             searchInputRef.current.focus();
     //         }
     //     }, [])
-    // )
-    useFocusEffect(
-        React.useCallback(() => {
-            const fetchData = async () => {
-                try {
-                    setIsLoading(true);
-                    await Promise.all([
-                        fetchAllTherapist(),
-                        fetchLanguage(),
-                        fetchQualification(),
-                        fetchTherapyType()
-                    ]);
-                } catch (error) {
-                    console.error("Error fetching data: ", error);
-                } finally {
-                    setIsLoading(false);
-                }
-            };
-
-            fetchData();
-
-            if (searchInputRef.current) {
-                searchInputRef.current.focus();
-            }
-        }, [])
-    );
+    // );
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };

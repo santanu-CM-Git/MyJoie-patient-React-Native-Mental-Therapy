@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
     imageSection1st: { flexDirection: 'row', alignItems: 'center', width: responsiveWidth(30) },
     imageSection1stImg: { height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) },
     imageSection1stText: { color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) },
-    imageSection2nd: { flexDirection: 'row', alignItems: 'center', width: responsiveWidth(45) },
+    imageSection2nd: { flexDirection: 'row', alignItems: 'center', width: responsiveWidth(45),marginLeft: responsiveWidth(1.5) },
     total2Value: { width: responsiveWidth(89), backgroundColor: '#FFFFFF', height: responsiveHeight(8), marginTop: responsiveHeight(2), borderRadius: 15, padding: 10, borderColor: '#E3E3E3', borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     total2Value1stSection: { width: responsiveWidth(40), flexDirection: 'row' },
     total2Value1stSectionImg: { height: 20, width: 20, marginRight: responsiveWidth(2) },

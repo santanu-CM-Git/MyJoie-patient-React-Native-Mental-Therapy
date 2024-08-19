@@ -14,8 +14,6 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import InputField from '../../components/InputField';
@@ -29,7 +27,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import CustomHeader from '../../components/CustomHeader';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from 'react-native-element-dropdown';
-import Modal from "react-native-modal";
 import Entypo from 'react-native-vector-icons/Entypo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import moment from "moment"
@@ -49,7 +46,6 @@ const dataMarital = [
 ];
 
 const ProfileScreen = ({ navigation, route }) => {
-  const concatNo = route?.params?.countrycode + '-' + route?.params?.phoneno;
   const [firstname, setFirstname] = useState('Jennifer Kourtney');
   const [firstNameError, setFirstNameError] = useState('')
   const [countryCode, setCountryCode] = useState('')
@@ -79,86 +75,11 @@ const ProfileScreen = ({ navigation, route }) => {
   const [open, setOpen] = useState(false)
   const [dobError, setdobError] = useState('')
 
-  // const pickDocument = async () => {
-  //   try {
-  //     const result = await DocumentPicker.pick({
-  //       type: [DocumentPicker.types.allFiles],
-  //     });
+  const [isFormChanged, setIsFormChanged] = useState(false);
 
-  //     //console.log('URI: ', result[0].uri);
-  //     //console.log('Type: ', result[0].type);
-  //     //console.log('Name: ', result[0].name);
-  //     //console.log('Size: ', result[0].size);
-
-  //     setPickedDocument(result[0]);
-  //     const formData = new FormData();
-  //     console.log(pickedDocument, 'mmmmm')
-  //     if (pickedDocument != null) {
-  //       formData.append("licenseFront", {
-  //         uri: pickedDocument.uri,
-  //         type: 'image/jpeg',
-  //         name: 'photo.jpg',
-  //       });
-  //     } else {
-  //       formData.append("licenseFront", "");
-  //     }
-  //     AsyncStorage.getItem('userToken', (err, usertoken) => {
-  //       axios.post(`${API_URL}/patient/submitDocuments`, formData, {
-  //         headers: {
-  //           Accept: 'application/json',
-  //           'Content-Type': 'multipart/form-data',
-  //           "Authorization": 'Bearer ' + usertoken,
-  //         },
-  //       })
-  //         .then(res => {
-  //           console.log(res.data)
-  //           if (res.data.response == true) {
-  //             setIsLoading(false)
-  //             Toast.show({
-  //               type: 'success',
-  //               text1: 'Hello',
-  //               text2: "Profile picture updated successfully",
-  //               position: 'top',
-  //               topOffset: Platform.OS == 'ios' ? 55 : 20
-  //             });
-  //           } else {
-  //             console.log('not okk')
-  //             setIsLoading(false)
-  //             Alert.alert('Oops..', "Something went wrong", [
-  //               {
-  //                 text: 'Cancel',
-  //                 onPress: () => console.log('Cancel Pressed'),
-  //                 style: 'cancel',
-  //               },
-  //               { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //             ]);
-  //           }
-  //         })
-  //         .catch(e => {
-  //           setIsLoading(false)
-  //           console.log(`user update error ${e}`)
-  //           console.log(e.response.data?.response.records)
-  //           Alert.alert('Oops..', e.response?.data?.message, [
-  //             {
-  //               text: 'Cancel',
-  //               onPress: () => console.log('Cancel Pressed'),
-  //               style: 'cancel',
-  //             },
-  //             { text: 'OK', onPress: () => console.log('OK Pressed') },
-  //           ]);
-  //         });
-  //     });
-  //   } catch (err) {
-  //     if (DocumentPicker.isCancel(err)) {
-  //       // User cancelled the document picker
-  //       console.log('Document picker was cancelled');
-  //     } else {
-  //       console.error('Error picking document', err);
-  //     }
-  //   }
-  // };
 
   const pickDocument = async () => {
+    setIsFormChanged(true);
     try {
       const result = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
@@ -279,6 +200,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const changeFirstname = (text) => {
     setFirstname(text)
+    setIsFormChanged(true);
     if (text) {
       setFirstNameError('')
     } else {
@@ -297,6 +219,7 @@ const ProfileScreen = ({ navigation, route }) => {
   }
 
   const changeEmail = (text) => {
+    setIsFormChanged(true);
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     if (reg.test(text) === false) {
       console.log("Email is Not Correct");
@@ -344,6 +267,7 @@ const ProfileScreen = ({ navigation, route }) => {
             console.log(res.data)
             if (res.data.response == true) {
               setIsLoading(false)
+              setIsFormChanged(false)
               Toast.show({
                 type: 'success',
                 text1: 'Hello',
@@ -489,6 +413,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     setSelectedDOB(selectedDate);
                     setDate(formattedDate);
                     setdobError('')
+                    setIsFormChanged(true);
                   } else {
                     // User canceled the picker
                     setOpen(false)
@@ -519,6 +444,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 onChange={item => {
                   setYearValue(item.value);
                   setYearIsFocus(false);
+                  setIsFormChanged(true);
                 }}
               />
             </View>
@@ -545,6 +471,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 onChange={item => {
                   setMonthValue(item.value);
                   setMonthIsFocus(false);
+                  setIsFormChanged(true);
                 }}
               />
             </View>
@@ -553,13 +480,14 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
 
       </KeyboardAwareScrollView>
-      <View style={styles.buttonwrapper}>
-        <CustomButton label={"Submit For Review"}
-          // onPress={() => { login() }}
-          onPress={() => { submitForm() }}
-        />
-      </View>
-
+      {isFormChanged && (
+        <View style={styles.buttonwrapper}>
+          <CustomButton label={"Submit"}
+            // onPress={() => { login() }}
+            onPress={() => { submitForm() }}
+          />
+        </View>
+      )}
     </SafeAreaView >
   );
 };

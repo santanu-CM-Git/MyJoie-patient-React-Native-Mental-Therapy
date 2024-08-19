@@ -9,6 +9,8 @@ import ForgotPassword from '../screens/AuthScreen/ForgotPassword';
 import OtpScreen from '../screens/AuthScreen/OtpScreen';
 import PasswordChange from '../screens/AuthScreen/PasswordChange';
 import SplashScreen from '../screens/AuthScreen/SplashScreen';
+import PrivacyPolicy from '../screens/NoAuthScreen/PrivacyPolicy';
+import Termsofuse from '../screens/NoAuthScreen/Termsofuse';
 
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +26,8 @@ const AuthStack = () => {
       <Stack.Screen name="PasswordChange" component={PasswordChange} />
       <Stack.Screen name="PersonalInformation" component={PersonalInformation} />
       <Stack.Screen name="Thankyou" component={ThankYouScreen} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+      <Stack.Screen name="Termsofuse" component={Termsofuse} />
     </Stack.Navigator>
   );
 };

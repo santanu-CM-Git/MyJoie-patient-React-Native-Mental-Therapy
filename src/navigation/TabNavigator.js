@@ -18,7 +18,7 @@ import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-nat
 import PrivacyPolicy from '../screens/NoAuthScreen/PrivacyPolicy';
 import ChatScreen from '../screens/NoAuthScreen/ChatScreen';
 import ScheduleScreen from '../screens/NoAuthScreen/ScheduleScreen';
-import { talkImg } from '../utils/Images';
+import { bookmarkedFill, bookmarkedNotFill, bookmarkednotFocusedImg, calenderFocusedImg, calenderImg, homeIconFocusedImg, homeIconNotFocusedImg, talkFocusedImg, talkImg } from '../utils/Images';
 import WalletScreen from '../screens/NoAuthScreen/WalletScreen';
 import ReviewScreen from '../screens/NoAuthScreen/ReviewScreen';
 import ThankYouBookingScreen from '../screens/NoAuthScreen/ThankYouBookingScreen';
@@ -27,6 +27,7 @@ import TherapistList from '../screens/NoAuthScreen/TherapistList';
 import TherapistProfile from '../screens/NoAuthScreen/TherapistProfile';
 import FreeTherapistList from '../screens/NoAuthScreen/FreeTherapistList';
 import PaymentFailed from '../screens/NoAuthScreen/PaymentFailed';
+import Bookmarked from '../screens/NoAuthScreen/Bookmarked';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -70,20 +71,11 @@ const HomeStack = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="TherapistList"
-        component={TherapistList}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
         name="FreeTherapistList"
         component={FreeTherapistList}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="TherapistProfile"
-        component={TherapistProfile}
-        options={{ headerShown: false }}
-      />
+      
       <Stack.Screen
         name="ScheduleScreen"
         component={ScheduleScreen}
@@ -111,6 +103,11 @@ const TherapistStack = () => {
         component={TherapistList}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="TherapistProfile"
+        component={TherapistProfile}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   )
 
@@ -129,12 +126,13 @@ const ScheduleStack = () => {
 
 };
 
-const ProfileStack = () => {
+
+const BookmarkedStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="ProfileScreen"
-        component={ProfileScreen}
+        name="BookmarkedScreen"
+        component={Bookmarked}
         options={{ headerShown: false }}
       />
 
@@ -181,16 +179,16 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
-              <Ionicons name="home-outline" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }} />
+              <Image source={focused ? homeIconFocusedImg : homeIconNotFocusedImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4),resizeMode:'contain' }} />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
-            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: responsiveHeight(1) }}>HOME</Text>
+            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: responsiveHeight(1) }}>Home</Text>
           ),
         })}
       />
       <Tab.Screen
-        name="Earning"
+        name="Talk"
         component={TherapistStack}
         options={({ route }) => ({
           tabBarStyle: {
@@ -209,10 +207,7 @@ const TabNavigator = () => {
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
               {/* <FontAwesome name="rupee-sign" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }} /> */}
-              <Image
-                source={talkImg}
-                style={{ height: 22, width: 22, resizeMode: 'contain', color: color, marginTop: responsiveHeight(1.6) }}
-              />
+              <Image source={focused ? talkFocusedImg : talkImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4),resizeMode:'contain' }} />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
@@ -239,17 +234,17 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
-              <AntDesign name="calendar" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }} />
+              <Image source={focused ? calenderFocusedImg : calenderImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4),resizeMode:'contain' }} />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
-            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: responsiveHeight(1) }}>Schedule</Text>
+            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: responsiveHeight(1) }}>Appointments</Text>
           ),
         })}
       />
       <Tab.Screen
-        name="PROFILE"
-        component={ProfileStack}
+        name="BOOKMARKED"
+        component={BookmarkedStack}
         options={({ route }) => ({
           tabBarStyle: {
             display: getTabBarVisibility(route),
@@ -266,11 +261,11 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
-              <FontAwesome name="user" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }} />
+              <Image source={focused ? bookmarkedFill : bookmarkednotFocusedImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4),resizeMode:'contain' }} />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
-            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: responsiveHeight(1) }}>Profile</Text>
+            <Text style={{ color, fontSize: responsiveFontSize(1.2), marginBottom: responsiveHeight(1) }}>Bookmarked</Text>
           ),
         })}
       />
@@ -311,6 +306,8 @@ const getTabBarVisibility = route => {
   }else if (routeName == 'ScheduleScreen') {
     return 'none';
   }else if (routeName == 'PaymentFailed') {
+    return 'none';
+  }else if (routeName == 'ProfileScreen') {
     return 'none';
   } else {
     return 'flex';

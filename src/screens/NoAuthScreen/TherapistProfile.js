@@ -38,6 +38,7 @@ const TherapistProfile = ({ navigation, route }) => {
     const [toggleCheckBox, setToggleCheckBox] = useState(true)
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedItem, setSelectedItem] = useState(3);
+    const [permissionError, setPermissionError] = useState('');
 
     const getNextSevenDays = () => {
         const days = [];
@@ -376,7 +377,8 @@ const TherapistProfile = ({ navigation, route }) => {
         console.log(selectedByUser.length, 'no of selected slot')
         console.log(profileDetails?.rate, 'rate of the therapist')
         console.log(route?.params?.mode, 'type')
-        if(toggleCheckBox === true){
+        if (toggleCheckBox === true) {
+            setPermissionError('')
             if (selectedByUser.length === 0) {
                 Alert.alert('Oops..', 'You need to select at least one slot.', [
                     {
@@ -404,7 +406,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         prescription_checked = 'no'
                     }
                     const totalAmount = (selectedByUser.length * profileDetails?.rate)
-    
+
                     console.log(profileDetails?.user_id, "therapist_id")
                     console.log(ids, 'slot_ids')
                     console.log(selectedDate, 'date')
@@ -472,7 +474,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         } else {
                             prescription_checked = 'no'
                         }
-    
+
                         const formData = new FormData();
                         formData.append("therapist_id", profileDetails?.user_id);
                         formData.append("slot_ids", JSON.stringify(ids));
@@ -491,8 +493,8 @@ const TherapistProfile = ({ navigation, route }) => {
                         formData.append("amount", "0");
                         formData.append("coupon_deduction", "0");
                         formData.append("gst_amount", "0");
-    
-    
+
+
                         console.log(formData)
                         AsyncStorage.getItem('userToken', (err, usertoken) => {
                             axios.post(`${API_URL}/patient/slot-book`, formData, {
@@ -542,21 +544,14 @@ const TherapistProfile = ({ navigation, route }) => {
                                 });
                         });
                     }
-    
+
                 }
-    
+
             }
-        }else{
-            Alert.alert('Oops..', 'You need to provide your consent to access your past medical history in order to book the appointment.', [
-                {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
-                { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ]);
+        } else {
+            setPermissionError('Permission is required to proceed.')
         }
-   
+
 
     }
 
@@ -932,11 +927,15 @@ const TherapistProfile = ({ navigation, route }) => {
                     <CheckBox
                         disabled={false}
                         value={toggleCheckBox}
-                        onValueChange={(newValue) => setToggleCheckBox(newValue)}
+                        onValueChange={(newValue) => {
+                            setToggleCheckBox(newValue)
+                            setPermissionError('')
+                        }}
                         tintColors={{ true: '#444343', false: '#444343' }}
                     />
                     <Text style={styles.checkboxText}>I give my consent to the app and therapists to access my past medical history available on the platform </Text>
                 </View>
+                {permissionError ? <Text style={styles.permissionErrorStyle}>{permissionError}</Text> : null}
                 {allReview.length !== 0 ?
                     <View style={{ padding: responsiveWidth(3), }}>
                         <View style={styles.reviewSection}>
@@ -1288,6 +1287,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: responsiveHeight(2),
         marginTop: responsiveHeight(2)
+    },
+    permissionErrorStyle:{
+        padding: responsiveWidth(2),
+        marginLeft: responsiveWidth(8),
+        color: '#E1293B',
+        fontFamily: 'DMSans-Regular',
+        fontSize: responsiveFontSize(1.7)
     }
 
 });

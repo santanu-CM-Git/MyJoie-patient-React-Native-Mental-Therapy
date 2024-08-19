@@ -103,7 +103,7 @@ export default function CustomerSupport({ navigation }) {
             <ScrollView style={styles.wrapper}>
                 <Text style={styles.header}>Talk to us</Text>
                 <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), lineHeight: responsiveHeight(2.5) }}>We want to make expert advice and healthcare more accessible to everyone. Reach out to us for any queries or issues you might be facing.</Text>
-                <View style={{ flexDirection: 'row', marginTop: responsiveHeight(4), }}>
+                {/* <View style={{ flexDirection: 'row', marginTop: responsiveHeight(4), }}>
                     <View style={{ width: responsiveWidth(20), }}>
                         <View style={{ height: 40, width: 40, borderRadius: 20, backgroundColor: '#EFFBF7', justifyContent: 'center', alignItems: 'center' }}>
                             <Image
@@ -117,8 +117,8 @@ export default function CustomerSupport({ navigation }) {
                         <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7), lineHeight: responsiveHeight(2.5) }}>Connect on Whatsapp</Text>
                         <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), lineHeight: responsiveHeight(2.5) }}>Our customer team is dedicated to helping you out</Text>
                     </View>
-                </View>
-                <View style={{ borderBottomColor: '#E3E3E3', borderBottomWidth: 1, marginHorizontal: 10, marginTop: 10 }} />
+                </View> */}
+                <View style={{ borderBottomColor: '#E3E3E3', borderBottomWidth: 1, marginHorizontal: 10, marginTop: responsiveHeight(4) }} />
                 <View style={{ flexDirection: 'row', marginTop: responsiveHeight(2), }}>
                     <View style={{ width: responsiveWidth(20), }}>
                         <View style={{ height: 40, width: 40, borderRadius: 20, backgroundColor: '#FFFAEC', justifyContent: 'center', alignItems: 'center' }}>
@@ -130,9 +130,8 @@ export default function CustomerSupport({ navigation }) {
                     </View>
                     <View style={{ width: responsiveWidth(70), }}>
                         <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), lineHeight: responsiveHeight(2.5) }}>Get in touch with us</Text>
-                        <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7), lineHeight: responsiveHeight(2.5) }}>Support@swastilife.com</Text>
-                        <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), lineHeight: responsiveHeight(2.5) }}>We want to address your concerns and
-                            value your feedback</Text>
+                        <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7), lineHeight: responsiveHeight(2.5) }}>sushant.jswl13@gmail.com</Text>
+                        <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), lineHeight: responsiveHeight(2.5) }}>We value your feedback</Text>
                     </View>
                 </View>
                 
