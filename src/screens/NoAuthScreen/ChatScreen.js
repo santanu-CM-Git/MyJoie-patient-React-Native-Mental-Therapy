@@ -38,8 +38,8 @@ const ChatScreen = ({ navigation, route }) => {
   // For video call
   const connectionData = {
     appId: AGORA_APP_ID,
-    channel: route?.params?.details?.agora_channel_id,
-    token: route?.params?.details?.agora_token,
+    channel: route?.params?.details?.agora_channel_id2,
+    token: route?.params?.details?.agora_token2,
     //channel: 'channel_1724075003_6ec1d41b-4866-4ec0-ac75-1cd044d97d6e',
     //token: '007eJxTYMh3Writ8n5BH9vFmXar9rrWW+Qek53nsKVVM7Nl18G7/bEKDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapv70Pp3GwMzDIbdRkZGRgZGAB4hdhh9OYwCQzmGQBk+YMyRmJeXmpOfGG5kYmBuamBgbG8WapyYYpJoZJuiYWZma6JqnJBrqJyeamuobJKQYmJimW5ilmqYwMBgAKcDZq'
   };
