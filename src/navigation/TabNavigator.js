@@ -9,10 +9,7 @@ import HomeScreen from '../screens/NoAuthScreen/HomeScreen';
 import ProfileScreen from '../screens/NoAuthScreen/ProfileScreen';
 import NotificationScreen from '../screens/NoAuthScreen/NotificationScreen';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome5';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
+import { useFocusEffect } from '@react-navigation/native';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 
 import PrivacyPolicy from '../screens/NoAuthScreen/PrivacyPolicy';
@@ -32,7 +29,13 @@ import Bookmarked from '../screens/NoAuthScreen/Bookmarked';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-const HomeStack = () => {
+const HomeStack = ({ navigation }) => {
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reset to the initial screen (TherapistList) whenever the tab is focused
+      navigation.navigate('Home');
+    }, [navigation])
+  );
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -66,11 +69,6 @@ const HomeStack = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Summary"
-        component={BookingSummary}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
         name="FreeTherapistList"
         component={FreeTherapistList}
         options={{ headerShown: false }}
@@ -95,7 +93,13 @@ const HomeStack = () => {
   );
 };
 
-const TherapistStack = () => {
+const TherapistStack = ({ navigation }) => {
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reset to the initial screen (TherapistList) whenever the tab is focused
+      navigation.navigate('TherapistList');
+    }, [navigation])
+  );
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -106,6 +110,11 @@ const TherapistStack = () => {
       <Stack.Screen
         name="TherapistProfile"
         component={TherapistProfile}
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="Summary"
+        component={BookingSummary}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

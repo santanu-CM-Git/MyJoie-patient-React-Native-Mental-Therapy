@@ -307,7 +307,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
     const handleBackButton = () => {
         // Custom logic to handle the back button
-        navigation.navigate('TherapistList')
+        navigation.navigate('Talk', { screen: 'TherapistList'})
         return true; // Returning true indicates that the back press is handled
     };
 
@@ -460,7 +460,8 @@ const TherapistProfile = ({ navigation, route }) => {
                         "payment_status": 'paid',
                         "order_id": generateUniqueOrderId()
                     }
-                    navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
+                    // navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
+                    navigation.navigate('Talk', { screen: 'Summary', params: { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser } })
                 } else {
                     if (selectedByUser.length > 1) {
                         Alert.alert('Sorry..', 'You need to choose only one slot for a free session.', [
@@ -717,7 +718,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('TherapistList')} title={'Therapist'} />
+            <CustomHeader commingFrom={'Therapist'} onPress={() =>  navigation.navigate('Talk', { screen: 'TherapistList'})} title={'Therapist'} />
             <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
                 <View style={{ alignSelf: 'center', marginTop: responsiveHeight(2) }}>
 

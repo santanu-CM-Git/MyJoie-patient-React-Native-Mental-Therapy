@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, TextInput, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, TextInput, Image, FlatList, TouchableOpacity, BackHandler, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { LongPressGestureHandler, State, TouchableWithoutFeedback } from 'react-native-gesture-handler'
@@ -129,6 +129,23 @@ const TherapistList = ({ navigation, route }) => {
         // selectedFruits is array of { label, value }
         setSelectedRate(selectedRate);
     };
+
+
+    const handleBackButton = () => {
+        // Custom logic to handle the back button
+        navigation.navigate('HOME', { screen: 'Home'})
+        return true; // Returning true indicates that the back press is handled
+    };
+
+    useEffect(() => {
+        // Add the event listener
+        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+        // Remove the event listener on cleanup
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+        };
+    }, []);
 
     const fetchLanguage = () => {
         axios.get(`${API_URL}/languages`, {
@@ -410,7 +427,7 @@ const TherapistList = ({ navigation, route }) => {
     };
 
     const renderItem = ({ item }) => (
-        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
+        <Pressable onPress={() => navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.user_id, mode: 'paid' } })}>
             <View style={styles.totalValue}>
                 <View style={styles.totalValue1stSection}>
                     <View style={styles.profilePicSection}>
@@ -609,7 +626,7 @@ const TherapistList = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.goBack()} title={'Therapist'} />
+            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('HOME', { screen: 'Home'})} title={'Therapist'} />
             <ScrollView style={styles.wrapper}>
                 <View style={styles.filterSection}>
                     <View style={styles.filterSection1st}>
