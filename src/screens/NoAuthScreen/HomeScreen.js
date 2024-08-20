@@ -347,7 +347,7 @@ export default function HomeScreen({ navigation }) {
             </Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'paid' })}>
+        <TouchableOpacity onPress={() => navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.user_id, mode: 'paid' } })}>
           <View style={styles.bookapointView}>
             <Image
               source={dateIcon}
