@@ -46,7 +46,7 @@ const dataMarital = [
 ];
 
 const ProfileScreen = ({ navigation, route }) => {
-  const [firstname, setFirstname] = useState('Jennifer Kourtney');
+  const [firstname, setFirstname] = useState('');
   const [firstNameError, setFirstNameError] = useState('')
   const [countryCode, setCountryCode] = useState('')
   const [phoneno, setPhoneno] = useState('');
