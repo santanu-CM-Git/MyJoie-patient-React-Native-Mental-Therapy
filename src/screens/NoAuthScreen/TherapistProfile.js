@@ -819,8 +819,8 @@ const TherapistProfile = ({ navigation, route }) => {
                             <Text style={styles.warningText}>We recommend booking one hour (two continuous slots)</Text>
                         </View> : <></>}
                     <View style={styles.availableSlotView}>
-                        <ScrollView nestedScrollEnabled={true} indicatorStyle='black' showsVerticalScrollIndicator={true} style={{ width: responsiveWidth(100), backgroundColor: therapistAvailability.length === 0 ? '' : '#EAECF0', paddingHorizontal: 5, paddingVertical: 10, height: calculateHeight() }}>
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        <ScrollView nestedScrollEnabled={true} indicatorStyle='black' showsVerticalScrollIndicator={true} style={{ width: responsiveWidth(100), backgroundColor: therapistAvailability.length === 0 ? '' : '#EEF8FF', paddingHorizontal: 5, paddingVertical: 10, height: calculateHeight() }}>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap',marginBottom:responsiveHeight(2) }}>
                                 {therapistAvailability.length === 0 ? (
                                     <View style={styles.noSlotView}>
                                         <Text style={styles.noSlotText}>No slots available</Text>
