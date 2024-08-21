@@ -202,6 +202,7 @@ const ChatScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     // //receivedMsg()
+    setupVideoSDKEngine();
     KeepAwake.activate();
     //startRecording();
     console.log(route?.params?.details, 'details from home page')
@@ -236,19 +237,25 @@ const ChatScreen = ({ navigation, route }) => {
         setEndTime(endTime); // Set the end time
 
         const mode = route?.params?.details?.mode_of_conversation;
-        if (mode === 'chat') {
-          setActiveTab('chat');
-          setVideoCall(false);
-          await leave();
-        } else if (mode === 'audio') {
-          await join();
-          setActiveTab('audio');
-          setVideoCall(false);
-        } else if (mode === 'video') {
-          setActiveTab('video');
-          setVideoCall(true);
-          await leave();
+
+        switch (mode) {
+          case 'chat':
+            setActiveTab('chat');
+            setVideoCall(false);
+            await leave();
+            break;
+          case 'audio':
+            await join();
+            setActiveTab('audio');
+            setVideoCall(false);
+            break;
+          case 'video':
+            await setupVideoSDKEngine()
+            setActiveTab('video');
+            setVideoCall(true);
+            break;
         }
+
         setIsLoading(false);
       } else {
         console.log('not okk');
@@ -562,9 +569,9 @@ const ChatScreen = ({ navigation, route }) => {
     }
   };
 
-  useEffect(() => {
-    setupVideoSDKEngine();
-  });
+  // useEffect(() => {
+  //   setupVideoSDKEngine();
+  // });
 
   const setupVideoSDKEngine = async () => {
     try {
