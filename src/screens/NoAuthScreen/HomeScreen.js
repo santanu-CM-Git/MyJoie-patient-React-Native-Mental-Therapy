@@ -313,7 +313,7 @@ export default function HomeScreen({ navigation }) {
     )
   }
   const TherapistListItem = memo(({ item }) => (
-    <Pressable onPress={() => navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.user_id, mode: 'paid' } })}>
+    <Pressable onPress={() => navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.user_id, mode: 'paid' }, key: Math.random().toString() })}>
       <View style={styles.therapistCardView}>
         <View style={{ flexDirection: 'row', padding: 15, }}>
 
@@ -347,7 +347,7 @@ export default function HomeScreen({ navigation }) {
             </Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.user_id, mode: 'paid' } })}>
+        <TouchableOpacity onPress={() => navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.user_id, mode: 'paid' }, key: Math.random().toString() })}>
           <View style={styles.bookapointView}>
             <Image
               source={dateIcon}
@@ -385,7 +385,7 @@ export default function HomeScreen({ navigation }) {
             onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
             disabled={!isButtonEnabled}
           > */}
-            <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
+          <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}>
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
         </View>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect,useCallback } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, ActivityIndicator, useWindowDimensions, Switch, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
@@ -15,6 +15,7 @@ import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
 import RazorpayCheckout from 'react-native-razorpay';
 import Toast from 'react-native-toast-message';
+import { useFocusEffect } from '@react-navigation/native';
 
 const BookingSummary = ({ navigation, route }) => {
 
@@ -361,7 +362,39 @@ const BookingSummary = ({ navigation, route }) => {
         }
     }, [gstPercentage, route]);
 
+    useFocusEffect(
+        useCallback(() => {
+            const fetchUserInfoAndBalance = async () => {
+                try {
+                    const userInfo = await AsyncStorage.getItem('userInfo');
+                    if (userInfo !== null) {
+                        setPatientDetails(JSON.parse(userInfo));
+                    }
+                    fetchWalletBalance();
+                } catch (error) {
+                    console.error("Failed to load user info", error);
+                }
+            };
 
+            fetchUserInfoAndBalance();
+
+            if (gstPercentage !== null) {
+                const { minStartTime, maxEndTime } = findTimeBounds(route?.params?.selectedSlot);
+                setMinTime(minStartTime);
+                setMaxTime(maxEndTime);
+
+                const originalAmount = route?.params?.submitData?.transaction_amount || 0;
+
+                // Calculate taxable amount including coupon deduction
+                const calculatedTaxableAmount = ((originalAmount - couponDeduction) * gstPercentage) / 100;
+                setTaxableAmount(calculatedTaxableAmount);
+
+                const initialPayableAmount = originalAmount + calculatedTaxableAmount;
+                setPayableAmount(initialPayableAmount);
+            }
+
+        }, [route, gstPercentage])
+    );
     if (isLoading) {
         return (
             <Loader />
@@ -556,7 +589,7 @@ const styles = StyleSheet.create({
     imageSection1st: { flexDirection: 'row', alignItems: 'center', width: responsiveWidth(30) },
     imageSection1stImg: { height: 20, width: 20, resizeMode: 'contain', marginRight: responsiveWidth(2) },
     imageSection1stText: { color: '#444343', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.5) },
-    imageSection2nd: { flexDirection: 'row', alignItems: 'center', width: responsiveWidth(45),marginLeft: responsiveWidth(1.5) },
+    imageSection2nd: { flexDirection: 'row', alignItems: 'center', width: responsiveWidth(45), marginLeft: responsiveWidth(1.5) },
     total2Value: { width: responsiveWidth(89), backgroundColor: '#FFFFFF', height: responsiveHeight(8), marginTop: responsiveHeight(2), borderRadius: 15, padding: 10, borderColor: '#E3E3E3', borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     total2Value1stSection: { width: responsiveWidth(40), flexDirection: 'row' },
     total2Value1stSectionImg: { height: 20, width: 20, marginRight: responsiveWidth(2) },

@@ -73,7 +73,7 @@ const HomeStack = ({ navigation }) => {
         component={FreeTherapistList}
         options={{ headerShown: false }}
       />
-      
+
       <Stack.Screen
         name="ScheduleScreen"
         component={ScheduleScreen}
@@ -84,7 +84,7 @@ const HomeStack = ({ navigation }) => {
         component={ProfileScreen}
         options={{ headerShown: false }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="PaymentFailed"
         component={PaymentFailed}
         options={{ headerShown: false }}
@@ -93,12 +93,15 @@ const HomeStack = ({ navigation }) => {
   );
 };
 
-const TherapistStack = ({ navigation }) => {
+const TherapistStack = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
-      // Reset to the initial screen (TherapistList) whenever the tab is focused
-      navigation.navigate('TherapistList');
-    }, [navigation])
+      // Check if there's a specific screen to navigate to
+      if (!route?.params?.screen) {
+        // If no specific screen, navigate to TherapistList by default
+        navigation.navigate('TherapistList');
+      }
+    }, [route, navigation])
   );
   return (
     <Stack.Navigator>
@@ -112,7 +115,7 @@ const TherapistStack = ({ navigation }) => {
         component={TherapistProfile}
         options={{ headerShown: false }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="Summary"
         component={BookingSummary}
         options={{ headerShown: false }}
@@ -188,7 +191,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
-              <Image source={focused ? homeIconFocusedImg : homeIconNotFocusedImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4),resizeMode:'contain' }} />
+              <Image source={focused ? homeIconFocusedImg : homeIconNotFocusedImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4), resizeMode: 'contain' }} />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
@@ -216,7 +219,7 @@ const TabNavigator = () => {
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
               {/* <FontAwesome name="rupee-sign" color={color} size={size} style={{ marginTop: responsiveHeight(1.2) }} /> */}
-              <Image source={focused ? talkFocusedImg : talkImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4),resizeMode:'contain' }} />
+              <Image source={focused ? talkFocusedImg : talkImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4), resizeMode: 'contain' }} />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
@@ -243,7 +246,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
-              <Image source={focused ? calenderFocusedImg : calenderImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4),resizeMode:'contain' }} />
+              <Image source={focused ? calenderFocusedImg : calenderImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4), resizeMode: 'contain' }} />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
@@ -270,7 +273,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
               {focused && <View style={{ width: responsiveWidth(12), borderColor: color, backgroundColor: color, borderWidth: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5 }} />}
-              <Image source={focused ? bookmarkedFill : bookmarkednotFocusedImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4),resizeMode:'contain' }} />
+              <Image source={focused ? bookmarkedFill : bookmarkednotFocusedImg} style={{ width: responsiveWidth(7), height: responsiveHeight(3.5), marginTop: responsiveHeight(1.4), resizeMode: 'contain' }} />
             </View>
           ),
           tabBarLabel: ({ color, focused }) => (
@@ -302,21 +305,21 @@ const getTabBarVisibility = route => {
     return 'none';
   } else if (routeName == 'ThankYouBookingScreen') {
     return 'none';
-  }else if (routeName == 'ChatScreen') {
+  } else if (routeName == 'ChatScreen') {
     return 'none';
-  }else if (routeName == 'ReviewScreen') {
+  } else if (routeName == 'ReviewScreen') {
     return 'none';
-  }else if (routeName == 'WalletScreen') {
+  } else if (routeName == 'WalletScreen') {
     return 'none';
-  }else if (routeName == 'TherapistProfile') {
+  } else if (routeName == 'TherapistProfile') {
     return 'none';
-  }else if (routeName == 'FreeTherapistList') {
+  } else if (routeName == 'FreeTherapistList') {
     return 'none';
-  }else if (routeName == 'ScheduleScreen') {
+  } else if (routeName == 'ScheduleScreen') {
     return 'none';
-  }else if (routeName == 'PaymentFailed') {
+  } else if (routeName == 'PaymentFailed') {
     return 'none';
-  }else if (routeName == 'ProfileScreen') {
+  } else if (routeName == 'ProfileScreen') {
     return 'none';
   } else {
     return 'flex';

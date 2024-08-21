@@ -256,11 +256,11 @@ const TherapistProfile = ({ navigation, route }) => {
         }
     };
 
-    const fetchTherapistData = () => {
+    const fetchTherapistData = (therapistId) => {
         setIsLoading(true);
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             const option = {
-                "therapist_id": route?.params?.therapistId
+                "therapist_id": therapistId
             }
             console.log(option)
             axios.post(`${API_URL}/patient/therapist`, option, {
@@ -323,9 +323,10 @@ const TherapistProfile = ({ navigation, route }) => {
 
 
     useEffect(() => {
+        const { therapistId, mode } = route.params;
         // console.log(route?.params?.detailsData, 'vvvvvvv')
         // setProfileDetails(route?.params?.detailsData)
-        fetchTherapistData()
+        fetchTherapistData(therapistId)
         const formattedDate = moment().format('YYYY-MM-DD');
         const dayOfWeek = moment().format('dddd');
         const index = 0;
@@ -333,7 +334,8 @@ const TherapistProfile = ({ navigation, route }) => {
         console.log(dayOfWeek)
         selectedDateChange(index, dayOfWeek, formattedDate)
         getAllReviewForTherapist()
-    }, [route?.params?.therapistId])
+        setSelectedByUser([])
+    }, [route.params])
 
     const getAllReviewForTherapist = () => {
         const option = {
@@ -638,7 +640,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                 position: 'top',
                                 topOffset: Platform.OS == 'ios' ? 55 : 20
                             });
-                            fetchTherapistData()
+                            fetchTherapistData(therapistId)
                         } else {
                             console.log('not okk')
                             setIsLoading(false)
