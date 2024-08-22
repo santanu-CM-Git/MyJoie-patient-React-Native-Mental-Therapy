@@ -385,7 +385,7 @@ export default function HomeScreen({ navigation }) {
             onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}
             disabled={!isButtonEnabled}
           >
-          {/* <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}> */}
+            {/* <TouchableOpacity style={styles.joinNowButton} onPress={() => navigation.navigate('ChatScreen', { details: item })}> */}
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
         </View>
@@ -462,7 +462,7 @@ export default function HomeScreen({ navigation }) {
         </View>
       </View>
       <View style={{ marginTop: responsiveHeight(1) }}>
-        <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
+        <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.therapist_id, mode: 'paid' }, key: Math.random().toString() }) }} />
       </View>
     </View>
   ))
@@ -611,7 +611,7 @@ export default function HomeScreen({ navigation }) {
             : null}
           <View style={styles.sectionHeaderView}>
             <Text style={styles.sectionHeaderText}>Therapist</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('TherapistList')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Talk', { screen: 'TherapistList', key: Math.random().toString() })}>
               <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
           </View>

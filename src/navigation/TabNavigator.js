@@ -94,11 +94,16 @@ const HomeStack = ({ navigation }) => {
 };
 
 const TherapistStack = ({ navigation, route }) => {
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     // Reset to the initial screen (TherapistList) whenever the tab is focused
+  //     navigation.navigate('TherapistList');
+  //   }, [navigation])
+  // );
   useFocusEffect(
     React.useCallback(() => {
       // Check if there's a specific screen to navigate to
-      if (!route?.params?.screen) {
-        // If no specific screen, navigate to TherapistList by default
+      if (!route?.params?.screen && route.name === 'TherapistStack') {
         navigation.navigate('TherapistList');
       }
     }, [route, navigation])

@@ -11,6 +11,7 @@ import SplashScreen from 'react-native-splash-screen';
 import messaging from '@react-native-firebase/messaging';
 import { requestPermission, setupNotificationHandlers } from './src/utils/NotificationService';
 import { navigate } from './src/navigation/NavigationService'; // Import the navigation function
+import { requestCameraAndAudioPermissions } from './src/utils/PermissionHandler';
 
 function App() {
   const [notifications, setNotifications] = useState([]);
@@ -19,24 +20,29 @@ function App() {
   useEffect(() => {
     SplashScreen.hide();
     requestPermission();
-
-    const unsubscribeForeground = setupNotificationHandlers(setNotifications, setnotifyStatus);
-
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      if (remoteMessage?.data?.screen === 'ScheduleScreen') {
-        navigate('Schedule', { screen: 'ScheduleScreen' });
+    requestCameraAndAudioPermissions().then(granted => {
+      if (!granted) {
+        // Handle the case where permissions are not granted
+        return;
       }
-    });
+      const unsubscribeForeground = setupNotificationHandlers(setNotifications, setnotifyStatus);
 
-    messaging().getInitialNotification().then(remoteMessage => {
-      if (remoteMessage?.data?.screen === 'ScheduleScreen') {
-        navigate('Schedule', { screen: 'ScheduleScreen' });
-      }
-    });
+      messaging().onNotificationOpenedApp(remoteMessage => {
+        if (remoteMessage?.data?.screen === 'ScheduleScreen') {
+          navigate('Schedule', { screen: 'ScheduleScreen' });
+        }
+      });
 
-    return () => {
-      if (unsubscribeForeground) unsubscribeForeground();
-    };
+      messaging().getInitialNotification().then(remoteMessage => {
+        if (remoteMessage?.data?.screen === 'ScheduleScreen') {
+          navigate('Schedule', { screen: 'ScheduleScreen' });
+        }
+      });
+
+      return () => {
+        if (unsubscribeForeground) unsubscribeForeground();
+      };
+    });
   }, []);
 
   return (
