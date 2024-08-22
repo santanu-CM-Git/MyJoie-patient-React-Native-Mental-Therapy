@@ -615,7 +615,7 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ paddingVertical: 10 }}>
+          <View style={{ paddingVertical: 10,paddingLeft:responsiveWidth(1) }}>
             <FlatList
               data={therapistData}
               renderItem={renderTherapistItem}
@@ -857,7 +857,7 @@ const styles = StyleSheet.create({
   therapistCardView: {
     width: responsiveWidth(76),
     backgroundColor: '#FFF',
-    marginHorizontal: 15,
+    marginHorizontal: 10,
     borderRadius: 10,
     marginTop: responsiveHeight(1),
     marginBottom: responsiveHeight(1),
