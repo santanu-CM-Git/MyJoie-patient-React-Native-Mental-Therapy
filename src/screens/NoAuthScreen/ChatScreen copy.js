@@ -1,30 +1,17 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, KeyboardAvoidingView, PermissionsAndroid, Alert, BackHandler } from 'react-native'
-import CustomHeader from '../../components/CustomHeader'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, ImageBackground, Image, PermissionsAndroid, Alert, BackHandler, Platform } from 'react-native'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { GreenTick, audiooffIcon, audioonIcon, callIcon, chatImg, filesendImg, sendImg, speakeroffIcon, speakeronIcon, summaryIcon, userPhoto, videoIcon, audioBgImg, defaultUserImg } from '../../utils/Images'
 import { GiftedChat, InputToolbar, Bubble, Send, Composer } from 'react-native-gifted-chat'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import * as DocumentPicker from 'react-native-document-picker';
 import InChatFileTransfer from '../../components/InChatFileTransfer';
-import InChatViewFile from '../../components/InChatViewFile';
 import { API_URL, AGORA_APP_ID } from '@env'
 import { TabActions, useRoute } from '@react-navigation/native';
 import KeepAwake from 'react-native-keep-awake';
-// import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
-// import { getDatabase, ref, onValue, push } from '@react-native-firebase/database';
-// import * as firebase from "firebase/app"
-import firebase from '@react-native-firebase/app';
-// import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
-import storage from '@react-native-firebase/storage';
 import firestore, { endBefore } from '@react-native-firebase/firestore'
-import RNFetchBlob from 'rn-fetch-blob'
-// import { CometChat } from '@cometchat/chat-sdk-react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/Entypo';
-import Modal from "react-native-modal";
+import ScreenRecorder from 'react-native-screen-mic-recorder'
 import AgoraUIKit, { StreamFallbackOptions, PropsInterface, VideoRenderMode, RenderModeType } from 'agora-rn-uikit';
 console.log(RenderModeType.RenderModeFit, 'kkkkkkkkkkk')
 
@@ -38,20 +25,32 @@ import moment from 'moment-timezone'
 import Loader from '../../utils/Loader'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
-// Define basic information
-const appId = AGORA_APP_ID;
-const token = '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==';
-const channelName = 'test';
-const uid = 0; // Local user UID, no need to modify
+import BackgroundTimer from 'react-native-background-timer';
+
+
 
 const ChatScreen = ({ navigation, route }) => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedURL, setRecordedURL] = useState(null);
+
   const routepage = useRoute();
   const [videoCall, setVideoCall] = useState(true);
+  // For video call
   const connectionData = {
     appId: AGORA_APP_ID,
-    channel: 'test',
-    token: '007eJxTYMif9fyV2Yeos/msk1S39//JCW60/+vpUzL1ks+LuXa/J0YoMFiam6YaWCYmp6RamJokJhtbJBkbG5ikJBqYGyUbGhqm+j8qTmsIZGTocvZiYmSAQBCfhaEktbiEgQEA4NAg+A==',
+    channel: route?.params?.details?.agora_channel_id2,
+    token: route?.params?.details?.agora_token2,
+    //channel: 'channel_1724075003_6ec1d41b-4866-4ec0-ac75-1cd044d97d6e',
+    //token: '007eJxTYMh3Writ8n5BH9vFmXar9rrWW+Qek53nsKVVM7Nl18G7/bEKDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapv70Pp3GwMzDIbdRkZGRgZGAB4hdhh9OYwCQzmGQBk+YMyRmJeXmpOfGG5kYmBuamBgbG8WapyYYpJoZJuiYWZma6JqnJBrqJyeamuobJKQYmJimW5ilmqYwMBgAKcDZq'
   };
+  // For audio call
+  const appId = AGORA_APP_ID;
+  const token = route?.params?.details?.agora_token;
+  const channelName = route?.params?.details?.agora_channel_id;
+  //const token = '007eJxTYMh3Writ8n5BH9vFmXar9rrWW+Qek53nsKVVM7Nl18G7/bEKDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapv70Pp3GwMzDIbdRkZGRgZGAB4hdhh9OYwCQzmGQBk+YMyRmJeXmpOfGG5kYmBuamBgbG8WapyYYpJoZJuiYWZma6JqnJBrqJyeamuobJKQYmJimW5ilmqYwMBgAKcDZq';
+  //const channelName = 'channel_1724075003_6ec1d41b-4866-4ec0-ac75-1cd044d97d6e';
+  const uid = 0; // Local user UID, no need to modify
+
   const rtcCallbacks = {
     EndCall: () => {
       setVideoCall(false);
@@ -74,11 +73,88 @@ const ChatScreen = ({ navigation, route }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('chat')
   const [isLoading, setIsLoading] = useState(true)
-  const intervalRef = useRef(null);
   const [timer, setTimer] = useState(0);
+  const [endTime, setEndTime] = useState(null);
+  const intervalRef = useRef(null);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+  const requestExternalStoragePermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'External Storage Permission',
+          message: 'This app needs access to your storage to read/write files.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const recordingStatus = await ScreenRecorder.startRecording().catch((error) => {
+        console.warn(error); // handle native error
+      });
+      if (recordingStatus === 'started') {
+        setIsRecording(true);
+        console.log('Recording has started...');
+      } else if (recordingStatus === 'userDeniedPermission') {
+        Alert.alert('Please grant permission in order to record screen');
+      }
+    } catch (error) {
+      console.error('Error starting recording:', error);
+    }
+  };
+
+  const stopRecording = async () => {
+    console.log('Stopping recording...');
+    try {
+      if (Platform.OS === 'android') {
+        const hasPermission = await requestExternalStoragePermission();
+        if (!hasPermission) {
+          throw new Error('Storage permission denied');
+        }
+      }
+      const uri = await ScreenRecorder.stopRecording().catch((error) => {
+        console.warn(error); // handle native error
+      });
+      if (uri) {
+        setRecordedURL(uri);
+        console.log('Recording stopped. URI:', uri);
+        const formData = new FormData();
+        formData.append('file', {
+          uri: Platform.OS === 'android' ? uri : uri.replace('file://', ''),
+          name: 'recording.mp4',
+          type: 'video/mp4',
+        });
+
+        // Upload the file to the server using axios
+        const response = await axios.post('http://162.215.253.89/swastilife/api/file-upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        const result = response.data;
+        console.log('File uploaded successfully:', result);
+      }
+      setIsRecording(false);
+    } catch (error) {
+      console.error('Error stopping recording:', error);
+      if (error.response) {
+        console.error('Server response:', error.response.data);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error setting up request:', error.message);
+      }
+    }
   };
 
   useEffect(() => {
@@ -100,42 +176,23 @@ const ChatScreen = ({ navigation, route }) => {
     }
   }, [routepage]);
 
-  // useEffect(() => {
-  //   // If timer is 0, return early
-  //   if (timer === 0) return;
-
-  //   // Create an interval that decrements the timer value every second
-  //   const interval = setInterval(() => {
-  //     setTimer((timer) => timer - 1);
-  //   }, 1000);
-
-  //   // Clear the interval if the component is unmounted or timer reaches 0
-  //   return () => clearInterval(interval);
-  // }, [timer]);
-
-  // const formatTime = (totalSeconds) => {
-  //   const minutes = Math.floor(totalSeconds / 60);
-  //   const seconds = totalSeconds % 60;
-  //   // Format the time to ensure it always shows two digits for minutes and seconds
-  //   return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  // };
 
   useEffect(() => {
-    if (timer > 0) {
-      const interval = setInterval(() => {
-        setTimer((prevTimer) => {
-          if (prevTimer <= 1) {
-            clearInterval(interval);
-            handleTimerEnd();
-            return 0;
-          }
-          return prevTimer - 1;
-        });
+    if (endTime) {
+      intervalRef.current = BackgroundTimer.setInterval(() => {
+        const currentTime = new Date();
+        const endDate = moment(endTime, 'HH:mm:ss').toDate();
+        const timeDifferenceInSeconds = Math.max(0, Math.floor((endDate - currentTime) / 1000));
+        if (timeDifferenceInSeconds <= 0) {
+          BackgroundTimer.clearInterval(intervalRef.current);
+          handleTimerEnd();
+        }
+        setTimer(timeDifferenceInSeconds);
       }, 1000);
-  
-      return () => clearInterval(interval);
+
+      return () => BackgroundTimer.clearInterval(intervalRef.current);
     }
-  }, [timer, handleTimerEnd]);
+  }, [endTime]);
 
   const formatTime = (totalSeconds) => {
     const minutes = Math.floor(totalSeconds / 60);
@@ -145,179 +202,161 @@ const ChatScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     // //receivedMsg()
+    setupVideoSDKEngine();
     KeepAwake.activate();
+    //startRecording();
     console.log(route?.params?.details, 'details from home page')
 
     sessionStart()
   }, [])
 
-  const sessionStart = () => {
-    setIsLoading(true)
+  const sessionStart = async () => {
+    setIsLoading(true);
     const currentTime = moment().format('HH:mm:ss');
     const option = {
       "booked_slot_id": route?.params?.details?.id,
-      "time": currentTime
-    }
-    console.log(option)
-    AsyncStorage.getItem('userToken', (err, usertoken) => {
-      axios.post(`${API_URL}/patient/slot-start`, option, {
+      "time": currentTime,
+    };
+    console.log(option);
+
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (!userToken) {
+        throw new Error('User token is missing');
+      }
+
+      const res = await axios.post(`${API_URL}/patient/slot-start`, option, {
         headers: {
           Accept: 'application/json',
-          "Authorization": 'Bearer ' + usertoken,
+          "Authorization": 'Bearer ' + userToken,
         },
-      })
-        .then(res => {
-          console.log(res.data)
-          if (res.data.response == true) {
-            const endTime = route?.params?.details?.end_time;
-            // Get the current time using moment
-            const currentTime = moment().format('HH:mm:ss');
-            // Create a new Date object for the end time, assuming the date is today
-            const endDate = moment(endTime, 'HH:mm:ss').toDate();
-            // Create a new Date object for the current time
-            const currentDate = moment(currentTime, 'HH:mm:ss').toDate();
-            // Calculate the difference in seconds
-            const timeDifferenceInSeconds = Math.max(0, Math.floor((endDate - currentDate) / 1000));
-            // Set the timer state
-            console.log(timeDifferenceInSeconds,'timeDifferenceInSecondstimeDifferenceInSeconds');
-            setTimer(timeDifferenceInSeconds);
-            if (route?.params?.details?.mode_of_conversation === 'chat') {
-              setActiveTab('chat')
-              setVideoCall(false)
-              leave()
-            } else if (route?.params?.details?.mode_of_conversation === 'audio') {
-              join()
-              setActiveTab('audio')
-              setVideoCall(false)
-            } else if (route?.params?.details?.mode_of_conversation === 'video') {
-              setActiveTab('video')
-              setVideoCall(true)
-              leave()
-            }
+      });
 
-            setIsLoading(false)
-          } else {
-            console.log('not okk')
-            setIsLoading(false)
-            Alert.alert('Oops..', "Something went wrong", [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ]);
-          }
-        })
-        .catch(e => {
-          setIsLoading(false)
-          console.log(`user update error ${e}`)
-          console.log(e.response.data?.response.records)
-          Alert.alert('Oops..', e.response?.data?.message, [
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            { text: 'OK', onPress: () => console.log('OK Pressed') },
-          ]);
-        });
-    });
-  }
+      if (res.data.response === true) {
+        const endTime = route?.params?.details?.end_time;
+        setEndTime(endTime); // Set the end time
 
-  // useEffect(() => {
-  //   if (timer > 0) {
-  //     const intervalId = setInterval(() => {
-  //       setTimer(prevTimer => {
-  //         if (prevTimer <= 1) {
-  //           clearInterval(intervalId);
-  //           handleTimerEnd();
-  //           return 0;
-  //         }
-  //         return prevTimer - 1;
-  //       });
-  //     }, 1000);
+        const mode = route?.params?.details?.mode_of_conversation;
 
-  //     // Cleanup the interval on component unmount
-  //     return () => clearInterval(intervalId);
-  //   }
-  // }, [timer]);
+        switch (mode) {
+          case 'chat':
+            setActiveTab('chat');
+            setVideoCall(false);
+            await leave();
+            break;
+          case 'audio':
+            await join();
+            setActiveTab('audio');
+            setVideoCall(false);
+            break;
+          case 'video':
+            await setupVideoSDKEngine()
+            setActiveTab('video');
+            setVideoCall(true);
+            break;
+        }
 
-  const handleTimerEnd = () => {
+        setIsLoading(false);
+      } else {
+        console.log('not okk');
+        Alert.alert('Oops..', "Something went wrong", [
+          { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+        setIsLoading(false);
+      }
+    } catch (e) {
+      setIsLoading(false);
+      console.log(`Session Start error ${e}`);
+      //console.log(e.response?.data?.response.records);
+      Alert.alert('Oops..', e.response?.data?.message || 'An unexpected error occurred', [
+        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+    }
+  };
+
+  const confirmEnd = () => {
+    Alert.alert(
+      'Confirm End',
+      'Are you sure you want to end this session?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => handleTimerEnd(),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const handleTimerEnd = async () => {
     console.log('Timer has ended. Execute your function here.');
     const currentTime = moment().format('HH:mm:ss');
     const option = {
       "booked_slot_id": route?.params?.details?.id,
       "time": currentTime
-    }
-    console.log(option)
-    AsyncStorage.getItem('userToken', (err, usertoken) => {
-      axios.post(`${API_URL}/patient/slot-complete`, option, {
+    };
+    console.log(option);
+
+    try {
+      // Retrieve user token
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (!userToken) {
+        throw new Error('User token is missing');
+      }
+
+      // Make API request
+      const res = await axios.post(`${API_URL}/patient/slot-complete`, option, {
         headers: {
           Accept: 'application/json',
-          "Authorization": 'Bearer ' + usertoken,
+          "Authorization": 'Bearer ' + userToken,
         },
-      })
-        .then(res => {
-          console.log(res.data)
-          if (res.data.response == true) {
-            navigation.navigate('ReviewScreen', { bookedId: route?.params?.details?.id, therapistName: route?.params?.details?.therapist?.name, therapistPic: route?.params?.details?.therapist?.profile_pic })
-          } else {
-            console.log('not okk')
-            setIsLoading(false)
-            Alert.alert('Oops..', "Something went wrong", [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ]);
-          }
-        })
-        .catch(e => {
-          setIsLoading(false)
-          console.log(`user update error ${e}`)
-          console.log(e.response.data?.response.records)
-          Alert.alert('Oops..', e.response?.data?.message, [
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            { text: 'OK', onPress: () => console.log('OK Pressed') },
-          ]);
-        });
-    });
-  };
-  const _pickDocument = async () => {
-    try {
-      const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
-        copyTo: 'documentDirectory',
-        mode: 'import',
-        allowMultiSelection: true,
       });
-      const fileUri = result[0].fileCopyUri;
-      if (!fileUri) {
-        console.log('File URI is undefined or null');
-        return;
-      }
-      console.log(fileUri)
-      if (fileUri.indexOf('.png') !== -1 || fileUri.indexOf('.jpg') !== -1) {
-        setImagePath(fileUri);
-        setIsAttachImage(true);
+
+      console.log(res.data);
+
+      if (res.data.response === true) {
+        // Uncomment and use if needed
+        // stopRecording();
+
+        setVideoCall(false);
+        await leave(); // Ensure leave completes before navigating
+        navigation.navigate('ReviewScreen', {
+          bookedId: route?.params?.details?.id,
+          therapistName: route?.params?.details?.therapist?.name,
+          therapistPic: route?.params?.details?.therapist?.profile_pic
+        });
       } else {
-        setFilePath(fileUri);
-        setIsAttachFile(true);
+        console.log('Response not OK');
+        setIsLoading(false);
+        Alert.alert('Oops..', "Something went wrong", [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
       }
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('User cancelled file picker');
-      } else {
-        console.log('DocumentPicker err => ', err);
-        throw err;
-      }
+    } catch (e) {
+      setIsLoading(false);
+      console.error('Error during handleTimerEnd:', e);
+
+      // Handle specific API errors if available
+      const errorMessage = e.response?.data?.message || 'An unexpected error occurred';
+      Alert.alert('Oops..', errorMessage, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
     }
   };
 
@@ -388,12 +427,6 @@ const ChatScreen = ({ navigation, route }) => {
     return (
 
       <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-        {/* <TouchableOpacity onPress={_pickDocument}>
-          <Image
-            source={filesendImg}
-            style={styles.imageView1}
-          />
-        </TouchableOpacity> */}
         <Send {...props}>
           <Image
             source={sendImg}
@@ -465,19 +498,6 @@ const ChatScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    // setMessages([
-    //   {
-    //     _id: 1,
-    //     text: 'Hello developer',
-    //     createdAt: new Date(),
-    //     user: {
-    //       _id: 2,
-    //       name: 'React Native',
-    //       avatar: require('../../assets/images/user-profile.jpg'),
-    //     },
-    //   },
-    // ])
-    //const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId //if user to user specific chat
     const docid = chatgenidres;
     const messageRef = firestore().collection('chatrooms')
       .doc(docid)
@@ -509,60 +529,6 @@ const ChatScreen = ({ navigation, route }) => {
     }
   }, [])
 
-  // const onSend = useCallback((messages = []) => {
-  //   const [messageToSend] = messages;
-  //   if (isAttachImage) {
-  //     const newMessage = {
-  //       _id: messages[0]._id + 1,
-  //       text: messageToSend.text,
-  //       timestamp: firebase.database.ServerValue.TIMESTAMP,
-  //       user: {
-  //         _id: 1,
-  //         avatar: require('../../assets/images/user-profile.jpg'),
-  //       },
-  //       codeSnippet: true,
-  //       image: imagePath,
-  //       file: {
-  //         url: ''
-  //       }
-  //     };
-  //     setMessages(previousMessages =>
-  //       GiftedChat.append(previousMessages, newMessage),
-  //     );
-  //     // messages.forEach(item => {
-  //     //   const message = newMessage
-  //     //   db.push(message);
-  //     // });
-  //     setImagePath('');
-  //     setIsAttachImage(false);
-  //   } else if (isAttachFile) {
-  //     const newMessage = {
-  //       _id: messages[0]._id + 1,
-  //       text: messageToSend.text,
-  //       createdAt: new Date(),
-  //       user: {
-  //         _id: 1,
-  //         avatar: require('../../assets/images/user-profile.jpg'),
-  //       },
-  //       image: '',
-  //       file: {
-  //         url: filePath
-  //       }
-  //     };
-  //     setMessages(previousMessages =>
-  //       GiftedChat.append(previousMessages, newMessage),
-  //     );
-  //     setFilePath('');
-  //     setIsAttachFile(false);
-  //   } else {
-  //     setMessages(previousMessages =>
-  //       GiftedChat.append(previousMessages, messages),
-  //     );
-  //   }
-  // },
-  //   [filePath, imagePath, isAttachFile, isAttachImage],
-  // );
-
   const onSend = (messageArray) => {
     console.log(messageArray)
     const msg = messageArray[0]
@@ -573,7 +539,6 @@ const ChatScreen = ({ navigation, route }) => {
       createdAt: new Date()
     }
     setMessages(previousMessages => GiftedChat.append(previousMessages, mymsg))
-    //const docid = patientId > therapistId ? therapistId + "-" + patientId : patientId + "-" + therapistId
     const docid = chatgenidres;
     firestore().collection('chatrooms')
       .doc(docid)
@@ -604,9 +569,9 @@ const ChatScreen = ({ navigation, route }) => {
     }
   };
 
-  useEffect(() => {
-    setupVideoSDKEngine();
-  });
+  // useEffect(() => {
+  //   setupVideoSDKEngine();
+  // });
 
   const setupVideoSDKEngine = async () => {
     try {
@@ -674,55 +639,88 @@ const ChatScreen = ({ navigation, route }) => {
   };
   // Define the join method called after clicking the join channel button
   const join = async () => {
+    console.log(isJoined, 'isJoinedisJoinedisJoinedisJoined');
+
     if (isJoined) {
       return;
     }
     try {
       // Set the channel profile type to communication after joining the channel
-      agoraEngineRef.current?.setChannelProfile(
+      await agoraEngineRef.current?.setChannelProfile(
         ChannelProfileType.ChannelProfileCommunication,
       );
       // Call the joinChannel method to join the channel
-      agoraEngineRef.current?.joinChannel(token, channelName, uid, {
+      await agoraEngineRef.current?.joinChannel(token, channelName, uid, {
         // Set the user role to broadcaster
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
       });
     } catch (e) {
-      console.log(e);
+      console.log(e, 'join channel error');
     }
   };
   // Define the leave method called after clicking the leave channel button
-  const leave = () => {
+  const leave = async () => {
     try {
-      // Call the leaveChannel method to leave the channel
-      agoraEngineRef.current?.leaveChannel();
+      await agoraEngineRef.current?.leaveChannel();
       setRemoteUid(0);
       setIsJoined(false);
       showMessage('Left the channel');
     } catch (e) {
-      console.log(e);
+      console.log(e, 'leave channel error');
+    }
+  };
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const goingToactiveTab = async (name) => {
+    if (name === 'audio') {
+      await leave();
+      await delay(200); // Add a delay to ensure state is properly updated
+      await join();
+      setActiveTab('audio');
+      setVideoCall(false);
+    } else if (name === 'video') {
+      await leave();
+      await delay(200); // Add a delay to ensure state is properly updated
+      setActiveTab('video');
+      setVideoCall(true);
+    } else if (name === 'chat') {
+      await leave();
+      await delay(200); // Add a delay to ensure state is properly updated
+      setActiveTab('chat');
+      setVideoCall(false);
     }
   };
 
-  const goingToactiveTab = (name) => {
+  // const goingToactiveTab = (name) => {
+  //   if (name === 'audio') {
+  //     leave()
+  //       .then(() => delay(200))
+  //       .then(() => join())
+  //       .then(() => {
+  //         setActiveTab('audio');
+  //         setVideoCall(false);
+  //       })
+  //       .catch(error => console.error(error));
+  //   } else if (name === 'video') {
+  //     leave()
+  //       .then(() => delay(200))
+  //       .then(() => {
+  //         setActiveTab('video');
+  //         setVideoCall(true);
+  //       })
+  //       .catch(error => console.error(error));
+  //   } else if (name === 'chat') {
+  //     leave()
+  //       .then(() => delay(200))
+  //       .then(() => {
+  //         setActiveTab('chat');
+  //         setVideoCall(false);
+  //       })
+  //       .catch(error => console.error(error));
+  //   }
+  // };
 
-    if (name == 'audio') {
-      //setupVoiceSDKEngine()
-      join()
-      setActiveTab('audio')
-      setVideoCall(false)
-    } else if (name == 'video') {
-      setActiveTab('video')
-      setVideoCall(true)
-      leave()
-    } else if (name == 'chat') {
-      setActiveTab('chat')
-      setVideoCall(false)
-      leave()
-    }
 
-
-  }
 
   const customPropsStyle = {
     localBtnStyles: {
@@ -777,6 +775,7 @@ const ChatScreen = ({ navigation, route }) => {
     },
   };
 
+
   const agoraConfig = {
     appId: connectionData.appId,
     channelProfile: 1, // Live broadcasting profile
@@ -809,7 +808,7 @@ const ChatScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.HeaderSectionHalf}>
           <Text style={styles.timerText}>{formatTime(timer)}</Text>
-          <TouchableOpacity onPress={() => handleTimerEnd()}>
+          <TouchableOpacity onPress={() => confirmEnd()}>
             <View style={styles.endButtonView}>
               <Text style={styles.endButtonText}>End</Text>
             </View>
@@ -882,15 +881,6 @@ const ChatScreen = ({ navigation, route }) => {
             </>
         }
       </View>
-      {/* <TouchableOpacity onPress={() => toggleModal()}>
-        <View style={{ width: responsiveWidth(95), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginTop: responsiveHeight(1) }}>
-          <Image
-            source={summaryIcon}
-            style={{ height: 20, width: 20, resizeMode: 'contain', marginRight: 5 }}
-          />
-          <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Previous Session Summary</Text>
-        </View>
-      </TouchableOpacity> */}
       <View style={styles.containSection}>
         {activeTab == 'chat' ?
           <GiftedChat
@@ -915,35 +905,6 @@ const ChatScreen = ({ navigation, route }) => {
           />
           : activeTab == 'audio' ?
             <>
-              {/* <View style={styles.btnContainer}>
-                <Text onPress={join} style={{ color: '#000' }}>
-                  Join
-                </Text>
-                <Text onPress={leave} style={{ color: '#000' }}>
-                  Leave
-                </Text>
-                <Text onPress={toggleMic} style={{ color: '#000' }}>
-                  {micOn ? 'Mute Mic' : 'Unmute Mic'}
-                </Text>
-                <Text onPress={toggleSpeaker} style={{ color: '#000' }}>
-                  {speakerOn ? 'Disable Speaker' : 'Enable Speaker'}
-                </Text>
-              </View>
-              <ScrollView
-                style={styles.scroll}
-                contentContainerStyle={styles.scrollContainer}>
-                {isJoined ? (
-                  <Text style={{color:'#000'}}>Local user UID: {uid}</Text>
-                ) : (
-                  <Text style={{color:'#000'}}>Join a channel</Text>
-                )}
-                {isJoined && remoteUid !== 0 ? (
-                  <Text style={{color:'#000'}}>Remote user UID: {remoteUid}</Text>
-                ) : (
-                  <Text style={{color:'#000'}}>Waiting for remote users to join</Text>
-                )}
-                <Text style={{color:'#000'}}>{message}</Text>
-              </ScrollView> */}
               <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground}>
                 {route?.params?.details?.therapist?.profile_pic ?
                   <Image
@@ -960,26 +921,26 @@ const ChatScreen = ({ navigation, route }) => {
                   {micOn ?
                     <TouchableOpacity onPress={() => toggleMic()}>
                       <Image
-                        source={audiooffIcon}
+                        source={audioonIcon}
                         style={styles.iconStyle}
                       />
                     </TouchableOpacity> :
                     <TouchableOpacity onPress={() => toggleMic()}>
                       <Image
-                        source={audioonIcon}
+                        source={audiooffIcon}
                         style={styles.iconStyle}
                       />
                     </TouchableOpacity>}
                   {speakerOn ?
                     <TouchableOpacity onPress={() => toggleSpeaker()}>
                       <Image
-                        source={speakeroffIcon}
+                        source={speakeronIcon}
                         style={styles.iconStyle}
                       />
                     </TouchableOpacity> :
                     <TouchableOpacity onPress={() => toggleSpeaker()}>
                       <Image
-                        source={speakeronIcon}
+                        source={speakeroffIcon}
                         style={styles.iconStyle}
                       />
                     </TouchableOpacity>}
@@ -992,9 +953,12 @@ const ChatScreen = ({ navigation, route }) => {
               {videoCall ? (
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
-                  <View style={{ height: responsiveHeight(75), }}>
-                    <AgoraUIKit connectionData={connectionData} rtcCallbacks={rtcCallbacks}
-                      styleProps={customPropsStyle} agoraConfig={agoraConfig}
+                  <View style={{ height: responsiveHeight(80), width: '100%' }}>
+                    <AgoraUIKit
+                      connectionData={connectionData}
+                      rtcCallbacks={rtcCallbacks}
+                      styleProps={customPropsStyle}
+                      agoraConfig={agoraConfig}
                     />
                   </View>
                 </SafeAreaView>
@@ -1008,94 +972,6 @@ const ChatScreen = ({ navigation, route }) => {
             </>
         }
       </View>
-      <Modal
-        isVisible={isModalVisible}
-        // onBackdropPress={() => setIsFocus(false)} // modal off by clicking outside of the modal
-        style={{
-          margin: 0, // Add this line to remove the default margin
-          justifyContent: 'flex-end',
-        }}>
-        <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff', height: 50, width: 50, borderRadius: 25, position: 'absolute', bottom: '55%', left: '45%', right: '45%' }}>
-          <Icon name="cross" size={30} color="#B0B0B0" onPress={toggleModal} />
-        </View>
-        {/* <TouchableWithoutFeedback onPress={() => setIsFocus(false)} style={{  }}> */}
-        <View style={{ height: '50%', backgroundColor: '#fff', position: 'absolute', bottom: 0, width: '100%' }}>
-          <View style={{ padding: 20 }}>
-            <ScrollView horizontal={true}>
-              <View style={{ width: responsiveWidth(89), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2), marginRight: 5 }}>
-                <View style={{ padding: 15 }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Rohit Sharma</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                      <Image
-                        source={GreenTick}
-                        style={{ height: 20, width: 20, resizeMode: 'contain' }}
-                      />
-                      <Text style={{ color: '#444343', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-SemiBold', marginLeft: responsiveWidth(1) }}>Completed</Text>
-                    </View>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Order ID :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>1923659</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Date :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>24-02-2024, 09:30 PM</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Appointment Time :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>60 Min</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Rate :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Rs 1100 for 30 Min</Text>
-                  </View>
-                  <View style={{ marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Session Summary :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginTop: 5 }}>The consultation session focused on exploring and addressing the patient's mental health concerns. The patient expressed their struggles with anxiety and depressive symptoms, impacting various aspects of their daily life. The therapist employed a person-centered approach, providing a safe and non-judgmental space for the patient to share their experiences.</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={{ width: responsiveWidth(89), borderRadius: 15, borderColor: '#E3E3E3', borderWidth: 1, marginTop: responsiveHeight(2), marginRight: 5 }}>
-                <View style={{ padding: 15 }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ color: '#2D2D2D', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Rohit Sharma</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                      <Image
-                        source={GreenTick}
-                        style={{ height: 20, width: 20, resizeMode: 'contain' }}
-                      />
-                      <Text style={{ color: '#444343', fontSize: responsiveFontSize(1.7), fontFamily: 'DMSans-SemiBold', marginLeft: responsiveWidth(1) }}>Completed</Text>
-                    </View>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Order ID :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>1923659</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Date :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>24-02-2024, 09:30 PM</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Appointment Time :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>60 Min</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Rate :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) }}>Rs 1100 for 30 Min</Text>
-                  </View>
-                  <View style={{ marginTop: responsiveHeight(1.5) }}>
-                    <Text style={{ color: '#444343', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginRight: responsiveWidth(2) }}>Session Summary :</Text>
-                    <Text style={{ color: '#746868', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7), marginTop: 5 }}>The consultation session focused on exploring and addressing the patient's mental health concerns. The patient expressed their struggles with anxiety and depressive symptoms, impacting various aspects of their daily life. The therapist employed a person-centered approach, providing a safe and non-judgmental space for the patient to share their experiences.</Text>
-                  </View>
-                </View>
-              </View>
-            </ScrollView>
-
-          </View>
-        </View>
-        {/* </TouchableWithoutFeedback> */}
-      </Modal>
     </SafeAreaView>
   )
 }
@@ -1120,7 +996,7 @@ const styles = StyleSheet.create({
   ButtonImg: { height: 20, width: 20, resizeMode: 'contain', marginRight: 5 },
   ButtonText: { color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
   containSection: { height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  AudioBackground: { width: responsiveWidth(100), height: responsiveHeight(75), justifyContent: 'center', alignItems: 'center' },
+  AudioBackground: { width: responsiveWidth(100), height: responsiveHeight(80), justifyContent: 'center', alignItems: 'center' },
   buttonImage: { height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
   audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
   audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
