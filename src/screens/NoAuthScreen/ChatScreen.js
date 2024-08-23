@@ -187,9 +187,9 @@ const ChatScreen = ({ navigation, route }) => {
       sessionStart();
     };
     initialize();
-    return () => {
-      agoraEngineRef.current?.destroy();
-    };
+    // return () => {
+    //   agoraEngineRef.current?.destroy();
+    // };
   }, []);
 
   const sessionStart = async () => {
@@ -540,48 +540,52 @@ const ChatScreen = ({ navigation, route }) => {
   const [micOn, setMicOn] = useState(true);
   const [speakerOn, setSpeakerOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(true);
+  const [isVideLoading, setIsVideLoading] = useState(true);
 
   function showMessage(msg) {
     setMessage(msg);
   }
 
-  // useEffect(() => {
-  //   setupVideoSDKEngine();
-  //   return () => {
-  //     agoraEngineRef.current?.destroy();
-  //   };
-  // }, []);
+  useEffect(() => {
+    setupVideoSDKEngine();
+    // return () => {
+    //   agoraEngineRef.current?.destroy();
+    // };
+  },[remoteUid]);
 
   const setupVideoSDKEngine = async () => {
     try {
       if (Platform.OS === 'android') {
         await getPermission(); // Await for permission request
       }
-  
+
       agoraEngineRef.current = await createAgoraRtcEngine(); // Await for engine creation
       const agoraEngine = agoraEngineRef.current;
-  
-      if (agoraEngine) {
-        console.log('Agora engine created successfully');
-      } else {
-        console.log('Failed to create Agora engine');
-      }
-  
+
+      // if (agoraEngine) {
+      //   console.log('Agora engine created successfully');
+      // } else {
+      //   console.log('Failed to create Agora engine');
+      // }
+
       await agoraEngine.registerEventHandler({
         onJoinChannelSuccess: () => {
           console.log('Successfully joined the channel: ' + channelName);
+          alert('Successfully joined the channel: ' + channelName)
           setIsJoined(true);
         },
         onUserJoined: (_connection, Uid) => {
           console.log('Remote user ' + Uid + ' has joined');
+          alert('Remote user ' + Uid + ' has joined')
           setRemoteUid(Uid);
         },
         onUserOffline: (_connection, Uid) => {
           console.log('Remote user ' + Uid + ' has left the channel');
+          alert('Remote user ' + Uid + ' has left the channel')
           setRemoteUid(null);
         },
       });
-  
+
       await agoraEngine.initialize({
         appId: appId,
       }); // Await for initialization
@@ -640,7 +644,7 @@ const ChatScreen = ({ navigation, route }) => {
         console.error('Agora engine not initialized');
         return;
       }
-  
+
       if (cameraOn) {
         agoraEngine.switchCamera(); // Switch between front and rear cameras
         console.log('Camera switched');
@@ -651,7 +655,7 @@ const ChatScreen = ({ navigation, route }) => {
       console.log('Error switching camera:', e);
     }
   };
-  
+
 
   const toggleCamera = () => {
     try {
@@ -660,7 +664,7 @@ const ChatScreen = ({ navigation, route }) => {
         console.error('Agora engine not initialized');
         return;
       }
-  
+
       if (cameraOn) {
         agoraEngine.stopPreview(); // Stop the local video preview
         agoraEngine.muteLocalVideoStream(true); // Mute local video stream
@@ -670,14 +674,14 @@ const ChatScreen = ({ navigation, route }) => {
         agoraEngine.muteLocalVideoStream(false); // Unmute local video stream
         console.log('Camera turned on');
       }
-  
+
       setCameraOn(!cameraOn); // Toggle camera state
     } catch (e) {
       console.log('Error toggling camera:', e);
       showMessage('Error toggling camera');
     }
   };
-  
+
   // Define the join method called after clicking the join channel button
   const joinChannel = async () => {
     const agoraEngine = agoraEngineRef.current;
@@ -698,11 +702,13 @@ const ChatScreen = ({ navigation, route }) => {
       await agoraEngine.joinChannel(token, channelName, uid, {
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
       });
+      setIsVideLoading(false)
       setCameraOn(true);
       console.log('Successfully joined the channel: ' + channelName);
     } catch (error) {
       console.log('Error joining channel:', error);
       console.log('Failed to join the channel. Please try again.');
+      setIsVideLoading(false)
     }
   };
   const leaveChannel = async () => {
@@ -904,72 +910,129 @@ const ChatScreen = ({ navigation, route }) => {
             </>
 
             :
+            // <>
+            //   {isVideoEnabled ? (
+            //     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+            //       {/* Agora Video Component */}
+            //       <View style={{ height: responsiveHeight(80), width: '100%' }}>
+            //         <>
+            //           {/* Remote Video View */}
+            //           {remoteUid !== null && (
+            //             <RtcSurfaceView
+            //               canvas={{ uid: remoteUid }}
+            //               style={styles.remoteVideo}
+            //             />
+            //           )}
+
+            //           {/* Local Video View */}
+            //           <RtcSurfaceView
+            //             canvas={{ uid: 0 }}
+            //             style={styles.localVideo}
+            //           />
+            //         </>
+            //         <View style={styles.videoButtonSection}>
+            //           {micOn ?
+            //             <TouchableOpacity onPress={() => toggleMic()}>
+            //               <Image
+            //                 source={audioonIcon}
+            //                 style={styles.iconStyle}
+            //               />
+            //             </TouchableOpacity> :
+            //             <TouchableOpacity onPress={() => toggleMic()}>
+            //               <Image
+            //                 source={audiooffIcon}
+            //                 style={styles.iconStyle}
+            //               />
+            //             </TouchableOpacity>}
+            //           {speakerOn ?
+            //             <TouchableOpacity onPress={() => toggleSpeaker()}>
+            //               <Image
+            //                 source={speakeronIcon}
+            //                 style={styles.iconStyle}
+            //               />
+            //             </TouchableOpacity> :
+            //             <TouchableOpacity onPress={() => toggleSpeaker()}>
+            //               <Image
+            //                 source={speakeroffIcon}
+            //                 style={styles.iconStyle}
+            //               />
+            //             </TouchableOpacity>}
+            //           <TouchableOpacity onPress={() => toggleSwitchCamera()}>
+            //             <Image
+            //               source={switchcameraIcon}
+            //               style={styles.iconStyle} 
+            //             /> 
+            //           </TouchableOpacity>
+            //           {/* <TouchableOpacity onPress={toggleCamera}>
+            //             <Image
+            //               source={cameraOn ? cameraonIcon : cameraoffIcon}
+            //               style={styles.iconStyle}
+            //             />
+            //           </TouchableOpacity> */}
+            //         </View>
+            //       </View>
+            //     </SafeAreaView>
+            //   ) : (
+            //     <Text onPress={() => {
+            //       setIsVideoEnabled(true);
+            //     }}>
+            //       Start Call
+            //     </Text>
+            //   )}
+            // </>
             <>
-              {isVideoEnabled ? (
+              {isVideLoading ? (
+                <ActivityIndicator size="large" color="#0000ff" />  // Display loading indicator while joining
+              ) : isVideoEnabled ? (
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
                   <View style={{ height: responsiveHeight(80), width: '100%' }}>
-                    <>
-                      {/* Remote Video View */}
-                      {remoteUid !== null && (
-                        <RtcSurfaceView
-                          canvas={{ uid: remoteUid }}
-                          style={styles.remoteVideo}
-                        />
-                      )}
-
-                      {/* Local Video View */}
+                    {/* Remote Video View */}
+                    {remoteUid !== null && (
                       <RtcSurfaceView
-                        canvas={{ uid: 0 }}
-                        style={styles.localVideo}
+                        canvas={{ uid: remoteUid }}
+                        style={styles.remoteVideo}
                       />
-                    </>
+                    )}
+
+                    {/* Local Video View */}
+                    <RtcSurfaceView
+                      canvas={{ uid: 0 }}
+                      style={styles.localVideo}
+                    />
+
+                    {/* Video Control Buttons */}
                     <View style={styles.videoButtonSection}>
-                      {micOn ?
-                        <TouchableOpacity onPress={() => toggleMic()}>
-                          <Image
-                            source={audioonIcon}
-                            style={styles.iconStyle}
-                          />
-                        </TouchableOpacity> :
-                        <TouchableOpacity onPress={() => toggleMic()}>
-                          <Image
-                            source={audiooffIcon}
-                            style={styles.iconStyle}
-                          />
-                        </TouchableOpacity>}
-                      {speakerOn ?
-                        <TouchableOpacity onPress={() => toggleSpeaker()}>
-                          <Image
-                            source={speakeronIcon}
-                            style={styles.iconStyle}
-                          />
-                        </TouchableOpacity> :
-                        <TouchableOpacity onPress={() => toggleSpeaker()}>
-                          <Image
-                            source={speakeroffIcon}
-                            style={styles.iconStyle}
-                          />
-                        </TouchableOpacity>}
-                      <TouchableOpacity onPress={() => toggleSwitchCamera()}>
+                      <TouchableOpacity onPress={toggleMic}>
                         <Image
-                          source={switchcameraIcon}
-                          style={styles.iconStyle} 
-                        /> 
-                      </TouchableOpacity>
-                      {/* <TouchableOpacity onPress={toggleCamera}>
-                        <Image
-                          source={cameraOn ? cameraonIcon : cameraoffIcon}
+                          source={micOn ? audioonIcon : audiooffIcon}
                           style={styles.iconStyle}
                         />
-                      </TouchableOpacity> */}
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={toggleSpeaker}>
+                        <Image
+                          source={speakerOn ? speakeronIcon : speakeroffIcon}
+                          style={styles.iconStyle}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={toggleSwitchCamera}>
+                        <Image
+                          source={switchcameraIcon}
+                          style={styles.iconStyle}
+                        />
+                      </TouchableOpacity>
+                      {/* Uncomment if you want to toggle the camera on/off */}
+                      {/* <TouchableOpacity onPress={toggleCamera}>
+              <Image
+                source={cameraOn ? cameraonIcon : cameraoffIcon}
+                style={styles.iconStyle}
+              />
+            </TouchableOpacity> */}
                     </View>
                   </View>
                 </SafeAreaView>
               ) : (
-                <Text onPress={() => {
-                  setIsVideoEnabled(true);
-                }}>
+                <Text onPress={() => setIsVideoEnabled(true)}>
                   Start Call
                 </Text>
               )}
