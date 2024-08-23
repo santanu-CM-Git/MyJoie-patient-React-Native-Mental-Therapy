@@ -12,8 +12,6 @@ import KeepAwake from 'react-native-keep-awake';
 import firestore, { endBefore } from '@react-native-firebase/firestore'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenRecorder from 'react-native-screen-mic-recorder'
-import AgoraUIKit, { StreamFallbackOptions, PropsInterface, VideoRenderMode, RenderModeType } from 'agora-rn-uikit';
-console.log(RenderModeType.RenderModeFit, 'kkkkkkkkkkk')
 
 import {
   ClientRoleType,
@@ -197,6 +195,7 @@ const ChatScreen = ({ navigation, route }) => {
 
   const sessionStart = async () => {
     setIsLoading(true);
+    await joinChannel();
     const currentTime = moment().format('HH:mm:ss');
     const option = {
       "booked_slot_id": route?.params?.details?.id,
@@ -218,7 +217,7 @@ const ChatScreen = ({ navigation, route }) => {
       });
 
       if (res.data.response === true) {
-        await joinChannel();
+       
         const endTime = route?.params?.details?.end_time;
         setEndTime(endTime); // Set the end time
 
@@ -560,7 +559,11 @@ const ChatScreen = ({ navigation, route }) => {
       }
       agoraEngineRef.current = createAgoraRtcEngine();
       const agoraEngine = agoraEngineRef.current;
-
+      if (agoraEngine) {
+        console.log('Agora engine created successfully');
+      } else {
+        console.log('Failed to create Agora engine');
+      }
       agoraEngine.registerEventHandler({
         onJoinChannelSuccess: () => {
           showMessage('Successfully joined the channel: ' + channelName);
@@ -629,11 +632,29 @@ const ChatScreen = ({ navigation, route }) => {
   // Define the join method called after clicking the join channel button
   const joinChannel = async () => {
     const agoraEngine = agoraEngineRef.current;
-    agoraEngine?.setChannelProfile(ChannelProfileType.ChannelProfileCommunication);
-    agoraEngine?.startPreview();
-    agoraEngine?.joinChannel(token, channelName, uid, {
-      clientRoleType: ClientRoleType.ClientRoleBroadcaster,
-    });
+
+    if (!agoraEngine) {
+      showMessage('Agora engine is not initialized');
+      return;
+    }
+
+    try {
+      // Set channel profile
+      agoraEngine.setChannelProfile(ChannelProfileType.ChannelProfileCommunication);
+
+      // Start video preview
+      agoraEngine.startPreview();
+
+      // Join the channel
+      await agoraEngine.joinChannel(token, channelName, uid, {
+        clientRoleType: ClientRoleType.ClientRoleBroadcaster,
+      });
+
+      showMessage('Successfully joined the channel: ' + channelName);
+    } catch (error) {
+      console.log('Error joining channel:', error);
+      showMessage('Failed to join the channel. Please try again.');
+    }
   };
   const leaveChannel = async () => {
     const agoraEngine = agoraEngineRef.current;
@@ -923,7 +944,7 @@ const styles = StyleSheet.create({
   audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
   audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
   iconStyle: { height: 50, width: 50 },
-  videoButtonSection:{ backgroundColor: 'red', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center',alignSelf:'center' },
+  videoButtonSection: { backgroundColor: 'red', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center' },
   messageContainer: {
     backgroundColor: 'red',
     height: responsiveHeight(70)
