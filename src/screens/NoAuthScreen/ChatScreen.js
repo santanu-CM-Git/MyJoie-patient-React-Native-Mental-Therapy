@@ -18,8 +18,9 @@ console.log(RenderModeType.RenderModeFit, 'kkkkkkkkkkk')
 import {
   ClientRoleType,
   createAgoraRtcEngine,
-  IRtcEngine,
   ChannelProfileType,
+  RtcSurfaceView,
+  IRtcEngine
 } from 'react-native-agora';
 import moment from 'moment-timezone'
 import Loader from '../../utils/Loader'
@@ -35,29 +36,12 @@ const ChatScreen = ({ navigation, route }) => {
 
   const routepage = useRoute();
   const [videoCall, setVideoCall] = useState(true);
-  // For video call
-  const connectionData = {
-    appId: AGORA_APP_ID,
-    channel: route?.params?.details?.agora_channel_id2,
-    token: route?.params?.details?.agora_token2,
-    //channel: 'channel_1724075003_6ec1d41b-4866-4ec0-ac75-1cd044d97d6e',
-    //token: '007eJxTYMh3Writ8n5BH9vFmXar9rrWW+Qek53nsKVVM7Nl18G7/bEKDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapv70Pp3GwMzDIbdRkZGRgZGAB4hdhh9OYwCQzmGQBk+YMyRmJeXmpOfGG5kYmBuamBgbG8WapyYYpJoZJuiYWZma6JqnJBrqJyeamuobJKQYmJimW5ilmqYwMBgAKcDZq'
-  };
+
   // For audio call
   const appId = AGORA_APP_ID;
   const token = route?.params?.details?.agora_token;
   const channelName = route?.params?.details?.agora_channel_id;
-  //const token = '007eJxTYMh3Writ8n5BH9vFmXar9rrWW+Qek53nsKVVM7Nl18G7/bEKDGamaUYmaYkpyamGRibmaZYWyRZp5snm5olGxkapyRapv70Pp3GwMzDIbdRkZGRgZGAB4hdhh9OYwCQzmGQBk+YMyRmJeXmpOfGG5kYmBuamBgbG8WapyYYpJoZJuiYWZma6JqnJBrqJyeamuobJKQYmJimW5ilmqYwMBgAKcDZq';
-  //const channelName = 'channel_1724075003_6ec1d41b-4866-4ec0-ac75-1cd044d97d6e';
   const uid = 0; // Local user UID, no need to modify
-
-  const rtcCallbacks = {
-    EndCall: () => {
-      setVideoCall(false);
-      setActiveTab('chat')
-    }
-    // Other callbacks like RemoteUserJoined, RemoteUserLeft, etc.
-  };
 
   const [messages, setMessages] = useState([])
   const [therapistId, setTherapistId] = useState(route?.params?.details?.therapist?.id)
@@ -77,85 +61,83 @@ const ChatScreen = ({ navigation, route }) => {
   const [endTime, setEndTime] = useState(null);
   const intervalRef = useRef(null);
 
-  const requestExternalStoragePermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'External Storage Permission',
-          message: 'This app needs access to your storage to read/write files.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } catch (err) {
-      console.warn(err);
-      return false;
-    }
-  };
+  // const requestExternalStoragePermission = async () => {
+  //   try {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //       {
+  //         title: 'External Storage Permission',
+  //         message: 'This app needs access to your storage to read/write files.',
+  //         buttonNeutral: 'Ask Me Later',
+  //         buttonNegative: 'Cancel',
+  //         buttonPositive: 'OK',
+  //       },
+  //     );
+  //     return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //   } catch (err) {
+  //     console.warn(err);
+  //     return false;
+  //   }
+  // };
 
-  const startRecording = async () => {
-    try {
-      const recordingStatus = await ScreenRecorder.startRecording().catch((error) => {
-        console.warn(error); // handle native error
-      });
-      if (recordingStatus === 'started') {
-        setIsRecording(true);
-        console.log('Recording has started...');
-      } else if (recordingStatus === 'userDeniedPermission') {
-        Alert.alert('Please grant permission in order to record screen');
-      }
-    } catch (error) {
-      console.error('Error starting recording:', error);
-    }
-  };
+  // const startRecording = async () => {
+  //   try {
+  //     const recordingStatus = await ScreenRecorder.startRecording().catch((error) => {
+  //       console.warn(error); // handle native error
+  //     });
+  //     if (recordingStatus === 'started') {
+  //       setIsRecording(true);
+  //       console.log('Recording has started...');
+  //     } else if (recordingStatus === 'userDeniedPermission') {
+  //       Alert.alert('Please grant permission in order to record screen');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error starting recording:', error);
+  //   }
+  // };
 
-  const stopRecording = async () => {
-    console.log('Stopping recording...');
-    try {
-      if (Platform.OS === 'android') {
-        const hasPermission = await requestExternalStoragePermission();
-        if (!hasPermission) {
-          throw new Error('Storage permission denied');
-        }
-      }
-      const uri = await ScreenRecorder.stopRecording().catch((error) => {
-        console.warn(error); // handle native error
-      });
-      if (uri) {
-        setRecordedURL(uri);
-        console.log('Recording stopped. URI:', uri);
-        const formData = new FormData();
-        formData.append('file', {
-          uri: Platform.OS === 'android' ? uri : uri.replace('file://', ''),
-          name: 'recording.mp4',
-          type: 'video/mp4',
-        });
+  // const stopRecording = async () => {
+  //   //console.log('Stopping recording...');
+  //   try {
+  //     if (Platform.OS === 'android') {
+  //       const hasPermission = await requestExternalStoragePermission();
+  //       if (!hasPermission) {
+  //         throw new Error('Storage permission denied');
+  //       }
+  //     }
+  //     const uri = await ScreenRecorder.stopRecording().catch((error) => {
+  //       console.warn(error); // handle native error
+  //     });
+  //     if (uri) {
+  //       setRecordedURL(uri);
+  //       console.log('Recording stopped. URI:', uri);
+  //       const formData = new FormData();
+  //       formData.append('file', {
+  //         uri: Platform.OS === 'android' ? uri : uri.replace('file://', ''),
+  //         name: 'recording.mp4',
+  //         type: 'video/mp4',
+  //       });
+  //       const response = await axios.post('http://162.215.253.89/swastilife/api/file-upload', formData, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
 
-        // Upload the file to the server using axios
-        const response = await axios.post('http://162.215.253.89/swastilife/api/file-upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        const result = response.data;
-        console.log('File uploaded successfully:', result);
-      }
-      setIsRecording(false);
-    } catch (error) {
-      console.error('Error stopping recording:', error);
-      if (error.response) {
-        console.error('Server response:', error.response.data);
-      } else if (error.request) {
-        console.error('No response received:', error.request);
-      } else {
-        console.error('Error setting up request:', error.message);
-      }
-    }
-  };
+  //       const result = response.data;
+  //       console.log('File uploaded successfully:', result);
+  //     }
+  //     setIsRecording(false);
+  //   } catch (error) {
+  //     console.error('Error stopping recording:', error);
+  //     if (error.response) {
+  //       console.error('Server response:', error.response.data);
+  //     } else if (error.request) {
+  //       console.error('No response received:', error.request);
+  //     } else {
+  //       console.error('Error setting up request:', error.message);
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     console.log(routepage.name);
@@ -201,14 +183,17 @@ const ChatScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    // //receivedMsg()
-    setupVideoSDKEngine();
-    KeepAwake.activate();
-    //startRecording();
-    console.log(route?.params?.details, 'details from home page')
-
-    sessionStart()
-  }, [])
+    const initialize = async () => {
+      await setupVideoSDKEngine();
+      KeepAwake.activate();
+      console.log(route?.params?.details, 'details from home page');
+      sessionStart();
+    };
+    initialize();
+    // return () => {
+    //   agoraEngineRef.current?.destroy();
+    // };
+  }, []);
 
   const sessionStart = async () => {
     setIsLoading(true);
@@ -233,6 +218,7 @@ const ChatScreen = ({ navigation, route }) => {
       });
 
       if (res.data.response === true) {
+        await joinChannel();
         const endTime = route?.params?.details?.end_time;
         setEndTime(endTime); // Set the end time
 
@@ -241,18 +227,17 @@ const ChatScreen = ({ navigation, route }) => {
         switch (mode) {
           case 'chat':
             setActiveTab('chat');
-            setVideoCall(false);
-            await leave();
+            setIsVideoEnabled(false);
             break;
           case 'audio':
-            await join();
+            await startAudioCall();
             setActiveTab('audio');
-            setVideoCall(false);
+            setIsVideoEnabled(false);
             break;
           case 'video':
-            await setupVideoSDKEngine()
+            await startVideoCall();
             setActiveTab('video');
-            setVideoCall(true);
+            setIsVideoEnabled(true);
             break;
         }
 
@@ -323,9 +308,8 @@ const ChatScreen = ({ navigation, route }) => {
       if (res.data.response === true) {
         // Uncomment and use if needed
         // stopRecording();
-
-        setVideoCall(false);
-        await leave(); // Ensure leave completes before navigating
+        setIsVideoEnabled(false);
+        await leaveChannel(); // Ensure leave completes before navigating
         navigation.navigate('ReviewScreen', {
           bookedId: route?.params?.details?.id,
           therapistName: route?.params?.details?.therapist?.name,
@@ -551,38 +535,32 @@ const ChatScreen = ({ navigation, route }) => {
 
   // audio call 
   const agoraEngineRef = useRef(<IRtcEngine></IRtcEngine>); // IRtcEngine instance
-  const [isJoined, setIsJoined] = useState(false); // Whether the local user has joined the channel
-  const [remoteUid, setRemoteUid] = useState(0); // Remote user UID
-  const [message, setMessage] = useState(''); // User prompt message
-  const [micOn, setMicOn] = useState(true); // Microphone state
-  const [speakerOn, setSpeakerOn] = useState(false); // Loudspeaker state
+  const [isJoined, setIsJoined] = useState(false);
+  const [remoteUid, setRemoteUid] = useState(null);
+  const [message, setMessage] = useState('');
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [micOn, setMicOn] = useState(true);
+  const [speakerOn, setSpeakerOn] = useState(true);
 
   function showMessage(msg) {
     setMessage(msg);
   }
 
-  const getPermission = async () => {
-    if (Platform.OS === 'android') {
-      await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-      ]);
-    }
-  };
-
   // useEffect(() => {
   //   setupVideoSDKEngine();
-  // });
+  //   return () => {
+  //     agoraEngineRef.current?.destroy();
+  //   };
+  // }, []);
 
   const setupVideoSDKEngine = async () => {
     try {
-      // Create RtcEngine after checking and obtaining device permissions
       if (Platform.OS === 'android') {
         await getPermission();
       }
       agoraEngineRef.current = createAgoraRtcEngine();
       const agoraEngine = agoraEngineRef.current;
 
-      // Register event callbacks
       agoraEngine.registerEventHandler({
         onJoinChannelSuccess: () => {
           showMessage('Successfully joined the channel: ' + channelName);
@@ -594,15 +572,26 @@ const ChatScreen = ({ navigation, route }) => {
         },
         onUserOffline: (_connection, Uid) => {
           showMessage('Remote user ' + Uid + ' has left the channel');
-          setRemoteUid(0);
+          setRemoteUid(null);
         },
       });
-      // Initialize the engine
+
       agoraEngine.initialize({
         appId: appId,
       });
     } catch (e) {
       console.log(e);
+    }
+  };
+  const getPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      ]);
+      return granted;
+    } catch (err) {
+      console.warn(err);
     }
   };
 
@@ -638,155 +627,51 @@ const ChatScreen = ({ navigation, route }) => {
     }
   };
   // Define the join method called after clicking the join channel button
-  const join = async () => {
-    console.log(isJoined, 'isJoinedisJoinedisJoinedisJoined');
-
-    if (isJoined) {
-      return;
-    }
-    try {
-      // Set the channel profile type to communication after joining the channel
-      await agoraEngineRef.current?.setChannelProfile(
-        ChannelProfileType.ChannelProfileCommunication,
-      );
-      // Call the joinChannel method to join the channel
-      await agoraEngineRef.current?.joinChannel(token, channelName, uid, {
-        // Set the user role to broadcaster
-        clientRoleType: ClientRoleType.ClientRoleBroadcaster,
-      });
-    } catch (e) {
-      console.log(e, 'join channel error');
-    }
+  const joinChannel = async () => {
+    const agoraEngine = agoraEngineRef.current;
+    agoraEngine?.setChannelProfile(ChannelProfileType.ChannelProfileCommunication);
+    agoraEngine?.startPreview();
+    agoraEngine?.joinChannel(token, channelName, uid, {
+      clientRoleType: ClientRoleType.ClientRoleBroadcaster,
+    });
   };
-  // Define the leave method called after clicking the leave channel button
-  const leave = async () => {
-    try {
-      await agoraEngineRef.current?.leaveChannel();
-      setRemoteUid(0);
-      setIsJoined(false);
-      showMessage('Left the channel');
-    } catch (e) {
-      console.log(e, 'leave channel error');
-    }
+  const leaveChannel = async () => {
+    const agoraEngine = agoraEngineRef.current;
+    agoraEngine?.leaveChannel();
+    setRemoteUid(null);
+    setIsJoined(false);
+    setIsVideoEnabled(false);
+    setMicOn(true); // Ensure mic is on when leaving the channel
+    setSpeakerOn(true); // Ensure speaker is on when leaving the channel
+    showMessage('You left the channel');
+  };
+
+  const startVideoCall = async () => {
+    const agoraEngine = agoraEngineRef.current;
+    agoraEngine?.enableVideo();
+    setIsVideoEnabled(true);
+  };
+
+  const startAudioCall = async () => {
+    const agoraEngine = agoraEngineRef.current;
+    agoraEngine?.disableVideo();
+    setIsVideoEnabled(false);
   };
   const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   const goingToactiveTab = async (name) => {
     if (name === 'audio') {
-      await leave();
-      await delay(200); // Add a delay to ensure state is properly updated
-      await join();
+      await startAudioCall();
       setActiveTab('audio');
-      setVideoCall(false);
+      setIsVideoEnabled(false);
     } else if (name === 'video') {
-      await leave();
-      await delay(200); // Add a delay to ensure state is properly updated
+      await startVideoCall();
       setActiveTab('video');
-      setVideoCall(true);
+      setIsVideoEnabled(true);
     } else if (name === 'chat') {
-      await leave();
-      await delay(200); // Add a delay to ensure state is properly updated
       setActiveTab('chat');
-      setVideoCall(false);
+      setIsVideoEnabled(false);
     }
-  };
-
-  // const goingToactiveTab = (name) => {
-  //   if (name === 'audio') {
-  //     leave()
-  //       .then(() => delay(200))
-  //       .then(() => join())
-  //       .then(() => {
-  //         setActiveTab('audio');
-  //         setVideoCall(false);
-  //       })
-  //       .catch(error => console.error(error));
-  //   } else if (name === 'video') {
-  //     leave()
-  //       .then(() => delay(200))
-  //       .then(() => {
-  //         setActiveTab('video');
-  //         setVideoCall(true);
-  //       })
-  //       .catch(error => console.error(error));
-  //   } else if (name === 'chat') {
-  //     leave()
-  //       .then(() => delay(200))
-  //       .then(() => {
-  //         setActiveTab('chat');
-  //         setVideoCall(false);
-  //       })
-  //       .catch(error => console.error(error));
-  //   }
-  // };
-
-
-
-  const customPropsStyle = {
-    localBtnStyles: {
-      endCall: {
-        height: 40,
-        width: 40,
-        backgroundColor: '#e43',
-        borderWidth: 0,
-        marginLeft: 5,
-      },
-      switchCamera: {
-        height: 40,
-        width: 40,
-        backgroundColor: '#8D9095',
-        borderWidth: 0,
-      },
-      muteLocalAudio: {
-        height: 40,
-        width: 40,
-        backgroundColor: '#8D9095',
-        borderWidth: 0,
-      },
-      muteLocalVideo: {
-        height: 40,
-        width: 40,
-        backgroundColor: '#8D9095',
-        borderWidth: 0,
-      },
-    },
-    maxViewStyles: {
-      flex: 1,
-      alignSelf: 'stretch',
-    },
-    UIKitContainer: {
-      flex: 1,
-    },
-    localBtnContainer: {
-      backgroundColor: 'rgba(52, 52, 52, 0.8)',
-      height: responsiveHeight(10),
-      borderRadius: 50,
-      alignItems: 'center',
-      position: 'absolute',
-      bottom: 5
-    },
-    theme: '#ffffffee',
-    iconSize: 25,
-    VideoRenderMode: RenderModeType.RenderModeFit,
-    remoteVideo: {
-      width: '100%',
-      height: '100%',
-      aspectRatio: 9 / 16,
-    },
-  };
-
-
-  const agoraConfig = {
-    appId: connectionData.appId,
-    channelProfile: 1, // Live broadcasting profile
-    videoEncoderConfig: {
-      width: 720,
-      height: 1280, // Portrait dimensions
-      bitrate: 1130,
-      frameRate: 15,
-      orientationMode: 'fixedPortrait',  // Force portrait mode
-    },
-    // other configurations
   };
 
   if (isLoading) {
@@ -950,16 +835,53 @@ const ChatScreen = ({ navigation, route }) => {
 
             :
             <>
-              {videoCall ? (
+              {isVideoEnabled ? (
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
                   <View style={{ height: responsiveHeight(80), width: '100%' }}>
-                    <AgoraUIKit
-                      connectionData={connectionData}
-                      rtcCallbacks={rtcCallbacks}
-                      styleProps={customPropsStyle}
-                      agoraConfig={agoraConfig}
-                    />
+                    <>
+                      {/* Remote Video View */}
+                      {remoteUid == null && (
+                        <RtcSurfaceView
+                          canvas={{ uid: remoteUid }}
+                          style={styles.remoteVideo}
+                        />
+                      )}
+
+                      {/* Local Video View */}
+                      <RtcSurfaceView
+                        canvas={{ uid: 0 }}
+                        style={styles.localVideo}
+                      />
+                    </>
+                    <View style={styles.videoButtonSection}>
+                      {micOn ?
+                        <TouchableOpacity onPress={() => toggleMic()}>
+                          <Image
+                            source={audioonIcon}
+                            style={styles.iconStyle}
+                          />
+                        </TouchableOpacity> :
+                        <TouchableOpacity onPress={() => toggleMic()}>
+                          <Image
+                            source={audiooffIcon}
+                            style={styles.iconStyle}
+                          />
+                        </TouchableOpacity>}
+                      {speakerOn ?
+                        <TouchableOpacity onPress={() => toggleSpeaker()}>
+                          <Image
+                            source={speakeronIcon}
+                            style={styles.iconStyle}
+                          />
+                        </TouchableOpacity> :
+                        <TouchableOpacity onPress={() => toggleSpeaker()}>
+                          <Image
+                            source={speakeroffIcon}
+                            style={styles.iconStyle}
+                          />
+                        </TouchableOpacity>}
+                    </View>
                   </View>
                 </SafeAreaView>
               ) : (
@@ -1001,6 +923,7 @@ const styles = StyleSheet.create({
   audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
   audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
   iconStyle: { height: 50, width: 50 },
+  videoButtonSection:{ backgroundColor: 'red', height: responsiveHeight(9), width: responsiveWidth(50), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 60, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center',alignSelf:'center' },
   messageContainer: {
     backgroundColor: 'red',
     height: responsiveHeight(70)
@@ -1083,6 +1006,17 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 50, // Adjust the radius as needed
     overflow: 'hidden', // Ensure child components respect the borderRadius
+  },
+  localVideo: {
+    width: '30%',
+    height: 200,
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  remoteVideo: {
+    width: '100%',
+    height: '100%',
   },
 
 });

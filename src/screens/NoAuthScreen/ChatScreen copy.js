@@ -113,7 +113,7 @@ const ChatScreen = ({ navigation, route }) => {
   };
 
   const stopRecording = async () => {
-    console.log('Stopping recording...');
+    //console.log('Stopping recording...');
     try {
       if (Platform.OS === 'android') {
         const hasPermission = await requestExternalStoragePermission();
@@ -133,8 +133,6 @@ const ChatScreen = ({ navigation, route }) => {
           name: 'recording.mp4',
           type: 'video/mp4',
         });
-
-        // Upload the file to the server using axios
         const response = await axios.post('http://162.215.253.89/swastilife/api/file-upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -690,37 +688,6 @@ const ChatScreen = ({ navigation, route }) => {
       setVideoCall(false);
     }
   };
-
-  // const goingToactiveTab = (name) => {
-  //   if (name === 'audio') {
-  //     leave()
-  //       .then(() => delay(200))
-  //       .then(() => join())
-  //       .then(() => {
-  //         setActiveTab('audio');
-  //         setVideoCall(false);
-  //       })
-  //       .catch(error => console.error(error));
-  //   } else if (name === 'video') {
-  //     leave()
-  //       .then(() => delay(200))
-  //       .then(() => {
-  //         setActiveTab('video');
-  //         setVideoCall(true);
-  //       })
-  //       .catch(error => console.error(error));
-  //   } else if (name === 'chat') {
-  //     leave()
-  //       .then(() => delay(200))
-  //       .then(() => {
-  //         setActiveTab('chat');
-  //         setVideoCall(false);
-  //       })
-  //       .catch(error => console.error(error));
-  //   }
-  // };
-
-
 
   const customPropsStyle = {
     localBtnStyles: {
