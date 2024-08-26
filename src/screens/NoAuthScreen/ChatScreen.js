@@ -535,23 +535,12 @@ const ChatScreen = ({ navigation, route }) => {
   const agoraEngineRef = useRef(<IRtcEngine></IRtcEngine>); // IRtcEngine instance
   const [isJoined, setIsJoined] = useState(false);
   const [remoteUid, setRemoteUid] = useState(null);
-  const [message, setMessage] = useState('');
+  const [localUid, setLocalUid] = useState(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [micOn, setMicOn] = useState(true);
   const [speakerOn, setSpeakerOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(true);
   const [isVideLoading, setIsVideLoading] = useState(true);
-
-  function showMessage(msg) {
-    setMessage(msg);
-  }
-
-  useEffect(() => {
-    setupVideoSDKEngine();
-    // return () => {
-    //   agoraEngineRef.current?.destroy();
-    // };
-  },[remoteUid]);
 
   const setupVideoSDKEngine = async () => {
     try {
@@ -569,9 +558,10 @@ const ChatScreen = ({ navigation, route }) => {
       // }
 
       await agoraEngine.registerEventHandler({
-        onJoinChannelSuccess: () => {
+        onJoinChannelSuccess: (connection, localUid, elapsed) => {
           console.log('Successfully joined the channel: ' + channelName);
           alert('Successfully joined the channel: ' + channelName)
+          setLocalUid(localUid);
           setIsJoined(true);
         },
         onUserJoined: (_connection, Uid) => {
@@ -610,10 +600,8 @@ const ChatScreen = ({ navigation, route }) => {
       const agoraEngine = agoraEngineRef.current;
       if (micOn) {
         agoraEngine?.muteLocalAudioStream(true);
-        showMessage('Microphone muted');
       } else {
         agoraEngine?.muteLocalAudioStream(false);
-        showMessage('Microphone unmuted');
       }
       setMicOn(!micOn);
     } catch (e) {
@@ -626,10 +614,8 @@ const ChatScreen = ({ navigation, route }) => {
       const agoraEngine = agoraEngineRef.current;
       if (speakerOn) {
         agoraEngine?.setEnableSpeakerphone(false);
-        showMessage('Speaker disabled');
       } else {
         agoraEngine?.setEnableSpeakerphone(true);
-        showMessage('Speaker enabled');
       }
       setSpeakerOn(!speakerOn);
     } catch (e) {
@@ -678,7 +664,6 @@ const ChatScreen = ({ navigation, route }) => {
       setCameraOn(!cameraOn); // Toggle camera state
     } catch (e) {
       console.log('Error toggling camera:', e);
-      showMessage('Error toggling camera');
     }
   };
 
@@ -719,7 +704,7 @@ const ChatScreen = ({ navigation, route }) => {
     setIsVideoEnabled(false);
     setMicOn(true); // Ensure mic is on when leaving the channel
     setSpeakerOn(true); // Ensure speaker is on when leaving the channel
-    showMessage('You left the channel');
+    console.log('You left the channel');
   };
 
   const startVideoCall = async () => {
@@ -910,76 +895,6 @@ const ChatScreen = ({ navigation, route }) => {
             </>
 
             :
-            // <>
-            //   {isVideoEnabled ? (
-            //     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-            //       {/* Agora Video Component */}
-            //       <View style={{ height: responsiveHeight(80), width: '100%' }}>
-            //         <>
-            //           {/* Remote Video View */}
-            //           {remoteUid !== null && (
-            //             <RtcSurfaceView
-            //               canvas={{ uid: remoteUid }}
-            //               style={styles.remoteVideo}
-            //             />
-            //           )}
-
-            //           {/* Local Video View */}
-            //           <RtcSurfaceView
-            //             canvas={{ uid: 0 }}
-            //             style={styles.localVideo}
-            //           />
-            //         </>
-            //         <View style={styles.videoButtonSection}>
-            //           {micOn ?
-            //             <TouchableOpacity onPress={() => toggleMic()}>
-            //               <Image
-            //                 source={audioonIcon}
-            //                 style={styles.iconStyle}
-            //               />
-            //             </TouchableOpacity> :
-            //             <TouchableOpacity onPress={() => toggleMic()}>
-            //               <Image
-            //                 source={audiooffIcon}
-            //                 style={styles.iconStyle}
-            //               />
-            //             </TouchableOpacity>}
-            //           {speakerOn ?
-            //             <TouchableOpacity onPress={() => toggleSpeaker()}>
-            //               <Image
-            //                 source={speakeronIcon}
-            //                 style={styles.iconStyle}
-            //               />
-            //             </TouchableOpacity> :
-            //             <TouchableOpacity onPress={() => toggleSpeaker()}>
-            //               <Image
-            //                 source={speakeroffIcon}
-            //                 style={styles.iconStyle}
-            //               />
-            //             </TouchableOpacity>}
-            //           <TouchableOpacity onPress={() => toggleSwitchCamera()}>
-            //             <Image
-            //               source={switchcameraIcon}
-            //               style={styles.iconStyle} 
-            //             /> 
-            //           </TouchableOpacity>
-            //           {/* <TouchableOpacity onPress={toggleCamera}>
-            //             <Image
-            //               source={cameraOn ? cameraonIcon : cameraoffIcon}
-            //               style={styles.iconStyle}
-            //             />
-            //           </TouchableOpacity> */}
-            //         </View>
-            //       </View>
-            //     </SafeAreaView>
-            //   ) : (
-            //     <Text onPress={() => {
-            //       setIsVideoEnabled(true);
-            //     }}>
-            //       Start Call
-            //     </Text>
-            //   )}
-            // </>
             <>
               {isVideLoading ? (
                 <ActivityIndicator size="large" color="#0000ff" />  // Display loading indicator while joining
@@ -997,7 +912,7 @@ const ChatScreen = ({ navigation, route }) => {
 
                     {/* Local Video View */}
                     <RtcSurfaceView
-                      canvas={{ uid: 0 }}
+                      canvas={{ uid: localUid }}
                       style={styles.localVideo}
                     />
 
