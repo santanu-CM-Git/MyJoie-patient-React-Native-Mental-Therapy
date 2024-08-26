@@ -532,7 +532,7 @@ const ChatScreen = ({ navigation, route }) => {
 
 
   // audio call 
-  const agoraEngineRef = useRef(<IRtcEngine></IRtcEngine>); // IRtcEngine instance
+  const agoraEngineRef = useRef(null); // IRtcEngine instance
   const [isJoined, setIsJoined] = useState(false);
   const [remoteUid, setRemoteUid] = useState(null);
   const [localUid, setLocalUid] = useState(null);
@@ -548,7 +548,7 @@ const ChatScreen = ({ navigation, route }) => {
         await getPermission(); // Await for permission request
       }
 
-      agoraEngineRef.current = await createAgoraRtcEngine(); // Await for engine creation
+      agoraEngineRef.current = createAgoraRtcEngine(); // Await for engine creation
       const agoraEngine = agoraEngineRef.current;
 
       // if (agoraEngine) {
@@ -556,6 +556,10 @@ const ChatScreen = ({ navigation, route }) => {
       // } else {
       //   console.log('Failed to create Agora engine');
       // }
+
+      await agoraEngine.initialize({
+        appId: appId,
+      }); // Await for initialization
 
       await agoraEngine.registerEventHandler({
         onJoinChannelSuccess: (connection, localUid, elapsed) => {
@@ -576,9 +580,6 @@ const ChatScreen = ({ navigation, route }) => {
         },
       });
 
-      await agoraEngine.initialize({
-        appId: appId,
-      }); // Await for initialization
     } catch (e) {
       console.log(e);
     }
@@ -689,22 +690,29 @@ const ChatScreen = ({ navigation, route }) => {
       });
       setIsVideLoading(false)
       setCameraOn(true);
-      console.log('Successfully joined the channel: ' + channelName);
+      //console.log('Successfully joined the channel: ' + channelName);
     } catch (error) {
       console.log('Error joining channel:', error);
       console.log('Failed to join the channel. Please try again.');
       setIsVideLoading(false)
     }
   };
+
+
   const leaveChannel = async () => {
-    const agoraEngine = agoraEngineRef.current;
-    await agoraEngine?.leaveChannel();
-    setRemoteUid(null);
-    setIsJoined(false);
-    setIsVideoEnabled(false);
-    setMicOn(true); // Ensure mic is on when leaving the channel
-    setSpeakerOn(true); // Ensure speaker is on when leaving the channel
-    console.log('You left the channel');
+    try {
+      const agoraEngine = agoraEngineRef.current;
+      await agoraEngine?.leaveChannel();
+      setRemoteUid(null);
+      setIsJoined(false);
+      setIsVideoEnabled(false);
+      setMicOn(true); // Ensure mic is on when leaving the channel
+      setSpeakerOn(true); // Ensure speaker is on when leaving the channel
+      console.log('You left the channel');
+    } catch (e) {
+      console.log(e);
+    }
+
   };
 
   const startVideoCall = async () => {
