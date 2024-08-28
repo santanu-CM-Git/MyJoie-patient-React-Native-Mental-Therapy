@@ -36,9 +36,11 @@ const ChatScreen = ({ navigation, route }) => {
 
   // For audio call
   const appId = AGORA_APP_ID;
-  const token = route?.params?.details?.agora_token;
-  const channelName = route?.params?.details?.agora_channel_id;
+  //const token = route?.params?.details?.agora_token;
+  // const channelName = route?.params?.details?.agora_channel_id;
   const uid = 0; // Local user UID, no need to modify
+  const token = '007eJxTYDhi6F9zTDfj6wqLJ2d/pO048fby6lV6n0oPfuMLOvD24KqzCgxmpmlGJmmJKcmphkYm5mmWFskWaebJ5uaJRsZGqckWqRd2nEtrCGRkWMXByczIAIEgPidDYnp+UWJJanEJAwMAj1MmkA==';
+  const channelName = 'agoratest';
 
   const [messages, setMessages] = useState([])
   const [therapistId, setTherapistId] = useState(route?.params?.details?.therapist?.id)
@@ -565,7 +567,7 @@ const ChatScreen = ({ navigation, route }) => {
         onJoinChannelSuccess: (connection, localUid, elapsed) => {
           console.log('Successfully joined the channel: ' + channelName);
           alert('Successfully joined the channel: ' + channelName)
-          setLocalUid(localUid);
+          setLocalUid(0);
           setIsJoined(true);
         },
         onUserJoined: (_connection, Uid) => {
@@ -726,7 +728,6 @@ const ChatScreen = ({ navigation, route }) => {
     await agoraEngine?.disableVideo();
     setIsVideoEnabled(false);
   };
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   const goingToactiveTab = async (name) => {
     if (name === 'audio') {
@@ -920,7 +921,7 @@ const ChatScreen = ({ navigation, route }) => {
 
                     {/* Local Video View */}
                     <RtcSurfaceView
-                      canvas={{ uid: localUid }}
+                      canvas={{ uid: 0 }}
                       style={styles.localVideo}
                     />
 
