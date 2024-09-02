@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
         //backgroundColor: 'red'
     },
     headerImage: {
-        width: 35,
-        height: 35,
+        width: 20,
+        height: 20,
     },
     firstText: {
         fontSize: responsiveFontSize(2),

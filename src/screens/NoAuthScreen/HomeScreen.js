@@ -829,7 +829,7 @@ const styles = StyleSheet.create({
   dateView1: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: responsiveWidth(25)
+    width: responsiveWidth(30),
   },
   dateView2: {
     flexDirection: 'row',
