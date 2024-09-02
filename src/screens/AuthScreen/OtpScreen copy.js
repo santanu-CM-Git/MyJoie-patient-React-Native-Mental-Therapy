@@ -66,7 +66,7 @@ const OtpScreen = ({ navigation, route }) => {
     //           console.log('OTP received:', otp);
     //           setOtp(otp);
     //         });
-
+    
     //         // Stop listening when component unmounts
     //         return () => OTPVerify.removeListener();
     //       })
@@ -81,62 +81,29 @@ const OtpScreen = ({ navigation, route }) => {
 
     const goToNextPage = (code) => {
         setIsLoading(true)
+        //console.log(`Code is ${code}, you are good to go!`)
+        //navigation.navigate('PersonalInformation', { phoneno: 2454545435, usertoken: 'sdfwr32432423424' })
+        // const option = {
+        //     "phone": route?.params?.phoneno,
+        //     "otp": code,
+        //     "code": route?.params?.counterycode,
+        //     "userId": route?.params?.userid,
+        // }
         if (code == comingOTP) {
-            const option = {
-                "country_code": route?.params?.countrycode,
-                "mobile": route?.params?.phone,
-                "firebase_token": route?.params?.fcmToken,
-                //"deviceid": deviceId,
+            setIsLoading(false)
+            Toast.show({
+                type: 'success',
+                text1: 'Hello',
+                text2: "The OTP has been successfully matched.",
+                position: 'top',
+                topOffset: Platform.OS == 'ios' ? 55 : 20
+            });
+            if(route?.params?.name){
+                login(route?.params?.token)
+            }else{
+                navigation.navigate('PersonalInformation', { token: route?.params?.token })
             }
-            axios.post(`${API_URL}/patient/login`, option, {
-                headers: {
-                    'Accept': 'application/json',
-                    //'Content-Type': 'multipart/form-data',
-                },
-            })
-                .then(res => {
-                    console.log(res.data)
-                    if (res.data.response == true) {
-                        setIsLoading(false)
-                        Toast.show({
-                            type: 'success',
-                            text1: 'Hello',
-                            text2: "The OTP has been successfully matched.",
-                            position: 'top',
-                            topOffset: Platform.OS == 'ios' ? 55 : 20
-                        });
-                            if(res.data?.data?.name){
-                                login(res.data?.token)
-                            }else{
-                                navigation.navigate('PersonalInformation', { token: res.data?.token })
-                            }
-                    } else {
-                        console.log('not okk')
-                        setIsLoading(false)
-                        Alert.alert('Oops..', "Something went wrong", [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
-                            { text: 'OK', onPress: () => console.log('OK Pressed') },
-                        ]);
-                    }
-                })
-                .catch(e => {
-                    setIsLoading(false)
-                    console.log(`user login error ${e}`)
-                    console.log(e.response)
-                    Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
-                    ]);
-                });
-
+            
         } else {
             console.log('not correct')
             setIsLoading(false)
@@ -228,7 +195,7 @@ const OtpScreen = ({ navigation, route }) => {
                 </Text>
                 <Text
                     style={styles.subheadernum}>
-                    {route?.params?.countrycode} {route?.params?.phone}
+                   {route?.params?.countrycode} {route?.params?.phone}
                 </Text>
                 {/* <Text
                     style={styles.subheader}>
@@ -259,7 +226,7 @@ const OtpScreen = ({ navigation, route }) => {
                     <TouchableOpacity onPress={() => resendOtp()} disabled={isResendDisabled}>
                         <Text style={[styles.resendText, isResendDisabled && { color: '#808080' }]}>Resend OTP</Text>
                     </TouchableOpacity>
-
+                    
                 </View>
 
             </View>

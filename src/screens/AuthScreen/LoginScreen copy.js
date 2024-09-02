@@ -95,10 +95,10 @@ const LoginScreen = ({ navigation }) => {
         const option = {
           "country_code": countryCode,
           "mobile": phone,
-          //"firebase_token": fcmToken,
+          "firebase_token": fcmToken,
           //"deviceid": deviceId,
         }
-        axios.post(`${API_URL}/patient/login-otp-generate`, option, {
+        axios.post(`${API_URL}/patient/login`, option, {
           headers: {
             'Accept': 'application/json',
             //'Content-Type': 'multipart/form-data',
@@ -117,8 +117,7 @@ const LoginScreen = ({ navigation }) => {
               });
               //alert(res.data?.otp)
               // login(res.data.token)
-              //navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name })
-              navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.data?.otp, fcmToken: fcmToken})
+              navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name })
             } else {
               console.log('not okk')
               setIsLoading(false)
