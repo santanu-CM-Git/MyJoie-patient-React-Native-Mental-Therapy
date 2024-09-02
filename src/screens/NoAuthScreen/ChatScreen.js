@@ -779,7 +779,7 @@ const ChatScreen = ({ navigation, route }) => {
           />
           : activeTab == 'audio' ?
             <>
-              <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground}>
+              <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground} resizeMode="cover">
                 {route?.params?.details?.therapist?.profile_pic ?
                   <Image
                     source={{ uri: route?.params?.details?.therapist?.profile_pic }}
