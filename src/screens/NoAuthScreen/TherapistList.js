@@ -444,7 +444,7 @@ const TherapistList = ({ navigation, route }) => {
                             starSize={12}
                             starStyle={styles.starStyle}
                         />
-                        {/* <Text style={styles.noOfReview}>{item?.review_counter} Reviews</Text> */}
+                        <Text style={styles.noOfReview}>{item?.display_rating_members} Reviews</Text>
                     </View>
                     <View style={styles.contentStyle}>
                         <Text style={styles.contentStyleName}>{item?.user?.name}</Text>

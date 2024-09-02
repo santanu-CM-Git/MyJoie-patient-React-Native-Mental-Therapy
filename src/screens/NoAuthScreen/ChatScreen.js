@@ -35,11 +35,11 @@ const ChatScreen = ({ navigation, route }) => {
 
   // For audio call
   const appId = AGORA_APP_ID;
-  //const token = route?.params?.details?.agora_token;
-  // const channelName = route?.params?.details?.agora_channel_id;
+  const token = route?.params?.details?.agora_token;
+  const channelName = route?.params?.details?.agora_channel_id;
   const uid = 0; // Local user UID, no need to modify
-  const token = '007eJxTYKgTufZm7uYZB3m+zpWVPfPUL/nHwS8G/a1Om+QOfOY2duRQYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZI/RZ0Na0hkJHhuscLJkYGCATxORkS0/OLEktSi0sYGACPbyPx';
-  const channelName = 'agoratest';
+  //const token = '007eJxTYKgTufZm7uYZB3m+zpWVPfPUL/nHwS8G/a1Om+QOfOY2duRQYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZI/RZ0Na0hkJHhuscLJkYGCATxORkS0/OLEktSi0sYGACPbyPx';
+  //const channelName = 'agoratest';
 
   const [messages, setMessages] = useState([])
   const [therapistId, setTherapistId] = useState(route?.params?.details?.therapist?.id)

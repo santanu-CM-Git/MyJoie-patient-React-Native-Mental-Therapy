@@ -395,7 +395,7 @@ export default function HomeScreen({ navigation }) {
               source={dateIcon}
               style={styles.datetimeIcon}
             />
-            <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
+            <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMM YY')}</Text>
           </View>
           {/* <View style={styles.dividerLine} /> */}
           <View style={styles.dateView2}>
@@ -448,7 +448,7 @@ export default function HomeScreen({ navigation }) {
             source={dateIcon}
             style={styles.datetimeIcon}
           />
-          <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMMM')}</Text>
+          <Text style={styles.dateTimeText}>{moment(item?.date).format('ddd, D MMM YY')}</Text>
         </View>
         {/* <View
           style={styles.verticalLine}

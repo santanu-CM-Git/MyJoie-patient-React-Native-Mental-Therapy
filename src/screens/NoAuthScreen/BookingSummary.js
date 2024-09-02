@@ -424,7 +424,7 @@ const BookingSummary = ({ navigation, route }) => {
                                     starSize={12}
                                     starStyle={styles.starStyle}
                                 />
-                                <Text style={styles.reviewText}>{profileDetails?.review_counter} Reviews</Text>
+                                <Text style={styles.reviewText}>{profileDetails?.display_rating_members} Reviews</Text>
                             </View>
                             <View style={styles.profileDetailsView}>
                                 <Text style={styles.textStyle1}>{profileDetails?.user?.name}</Text>
@@ -443,7 +443,7 @@ const BookingSummary = ({ navigation, route }) => {
                                         source={dateIcon}
                                         style={styles.imageSection1stImg}
                                     />
-                                    <Text style={styles.imageSection1stText}>{moment(previousPageData?.date).format('ddd, D MMMM')}</Text>
+                                    <Text style={styles.imageSection1stText}>{moment(previousPageData?.date).format('ddd, D MMM YY')}</Text>
                                 </View>
                                 <View style={styles.imageSection2nd}>
                                     <Image
