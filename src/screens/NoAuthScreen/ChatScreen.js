@@ -11,7 +11,6 @@ import { TabActions, useRoute } from '@react-navigation/native';
 import KeepAwake from 'react-native-keep-awake';
 import firestore, { endBefore } from '@react-native-firebase/firestore'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ScreenRecorder from 'react-native-screen-mic-recorder'
 
 import {
   ClientRoleType,
@@ -59,84 +58,6 @@ const ChatScreen = ({ navigation, route }) => {
   const [timer, setTimer] = useState(0);
   const [endTime, setEndTime] = useState(null);
   const intervalRef = useRef(null);
-
-  // const requestExternalStoragePermission = async () => {
-  //   try {
-  //     const granted = await PermissionsAndroid.request(
-  //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-  //       {
-  //         title: 'External Storage Permission',
-  //         message: 'This app needs access to your storage to read/write files.',
-  //         buttonNeutral: 'Ask Me Later',
-  //         buttonNegative: 'Cancel',
-  //         buttonPositive: 'OK',
-  //       },
-  //     );
-  //     return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //   } catch (err) {
-  //     console.warn(err);
-  //     return false;
-  //   }
-  // };
-
-  // const startRecording = async () => {
-  //   try {
-  //     const recordingStatus = await ScreenRecorder.startRecording().catch((error) => {
-  //       console.warn(error); // handle native error
-  //     });
-  //     if (recordingStatus === 'started') {
-  //       setIsRecording(true);
-  //       console.log('Recording has started...');
-  //     } else if (recordingStatus === 'userDeniedPermission') {
-  //       Alert.alert('Please grant permission in order to record screen');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error starting recording:', error);
-  //   }
-  // };
-
-  // const stopRecording = async () => {
-  //   //console.log('Stopping recording...');
-  //   try {
-  //     if (Platform.OS === 'android') {
-  //       const hasPermission = await requestExternalStoragePermission();
-  //       if (!hasPermission) {
-  //         throw new Error('Storage permission denied');
-  //       }
-  //     }
-  //     const uri = await ScreenRecorder.stopRecording().catch((error) => {
-  //       console.warn(error); // handle native error
-  //     });
-  //     if (uri) {
-  //       setRecordedURL(uri);
-  //       console.log('Recording stopped. URI:', uri);
-  //       const formData = new FormData();
-  //       formData.append('file', {
-  //         uri: Platform.OS === 'android' ? uri : uri.replace('file://', ''),
-  //         name: 'recording.mp4',
-  //         type: 'video/mp4',
-  //       });
-  //       const response = await axios.post('http://162.215.253.89/swastilife/api/file-upload', formData, {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       });
-
-  //       const result = response.data;
-  //       console.log('File uploaded successfully:', result);
-  //     }
-  //     setIsRecording(false);
-  //   } catch (error) {
-  //     console.error('Error stopping recording:', error);
-  //     if (error.response) {
-  //       console.error('Server response:', error.response.data);
-  //     } else if (error.request) {
-  //       console.error('No response received:', error.request);
-  //     } else {
-  //       console.error('Error setting up request:', error.message);
-  //     }
-  //   }
-  // };
 
   useEffect(() => {
     console.log(routepage.name);
@@ -306,8 +227,6 @@ const ChatScreen = ({ navigation, route }) => {
       console.log(res.data);
 
       if (res.data.response === true) {
-        // Uncomment and use if needed
-        // stopRecording();
         setIsVideoEnabled(false);
         await leaveChannel(); // Ensure leave completes before navigating
         navigation.navigate('ReviewScreen', {
