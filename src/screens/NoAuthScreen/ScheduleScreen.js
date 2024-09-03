@@ -433,7 +433,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                 <Text style={styles.previousBookingContentValue}>Rs {item?.therapist_details?.rate} for 30 Min</Text>
             </View>
             <View style={{ marginTop: responsiveHeight(2) }}>
-                <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
+                <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id,mode: 'paid' }) }} />
             </View>
         </View>
     )
