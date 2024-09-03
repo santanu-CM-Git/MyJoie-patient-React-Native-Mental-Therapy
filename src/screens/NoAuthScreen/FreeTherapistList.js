@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -65,7 +65,7 @@ const Ages = [
 // ]
 
 
-const TherapistList = ({ navigation, route }) => {
+const FreeTherapistList = ({ navigation, route }) => {
 
     const [value, setValue] = useState('All');
     const [isFocus, setIsFocus] = useState(false);
@@ -205,6 +205,21 @@ const TherapistList = ({ navigation, route }) => {
             });
     }
 
+    const handleBackButton = () => {
+        navigation.goBack()
+        
+        return true; // Returning true indicates that the back press is handled
+    };
+
+    useEffect(() => {
+        // Add the event listener
+        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+        // Remove the event listener on cleanup
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -215,16 +230,16 @@ const TherapistList = ({ navigation, route }) => {
 
         fetchData();
     }, [])
-    useFocusEffect(
-        React.useCallback(() => {
-            const fetchData = async () => {
-                await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
-                setIsLoading(false);
-            };
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         const fetchData = async () => {
+    //             await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
+    //             setIsLoading(false);
+    //         };
 
-            fetchData();
-        }, [])
-    )
+    //         fetchData();
+    //     }, [])
+    // )
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
@@ -363,7 +378,7 @@ const TherapistList = ({ navigation, route }) => {
     };
 
     const renderItem = ({ item }) => (
-        <Pressable onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id, mode: 'free' })}>
+        <Pressable onPress={() => navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.user_id, mode: 'free' } })}>
             <View style={styles.totalValue}>
                 <View style={styles.totalValue1stSection}>
                     <View style={styles.profilePicSection}>
@@ -385,7 +400,7 @@ const TherapistList = ({ navigation, route }) => {
                     <View style={styles.contentStyle}>
                         <Text style={styles.contentStyleName}>{item?.user?.name}</Text>
                         <Text style={styles.contentStyleQualification}>{item?.qualification_list.replace(/,/g, ', ')}</Text>
-                        {item?.experience?<Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text>:null}
+                        {item?.experience ? <Text style={styles.contentStyleExp}>{item?.experience} Years Experience</Text> : null}
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.contentStyleLang}>Language :</Text>
                             <Text style={styles.contentStyleLangValue}> {item?.languages_list.replace(/,/g, ', ')}</Text>
@@ -846,7 +861,7 @@ const TherapistList = ({ navigation, route }) => {
     )
 }
 
-export default TherapistList
+export default FreeTherapistList
 
 const styles = StyleSheet.create({
     Container: {

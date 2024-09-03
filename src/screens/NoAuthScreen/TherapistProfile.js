@@ -307,7 +307,12 @@ const TherapistProfile = ({ navigation, route }) => {
 
     const handleBackButton = () => {
         // Custom logic to handle the back button
-        navigation.navigate('Talk', { screen: 'TherapistList'})
+        if(route?.params?.mode == 'paid'){
+            navigation.navigate('Talk', { screen: 'TherapistList'})
+        }else{
+            navigation.navigate('HOME', { screen: 'FreeTherapistList'})
+        }
+        
         return true; // Returning true indicates that the back press is handled
     };
 
