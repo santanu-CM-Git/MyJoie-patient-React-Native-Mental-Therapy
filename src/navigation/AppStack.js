@@ -139,7 +139,7 @@ const AuthStack = () => {
           ),
         }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="  testtttt"
         component={TestPage}
         options={{
@@ -148,7 +148,7 @@ const AuthStack = () => {
             <Image source={PolicyIcon} style={{ width: 25,height: 25}} color={color}/>
           ),
         }}
-      />
+      /> */}
     </Drawer.Navigator>
   );
 };
