@@ -213,7 +213,7 @@ const Bookmarked = ({ navigation }) => {
             </View>
             <View style={{ marginTop: responsiveHeight(2),marginBottom: -responsiveHeight(1) }}>
                 <CustomButton label={"Book Now"} buttonColor={'small'} 
-                    onPress={() => navigation.navigate('TherapistProfile', { therapistId: item?.user_id })}
+                    onPress={() => { navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.user_id, mode: 'paid' }, key: Math.random().toString() }) }}
                 />
             </View>
         </View>
