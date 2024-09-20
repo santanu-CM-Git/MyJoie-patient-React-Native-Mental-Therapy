@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     image: {
-        width: 100,
-        height: 100,
+        width: responsiveWidth(90),
+        height: responsiveHeight(7),
         resizeMode:'contain'
     },
     logoContainer: {
