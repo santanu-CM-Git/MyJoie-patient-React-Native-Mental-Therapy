@@ -103,6 +103,9 @@ const TherapistStack = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       // Check if there's a specific screen to navigate to
+      console.log(route?.params?.screen,'ooooooooooooooooooooo')
+      console.log(route.name, 'ppppppppppppppppppp');
+      
       if (!route?.params?.screen && route.name === 'TherapistStack') {
         navigation.navigate('TherapistList');
       }
