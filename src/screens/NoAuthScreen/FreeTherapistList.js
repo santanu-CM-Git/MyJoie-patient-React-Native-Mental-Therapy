@@ -77,7 +77,7 @@ const FreeTherapistList = ({ navigation, route }) => {
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     const [activeTab, setActiveTab] = useState('Experience')
     const [searchValue, setSearchValue] = useState('');
-    const [sliderValuesForPrice, setSliderValuesForPrice] = useState([0, 2000]);
+    const [sliderValuesForPrice, setSliderValuesForPrice] = useState([0, 10000]);
     const sliderValuesChange = (values) => {
         setSliderValuesForPrice(values);
     };

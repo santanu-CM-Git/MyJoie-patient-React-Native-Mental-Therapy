@@ -73,7 +73,7 @@ const CustomDrawer = props => {
                 style={{ height: 60, width: 60, borderRadius: 40, marginBottom: 10, marginTop: 10, marginRight: 20 }}
               />
             }
-            <View style={{ flexDirection: 'column', marginLeft: 10 }}>
+            <View style={{ flexDirection: 'column', marginLeft: 10,width: responsiveWidth(40)}}>
               <Text
                 style={{
                   color: '#3A3232',

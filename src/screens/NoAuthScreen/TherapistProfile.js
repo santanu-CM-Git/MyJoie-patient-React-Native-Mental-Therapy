@@ -338,7 +338,7 @@ const TherapistProfile = ({ navigation, route }) => {
         console.log(formattedDate);
         console.log(dayOfWeek)
         selectedDateChange(index, dayOfWeek, formattedDate)
-        getAllReviewForTherapist()
+        //getAllReviewForTherapist()
         setSelectedByUser([])
     }, [route.params])
 
@@ -783,11 +783,11 @@ const TherapistProfile = ({ navigation, route }) => {
                                     <Text style={styles.profilebookingText}>Free for 15 Min Booking</Text>
                                 </View>
                             }
-                            <View style={styles.varticleLine} />
-                            <View style={styles.profilebookingView}>
+                            {/* <View style={styles.varticleLine} /> */}
+                            {/* <View style={styles.profilebookingView}>
 
                                 <Text style={styles.profilebookingText}>Session Done - {profileDetails?.session_done}</Text>
-                            </View>
+                            </View> */}
                         </View>
                     </View>
                     <View style={styles.selectedDateSection}>
@@ -908,17 +908,16 @@ const TherapistProfile = ({ navigation, route }) => {
                     <Text style={styles.checkboxText}>I give my consent to the app and therapists to access my past medical history available on the platform </Text>
                 </View>
                 {permissionError ? <Text style={styles.permissionErrorStyle}>{permissionError}</Text> : null}
-                {allReview.length !== 0 ?
+                {/* {allReview.length !== 0 ?
                     <View style={{ padding: responsiveWidth(3), }}>
                         <View style={styles.reviewSection}>
                             <Text style={styles.headerText}>Reviews</Text>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                {/* <Text style={{ fontSize: responsiveFontSize(1.7), color: '#746868', fontFamily: 'DMSans-Regular', }}>See All</Text> */}
                             </View>
                         </View>
                     </View>
-                    : <></>}
-                <View style={styles.reviewSectionList}>
+                    : <></>} */}
+                {/* <View style={styles.reviewSectionList}>
                     <FlatList
                         data={allReview}
                         renderItem={renderItem}
@@ -932,7 +931,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
                     />
-                </View>
+                </View> */}
                 <View style={{ width: responsiveWidth(90), alignSelf: 'center' }}>
                     <CustomButton label={"Book Appointment"}
                         // onPress={() => { login() }}
@@ -1025,9 +1024,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#F4F5F5',
         borderRadius: 10,
         padding: 5,
-        flexDirection: 'row',
+        //flexDirection: 'row',
+        //justifyContent: 'space-between'
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent:'center'
     },
     profilebookingRateView: {
         flexDirection: 'row',

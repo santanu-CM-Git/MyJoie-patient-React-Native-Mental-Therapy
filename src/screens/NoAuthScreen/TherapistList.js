@@ -64,7 +64,7 @@ const TherapistList = ({ navigation, route }) => {
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     const [activeTab, setActiveTab] = useState('Experience')
     const [searchValue, setSearchValue] = useState('');
-    const [sliderValuesForPrice, setSliderValuesForPrice] = useState([0, 2000]);
+    const [sliderValuesForPrice, setSliderValuesForPrice] = useState([0, 10000]);
     const sliderValuesChange = (values) => {
         setSliderValuesForPrice(values);
     };
@@ -627,7 +627,9 @@ const TherapistList = ({ navigation, route }) => {
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('HOME', { screen: 'Home'})} title={'Therapist'} />
-            <ScrollView style={styles.wrapper}>
+            <ScrollView style={styles.wrapper} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
+      }>
                 <View style={styles.filterSection}>
                     <View style={styles.filterSection1st}>
                         <View style={{ width: responsiveWidth(35), }}>
@@ -697,9 +699,9 @@ const TherapistList = ({ navigation, route }) => {
                             getItemLayout={(therapistFilterData, index) => (
                                 { length: 50, offset: 50 * index, index }
                             )}
-                            refreshControl={
-                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
-                            }
+                            // refreshControl={
+                            //     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
+                            // }
                         />
                         :
                         <View style={[styles.totalValue, { justifyContent: 'center', alignItems: 'center' }]}>

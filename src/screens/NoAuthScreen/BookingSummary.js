@@ -144,7 +144,12 @@ const BookingSummary = ({ navigation, route }) => {
                 console.log(JSON.parse(error.description));
                 const errorMsg = JSON.parse(error.description);
                 console.log(errorMsg.error.description);
-                navigation.navigate('PaymentFailed', { message: errorMsg.error.description });
+                if(errorMsg.error.description == "undefined"){
+                    navigation.navigate('PaymentFailed', { message: errorMsg.error.reason});
+                }else{
+                    navigation.navigate('PaymentFailed', { message: errorMsg.error.description});
+                }
+                
             });
         }
     };

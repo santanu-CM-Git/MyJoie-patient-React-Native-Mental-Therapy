@@ -9,6 +9,7 @@ import {
     StatusBar,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 
 const SplashScreen = ({ navigation }) => {
     const moveAnim = useRef(new Animated.Value(0)).current;

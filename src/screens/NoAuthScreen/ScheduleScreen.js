@@ -133,10 +133,10 @@ const ScheduleScreen = ({ navigation, route }) => {
     };
 
     const confirmationBeforeCancel = (id) => {
-        Alert.alert('Hello', "Are you sure you want to cancel the booking? It might deduct from your balance.", [
+        Alert.alert('Hello', "Are you sure you want to cancel the appointment? Cancelation changes might get applied.", [
             {
                 text: 'Cancel',
-                onPress: () => setIsFocus(!isFocus),
+                onPress: () => {null},
                 style: 'cancel',
             },
             { text: 'OK', onPress: () => cancelSchedule(id) },
