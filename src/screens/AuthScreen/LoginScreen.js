@@ -89,6 +89,8 @@ const LoginScreen = ({ navigation }) => {
       setMobileError('Please enter a 10-digit number.')
     } else {
       setIsLoading(true)
+      console.log(API_URL);
+      
       AsyncStorage.getItem('fcmToken', (err, fcmToken) => {
         console.log(fcmToken, 'firebase token')
         console.log(deviceId, 'device id')

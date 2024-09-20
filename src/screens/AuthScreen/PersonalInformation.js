@@ -182,11 +182,11 @@ const PersonalInformation = ({ navigation, route }) => {
       //login()
       setIsLoading(true)
       const option = {
-        "name" : firstname,
-        "email" : email,
-        "dob" : moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
-        "gender" : yearvalue,
-        "marital_status" :  monthvalue,
+        "name": firstname,
+        "email": email,
+        "dob": moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+        "gender": yearvalue,
+        "marital_status": monthvalue,
         //"mobile" : "7797599595"
       }
       console.log(option, 'dhhhdhhd')
@@ -207,7 +207,7 @@ const PersonalInformation = ({ navigation, route }) => {
               position: 'top',
               topOffset: Platform.OS == 'ios' ? 55 : 20
             });
-           login(route?.params?.token)
+            login(route?.params?.token)
           } else {
             console.log('not okk')
             setIsLoading(false)
@@ -384,7 +384,22 @@ const PersonalInformation = ({ navigation, route }) => {
         </View>
 
         <View style={styles.buttonwrapper}>
-          <Text style={styles.termsText}>By signing in you agree to our Terms & Condition and Privacy Policy</Text>
+          <View style={styles.termsView}>
+            <Text style={styles.termsText}>
+              By signing in you agree to our{' '}
+              <Text
+                style={styles.termsLinkText}
+                onPress={() => navigation.navigate('Termsofuse')}>
+                Terms & Condition
+              </Text>{' '}
+              and{' '}
+              <Text
+                style={styles.termsLinkText}
+                onPress={() => navigation.navigate('PrivacyPolicy')}>
+                Privacy Policy
+              </Text>.
+            </Text>
+          </View>
           <CustomButton label={"Submit"}
             //onPress={() => { login() }}
             onPress={() => { submitForm() }}
@@ -408,6 +423,7 @@ const styles = StyleSheet.create({
   wrapper: {
     paddingHorizontal: 23,
     //height: responsiveHeight(78)
+    marginBottom: responsiveHeight(2)
   },
   header1: {
     fontFamily: 'DMSans-SemiBold',
@@ -530,10 +546,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10
   },
+  termsView: {
+    marginBottom: responsiveHeight(3),
+    paddingHorizontal: 10,
+    //alignSelf: 'flex-start',
+  },
   termsText: {
+    color: '#746868',
     fontFamily: 'DMSans-Regular',
     fontSize: responsiveFontSize(1.5),
+    //textAlign: 'center',
+  },
+  termsLinkText: {
     color: '#746868',
-    marginBottom: responsiveHeight(2)
-  }
+    fontFamily: 'DMSans-Regular',
+    fontSize: responsiveFontSize(1.5),
+    textAlign: 'center',
+    textDecorationLine: 'underline', // Optional: to make the link look more like a link
+  },
 });
