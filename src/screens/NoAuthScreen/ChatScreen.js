@@ -652,13 +652,19 @@ const ChatScreen = ({ navigation, route }) => {
   const goingToactiveTab = async (name) => {
     if (name === 'audio') {
       await startAudioCall();
+      const agoraEngine = agoraEngineRef.current;
+      agoraEngine?.muteLocalAudioStream(false);
       setActiveTab('audio');
       setIsVideoEnabled(false);
     } else if (name === 'video') {
       await startVideoCall();
+      const agoraEngine = agoraEngineRef.current;
+      agoraEngine?.muteLocalAudioStream(false);
       setActiveTab('video');
       setIsVideoEnabled(true);
     } else if (name === 'chat') {
+      const agoraEngine = agoraEngineRef.current;
+      agoraEngine?.muteLocalAudioStream(true);
       setActiveTab('chat');
       setIsVideoEnabled(false);
     }
@@ -946,7 +952,7 @@ const ChatScreen = ({ navigation, route }) => {
                           source={switchcameraIcon}
                           style={styles.iconStyle}
                         />
-                      </TouchableOpacity>
+                      </TouchableOpacity> 
                       {/* Uncomment if you want to toggle the camera on/off */}
                       {/* <TouchableOpacity onPress={toggleCamera}>
               <Image
