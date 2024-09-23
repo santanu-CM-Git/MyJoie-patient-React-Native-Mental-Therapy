@@ -233,12 +233,13 @@ const FreeTherapistList = ({ navigation, route }) => {
             const fetchData = async () => {
                 await Promise.all([
                     fetchAllTherapist(),
-                    resetValueOfFilter()
+                    resetValueOfFilter(),
                 ]);
                 setIsLoading(false);
             };
 
             fetchData();
+            setFilterModalVisible(false)
         }, [])
     )
     const toggleModal = () => {

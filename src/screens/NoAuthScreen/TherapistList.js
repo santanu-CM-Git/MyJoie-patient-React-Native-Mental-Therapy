@@ -268,8 +268,9 @@ const TherapistList = ({ navigation, route }) => {
                 try {
                     setIsLoading(true);
                     await Promise.all([
+                        resetValueOfFilter(),
                         fetchAllTherapist(),
-                        resetValueOfFilter()
+                        
                     ]);
                 } catch (error) {
                     console.error("Error fetching data: ", error);
@@ -279,6 +280,7 @@ const TherapistList = ({ navigation, route }) => {
             };
 
             fetchData();
+            setFilterModalVisible(false)
 
             if (searchInputRef.current) {
                 searchInputRef.current.focus();
