@@ -306,7 +306,7 @@ export default function HomeScreen({ navigation }) {
             //source={freebannerPlaceHolder}
             //style={{ width: BannerWidth, height: BannerHeight }}
             style={styles.bannerImage}
-            resizeMode={FastImage.resizeMode.contain}
+            //resizeMode={FastImage.resizeMode.contain}
           />
         </View>
       </Pressable>
@@ -743,20 +743,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    marginTop: responsiveHeight(1)
+    marginTop: responsiveHeight(1),
+    marginLeft: responsiveWidth(1)
   },
   bannerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
+    width: responsiveWidth(93),
     height: BannerHeight,
     //backgroundColor: 'red',
     overflow: 'hidden',
+    borderRadius: 10
   },
   bannerImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
+    //resizeMode: 'contain',
+    borderRadius: 10
   },
   sectionHeaderView: {
     flexDirection: 'row',
@@ -778,7 +781,7 @@ const styles = StyleSheet.create({
   },
   upcommingAppointmentView: {
     height: responsiveHeight(18),
-    width: responsiveWidth(91),
+    width: responsiveWidth(92),
     backgroundColor: '#FFF',
     marginHorizontal: 15,
     padding: 15,

@@ -307,12 +307,12 @@ const TherapistProfile = ({ navigation, route }) => {
 
     const handleBackButton = () => {
         // Custom logic to handle the back button
-        if(route?.params?.mode == 'paid'){
-            navigation.navigate('Talk', { screen: 'TherapistList'})
-        }else{
-            navigation.navigate('HOME', { screen: 'FreeTherapistList'})
+        if (route?.params?.mode == 'paid') {
+            navigation.navigate('Talk', { screen: 'TherapistList' })
+        } else {
+            navigation.navigate('HOME', { screen: 'FreeTherapistList' })
         }
-        
+
         return true; // Returning true indicates that the back press is handled
     };
 
@@ -394,6 +394,51 @@ const TherapistProfile = ({ navigation, route }) => {
         const timestamp = Date.now(); // Current timestamp in milliseconds
         const randomNum = Math.floor(Math.random() * 100000); // Random number between 0 and 99999
         return `ORD-${timestamp}-${randomNum}`;
+    }
+
+    const isBlockedByAdminCheck = () => {
+        const option = {
+            "therapist_id": profileDetails?.user_id
+        }
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            axios.post(`${API_URL}/patient/slot-book-checking`, option, {
+                headers: {
+                    Accept: 'application/json',
+                    "Authorization": `Bearer ${usertoken}`,
+                },
+            })
+                .then(res => {
+                    console.log(JSON.stringify(res.data.data), 'submit form response')
+                    if (res.data.response == true) {
+                        setIsLoading(false)
+                        submitForm()
+                    } else {
+                        console.log('not okk')
+                        setIsLoading(false)
+                        Alert.alert('Oops..', res?.data?.message || "Something went wrong", [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(e => {
+                    setIsLoading(false)
+                    console.log(`slot booking checking error ${e}`)
+                    console.log(e.response)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
+                });
+        });
     }
 
     const submitForm = () => {
@@ -725,7 +770,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Therapist'} onPress={() =>  navigation.navigate('Talk', { screen: 'TherapistList'})} title={'Therapist'} />
+            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('Talk', { screen: 'TherapistList' })} title={'Therapist'} />
             <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
                 <View style={{ alignSelf: 'center', marginTop: responsiveHeight(2) }}>
 
@@ -828,7 +873,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         </View> : <></>}
                     <View style={styles.availableSlotView}>
                         <ScrollView nestedScrollEnabled={true} indicatorStyle='black' showsVerticalScrollIndicator={true} style={{ width: responsiveWidth(100), backgroundColor: therapistAvailability.length === 0 ? '' : '#EEF8FF', paddingHorizontal: 5, paddingVertical: 10, height: calculateHeight() }}>
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap',marginBottom:responsiveHeight(2) }}>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: responsiveHeight(2) }}>
                                 {therapistAvailability.length === 0 ? (
                                     <View style={styles.noSlotView}>
                                         <Text style={styles.noSlotText}>No slots available</Text>
@@ -935,7 +980,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 <View style={{ width: responsiveWidth(90), alignSelf: 'center' }}>
                     <CustomButton label={"Book Appointment"}
                         // onPress={() => { login() }}
-                        onPress={() => { submitForm() }}
+                        onPress={() => { isBlockedByAdminCheck() }}
                     />
                 </View>
             </ScrollView>
@@ -1027,7 +1072,7 @@ const styles = StyleSheet.create({
         //flexDirection: 'row',
         //justifyContent: 'space-between'
         alignItems: 'center',
-        justifyContent:'center'
+        justifyContent: 'center'
     },
     profilebookingRateView: {
         flexDirection: 'row',

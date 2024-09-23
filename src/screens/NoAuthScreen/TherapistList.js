@@ -23,18 +23,16 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 const Experience = [
     { label: '0 - 2 Years', value: '0-2' },
-    { label: '3 - 5 Years', value: '2-5' },
-    { label: '6 - 8 Years', value: '6-8' },
-    { label: '9 - 12 Years', value: '9-12' },
-    { label: '13 - 15 Years', value: '13-15' },
+    { label: '2 - 5 Years', value: '2-5' },
+    { label: '5 - 8 Years', value: '5-8' },
+    { label: '8 - 12 Years', value: '8-12' },
+    { label: '12 - 15 Years', value: '12-15' },
     { label: '15 - 20 Years', value: '15-20' },
     { label: '20+ Years', value: '20-100' }
 ]
 const Rating = [
-    { label: '1 Star', value: '1' },
-    { label: '2 Star', value: '2' },
-    { label: '3 Star', value: '3' },
-    { label: '4 Star', value: '4' },
+    { label: 'Above 3 Star', value: '3' },
+    { label: 'Above 4 Star', value: '4' },
     { label: '5 Star', value: '5' }
 ]
 const Gender = [
@@ -42,13 +40,13 @@ const Gender = [
     { label: 'Female', value: 'Female' },
     { label: 'Others', value: 'Others' }
 ]
-const Ages = [
-    { label: '20 - 30', value: '20-30' },
-    { label: '30 - 40', value: '30-40' },
-    { label: '40 - 50', value: '40-50' },
-    { label: '50 - 60', value: '50-60' },
-    { label: '60 above', value: '60-100' },
-]
+// const Ages = [
+//     { label: '20 - 30', value: '20-30' },
+//     { label: '30 - 40', value: '30-40' },
+//     { label: '40 - 50', value: '40-50' },
+//     { label: '50 - 60', value: '50-60' },
+//     { label: '60 above', value: '60-100' },
+// ]
 
 
 const TherapistList = ({ navigation, route }) => {
@@ -271,6 +269,7 @@ const TherapistList = ({ navigation, route }) => {
                     setIsLoading(true);
                     await Promise.all([
                         fetchAllTherapist(),
+                        resetValueOfFilter()
                     ]);
                 } catch (error) {
                     console.error("Error fetching data: ", error);
@@ -525,14 +524,24 @@ const TherapistList = ({ navigation, route }) => {
     }
 
     const resetValueOfFilter = () => {
+        // setSelectedExperience([])
+        // setSelectedType([])
+        // setSelectedRating([])
+        // setSelectedGender([])
+        // setSelectedAge([18, 100])
+        // setSelectedQualification([])
+        // setSelectedLanguage([])
+        // setSliderValuesForPrice([0, 10000])
+        // toggleFilterModal()
+        // setTherapistFilterData(therapistData);
         setSelectedExperience([])
         setSelectedType([])
         setSelectedRating([])
         setSelectedGender([])
-        setSelectedAge([])
+        setSliderValuesForAge([0, 100])
         setSelectedQualification([])
         setSelectedLanguage([])
-        setSliderValuesForPrice([0, 2000])
+        setSliderValuesForPrice([0, 10000])
         toggleFilterModal()
         setTherapistFilterData(therapistData);
     }
