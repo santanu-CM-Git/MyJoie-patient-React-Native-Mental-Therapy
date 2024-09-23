@@ -230,16 +230,16 @@ const FreeTherapistList = ({ navigation, route }) => {
 
         fetchData();
     }, [])
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         const fetchData = async () => {
-    //             await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
-    //             setIsLoading(false);
-    //         };
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchData = async () => {
+                await Promise.all([fetchAllTherapist()]);
+                setIsLoading(false);
+            };
 
-    //         fetchData();
-    //     }, [])
-    // )
+            fetchData();
+        }, [])
+    )
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };

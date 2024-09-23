@@ -264,31 +264,28 @@ const TherapistList = ({ navigation, route }) => {
 
     }, []);
 
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         const fetchData = async () => {
-    //             try {
-    //                 setIsLoading(true);
-    //                 await Promise.all([
-    //                     fetchAllTherapist(),
-    //                     fetchLanguage(),
-    //                     fetchQualification(),
-    //                     fetchTherapyType()
-    //                 ]);
-    //             } catch (error) {
-    //                 console.error("Error fetching data: ", error);
-    //             } finally {
-    //                 setIsLoading(false);
-    //             }
-    //         };
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchData = async () => {
+                try {
+                    setIsLoading(true);
+                    await Promise.all([
+                        fetchAllTherapist(),
+                    ]);
+                } catch (error) {
+                    console.error("Error fetching data: ", error);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
 
-    //         fetchData();
+            fetchData();
 
-    //         if (searchInputRef.current) {
-    //             searchInputRef.current.focus();
-    //         }
-    //     }, [])
-    // );
+            if (searchInputRef.current) {
+                searchInputRef.current.focus();
+            }
+        }, [])
+    );
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
