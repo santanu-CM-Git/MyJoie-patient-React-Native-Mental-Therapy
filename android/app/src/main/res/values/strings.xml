@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">MyJoie</string>
+     <string name="facebook_app_id">974564787686868</string>
+    <string name="facebook_client_token">56789</string>
     <!-- add for truecaller login -->
     <!-- <string name="partnerKey">-df3_ox1_dh4f9shnjts_ehuwrd3hsjs9bsoshnbhko</string>  -->
 </resources>

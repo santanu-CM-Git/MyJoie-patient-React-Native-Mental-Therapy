@@ -134,6 +134,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation platform('com.google.firebase:firebase-bom:32.7.3')  //add for firebase push notification
     implementation project(':react-native-keep-awake') // for keep awake
+    implementation project(':react-native-fbsdk-next') // for facebook
     //implementation "com.truecaller.android.sdk:truecaller-sdk:2.8.0" //add for truecaller login
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
