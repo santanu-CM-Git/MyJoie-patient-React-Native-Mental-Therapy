@@ -319,7 +319,6 @@ const TherapistProfile = ({ navigation, route }) => {
     useEffect(() => {
         // Add the event listener
         BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-
         // Remove the event listener on cleanup
         return () => {
             BackHandler.removeEventListener('hardwareBackPress', handleBackButton);

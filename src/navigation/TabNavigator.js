@@ -89,6 +89,11 @@ const HomeStack = ({ navigation }) => {
         component={PaymentFailed}
         options={{ headerShown: false }}
       />
+      {/* <Stack.Screen
+        name="TherapistProfile"
+        component={TherapistProfile}
+        options={{ headerShown: false }}
+      /> */}
     </Stack.Navigator>
   );
 };
@@ -105,12 +110,23 @@ const TherapistStack = ({ navigation, route }) => {
   //     // Check if there's a specific screen to navigate to
   //     console.log(route?.params?.screen,'ooooooooooooooooooooo')
   //     console.log(route.name, 'ppppppppppppppppppp');
-      
+
   //     if (!route?.params?.screen && route.name === 'TherapistStack') {
   //       navigation.navigate('TherapistList');
   //     }
   //   }, [route, navigation])
   // );
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log(route?.params?.screen, 'ooooooooooooooooooooo')
+      console.log(route.name, 'ppppppppppppppppppp');
+
+      if (!route?.params?.screen && route.name === 'TherapistStack') {
+        navigation.navigate('TherapistList');
+      }
+
+    }, [route, navigation])
+  );
   return (
     <Stack.Navigator>
       <Stack.Screen
