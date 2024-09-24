@@ -398,7 +398,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 value={selectedDOB}
                 textColor={'#000'}
                 minimumDate={MIN_DATE}
-                // maximumDate={MAX_DATE}
+                 maximumDate={MAX_DATE}
                 themeVariant="light"
                 onChange={(event, selectedDate) => {
                   // console.log(moment(selectedDate).format('DD-MM-YYYY'),'jjjjj');

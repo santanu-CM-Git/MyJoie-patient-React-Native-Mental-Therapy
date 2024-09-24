@@ -546,6 +546,7 @@ export default function HomeScreen({ navigation }) {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    fetchBanner();
     fetchAllTherapist();
     fetchProfileDetails();
     fetchPreviousBooking();
