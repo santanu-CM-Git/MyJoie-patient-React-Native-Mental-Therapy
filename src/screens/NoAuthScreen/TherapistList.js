@@ -90,9 +90,27 @@ const TherapistList = ({ navigation, route }) => {
 
     // Rating
     const [selectedRating, setSelectedRating] = useState([]);
+    const [ratingValue, setRatingValue] = useState([]);
     const onSelectionsChangeRating = (selectedRating) => {
         // selectedFruits is array of { label, value }
-        setSelectedRating(selectedRating);
+        //setSelectedRating(selectedRating);
+        //Keep only the last selected item
+        if (selectedRating.length > 0) {
+            const selectedValue = selectedRating[selectedRating.length - 1].value;
+
+            // Set the selectedRating to only the last selected value
+            setSelectedRating([selectedRating[selectedRating.length - 1]]);
+
+            console.log(selectedValue)
+            // Update rating based on selection
+            if (selectedValue === '3') {
+                setRatingValue([3, 5]);
+            } else if (selectedValue === '4') {
+                setRatingValue([4, 5]);
+            } else if (selectedValue === '5') {
+                setRatingValue([5, 5]);
+            }
+        }
     };
     // Gender
     const [selectedGender, setSelectedGender] = useState([]);
@@ -131,7 +149,7 @@ const TherapistList = ({ navigation, route }) => {
 
     const handleBackButton = () => {
         // Custom logic to handle the back button
-        navigation.navigate('HOME', { screen: 'Home'})
+        navigation.navigate('HOME', { screen: 'Home' })
         return true; // Returning true indicates that the back press is handled
     };
 
@@ -268,9 +286,8 @@ const TherapistList = ({ navigation, route }) => {
                 try {
                     setIsLoading(true);
                     await Promise.all([
-                        resetValueOfFilter(),
                         fetchAllTherapist(),
-                        
+
                     ]);
                 } catch (error) {
                     console.error("Error fetching data: ", error);
@@ -281,6 +298,15 @@ const TherapistList = ({ navigation, route }) => {
 
             fetchData();
             setFilterModalVisible(false)
+            setSelectedExperience([])
+            setSelectedType([])
+            setSelectedRating([])
+            setRatingValue([])
+            setSelectedGender([])
+            setSliderValuesForAge([0, 100])
+            setSelectedQualification([])
+            setSelectedLanguage([])
+            setSliderValuesForPrice([0, 10000])
 
             if (searchInputRef.current) {
                 searchInputRef.current.focus();
@@ -539,6 +565,7 @@ const TherapistList = ({ navigation, route }) => {
         setSelectedExperience([])
         setSelectedType([])
         setSelectedRating([])
+        setRatingValue([])
         setSelectedGender([])
         setSliderValuesForAge([0, 100])
         setSelectedQualification([])
@@ -563,7 +590,8 @@ const TherapistList = ({ navigation, route }) => {
         try {
             const experienceRanges = selectedExperience.map(exp => exp.value.split('-').map(Number));
             const type = selectedType.map(t => t.value);
-            const rating = selectedRating.map(r => Number(r.value));
+            //const rating = selectedRating.map(r => Number(r.value));
+            const rating = ratingValue;
             const gender = selectedGender.map(g => g.value);
             const ageranges = sliderValuesForAge;
             const qualification = selectedQualification.map(q => q.value);
@@ -630,14 +658,14 @@ const TherapistList = ({ navigation, route }) => {
         fetchLanguage();
         fetchQualification();
         fetchTherapyType();
-      };
+    };
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('HOME', { screen: 'Home'})} title={'Therapist'} />
+            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('HOME', { screen: 'Home' })} title={'Therapist'} />
             <ScrollView style={styles.wrapper} refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
-      }>
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
+            }>
                 <View style={styles.filterSection}>
                     <View style={styles.filterSection1st}>
                         <View style={{ width: responsiveWidth(35), }}>
@@ -707,9 +735,9 @@ const TherapistList = ({ navigation, route }) => {
                             getItemLayout={(therapistFilterData, index) => (
                                 { length: 50, offset: 50 * index, index }
                             )}
-                            // refreshControl={
-                            //     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
-                            // }
+                        // refreshControl={
+                        //     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
+                        // }
                         />
                         :
                         <View style={[styles.totalValue, { justifyContent: 'center', alignItems: 'center' }]}>

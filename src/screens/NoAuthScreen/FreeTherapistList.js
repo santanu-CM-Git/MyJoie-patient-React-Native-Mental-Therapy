@@ -102,9 +102,27 @@ const FreeTherapistList = ({ navigation, route }) => {
 
     // Rating
     const [selectedRating, setSelectedRating] = useState([]);
+    const [ratingValue, setRatingValue] = useState([]);
     const onSelectionsChangeRating = (selectedRating) => {
         // selectedFruits is array of { label, value }
-        setSelectedRating(selectedRating);
+        //setSelectedRating(selectedRating);
+        //Keep only the last selected item
+        if (selectedRating.length > 0) {
+            const selectedValue = selectedRating[selectedRating.length - 1].value;
+
+            // Set the selectedRating to only the last selected value
+            setSelectedRating([selectedRating[selectedRating.length - 1]]);
+
+            console.log(selectedValue)
+            // Update rating based on selection
+            if (selectedValue === '3') {
+                setRatingValue([3, 5]);
+            } else if (selectedValue === '4') {
+                setRatingValue([4, 5]);
+            } else if (selectedValue === '5') {
+                setRatingValue([5, 5]);
+            }
+        }
     };
     // Gender
     const [selectedGender, setSelectedGender] = useState([]);
@@ -205,7 +223,7 @@ const FreeTherapistList = ({ navigation, route }) => {
 
     const handleBackButton = () => {
         navigation.goBack()
-        
+
         return true; // Returning true indicates that the back press is handled
     };
 
@@ -233,13 +251,21 @@ const FreeTherapistList = ({ navigation, route }) => {
             const fetchData = async () => {
                 await Promise.all([
                     fetchAllTherapist(),
-                    resetValueOfFilter(),
                 ]);
                 setIsLoading(false);
             };
 
             fetchData();
             setFilterModalVisible(false)
+            setSelectedExperience([])
+            setSelectedType([])
+            setSelectedRating([])
+            setRatingValue([])
+            setSelectedGender([])
+            setSliderValuesForAge([0, 100])
+            setSelectedQualification([])
+            setSelectedLanguage([])
+            setSliderValuesForPrice([0, 10000])
         }, [])
     )
     const toggleModal = () => {
@@ -488,6 +514,7 @@ const FreeTherapistList = ({ navigation, route }) => {
         setSelectedExperience([])
         setSelectedType([])
         setSelectedRating([])
+        setRatingValue([])
         setSelectedGender([])
         setSliderValuesForAge([0, 100])
         setSelectedQualification([])
@@ -512,7 +539,8 @@ const FreeTherapistList = ({ navigation, route }) => {
         try {
             const experienceRanges = selectedExperience.map(exp => exp.value.split('-').map(Number));
             const type = selectedType.map(t => t.value);
-            const rating = selectedRating.map(r => Number(r.value));
+            // const rating = selectedRating.map(r => Number(r.value));
+            const rating = ratingValue;
             const gender = selectedGender.map(g => g.value);
             //const ageranges = selectedAge.map(age => age.value.split('-').map(Number));
             const ageranges = sliderValuesForAge;
