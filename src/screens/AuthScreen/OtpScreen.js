@@ -81,6 +81,8 @@ const OtpScreen = ({ navigation, route }) => {
 
     const goToNextPage = (code) => {
         setIsLoading(true)
+        console.log(comingOTP,'comingOTPcomingOTP');
+        
         if (code == comingOTP) {
             const option = {
                 "country_code": route?.params?.countrycode,
@@ -88,6 +90,8 @@ const OtpScreen = ({ navigation, route }) => {
                 "firebase_token": route?.params?.fcmToken,
                 //"deviceid": deviceId,
             }
+            console.log(option);
+
             axios.post(`${API_URL}/patient/login`, option, {
                 headers: {
                     'Accept': 'application/json',
@@ -105,11 +109,11 @@ const OtpScreen = ({ navigation, route }) => {
                             position: 'top',
                             topOffset: Platform.OS == 'ios' ? 55 : 20
                         });
-                            if(res.data?.data?.name){
-                                login(res.data?.token)
-                            }else{
-                                navigation.navigate('PersonalInformation', { token: res.data?.token })
-                            }
+                        if (res.data?.data?.name) {
+                            login(res.data?.token)
+                        } else {
+                            navigation.navigate('PersonalInformation', { token: res.data?.token })
+                        }
                     } else {
                         console.log('not okk')
                         setIsLoading(false)
@@ -140,7 +144,7 @@ const OtpScreen = ({ navigation, route }) => {
         } else {
             console.log('not correct')
             setIsLoading(false)
-            
+
             Alert.alert('Oops..', "The OTP does not match. Please enter the correct OTP.", [
                 {
                     text: 'Cancel',
@@ -149,16 +153,17 @@ const OtpScreen = ({ navigation, route }) => {
                 },
                 { text: 'OK', onPress: () => setOtp('') },
             ]);
-            
+
         }
     }
 
     const resendOtp = () => {
         setIsLoading(true)
         const option = {
+            "country_code": route?.params?.countrycode,
             "mobile": route?.params?.phone,
         }
-        axios.post(`${API_URL}/patient/login`, option, {
+        axios.post(`${API_URL}/patient/login-otp-generate`, option, {
             headers: {
                 'Accept': 'application/json',
                 //'Content-Type': 'multipart/form-data',
@@ -175,7 +180,7 @@ const OtpScreen = ({ navigation, route }) => {
                         position: 'top',
                         topOffset: Platform.OS == 'ios' ? 55 : 20
                     });
-                    setComingOTP(res.data.otp)
+                    setComingOTP(res.data?.data?.otp)
                     setTimer(60 * 1)
                     setIsResendDisabled(true);
                     setOtp('')
@@ -277,7 +282,7 @@ export default OtpScreen;
 
 const styles = StyleSheet.create({
     container: {
-        flex:1,
+        flex: 1,
         justifyContent: 'center',
         backgroundColor: '#FFFFFF',
         height: responsiveHeight(100)
