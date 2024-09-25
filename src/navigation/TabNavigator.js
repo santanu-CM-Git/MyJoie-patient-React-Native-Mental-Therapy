@@ -176,7 +176,7 @@ const BookmarkedStack = () => {
 
 };
 
-const TabNavigator = () => {
+const TabNavigator = ({navigation}) => {
   const cartProducts = useSelector(state => state.cart)
   console.log(cartProducts)
   return (
@@ -189,7 +189,8 @@ const TabNavigator = () => {
         tabBarStyle: {
           height: 100,
         },
-      }}>
+      }}
+      >
       <Tab.Screen
         name="HOME"
         component={HomeStack}
@@ -220,6 +221,12 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Talk"
         component={TherapistStack}
+        listeners={{
+          tabPress: e => {
+            e.preventDefault();
+            navigation.navigate('TherapistList')
+          },
+        }}
         options={({ route }) => ({
           tabBarStyle: {
             display: getTabBarVisibility(route),

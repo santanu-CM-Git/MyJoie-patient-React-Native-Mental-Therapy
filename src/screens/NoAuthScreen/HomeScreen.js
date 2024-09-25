@@ -181,7 +181,7 @@ export default function HomeScreen({ navigation }) {
       );
 
       let previousBooking = response.data.data;
-      console.log(previousBooking, 'previous Booking data');
+      //console.log(previousBooking, 'previous Booking data');
 
       // Sort by date and start_time
       previousBooking.sort((a, b) => {
@@ -214,7 +214,7 @@ export default function HomeScreen({ navigation }) {
         .then(res => {
           //console.log(res.data,'user details')
           let upcomingBooking = res.data.data;
-          console.log(upcomingBooking, 'upcomingBooking')
+          //console.log(upcomingBooking, 'upcomingBooking')
           const filteredBookings = upcomingBooking.filter(booking =>
             booking.status === "scheduled" || booking.status === "start"
           );
@@ -254,7 +254,7 @@ export default function HomeScreen({ navigation }) {
         },
       })
         .then(res => {
-          console.log(JSON.stringify(res.data.data), 'fetch all therapist')
+          //console.log(JSON.stringify(res.data.data), 'fetch all therapist')
           if (res.data.response == true) {
             const therapistData = res.data.data.slice(0, 5);
             setTherapistData(therapistData);
