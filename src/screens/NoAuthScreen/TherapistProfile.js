@@ -50,83 +50,6 @@ const TherapistProfile = ({ navigation, route }) => {
 
     const nextSevenDays = getNextSevenDays();
 
-    // const selectedDateChange = (index, day, date) => {
-    //     console.log(index, day, date)
-    //     setSelectedDay(index)
-    //     setSelectedDate(date)
-    //     setIsLoading(true);
-    //     // console.log(day, 'day');
-    //     // console.log(date, 'date');
-    //     // console.log(profileDetails?.id, 'therapist_id');
-    //     // console.log('paid', 'paid')
-    //     var givendate = '';
-    //     if (day == 'Monday') {
-    //         givendate = 'monday'
-    //     } else if (day == 'Tuesday') {
-    //         givendate = 'tuesday'
-    //     } else if (day == 'Wednesday') {
-    //         givendate = 'wednessday'
-    //     } else if (day == 'Thursday') {
-    //         givendate = 'thursday'
-    //     } else if (day == 'Friday') {
-    //         givendate = 'friday'
-    //     } else if (day == 'Saturday') {
-    //         givendate = 'saturday'
-    //     } else if (day == 'Sunday') {
-    //         givendate = 'sunday'
-    //     }
-    //     const option = {
-    //         "day": givendate,
-    //         "date": date,
-    //         "therapist_id": route?.params?.therapistId,
-    //         "booking_type": route?.params?.mode
-    //     }
-    //     console.log(option)
-    //     AsyncStorage.getItem('userToken', (err, usertoken) => {
-    //         axios.post(`${API_URL}/patient/therapist-date-slots`, option, {
-    //             headers: {
-    //                 'Accept': 'application/json',
-    //                 "Authorization": 'Bearer ' + usertoken,
-    //                 //'Content-Type': 'multipart/form-data',
-    //             },
-    //         })
-    //             .then(res => {
-    //                 console.log(JSON.stringify(res.data.data), 'fetch all therapist availibility')
-    //                 if (res.data.response == true) {
-    //                     //const filteredData = res.data.data.filter(slot => slot.booked_status === 0);
-    //                     //setTherapistAvailability(filteredData);
-    //                     setTherapistAvailability(res.data.data)
-    //                     setIsLoading(false);
-
-    //                 } else {
-    //                     console.log('not okk')
-    //                     setIsLoading(false)
-    //                     Alert.alert('Oops..', "Something went wrong", [
-    //                         {
-    //                             text: 'Cancel',
-    //                             onPress: () => console.log('Cancel Pressed'),
-    //                             style: 'cancel',
-    //                         },
-    //                         { text: 'OK', onPress: () => console.log('OK Pressed') },
-    //                     ]);
-    //                 }
-    //             })
-    //             .catch(e => {
-    //                 setIsLoading(false)
-    //                 console.log(`user register error ${e}`)
-    //                 console.log(e.response)
-    //                 Alert.alert('Oops..', e.response?.data?.message, [
-    //                     {
-    //                         text: 'Cancel',
-    //                         onPress: () => console.log('Cancel Pressed'),
-    //                         style: 'cancel',
-    //                     },
-    //                     { text: 'OK', onPress: () => console.log('OK Pressed') },
-    //                 ]);
-    //             });
-    //     });
-    // }
-
     const selectedDateChange = (index, day, date) => {
         console.log(index, day, date);
         setSelectedDay(index);
@@ -214,21 +137,6 @@ const TherapistProfile = ({ navigation, route }) => {
                 });
         });
     };
-
-    // const handleSlotSelect = (slot) => {
-    //     console.log(slot, 'selected slot data')
-    //     if (slot.booked_status === 0) {
-    //         setSelectedByUser((prevSelected) => {
-    //             if (prevSelected.includes(slot)) {
-    //                 // Deselect if already selected
-    //                 return prevSelected.filter(selectedSlot => selectedSlot !== slot);
-    //             } else {
-    //                 // Select the slot
-    //                 return [...prevSelected, slot];
-    //             }
-    //         });
-    //     }
-    // };
 
     const handleSlotSelect = (slot) => {
         console.log(slot, 'selected slot data');
@@ -622,46 +530,6 @@ const TherapistProfile = ({ navigation, route }) => {
 
 
     }
-
-    // const handlePayment = () => {
-    //     const totalAmount = (selectedByUser.length * profileDetails?.rate)
-    //     if (selectedByUser.length != '0') {
-    //         var options = {
-    //             description: 'This is the description we need',
-    //             image: 'https://i.imgur.com/3g7nmJC.jpg',
-    //             currency: 'INR',
-    //             key: razorpayKeyId,
-    //             amount: totalAmount * 100,
-    //             name: 'Customer 1',
-    //             order_id: '',
-    //             prefill: {
-    //                 email: 'xyz@example.com',
-    //                 contact: '9191919191',
-    //                 name: 'Person Name'
-    //             },
-    //             theme: { color: '#ECFCFA' }
-    //         }
-    //         RazorpayCheckout.open(options).then((data) => {
-    //             // handle success
-    //             //alert(`Success: ${data.razorpay_payment_id}`);
-    //             console.log(data, 'data')
-    //             submitForm(data.razorpay_payment_id)
-    //         }).catch((error) => {
-    //             // handle failure
-    //             alert(`Error: ${error.code} | ${error.description}`);
-    //         });
-    //     } else {
-    //         Toast.show({
-    //             type: 'error',
-    //             text1: 'Hello',
-    //             text2: "Please choose time slot",
-    //             position: 'top',
-    //             topOffset: Platform.OS == 'ios' ? 55 : 20
-    //         });
-    //     }
-
-
-    // }
 
     const bookmarkedToggle = (therapistId) => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
