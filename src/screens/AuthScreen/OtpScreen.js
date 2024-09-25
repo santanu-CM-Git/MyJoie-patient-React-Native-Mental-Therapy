@@ -140,15 +140,16 @@ const OtpScreen = ({ navigation, route }) => {
         } else {
             console.log('not correct')
             setIsLoading(false)
+            
             Alert.alert('Oops..', "The OTP does not match. Please enter the correct OTP.", [
                 {
                     text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
+                    onPress: () => setOtp(''),
                     style: 'cancel',
                 },
-                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                { text: 'OK', onPress: () => setOtp('') },
             ]);
-            setOtp('')
+            
         }
     }
 
