@@ -704,15 +704,6 @@ const TherapistList = ({ navigation, route }) => {
                     </View>
                 </View>
                 <View style={{ alignSelf: 'center', marginBottom: 10 }}>
-                    {/* <InputField
-                        ref={searchInputRef}
-                        label={'Search by therapist name'}
-                        keyboardType=" "
-                        value={searchValue}
-                        //helperText={'Please enter lastname'}
-                        inputType={'searchable'}
-                        onChangeText={(text) => changeSearchValue(text)}
-                    /> */}
                     <TextInput
                         style={styles.editinput}
                         onChangeText={(text) => changeSearchValue(text)}
@@ -729,15 +720,13 @@ const TherapistList = ({ navigation, route }) => {
                             data={therapistFilterData}
                             renderItem={renderItem}
                             keyExtractor={(item) => item.id.toString()}
-                            maxToRenderPerBatch={10}
-                            windowSize={5}
-                            initialNumToRender={10}
+                            maxToRenderPerBatch={5}
+                            windowSize={2}
+                            initialNumToRender={5}
+                            removeClippedSubviews={true}
                             getItemLayout={(therapistFilterData, index) => (
                                 { length: 50, offset: 50 * index, index }
                             )}
-                        // refreshControl={
-                        //     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
-                        // }
                         />
                         :
                         <View style={[styles.totalValue, { justifyContent: 'center', alignItems: 'center' }]}>
