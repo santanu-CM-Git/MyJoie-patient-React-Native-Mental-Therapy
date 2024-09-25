@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect,useCallback } from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, Image, Platform, Alert, FlatList } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -77,9 +77,9 @@ const SessionHistory = ({ navigation }) => {
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         fetchPreviousBooking()
-    
+
         setRefreshing(false);
-      }, []);
+    }, []);
 
     const renderPrevious = ({ item }) => (
 
@@ -96,7 +96,12 @@ const SessionHistory = ({ navigation }) => {
                         style={styles.iconStyle}
                     />
                     <Text style={styles.singleViewStatus}>
-                        {item?.status === 'completed' ? 'Completed' : item?.status === 'cancel' ? 'Cancel' : 'Scheduled'}
+                        {/* {item?.status === 'completed' ? 'Completed' : item?.status === 'cancel' ? 'Cancel' : 'Scheduled'} */}
+                        {item?.status === 'cancel' ? 'Canceled' :
+                            item?.status === 'incomplete' ? 'Incomplete' :
+                                item?.status === 'processing' ? 'Processing' :
+                                    item?.status === 'completed' ? 'Completed' :
+                                        null}
                     </Text>
                 </View>
             </View>
@@ -137,7 +142,7 @@ const SessionHistory = ({ navigation }) => {
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Session History'} onPress={() => navigation.goBack()} title={'Session History'} />
             <ScrollView style={styles.wrapper} refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
             }>
                 <View style={{ marginBottom: responsiveHeight(3) }}>
                     {previousBooking.length !== 0 ?
