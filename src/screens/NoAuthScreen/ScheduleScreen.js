@@ -412,7 +412,12 @@ const ScheduleScreen = ({ navigation, route }) => {
                         style={styles.previousBookingStatusIcon}
                     />
                     <Text style={styles.previousBookingStatusText}>
-                        {item?.status === 'completed' ? 'Completed' : item?.status === 'cancel' ? 'Cancel' : 'Scheduled'}
+                        {/* {item?.status === 'completed' ? 'Completed' : item?.status === 'cancel' ? 'Cancel' : 'Scheduled'} */}
+                        {item?.status === 'cancel' ? 'Canceled' :
+                                    item?.status === 'incomplete' ? 'Incomplete' :
+                                        item?.status === 'processing' ? 'Processing' :
+                                            item?.status === 'completed' ? 'Completed' :
+                                                null}
                     </Text>
                 </View>
             </View>
