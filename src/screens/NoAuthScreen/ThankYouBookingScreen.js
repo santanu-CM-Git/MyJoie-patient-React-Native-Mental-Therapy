@@ -13,6 +13,7 @@ const ThankYouBookingScreen = ({ navigation, route }) => {
   useEffect(() => {
     const detailsData = JSON.parse(route?.params?.detailsData);
     setData(detailsData);
+    
   }, []);
 
   return (
@@ -54,7 +55,10 @@ const ThankYouBookingScreen = ({ navigation, route }) => {
         </View>
       )}
       <View style={styles.buttonWrapper}>
-        <CustomButton label={"Back to Home"} onPress={() => navigation.navigate('Home')} />
+        <CustomButton label={"Back to Home"} onPress={() => navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        })} />
       </View>
     </SafeAreaView>
   );

@@ -256,7 +256,8 @@ export default function HomeScreen({ navigation }) {
         .then(res => {
           console.log(JSON.stringify(res.data.data), 'fetch all therapist')
           if (res.data.response == true) {
-            setTherapistData(res.data.data);
+            const therapistData = res.data.data.slice(0, 5);
+            setTherapistData(therapistData);
             //setIsLoading(false);
 
           } else {
@@ -297,8 +298,35 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.bannerButtonText}>Call Us Today!</Text>
           </View>
         </View> */}
+    const handleBannerPress = () => {
+      // Check the banner_link and navigate to the appropriate screen
+      switch (item.banner_link) {
+        case 'therapist_list':
+          navigation.navigate('Talk', { screen: 'TherapistList', key: Math.random().toString() })
+          break;
+        case 'appointment':
+          navigation.navigate('ScheduleScreen');
+          break;
+        case 'customer_support':
+          navigation.navigate('Customer Support');
+          break;
+        case 'transaction':
+          navigation.navigate('Transaction');
+          break;
+        case 'session_history':
+          navigation.navigate('Session History');
+          break;
+        case 'profile':
+          navigation.navigate('ProfileScreen');
+          break;
+        default:
+          // You can add a fallback or do nothing if the link doesn't match any cases
+          navigation.navigate('Customer Support');
+          console.log('Unknown banner link:', item.banner_link);
+      }
+    };
     return (
-      <Pressable onPress={() => navigation.navigate('Customer Support')}>
+      <Pressable onPress={handleBannerPress}>
         <View style={styles.bannerContainer}>
           <FastImage
             source={{ uri: item.banner_image }}
@@ -306,7 +334,7 @@ export default function HomeScreen({ navigation }) {
             //source={freebannerPlaceHolder}
             //style={{ width: BannerWidth, height: BannerHeight }}
             style={styles.bannerImage}
-            //resizeMode={FastImage.resizeMode.contain}
+          resizeMode={FastImage.resizeMode.contain}
           />
         </View>
       </Pressable>
@@ -616,7 +644,7 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ paddingVertical: 10,paddingLeft:responsiveWidth(1) }}>
+          <View style={{ paddingVertical: 10, paddingLeft: responsiveWidth(1) }}>
             <FlatList
               data={therapistData}
               renderItem={renderTherapistItem}

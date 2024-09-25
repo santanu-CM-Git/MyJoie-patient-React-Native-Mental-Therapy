@@ -133,7 +133,7 @@ const ScheduleScreen = ({ navigation, route }) => {
     };
 
     const confirmationBeforeCancel = (id) => {
-        Alert.alert('Hello', "Are you sure you want to cancel the appointment? Cancelation changes might get applied.", [
+        Alert.alert('Hello', "Are you sure you want to cancel the appointment? Cancellation charges may apply.", [
             {
                 text: 'Cancel',
                 onPress: () => {null},
