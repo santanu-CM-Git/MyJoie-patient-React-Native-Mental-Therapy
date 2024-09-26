@@ -304,8 +304,11 @@ const TherapistProfile = ({ navigation, route }) => {
     }
 
     const isBlockedByAdminCheck = () => {
+        const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
         const option = {
-            "therapist_id": profileDetails?.user_id
+            "therapist_id": profileDetails?.user_id,
+            "slot_ids": JSON.stringify(ids),
+            "date": selectedDate,
         }
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             axios.post(`${API_URL}/patient/slot-book-checking`, option, {
