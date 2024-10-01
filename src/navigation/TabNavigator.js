@@ -89,6 +89,11 @@ const HomeStack = ({ navigation }) => {
         component={PaymentFailed}
         options={{ headerShown: false }}
       />
+       <Stack.Screen
+        name="TherapistList"
+        component={TherapistList}
+        options={{ headerShown: false }}
+      />
       {/* <Stack.Screen
         name="TherapistProfile"
         component={TherapistProfile}
@@ -335,6 +340,8 @@ const getTabBarVisibility = route => {
   } else if (routeName == 'ReviewScreen') {
     return 'none';
   } else if (routeName == 'WalletScreen') {
+    return 'none';
+  } else if (routeName == 'TherapistList') {
     return 'none';
   } else if (routeName == 'TherapistProfile') {
     return 'none';
