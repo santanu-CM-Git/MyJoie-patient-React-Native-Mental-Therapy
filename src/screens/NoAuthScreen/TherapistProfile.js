@@ -304,7 +304,14 @@ const TherapistProfile = ({ navigation, route }) => {
     }
 
     const isBlockedByAdminCheck = () => {
-        const ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
+
+        let ids = [];
+
+        if (route?.params?.mode === 'paid') {
+            ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
+        } else {
+            ids = selectedByUser.flatMap(item => [item.id.toString()]);
+        }
         const option = {
             "therapist_id": profileDetails?.user_id,
             "slot_ids": JSON.stringify(ids),
