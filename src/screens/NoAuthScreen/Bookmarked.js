@@ -133,11 +133,6 @@ const Bookmarked = ({ navigation }) => {
                         console.log(`user register error ${e}`)
                         console.log(e.response)
                         Alert.alert('Oops..', e.response?.data?.message, [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
                         ]);
                     });

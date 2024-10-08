@@ -359,11 +359,6 @@ const TherapistList = ({ navigation, route }) => {
                     console.log(`fetch all therapist error ${e}`)
                     console.log(e.response)
                     Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
                         { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
                     ]);
                 });
@@ -641,11 +636,6 @@ const TherapistList = ({ navigation, route }) => {
             console.error('Error fetching therapists:', error);
 
             Alert.alert('Oops..', error.response?.data?.message || 'Something went wrong', [
-                {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
                 { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
             ]);
         } finally {

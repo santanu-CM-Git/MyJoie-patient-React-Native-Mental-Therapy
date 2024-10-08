@@ -182,11 +182,6 @@ const ProfileScreen = ({ navigation, route }) => {
           console.log(`Profile error ${e}`)
           setIsLoading(false)
           Alert.alert('Oops..', e.response?.data?.message, [
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
             { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
           ]);
         });
@@ -303,11 +298,6 @@ const ProfileScreen = ({ navigation, route }) => {
             console.log(`user update error ${e}`)
             console.log(e.response.data?.response.records)
             Alert.alert('Oops..', e.response?.data?.message, [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
               { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
             ]);
           });

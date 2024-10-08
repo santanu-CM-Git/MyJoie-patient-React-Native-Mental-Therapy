@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect,useContext } from 'react';
+import React, { useState, useMemo, useEffect, useContext } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
@@ -202,11 +202,6 @@ const TherapistProfile = ({ navigation, route }) => {
                     console.log(`fetch therapist data error ${e}`)
                     console.log(e.response)
                     Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
                         { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
                     ]);
                 });
@@ -305,58 +300,68 @@ const TherapistProfile = ({ navigation, route }) => {
     }
 
     const isBlockedByAdminCheck = () => {
-
-        let ids = [];
-
-        if (route?.params?.mode === 'paid') {
-            ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
-        } else {
-            ids = selectedByUser.flatMap(item => [item.id.toString()]);
-        }
-        const option = {
-            "therapist_id": profileDetails?.user_id,
-            "slot_ids": JSON.stringify(ids),
-            "date": selectedDate,
-        }
-        AsyncStorage.getItem('userToken', (err, usertoken) => {
-            axios.post(`${API_URL}/patient/slot-book-checking`, option, {
-                headers: {
-                    Accept: 'application/json',
-                    "Authorization": `Bearer ${usertoken}`,
+        if (selectedByUser.length === 0) {
+            Alert.alert('Oops..', 'You need to select at least one slot.', [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
                 },
-            })
-                .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'submit form response')
-                    if (res.data.response == true) {
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        } else {
+            let ids = [];
+
+            if (route?.params?.mode === 'paid') {
+                ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
+            } else {
+                ids = selectedByUser.flatMap(item => [item.id.toString()]);
+            }
+            const option = {
+                "therapist_id": profileDetails?.user_id,
+                "slot_ids": JSON.stringify(ids),
+                "date": selectedDate,
+            }
+            AsyncStorage.getItem('userToken', (err, usertoken) => {
+                axios.post(`${API_URL}/patient/slot-book-checking`, option, {
+                    headers: {
+                        Accept: 'application/json',
+                        "Authorization": `Bearer ${usertoken}`,
+                    },
+                })
+                    .then(res => {
+                        console.log(JSON.stringify(res.data.data), 'submit form response')
+                        if (res.data.response == true) {
+                            setIsLoading(false)
+                            submitForm()
+                        } else {
+                            console.log('not okk')
+                            setIsLoading(false)
+                            Alert.alert('Oops..', res?.data?.message || "Something went wrong", [
+                                {
+                                    text: 'Cancel',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                },
+                                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                            ]);
+                        }
+                    })
+                    .catch(e => {
                         setIsLoading(false)
-                        submitForm()
-                    } else {
-                        console.log('not okk')
-                        setIsLoading(false)
-                        Alert.alert('Oops..', res?.data?.message || "Something went wrong", [
+                        console.log(`slot booking checking error ${e}`)
+                        console.log(e.response)
+                        Alert.alert('Oops..', e.response?.data?.message, [
                             {
                                 text: 'Cancel',
                                 onPress: () => console.log('Cancel Pressed'),
                                 style: 'cancel',
                             },
-                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                            { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
                         ]);
-                    }
-                })
-                .catch(e => {
-                    setIsLoading(false)
-                    console.log(`slot booking checking error ${e}`)
-                    console.log(e.response)
-                    Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
-                    ]);
-                });
-        });
+                    });
+            });
+        }
     }
 
     const submitForm = () => {
