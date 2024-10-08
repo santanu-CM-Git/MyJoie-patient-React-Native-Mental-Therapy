@@ -113,10 +113,52 @@ const BookingSummary = ({ navigation, route }) => {
             console.error('Fetch wallet balance error:', error);
             console.error(error.response?.data?.message);
             Alert.alert('Oops..', error.response?.data?.message || 'Something went wrong', [
-                { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
+                { text: 'OK', onPress: () => error.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
             ]);
         }
     };
+
+    const beforeHandlePayment = () => {
+        const option = {
+            "therapist_id": previousPageData?.therapist_id,
+            "slot_ids": previousPageData?.slot_ids,
+            "date": previousPageData?.date,
+        }
+        AsyncStorage.getItem('userToken', (err, usertoken) => {
+            axios.post(`${API_URL}/patient/slot-book-checking`, option, {
+                headers: {
+                    Accept: 'application/json',
+                    "Authorization": `Bearer ${usertoken}`,
+                },
+            })
+                .then(res => {
+                    console.log(JSON.stringify(res.data.data), 'submit form response')
+                    if (res.data.response == true) {
+                        setIsLoading(false)
+                        handlePayment()
+                    } else {
+                        console.log('not okk')
+                        setIsLoading(false)
+                        Alert.alert('Oops..', res?.data?.message || "Something went wrong", [
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                            },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(e => {
+                    setIsLoading(false)
+                    console.log(`slot booking checking error ${e}`)
+                    console.log(e.response)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
+                    ]);
+                });
+        });
+    }
 
     const handlePayment = () => {
         const totalAmount = payableAmount;
@@ -551,7 +593,7 @@ const BookingSummary = ({ navigation, route }) => {
                 </View>
                 <View style={{ marginTop: responsiveHeight(1) }}>
                     <CustomButton label={"Pay Now"}
-                        onPress={() => handlePayment()}
+                        onPress={() => beforeHandlePayment()}
                     />
                 </View>
             </View>

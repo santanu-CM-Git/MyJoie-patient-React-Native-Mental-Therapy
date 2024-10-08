@@ -448,7 +448,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.nameText}>{item?.therapist?.name}</Text>
           {/* <Text style={styles.namesubText}>Patient</Text> */}
           <View style={styles.ratingView}>
-            <Text style={styles.namesubText}>{item?.qualification_list}</Text>
+            <Text style={styles.namesubText} >{item?.qualification_list}</Text>
             <StarRating
               disabled={true}
               maxStars={5}
@@ -485,7 +485,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
         </View>
       </View>
-      <View style={{ marginTop: responsiveHeight(1) }}>
+      <View style={{ marginTop: responsiveHeight(1),marginBottom: -responsiveHeight(1) }}>
         <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.therapist_id, mode: 'paid' }, key: Math.random().toString() }) }} />
       </View>
     </View>
@@ -825,7 +825,8 @@ const styles = StyleSheet.create({
     color: '#746868',
     fontFamily: 'DMSans-Regular',
     marginRight: 5,
-    fontSize: responsiveFontSize(1.5)
+    fontSize: responsiveFontSize(1.5),
+    width: responsiveWidth(28)
   },
   joinNowButton: {
     marginLeft: responsiveWidth(2),
@@ -949,7 +950,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   previousTherapistView: {
-    height: responsiveHeight(30),
+    //height: responsiveHeight(30),
     width: responsiveWidth(92),
     backgroundColor: '#FFF',
     marginHorizontal: 15,
