@@ -105,7 +105,7 @@ const OtpScreen = ({ navigation, route }) => {
                         Toast.show({
                             type: 'success',
                             text1: 'Hello',
-                            text2: "The OTP has been successfully matched.",
+                            text2: "OTP is matched successfully.",
                             position: 'top',
                             topOffset: Platform.OS == 'ios' ? 55 : 20
                         });

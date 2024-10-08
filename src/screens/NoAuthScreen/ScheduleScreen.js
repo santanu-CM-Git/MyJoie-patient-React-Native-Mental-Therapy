@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef,useCallback } from 'react';
+import React, { useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, Image, Platform, Alert, FlatList, Pressable } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import CustomButton from '../../components/CustomButton';
@@ -136,7 +136,7 @@ const ScheduleScreen = ({ navigation, route }) => {
         Alert.alert('Hello', "Are you sure you want to cancel the appointment? Cancellation charges may apply.", [
             {
                 text: 'Cancel',
-                onPress: () => {null},
+                onPress: () => { null },
                 style: 'cancel',
             },
             { text: 'OK', onPress: () => cancelSchedule(id) },
@@ -274,7 +274,7 @@ const ScheduleScreen = ({ navigation, route }) => {
         }, [])
     )
 
-    const onRefresh = useCallback(() => {
+    const onRefresh = () => {
         setRefreshing(true);
         if (route?.params?.activeTab === 'Upcoming' || route?.params?.activeTab === undefined) {
             setActiveTab('Upcoming');
@@ -285,9 +285,9 @@ const ScheduleScreen = ({ navigation, route }) => {
         }
         fetchUpcomingBooking();
         fetchPreviousBooking();
-    
+
         setRefreshing(false);
-      }, []);
+    };
 
     const renderUpcoming = ({ item }) => {
         // const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
@@ -297,6 +297,7 @@ const ScheduleScreen = ({ navigation, route }) => {
         const endDateTime = new Date(`${item.date}T${item.end_time}`);
         const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
         const isButtonEnabled = currentDateTime >= twoMinutesBefore && currentDateTime <= endDateTime;
+
         return (
             <View style={styles.upcomingView}>
                 {(item?.status === 'scheduled' || item?.status === 'start') ? (
@@ -414,10 +415,10 @@ const ScheduleScreen = ({ navigation, route }) => {
                     <Text style={styles.previousBookingStatusText}>
                         {/* {item?.status === 'completed' ? 'Completed' : item?.status === 'cancel' ? 'Cancel' : 'Scheduled'} */}
                         {item?.status === 'cancel' ? 'Canceled' :
-                                    item?.status === 'incomplete' ? 'Incomplete' :
-                                        item?.status === 'processing' ? 'Processing' :
-                                            item?.status === 'completed' ? 'Completed' :
-                                                null}
+                            item?.status === 'incomplete' ? 'Incomplete' :
+                                item?.status === 'processing' ? 'Processing' :
+                                    item?.status === 'completed' ? 'Completed' :
+                                        null}
                     </Text>
                 </View>
             </View>
@@ -455,7 +456,7 @@ const ScheduleScreen = ({ navigation, route }) => {
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Schedule'} onPress={() => navigation.goBack()} title={'Schedule'} />
             <ScrollView style={styles.wrapper} refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
             }>
                 <View style={{ marginBottom: responsiveHeight(3) }}>
                     <SwitchSelector

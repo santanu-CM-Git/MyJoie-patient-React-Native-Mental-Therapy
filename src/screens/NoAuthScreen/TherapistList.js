@@ -658,6 +658,17 @@ const TherapistList = ({ navigation, route }) => {
         fetchLanguage();
         fetchQualification();
         fetchTherapyType();
+        //reset previous selected data
+        setSelectedExperience([])
+        setSelectedType([])
+        setSelectedRating([])
+        setRatingValue([])
+        setSelectedGender([])
+        setSliderValuesForAge([0, 100])
+        setSelectedQualification([])
+        setSelectedLanguage([])
+        setSliderValuesForPrice([0, 10000])
+        setValue('All')
     };
 
     return (
@@ -909,7 +920,7 @@ const TherapistList = ({ navigation, route }) => {
                                                                     sliderLength={180}
                                                                     onValuesChange={sliderValuesChange}
                                                                     min={0}
-                                                                    max={2000}
+                                                                    max={10000}
                                                                     step={1}
                                                                     vertical={true}
                                                                     allowOverlap={false}

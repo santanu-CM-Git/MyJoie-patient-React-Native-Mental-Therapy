@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView,RefreshControl, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -65,6 +65,7 @@ const Gender = [
 
 const FreeTherapistList = ({ navigation, route }) => {
 
+    const [refreshing, setRefreshing] = useState(false);
     const [value, setValue] = useState('All');
     const [isFocus, setIsFocus] = useState(false);
     const [therapistData, setTherapistData] = React.useState([])
@@ -293,7 +294,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                         setTherapistData(res.data.data);
                         setTherapistFilterData(res.data.data)
                         //setIsLoading(false);
-
+                        setRefreshing(false)
                     } else {
                         console.log('not okk')
                         setIsLoading(false)
@@ -600,11 +601,32 @@ const FreeTherapistList = ({ navigation, route }) => {
         }
     };
 
+    const onRefresh = () => {
+        setRefreshing(true);
+        // Call your function here to refresh the data
+        fetchAllTherapist();
+        fetchLanguage();
+        fetchQualification();
+        fetchTherapyType();
+        //reset previous selected data
+        setSelectedExperience([])
+        setSelectedType([])
+        setSelectedRating([])
+        setRatingValue([])
+        setSelectedGender([])
+        setSliderValuesForAge([0, 100])
+        setSelectedQualification([])
+        setSelectedLanguage([])
+        setSliderValuesForPrice([0, 10000])
+        setValue('All')
+    };
 
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.goBack()} title={'Therapist'} />
-            <ScrollView style={styles.wrapper}>
+            <ScrollView style={styles.wrapper} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
+            }>
                 <View style={styles.filterSection}>
                     <View style={styles.filterSection1st}>
                         <View style={{ width: responsiveWidth(35), }}>
@@ -845,7 +867,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                                                                     sliderLength={180}
                                                                     onValuesChange={sliderValuesChange}
                                                                     min={0}
-                                                                    max={2000}
+                                                                    max={10000}
                                                                     step={1}
                                                                     vertical={true}
                                                                     allowOverlap={false}

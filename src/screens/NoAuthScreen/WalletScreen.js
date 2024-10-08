@@ -153,8 +153,8 @@ const WalletScreen = ({ navigation }) => {
                             <Text style={styles.walletTitleText}>Wallet Balance</Text>
                             <Text style={styles.walletTitleSubtext}>Available Amount</Text>
                         </View>
-                        <View style={{ width: responsiveWidth(20), marginLeft: 10 }}>
-                            <Text style={styles.walletBalance}>₹{walletBalance}</Text>
+                        <View style={{ width: responsiveWidth(25), marginLeft: 10 }}>
+                            <Text style={styles.walletBalance} numberOfLines={1}>₹{walletBalance.toFixed(2)}</Text>
                         </View>
                     </View>
                 </View>
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     walletTitleView: {
         flexDirection: 'column',
         marginLeft: 20,
-        width: responsiveWidth(40),
+        width: responsiveWidth(37),
         height: responsiveHeight(5),
         justifyContent: 'space-between'
     },
