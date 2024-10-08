@@ -18,10 +18,11 @@ import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { API_URL } from '@env'
 import Toast from 'react-native-toast-message';
-
+import { AuthContext } from '../../context/AuthContext';
 
 const ScheduleScreen = ({ navigation, route }) => {
     const timerRef = useRef(null);
+    const { logout } = useContext(AuthContext);
     const [refreshing, setRefreshing] = useState(false);
     const [activeTab, setActiveTab] = useState('Upcoming')
     const [activeButtonNo, setActiveButtonNo] = useState(0)
@@ -64,6 +65,14 @@ const ScheduleScreen = ({ navigation, route }) => {
                 .catch(e => {
                     console.log(`Login error ${e}`)
                     console.log(e.response?.data?.message)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
+                    ]);
                 });
         });
     }

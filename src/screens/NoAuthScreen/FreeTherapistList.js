@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback,useContext } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView,RefreshControl, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
@@ -21,6 +21,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import { AuthContext } from '../../context/AuthContext';
 
 // const dropdowndata = [
 //     { label: 'All therapist', value: 'All' },
@@ -65,6 +66,7 @@ const Gender = [
 
 const FreeTherapistList = ({ navigation, route }) => {
 
+    const { logout } = useContext(AuthContext);
     const [refreshing, setRefreshing] = useState(false);
     const [value, setValue] = useState('All');
     const [isFocus, setIsFocus] = useState(false);
@@ -318,7 +320,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                             onPress: () => console.log('Cancel Pressed'),
                             style: 'cancel',
                         },
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
                     ]);
                 });
         });

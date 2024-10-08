@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect,useCallback } from 'react';
+import React, { useState, useMemo, useEffect,useCallback,useContext } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, ActivityIndicator, useWindowDimensions, Switch, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
@@ -16,9 +16,11 @@ import CustomButton from '../../components/CustomButton';
 import RazorpayCheckout from 'react-native-razorpay';
 import Toast from 'react-native-toast-message';
 import { useFocusEffect } from '@react-navigation/native';
+import { AuthContext } from '../../context/AuthContext';
 
 const BookingSummary = ({ navigation, route }) => {
 
+    const { logout } = useContext(AuthContext);
     const [couponCode, setCouponCode] = useState('');
     const [walletBalance, setWalletBalance] = useState(0);
     const [gstPercentage, setGstPercentage] = useState(0);
@@ -111,7 +113,7 @@ const BookingSummary = ({ navigation, route }) => {
             console.error('Fetch wallet balance error:', error);
             console.error(error.response?.data?.message);
             Alert.alert('Oops..', error.response?.data?.message || 'Something went wrong', [
-                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
             ]);
         }
     };

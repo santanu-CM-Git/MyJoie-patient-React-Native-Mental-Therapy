@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect,useContext } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
@@ -15,7 +15,7 @@ import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
 import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-toast-message';
-
+import { AuthContext } from '../../context/AuthContext';
 
 const items = [
     { id: 1, icon: chatColor },
@@ -24,6 +24,7 @@ const items = [
 ];
 const TherapistProfile = ({ navigation, route }) => {
 
+    const { logout } = useContext(AuthContext);
     const [allReview, setAllreview] = React.useState([])
     const [profileDetails, setProfileDetails] = useState([])
     const [therapistAvailability, setTherapistAvailability] = useState([])
@@ -206,7 +207,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             onPress: () => console.log('Cancel Pressed'),
                             style: 'cancel',
                         },
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
                     ]);
                 });
 

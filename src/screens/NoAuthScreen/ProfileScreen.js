@@ -46,6 +46,8 @@ const dataMarital = [
 ];
 
 const ProfileScreen = ({ navigation, route }) => {
+
+  const { logout } = useContext(AuthContext);
   const [firstname, setFirstname] = useState('');
   const [firstNameError, setFirstNameError] = useState('')
   const [countryCode, setCountryCode] = useState('')
@@ -179,6 +181,14 @@ const ProfileScreen = ({ navigation, route }) => {
         .catch(e => {
           console.log(`Profile error ${e}`)
           setIsLoading(false)
+          Alert.alert('Oops..', e.response?.data?.message, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
+          ]);
         });
     });
   }
@@ -298,7 +308,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
               },
-              { text: 'OK', onPress: () => console.log('OK Pressed') },
+              { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
             ]);
           });
       });

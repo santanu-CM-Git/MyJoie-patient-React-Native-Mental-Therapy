@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef,useContext } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, TextInput, Image, FlatList, TouchableOpacity, BackHandler, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -20,6 +20,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import { AuthContext } from '../../context/AuthContext';
 
 const Experience = [
     { label: '0 - 2 Years', value: '0-2' },
@@ -51,6 +52,7 @@ const Gender = [
 
 const TherapistList = ({ navigation, route }) => {
 
+    const { logout } = useContext(AuthContext);
     const [refreshing, setRefreshing] = useState(false);
     const [value, setValue] = useState('All');
     const [isFocus, setIsFocus] = useState(false);
@@ -362,7 +364,7 @@ const TherapistList = ({ navigation, route }) => {
                             onPress: () => console.log('Cancel Pressed'),
                             style: 'cancel',
                         },
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
                     ]);
                 });
         });
@@ -644,7 +646,7 @@ const TherapistList = ({ navigation, route }) => {
                     onPress: () => console.log('Cancel Pressed'),
                     style: 'cancel',
                 },
-                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
             ]);
         } finally {
             setIsLoading(false);

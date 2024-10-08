@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions } from 'react-native'
+import React, { useState, useMemo, useEffect, useCallback, useContext } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -10,9 +10,11 @@ import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from '../../utils/Loader';
 import moment from "moment"
-
+import { AuthContext } from '../../context/AuthContext';
 
 const WalletScreen = ({ navigation }) => {
+
+    const { logout } = useContext(AuthContext);
     const [refreshing, setRefreshing] = useState(false);
     const [walletBalance, setWalletBalance] = React.useState(0)
     const [WalletTransaction, setWalletTransaction] = useState([])
@@ -49,6 +51,14 @@ const WalletScreen = ({ navigation }) => {
                 .catch(e => {
                     console.log(`Login error ${e}`)
                     console.log(e.response?.data?.message)
+                    Alert.alert('Oops..', e.response?.data?.message, [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
+                    ]);
                 });
         });
     }

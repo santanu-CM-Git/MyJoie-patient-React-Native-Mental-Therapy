@@ -52,6 +52,7 @@ export default function HomeScreen({ navigation }) {
 
   const dispatch = useDispatch();
   const { data: products, status } = useSelector(state => state.products)
+  const { logout } = useContext(AuthContext);
   // const { userInfo } = useContext(AuthContext)
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true)
@@ -283,7 +284,7 @@ export default function HomeScreen({ navigation }) {
               onPress: () => console.log('Cancel Pressed'),
               style: 'cancel',
             },
-            { text: 'OK', onPress: () => console.log('OK Pressed') },
+            { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
           ]);
         });
     });
@@ -334,7 +335,7 @@ export default function HomeScreen({ navigation }) {
             //source={freebannerPlaceHolder}
             //style={{ width: BannerWidth, height: BannerHeight }}
             style={styles.bannerImage}
-          resizeMode={FastImage.resizeMode.contain}
+            resizeMode={FastImage.resizeMode.contain}
           />
         </View>
       </Pressable>
