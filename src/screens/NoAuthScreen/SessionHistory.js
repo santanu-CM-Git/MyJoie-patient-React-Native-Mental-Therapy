@@ -158,7 +158,7 @@ const SessionHistory = ({ navigation }) => {
                             )}
                         />
                         :
-                        <View style={styles.singleView}>
+                        <View style={styles.nosingleView}>
                             <Text style={styles.nodataText}>No previous booking yet</Text>
                         </View>
                     }
@@ -189,6 +189,16 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginTop: responsiveHeight(2),
         paddingBottom: -responsiveHeight(1),
+        borderColor: '#F4F5F5',
+        borderWidth: 2,
+    },
+    nosingleView: {
+        width: '100%',
+        backgroundColor: '#FFF',
+        padding: 20,
+        borderRadius: 20,
+        marginTop: responsiveHeight(2),
+        //paddingBottom: -responsiveHeight(1),
         borderColor: '#F4F5F5',
         borderWidth: 2,
     },
