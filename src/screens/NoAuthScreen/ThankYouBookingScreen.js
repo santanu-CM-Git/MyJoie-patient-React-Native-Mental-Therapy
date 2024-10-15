@@ -1,14 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet,BackHandler } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Thankyou from '../../assets/images/misc/Thankyou.svg';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomButton from '../../components/CustomButton';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import moment from 'moment-timezone';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const ThankYouBookingScreen = ({ navigation, route }) => {
   const [data, setData] = useState(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.isFocused()) {
+          // If you're not on the home screen, redirect to the home screen
+          navigation.navigate('Home'); // Replace 'Home' with the actual route name for your home screen
+          return true; // Prevent the default back action
+        } else {
+          // If already on the home screen, allow default back action (exit app)
+          return false;
+        }
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [navigation])
+  );
 
   useEffect(() => {
     const detailsData = JSON.parse(route?.params?.detailsData);

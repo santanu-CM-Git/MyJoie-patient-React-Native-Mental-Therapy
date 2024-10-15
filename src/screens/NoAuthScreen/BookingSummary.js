@@ -123,6 +123,7 @@ const BookingSummary = ({ navigation, route }) => {
             "therapist_id": previousPageData?.therapist_id,
             "slot_ids": previousPageData?.slot_ids,
             "date": previousPageData?.date,
+            "booking_type": 'paid'
         }
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             axios.post(`${API_URL}/patient/slot-book-checking`, option, {

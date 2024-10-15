@@ -16,6 +16,7 @@ import CustomButton from '../../components/CustomButton';
 import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-toast-message';
 import { AuthContext } from '../../context/AuthContext';
+import { requestPermission, setupNotificationHandlers } from '../../utils/NotificationService';
 
 const items = [
     { id: 1, icon: chatColor },
@@ -231,6 +232,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
 
     useEffect(() => {
+        requestPermission()
         const { therapistId, mode } = route.params;
         // console.log(route?.params?.detailsData, 'vvvvvvv')
         // setProfileDetails(route?.params?.detailsData)
@@ -311,16 +313,20 @@ const TherapistProfile = ({ navigation, route }) => {
             ]);
         } else {
             let ids = [];
+            let mode = '';
 
             if (route?.params?.mode === 'paid') {
                 ids = selectedByUser.flatMap(item => [item.id1.toString(), item.id2.toString()]);
+                mode = 'paid'
             } else {
                 ids = selectedByUser.flatMap(item => [item.id.toString()]);
+                mode = 'free'
             }
             const option = {
                 "therapist_id": profileDetails?.user_id,
                 "slot_ids": JSON.stringify(ids),
                 "date": selectedDate,
+                "booking_type" : mode
             }
             AsyncStorage.getItem('userToken', (err, usertoken) => {
                 axios.post(`${API_URL}/patient/slot-book-checking`, option, {

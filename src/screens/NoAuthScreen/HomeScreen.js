@@ -12,7 +12,9 @@ import {
   StyleSheet,
   Alert,
   Dimensions,
-  Pressable
+  Pressable,
+  BackHandler,
+  Platform
 } from 'react-native';
 import Modal from "react-native-modal";
 import { AuthContext } from '../../context/AuthContext';
@@ -82,7 +84,6 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     getFCMToken()
-
     // if (Platform.OS == 'android') {
     //   /* this is app foreground notification */
     //   const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -100,6 +101,23 @@ export default function HomeScreen({ navigation }) {
     //   return unsubscribe;
     // }
   }, [])
+
+  useEffect(() => {
+    const backAction = () => {
+      if (Platform.OS === 'android') {
+        BackHandler.exitApp(); // Minimize the app (simulating background run)
+        return true; // Prevent default back action
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove(); // Cleanup the event listener on component unmount
+  }, []);
 
   const fetchProfileDetails = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -485,7 +503,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.dateTimeText}>{moment(item?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(item?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
         </View>
       </View>
-      <View style={{ marginTop: responsiveHeight(1),marginBottom: -responsiveHeight(1) }}>
+      <View style={{ marginTop: responsiveHeight(1), marginBottom: -responsiveHeight(1) }}>
         <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.therapist_id, mode: 'paid' }, key: Math.random().toString() }) }} />
       </View>
     </View>

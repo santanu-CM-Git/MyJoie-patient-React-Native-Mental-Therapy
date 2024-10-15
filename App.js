@@ -30,12 +30,16 @@ function App() {
       messaging().onNotificationOpenedApp(remoteMessage => {
         if (remoteMessage?.data?.screen === 'ScheduleScreen') {
           navigate('Schedule', { screen: 'ScheduleScreen' });
+        } else if (remoteMessage?.data?.screen === 'WalletScreen') {
+          navigate('WalletScreen');
         }
       });
 
       messaging().getInitialNotification().then(remoteMessage => {
         if (remoteMessage?.data?.screen === 'ScheduleScreen') {
           navigate('Schedule', { screen: 'ScheduleScreen' });
+        } else if (remoteMessage?.data?.screen === 'WalletScreen') {
+          navigate('WalletScreen');
         }
       });
 

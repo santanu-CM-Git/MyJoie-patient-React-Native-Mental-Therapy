@@ -66,13 +66,13 @@ export const requestPermission = async () => {
 
   console.log('Request notification permission status:', request);
 
-  if (request !== RESULTS.GRANTED) {
-    Alert.alert(
-      'Notification Permission Required',
-      'Please enable notifications to stay updated.',
-      [{ text: 'OK', onPress: openSettings }]
-    );
-  }
+  // if (request !== RESULTS.GRANTED) {
+  //   Alert.alert(
+  //     'Notification Permission Required',
+  //     'Please enable notifications to stay updated.',
+  //     [{ text: 'OK', onPress: openSettings }]
+  //   );
+  // }
 };
 
 

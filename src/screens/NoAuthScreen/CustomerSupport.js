@@ -13,29 +13,24 @@ import {
     Alert,
     Linking
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import * as Animatable from 'react-native-animatable';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import CustomSwitch from '../../components/CustomSwitch';
-import ListItem from '../../components/ListItem';
+
 import { AuthContext } from '../../context/AuthContext';
-import { getProducts } from '../../store/productSlice'
-import { API_URL } from '@env'
-import axios from 'axios';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { add } from '../../store/cartSlice';
 import { emailIcon, facebookIcon, instagramIcon, whatsappIcon, youtubeIcon } from '../../utils/Images';
 import Loader from '../../utils/Loader';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import CustomHeader from '../../components/CustomHeader';
-import Collapsible from 'react-native-collapsible';
-import Accordion from 'react-native-collapsible/Accordion';
-import data from '../../model/data'
-import CustomButton from '../../components/CustomButton';
 
 const BannerWidth = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(BannerWidth * 0.7)
 const { height, width } = Dimensions.get('screen')
+
+const instaURL = 'https://www.instagram.com/myjoie.app/';
+
+const facebookURL = 'https://www.facebook.com/profile.php?id=61564987316705';
+
+const linkedinURL = 'https://www.linkedin.com/company/myjoie'
 
 export default function CustomerSupport({ navigation }) {
 
@@ -49,46 +44,14 @@ export default function CustomerSupport({ navigation }) {
     const [isLoading, setIsLoading] = useState(false)
     const [getAllData, setAllData] = useState([])
 
-    const fetchTerms = () => {
-        AsyncStorage.getItem('userToken', (err, usertoken) => {
-            axios.get(`${API_URL}/api/driver/get-help-support`,
-                {
-                    headers: {
-                        "Authorization": 'Bearer ' + usertoken,
-                        "Content-Type": 'application/json'
-                    },
-                })
-                .then(res => {
-                    // console.log(res.data.Termsandconditions[0], 'terms and condition')
-
-                    if (res.data.response.status.code === 200) {
-                        setAllData(res.data.response.records)
-                        setFaq(res.data.response.records.faq)
-                        console.log(res.data.response.records.faq, 'faq')
-                        setIsLoading(false);
-                    } else {
-                        setIsLoading(false)
-                        Alert.alert('Oops..', "Something went wrong", [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
-                            { text: 'OK', onPress: () => console.log('OK Pressed') },
-                        ]);
-                    }
-                })
-                .catch(e => {
-                    console.log(`terms and condition error ${e}`)
-                });
-
-        });
-    }
-
-    useEffect(() => {
-        //fetchTerms();
-    }, [])
-
+    const openLink = async (url) => {
+        const supported = await Linking.canOpenURL(url);
+        if (supported) {
+            await Linking.openURL(url);
+        } else {
+            Alert.alert('Error', `Unable to open URL: ${url}`);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -130,34 +93,40 @@ export default function CustomerSupport({ navigation }) {
                     </View>
                     <View style={{ width: responsiveWidth(70), }}>
                         <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), lineHeight: responsiveHeight(2.5) }}>Get in touch with us</Text>
-                        <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7), lineHeight: responsiveHeight(2.5) }}>sushant.jswl13@gmail.com</Text>
+                        <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(1.7), lineHeight: responsiveHeight(2.5) }}>corporate@myjoie.app</Text>
                         <Text style={{ color: '#746868', fontFamily: 'DMSans-Regular', fontSize: responsiveFontSize(1.5), lineHeight: responsiveHeight(2.5) }}>We value your feedback</Text>
                     </View>
                 </View>
-                
+
 
             </ScrollView>
             <View style={{ position: 'absolute', bottom: 30, alignSelf: 'center' }}>
                 <Text style={{ color: '#2D2D2D', fontFamily: 'DMSans-SemiBold', fontSize: responsiveFontSize(2), lineHeight: responsiveHeight(2.5) }}>Stay Connected Online</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center',marginTop: responsiveHeight(1) }}>
-                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF',borderColor:'#417AA4',borderWidth:1, justifyContent: 'center', alignItems: 'center',marginHorizontal: responsiveWidth(2) }}>
-                        <Image
-                            source={facebookIcon}
-                            style={{ height: 20, width: 20, resizeMode: 'contain', }}
-                        />
-                    </View>
-                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF',borderColor:'#417AA4',borderWidth:1, justifyContent: 'center', alignItems: 'center',marginHorizontal: responsiveWidth(2) }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: responsiveHeight(1) }}>
+                    <TouchableOpacity onPress={() => openLink(facebookURL)}>
+                        <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF', borderColor: '#417AA4', borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: responsiveWidth(2) }}>
+                            <Image
+                                source={facebookIcon}
+                                style={{ height: 20, width: 20, resizeMode: 'contain', }}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => openLink(instaURL)}>
+                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF', borderColor: '#417AA4', borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: responsiveWidth(2) }}>
                         <Image
                             source={instagramIcon}
                             style={{ height: 20, width: 20, resizeMode: 'contain', }}
                         />
                     </View>
-                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF',borderColor:'#417AA4',borderWidth:1, justifyContent: 'center', alignItems: 'center',marginHorizontal: responsiveWidth(2) }}>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => openLink(linkedinURL)}>
+                    <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF', borderColor: '#417AA4', borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: responsiveWidth(2) }}>
                         <Image
                             source={youtubeIcon}
                             style={{ height: 20, width: 20, resizeMode: 'contain', }}
                         />
                     </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView >
