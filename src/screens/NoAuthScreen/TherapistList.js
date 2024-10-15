@@ -913,7 +913,7 @@ const TherapistList = ({ navigation, route }) => {
                                                                     onValuesChange={sliderValuesChange}
                                                                     min={0}
                                                                     max={10000}
-                                                                    step={1}
+                                                                    step={100}
                                                                     vertical={true}
                                                                     allowOverlap={false}
                                                                     snapped
