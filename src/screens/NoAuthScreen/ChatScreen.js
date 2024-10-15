@@ -718,12 +718,65 @@ const ChatScreen = ({ navigation, route }) => {
       ]);
     }
   }
+
+  const requestToCancel = async () => {
+    const option = {
+      "booked_slot_id": route?.params?.details?.id,
+      "flag": activeTab,
+      "screen" : activeTab
+    };
+    // console.log(option);
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (!userToken) {
+        throw new Error('User token is missing');
+      }
+      const res = await axios.post(`${API_URL}/notification/tab-switch-cancel`, option, {
+        headers: {
+          Accept: 'application/json',
+          "Authorization": 'Bearer ' + userToken,
+        },
+      });
+      // console.log(res.data);
+      if (res.data.response === true) {
+        setIsLoading(false);
+      } else {
+        // console.log('Response not OK');
+        setIsLoading(false);
+        Alert.alert('Oops..', "Something went wrong", [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+      }
+    } catch (e) {
+      setIsLoading(false);
+      console.error('Error during handleTimerEnd:', e);
+      const errorMessage = e.response?.data?.message || 'An unexpected error occurred';
+      Alert.alert('Oops..', errorMessage, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+    }
+  }
+
   useEffect(() => {
     if (Platform.OS == 'android') {
       /* this is app foreground notification */
       const unsubscribe = messaging().onMessage(async remoteMessage => {
         // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
         // console.log('Received background message:', JSON.stringify(remoteMessage));
+        if(remoteMessage?.data?.screen === 'Cancel'){
+          console.log(remoteMessage?.data?.flag,'ddddddddd')
+          goingToactiveTab(remoteMessage?.data?.flag)
+        }
         if (remoteMessage?.data?.screen === 'ChatScreen') {
           Alert.alert(
             'Hello',
@@ -731,7 +784,7 @@ const ChatScreen = ({ navigation, route }) => {
             [
               {
                 text: 'Cancel',
-                onPress: () => console.log('cancel pressed'),
+                onPress: () => requestToCancel(),
                 style: 'cancel',
               },
               {
