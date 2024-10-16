@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Datmont</string>
+	<string>MyJoie</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -38,9 +38,9 @@
 		</dict>
 	</dict>
 	<key>NSDocumentPickerUsageDescription</key>
-	<string>Give $(PRODUCT_NAME) permission to access your Photo Library. Datmont would like to access your photos for uploading the signature and PDF of user. Your privacy is important to us, and we will only use the Document Picker for its intended purpose.</string>
+	<string>Give $(PRODUCT_NAME) permission to access your Photo Library. MyJoie would like to access your photos for uploading the signature and PDF of user. Your privacy is important to us, and we will only use the Document Picker for its intended purpose.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give $(PRODUCT_NAME) permission to access your Photo Library. Datmont would like to access your photos for uploading the signature and PDF of user. Your privacy is important to us, and we will only use the Document Picker for its intended purpose.</string>
+	<string>Give $(PRODUCT_NAME) permission to access your Photo Library. MyJoie would like to access your photos for uploading the signature and PDF of user. Your privacy is important to us, and we will only use the Document Picker for its intended purpose.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
