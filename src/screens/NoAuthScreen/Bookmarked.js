@@ -140,7 +140,7 @@ const Bookmarked = ({ navigation }) => {
         });
     }
 
-    const getNextAvailableSlot = (slot) => {
+    const getNextAvailableSlot = (slot) => { 
         if (!slot) return 'Next Avl. Slot : Check availability';
         const now = moment();
         const slotTime = moment(slot, 'HH:mm:ss');
