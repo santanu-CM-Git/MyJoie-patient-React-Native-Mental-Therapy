@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyClSQa2Vjw2KytsHdl3aMxwaE3Z0RST8zY</string>
+	<string>AIzaSyD0YITFIV8rXqiqyqYaUFDZkfcUSuHmgcM</string>
 	<key>GCM_SENDER_ID</key>
-	<string>980159603394</string>
+	<string>930256237670</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.example.patientapp</string>
+	<string>org.reactjs.native.example.PatientApp</string>
 	<key>PROJECT_ID</key>
-	<string>driver-app-c4784</string>
+	<string>swethadairyfarm-92558</string>
 	<key>STORAGE_BUCKET</key>
-	<string>driver-app-c4784.appspot.com</string>
+	<string>swethadairyfarm-92558.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:980159603394:ios:12dd5a8dcabab5e749115b</string>
+	<string>1:930256237670:ios:00d4c2279e6706ad79e9a7</string>
 </dict>
 </plist>
