@@ -102,7 +102,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'fetch all therapist availability');
+                    //console.log(JSON.stringify(res.data.data), 'fetch all therapist availability');
                     if (res.data.response == true) {
                         const currentTime = moment();
                         const filteredData = res.data.data.filter(slot => {

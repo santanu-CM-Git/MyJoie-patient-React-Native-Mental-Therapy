@@ -173,7 +173,7 @@ const TherapistList = ({ navigation, route }) => {
         })
             .then(res => {
                 //console.log(languageInfo, 'bbbbbbb')
-                console.log(res.data.data, 'fetch language')
+                //console.log(res.data.data, 'fetch language')
                 const languageInfo = res.data.data.map(item => ({
                     label: item.content,
                     value: item.id,
@@ -192,7 +192,7 @@ const TherapistList = ({ navigation, route }) => {
             },
         })
             .then(res => {
-                console.log(res.data.data, 'fetch qualification')
+                //console.log(res.data.data, 'fetch qualification')
                 const qualificationInfo = res.data.data.map(item => ({
                     label: item.content,
                     value: item.id,
@@ -211,7 +211,7 @@ const TherapistList = ({ navigation, route }) => {
             },
         })
             .then(res => {
-                console.log(res.data.data, 'fetch therapist type')
+                //console.log(res.data.data, 'fetch therapist type')
                 const therapyTypeInfo = res.data.data.map(item => ({
                     label: item.type,
                     value: item.id,
@@ -335,7 +335,7 @@ const TherapistList = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'fetch all therapist')
+                    //console.log(JSON.stringify(res.data.data), 'fetch all therapist')
                     if (res.data.response == true) {
                         setTherapistData(res.data.data);
                         setTherapistFilterData(res.data.data)
@@ -395,7 +395,7 @@ const TherapistList = ({ navigation, route }) => {
                     },
                 })
                     .then(res => {
-                        console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
+                       // console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
                         if (res.data.response == true) {
                             setIsLoading(false);
                             Toast.show({
