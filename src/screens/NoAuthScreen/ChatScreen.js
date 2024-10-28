@@ -723,7 +723,7 @@ const ChatScreen = ({ navigation, route }) => {
     const option = {
       "booked_slot_id": route?.params?.details?.id,
       "flag": activeTab,
-      "screen" : activeTab
+      "screen": activeTab
     };
     // console.log(option);
     try {
@@ -773,8 +773,8 @@ const ChatScreen = ({ navigation, route }) => {
       const unsubscribe = messaging().onMessage(async remoteMessage => {
         // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
         // console.log('Received background message:', JSON.stringify(remoteMessage));
-        if(remoteMessage?.data?.screen === 'Cancel'){
-          console.log(remoteMessage?.data?.flag,'ddddddddd')
+        if (remoteMessage?.data?.screen === 'Cancel') {
+          console.log(remoteMessage?.data?.flag, 'ddddddddd')
           goingToactiveTab(remoteMessage?.data?.flag)
         }
         if (remoteMessage?.data?.screen === 'ChatScreen') {
@@ -972,6 +972,12 @@ const ChatScreen = ({ navigation, route }) => {
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
                   <View style={{ height: responsiveHeight(80), width: '100%' }}>
+                    {remoteUid == null ?
+                      <View style={{ flex: 1, justifyContent:'center',alignItems:'center' }}>
+                        <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>waiting for the therapist to join..</Text>
+                      </View>
+                      : null}
+
                     {/* Remote Video View */}
                     {remoteUid !== null && (
                       <RtcSurfaceView
@@ -1005,7 +1011,7 @@ const ChatScreen = ({ navigation, route }) => {
                           source={switchcameraIcon}
                           style={styles.iconStyle}
                         />
-                      </TouchableOpacity> 
+                      </TouchableOpacity>
                       {/* Uncomment if you want to toggle the camera on/off */}
                       {/* <TouchableOpacity onPress={toggleCamera}>
               <Image
