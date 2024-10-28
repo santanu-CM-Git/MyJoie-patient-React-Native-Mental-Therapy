@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback, useRef,useContext } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef, useContext } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, RefreshControl, TextInput, Image, FlatList, TouchableOpacity, BackHandler, KeyboardAwareScrollView, useWindowDimensions, Switch, Pressable, Alert } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -62,6 +62,7 @@ const TherapistList = ({ navigation, route }) => {
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const [isModalVisible, setModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+    const [isFilterApplied, setIsFilterApplied] = useState(false);
     const [activeTab, setActiveTab] = useState('Experience')
     const [searchValue, setSearchValue] = useState('');
     const [sliderValuesForPrice, setSliderValuesForPrice] = useState([0, 10000]);
@@ -87,6 +88,7 @@ const TherapistList = ({ navigation, route }) => {
     const [selectedType, setSelectedType] = useState([]);
     const onSelectionsChangeType = (selectedType) => {
         // selectedFruits is array of { label, value }
+        console.log(selectedType,'meeee')
         setSelectedType(selectedType);
     };
 
@@ -94,11 +96,13 @@ const TherapistList = ({ navigation, route }) => {
     const [selectedRating, setSelectedRating] = useState([]);
     const [ratingValue, setRatingValue] = useState([]);
     const onSelectionsChangeRating = (selectedRating) => {
+        
         // selectedFruits is array of { label, value }
         //setSelectedRating(selectedRating);
         //Keep only the last selected item
         if (selectedRating.length > 0) {
             const selectedValue = selectedRating[selectedRating.length - 1].value;
+console.log(selectedRating[selectedRating.length - 1],'mmm');
 
             // Set the selectedRating to only the last selected value
             setSelectedRating([selectedRating[selectedRating.length - 1]]);
@@ -121,11 +125,11 @@ const TherapistList = ({ navigation, route }) => {
         setSelectedGender(selectedGender);
     };
     // Age
-    const [selectedAge, setSelectedAge] = useState([]);
-    const onSelectionsChangeAge = (selectedAge) => {
-        // selectedFruits is array of { label, value }
-        setSelectedAge(selectedAge);
-    };
+    // const [selectedAge, setSelectedAge] = useState([]);
+    // const onSelectionsChangeAge = (selectedAge) => {
+    //     // selectedFruits is array of { label, value }
+    //     setSelectedAge(selectedAge);
+    // };
     // Qualification
     const [qualificationitems, setqualificationitems] = useState([])
     const [selectedQualification, setSelectedQualification] = useState([]);
@@ -142,11 +146,11 @@ const TherapistList = ({ navigation, route }) => {
         setSelectedLanguage(selectedLanguage);
     };
     // Rate
-    const [selectedRate, setSelectedRate] = useState([]);
-    const onSelectionsChangeRate = (selectedRate) => {
-        // selectedFruits is array of { label, value }
-        setSelectedRate(selectedRate);
-    };
+    // const [selectedRate, setSelectedRate] = useState([]);
+    // const onSelectionsChangeRate = (selectedRate) => {
+    //     // selectedFruits is array of { label, value }
+    //     setSelectedRate(selectedRate);
+    // };
 
 
     const handleBackButton = () => {
@@ -231,32 +235,71 @@ const TherapistList = ({ navigation, route }) => {
             });
     }
 
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         setIsLoading(true);
-    //         await Promise.all([fetchAllTherapist(), fetchLanguage(), fetchQualification(), fetchTherapyType()]);
-    //         setIsLoading(false);
-    //     };
-
-    //     fetchData();
-    //     console.log(route?.params?.comingFrom, 'nnnnnnnnnnnnnnnnnnn');
-    //     if (route?.params?.comingFrom === 'search') {
-    //         setTimeout(() => {
-    //             if (searchInputRef.current) {
-    //                 searchInputRef.current.focus();
-    //             }
-    //         }, 100);
-    //     }
-
-    // }, [])
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
+                const storedFilterData = await AsyncStorage.getItem('filterDataForPaid');
+                const storedFilterDataRaw = await AsyncStorage.getItem('filterDataForPaidRaw')
+                const filterData = storedFilterData ? JSON.parse(storedFilterData) : null;
+                const filterDataRaw = storedFilterDataRaw ? JSON.parse(storedFilterDataRaw) : null;
+                console.log(filterData, 'already applied data');
+
+                if (filterData) {
+                    // If filter data exists, call submitForFilter
+                    setIsLoading(true)
+                    console.log(filterDataRaw.ratingValue,'jjjjjj')
+                    setSelectedExperience(filterDataRaw.selectedExperience)
+                    setSelectedType(filterDataRaw.selectedType)
+                    const ratingRanges = filterDataRaw.ratingValue;
+                    if (ratingRanges[0] === 3 && ratingRanges[1] === 5) {
+                        setSelectedRating([{ label: 'Above 3 Star', value: '3' }]);
+                    } else if (ratingRanges[0] === 4 && ratingRanges[1] === 5) {
+                        setSelectedRating([{ label: 'Above 4 Star', value: '4' }]);
+                    } else if (ratingRanges[0] === 5 && ratingRanges[1] === 5) {
+                        setSelectedRating([{ label: 'Above 5 Star', value: '5' }]);
+                    }
+                    setRatingValue(filterDataRaw.ratingValue)
+                    setSelectedGender(filterDataRaw.selectedGender)
+                    setSliderValuesForAge(filterDataRaw.sliderValuesForAge)
+                    setSelectedQualification(filterDataRaw.selectedQualification)
+                    setSelectedLanguage(filterDataRaw.selectedLanguage)
+                    setSliderValuesForPrice(filterDataRaw.sliderValuesForPrice)
+
+                    try {
+                        const userToken = await AsyncStorage.getItem('userToken');
+                        if (!userToken) {
+                            throw new Error('User token not found');
+                        }
+
+                        const response = await axios.post(`${API_URL}/patient/therapist-filter`, filterData, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'Authorization': `Bearer ${userToken}`
+                            }
+                        });
+
+                        const data = response.data;
+                        if (data.response) {
+                            setTherapistFilterData(data.therapists);
+                            setIsLoading(false)
+                        } else {
+                            throw new Error('Response not OK');
+                        }
+                    } catch (error) {
+                        setIsLoading(false)
+                        console.error('Error fetching filtered therapists:', error);
+                        Alert.alert('Oops..', error.response?.data?.message || 'Something went wrong', [
+                            { text: 'OK', onPress: () => error.response?.data?.message === 'Unauthorized' ? logout() : console.log('OK Pressed') },
+                        ]);
+                    }
+                } else {
+                    // Otherwise, call fetchAllTherapist to fetch all therapists
+                    await fetchAllTherapist();
+                }
                 // Wait for all the fetch calls to complete
                 await Promise.all([
-                    fetchAllTherapist(),
+                    //fetchAllTherapist(),
                     fetchLanguage(),
                     fetchQualification(),
                     fetchTherapyType()
@@ -282,39 +325,6 @@ const TherapistList = ({ navigation, route }) => {
 
     }, []);
 
-    useFocusEffect(
-        React.useCallback(() => {
-            const fetchData = async () => {
-                try {
-                    setIsLoading(true);
-                    await Promise.all([
-                        fetchAllTherapist(),
-
-                    ]);
-                } catch (error) {
-                    console.error("Error fetching data: ", error);
-                } finally {
-                    setIsLoading(false);
-                }
-            };
-
-            fetchData();
-            setFilterModalVisible(false)
-            setSelectedExperience([])
-            setSelectedType([])
-            setSelectedRating([])
-            setRatingValue([])
-            setSelectedGender([])
-            setSliderValuesForAge([0, 100])
-            setSelectedQualification([])
-            setSelectedLanguage([])
-            setSliderValuesForPrice([0, 10000])
-
-            if (searchInputRef.current) {
-                searchInputRef.current.focus();
-            }
-        }, [])
-    );
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
@@ -322,7 +332,7 @@ const TherapistList = ({ navigation, route }) => {
         setFilterModalVisible(!isFilterModalVisible);
     };
 
-    const fetchAllTherapist = () => {
+    const fetchAllTherapist = async () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             const option = {
                 "flag": 'paid'
@@ -395,7 +405,7 @@ const TherapistList = ({ navigation, route }) => {
                     },
                 })
                     .then(res => {
-                       // console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
+                        // console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
                         if (res.data.response == true) {
                             setIsLoading(false);
                             Toast.show({
@@ -548,17 +558,9 @@ const TherapistList = ({ navigation, route }) => {
         setTherapistFilterData(filteredData);
     }
 
-    const resetValueOfFilter = () => {
-        // setSelectedExperience([])
-        // setSelectedType([])
-        // setSelectedRating([])
-        // setSelectedGender([])
-        // setSelectedAge([18, 100])
-        // setSelectedQualification([])
-        // setSelectedLanguage([])
-        // setSliderValuesForPrice([0, 10000])
-        // toggleFilterModal()
-        // setTherapistFilterData(therapistData);
+    const resetValueOfFilter = async () => {
+        await AsyncStorage.removeItem('filterDataForPaid');
+        await AsyncStorage.removeItem('filterDataForPaidRaw');
         setSelectedExperience([])
         setSelectedType([])
         setSelectedRating([])
@@ -570,6 +572,7 @@ const TherapistList = ({ navigation, route }) => {
         setSliderValuesForPrice([0, 10000])
         toggleFilterModal()
         setTherapistFilterData(therapistData);
+        fetchAllTherapist();
     }
 
     const submitForFilter = async () => {
@@ -608,7 +611,21 @@ const TherapistList = ({ navigation, route }) => {
                 flag: "paid"
             };
 
-            console.log(filteredData);
+            const rawData = {
+                selectedExperience,
+                selectedType,
+                ratingValue,
+                selectedGender,
+                sliderValuesForAge,
+                selectedQualification,
+                selectedLanguage,
+                sliderValuesForPrice
+            }
+
+            await AsyncStorage.setItem('filterDataForPaidRaw', JSON.stringify(rawData));
+            await AsyncStorage.setItem('filterDataForPaid', JSON.stringify(filteredData));
+
+            console.log('Filter data saved to AsyncStorage:', filteredData);
 
             const userToken = await AsyncStorage.getItem('userToken');
             if (!userToken) {
@@ -643,8 +660,12 @@ const TherapistList = ({ navigation, route }) => {
         }
     };
 
-    const onRefresh = () => {
+    const onRefresh = async () => {
         setRefreshing(true);
+
+        await AsyncStorage.removeItem('filterDataForPaid');
+        await AsyncStorage.removeItem('filterDataForPaidRaw');
+        
         // Call your function here to refresh the data
         fetchAllTherapist();
         fetchLanguage();
