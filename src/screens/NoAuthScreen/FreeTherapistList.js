@@ -76,6 +76,7 @@ const FreeTherapistList = ({ navigation, route }) => {
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const [isModalVisible, setModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+    const [isFilterApplied, setIsFilterApplied] = useState(false);
     const [activeTab, setActiveTab] = useState('Experience')
     const [searchValue, setSearchValue] = useState('');
     const [sliderValuesForPrice, setSliderValuesForPrice] = useState([0, 10000]);
@@ -252,6 +253,7 @@ const FreeTherapistList = ({ navigation, route }) => {
             if (filterData) {
                 // If filter data exists, call submitForFilter
                 setIsLoading(true)
+                setIsFilterApplied(true)
                 console.log(filterDataRaw.ratingValue,'jjjjjj')
                 setSelectedExperience(filterDataRaw.selectedExperience)
                 setSelectedType(filterDataRaw.selectedType)
@@ -298,6 +300,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                     ]);
                 }
             } else {
+                setIsFilterApplied(false)
                 // Otherwise, call fetchAllTherapist to fetch all therapists
                 await fetchAllTherapist();
             }
@@ -569,6 +572,7 @@ const FreeTherapistList = ({ navigation, route }) => {
     const resetValueOfFilter = async() => {
         await AsyncStorage.removeItem('filterDataForPaid');
         await AsyncStorage.removeItem('filterDataForPaidRaw');
+        setIsFilterApplied(false)
         setSelectedExperience([])
         setSelectedType([])
         setSelectedRating([])
@@ -578,7 +582,7 @@ const FreeTherapistList = ({ navigation, route }) => {
         setSelectedQualification([])
         setSelectedLanguage([])
         setSliderValuesForPrice([0, 10000])
-        toggleFilterModal()
+        setFilterModalVisible(false);
         setTherapistFilterData(therapistData);
         fetchAllTherapist();
     }
@@ -633,6 +637,7 @@ const FreeTherapistList = ({ navigation, route }) => {
             await AsyncStorage.setItem('filterDataForPaidRaw', JSON.stringify(rawData));
             await AsyncStorage.setItem('filterDataForPaid', JSON.stringify(filteredData));
 
+            setIsFilterApplied(true)
             console.log('Filter data saved to AsyncStorage:', filteredData);
 
             const userToken = await AsyncStorage.getItem('userToken');
@@ -673,7 +678,10 @@ const FreeTherapistList = ({ navigation, route }) => {
         }
     };
 
-    const onRefresh = () => {
+    const onRefresh = async() => {
+        await AsyncStorage.removeItem('filterDataForPaid');
+        await AsyncStorage.removeItem('filterDataForPaidRaw');
+        setIsFilterApplied(false)
         setRefreshing(true);
         // Call your function here to refresh the data
         fetchAllTherapist();
@@ -725,15 +733,30 @@ const FreeTherapistList = ({ navigation, route }) => {
                             {/* <Text style={{ fontSize: responsiveFontSize(2), color: '#2D2D2D', fontFamily: 'DMSans-Bold', }}>Type for therapy</Text> */}
 
                         </View>
-                        <TouchableWithoutFeedback onPress={() => toggleFilterModal()}>
-                            <View style={styles.filterIconView}>
-                                <Image
-                                    source={filterImg}
-                                    style={{ height: 20, width: 20 }}
-                                />
-                                <Text style={styles.filterIconText}>Filter</Text>
-                            </View>
-                        </TouchableWithoutFeedback>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            {isFilterApplied ?
+                                <TouchableWithoutFeedback onPress={() => resetValueOfFilter()}>
+                                    <Text style={{ fontSize: responsiveFontSize(1.7), color: '#2D2D2D', fontFamily: 'DMSans-Regular', }}>Clear </Text>
+                                </TouchableWithoutFeedback>
+                                :
+                                null
+                            }
+                            <TouchableWithoutFeedback onPress={() => toggleFilterModal()}>
+                                <View style={[
+                                    styles.filterIconView,
+                                    {
+                                        borderColor: isFilterApplied ? '#417AA4' : '#E3E3E3', // Example default color if not applied
+                                        backgroundColor: isFilterApplied ? '#EEF8FF' : '#FFFFFF' // Example default background if not applied
+                                    }
+                                ]}>
+                                    <Image
+                                        source={filterImg}
+                                        style={{ height: 20, width: 20, marginRight: 5 }}
+                                    />
+                                    <Text style={styles.filterIconText}>{isFilterApplied ? "Filter Applied" : "Filter"}</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
                     </View>
                 </View>
                 <View style={{ alignSelf: 'center' }}>
@@ -1009,13 +1032,16 @@ const styles = StyleSheet.create({
         marginBottom: responsiveHeight(2)
     },
     filterIconView: {
-        width: responsiveWidth(20),
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderWidth: 1,
+        borderRadius: 20,
+        paddingHorizontal: 12,
+        paddingVertical: 5,
     },
     filterIconText: {
-        fontSize: responsiveFontSize(2),
+        fontSize: responsiveFontSize(1.7),
         color: '#2D2D2D',
         fontFamily: 'DMSans-Bold',
     },
