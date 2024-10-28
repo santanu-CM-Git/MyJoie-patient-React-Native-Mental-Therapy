@@ -213,8 +213,10 @@ const TherapistProfile = ({ navigation, route }) => {
     const handleBackButton = () => {
         // Custom logic to handle the back button
         if (route?.params?.mode == 'paid') {
+            console.log('hello paid')
             navigation.navigate('Talk', { screen: 'TherapistList' })
         } else {
+            console.log('hi free')
             navigation.navigate('HOME', { screen: 'FreeTherapistList' })
         }
 
@@ -659,7 +661,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('Talk', { screen: 'TherapistList' })} title={'Therapist'} />
+            <CustomHeader commingFrom={'Therapist'} onPress={() => handleBackButton()} title={'Therapist'} />
             <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
                 <View style={{ alignSelf: 'center', marginTop: responsiveHeight(2) }}>
 

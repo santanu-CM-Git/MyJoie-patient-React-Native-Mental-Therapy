@@ -100,7 +100,7 @@ const AuthStack = () => {
       />
       
       <Drawer.Screen
-        name="Transaction"
+        name="Transaction History"
         component={WalletScreen}
         options={{
           drawerIcon: ({color}) => (
