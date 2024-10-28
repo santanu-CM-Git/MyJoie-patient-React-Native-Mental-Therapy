@@ -244,8 +244,8 @@ const FreeTherapistList = ({ navigation, route }) => {
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
-            const storedFilterData = await AsyncStorage.getItem('filterDataForPaid');
-            const storedFilterDataRaw = await AsyncStorage.getItem('filterDataForPaidRaw')
+            const storedFilterData = await AsyncStorage.getItem('filterDataForFree');
+            const storedFilterDataRaw = await AsyncStorage.getItem('filterDataForFreeRaw')
             const filterData = storedFilterData ? JSON.parse(storedFilterData) : null;
             const filterDataRaw = storedFilterDataRaw ? JSON.parse(storedFilterDataRaw) : null;
             console.log(filterData, 'already applied data');
@@ -570,8 +570,8 @@ const FreeTherapistList = ({ navigation, route }) => {
     }
 
     const resetValueOfFilter = async() => {
-        await AsyncStorage.removeItem('filterDataForPaid');
-        await AsyncStorage.removeItem('filterDataForPaidRaw');
+        await AsyncStorage.removeItem('filterDataForFree');
+        await AsyncStorage.removeItem('filterDataForFreeRaw');
         setIsFilterApplied(false)
         setSelectedExperience([])
         setSelectedType([])
@@ -634,8 +634,8 @@ const FreeTherapistList = ({ navigation, route }) => {
                 sliderValuesForPrice
             }
 
-            await AsyncStorage.setItem('filterDataForPaidRaw', JSON.stringify(rawData));
-            await AsyncStorage.setItem('filterDataForPaid', JSON.stringify(filteredData));
+            await AsyncStorage.setItem('filterDataForFreeRaw', JSON.stringify(rawData));
+            await AsyncStorage.setItem('filterDataForFree', JSON.stringify(filteredData));
 
             setIsFilterApplied(true)
             console.log('Filter data saved to AsyncStorage:', filteredData);
@@ -679,8 +679,8 @@ const FreeTherapistList = ({ navigation, route }) => {
     };
 
     const onRefresh = async() => {
-        await AsyncStorage.removeItem('filterDataForPaid');
-        await AsyncStorage.removeItem('filterDataForPaidRaw');
+        await AsyncStorage.removeItem('filterDataForFree');
+        await AsyncStorage.removeItem('filterDataForFreeRaw');
         setIsFilterApplied(false)
         setRefreshing(true);
         // Call your function here to refresh the data
