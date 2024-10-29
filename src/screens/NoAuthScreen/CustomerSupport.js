@@ -17,7 +17,7 @@ import {
 import { AuthContext } from '../../context/AuthContext';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { emailIcon, facebookIcon, instagramIcon, whatsappIcon, youtubeIcon } from '../../utils/Images';
+import { emailIcon, facebookIcon, instagramIcon, linkedinIcon, whatsappIcon, youtubeIcon } from '../../utils/Images';
 import Loader from '../../utils/Loader';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import CustomHeader from '../../components/CustomHeader';
@@ -122,7 +122,7 @@ export default function CustomerSupport({ navigation }) {
                     <TouchableOpacity onPress={() => openLink(linkedinURL)}>
                     <View style={{ height: 40, width: 40, borderRadius: 10, backgroundColor: '#EEF8FF', borderColor: '#417AA4', borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: responsiveWidth(2) }}>
                         <Image
-                            source={youtubeIcon}
+                            source={linkedinIcon}
                             style={{ height: 20, width: 20, resizeMode: 'contain', }}
                         />
                     </View>

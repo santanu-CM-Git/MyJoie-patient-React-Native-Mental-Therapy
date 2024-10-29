@@ -68,6 +68,7 @@ export default function HomeScreen({ navigation }) {
   const [customerSpeaksData, setCustomerSpeaksData] = useState([])
   const [userInfo, setuserInfo] = useState([])
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [freeBannerImg, setFreeBannerImg] = useState('')
 
   const getFCMToken = async () => {
     try {
@@ -144,10 +145,11 @@ export default function HomeScreen({ navigation }) {
       },
     })
       .then(res => {
-        //console.log(res.data,'user details')
+        console.log(res.data, 'all banner details')
         let banner = res.data.data;
         console.log(banner, 'banner data')
         setBannerData(banner)
+        setFreeBannerImg(res.data.free_banner)
         banner.forEach(item => {
           Image.prefetch(item.banner_image);
         });
@@ -676,10 +678,16 @@ export default function HomeScreen({ navigation }) {
           {(userInfo?.patient_details?.free_session === 'no' && parseInt(userInfo?.offer_for_free) > 0) ? (
             <TouchableOpacity onPress={() => navigation.navigate('FreeTherapistList')}>
               <View style={styles.freebannerContainer}>
-                <Image
-                  source={freebannerPlaceHolder}
-                  style={styles.freebannerImg}
-                />
+                {freeBannerImg ?
+                  <Image
+                    source={{uri: freeBannerImg}}
+                    style={styles.freebannerImg}
+                  /> :
+                  <Image
+                    source={freebannerPlaceHolder}
+                    style={styles.freebannerImg}
+                  />
+                }
               </View>
             </TouchableOpacity>
           ) : null}
