@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useContext } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, useWindowDimensions, Switch, Alert } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, Platform, Switch, Alert, PermissionsAndroid, Linking } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -16,7 +16,8 @@ import CustomButton from '../../components/CustomButton';
 import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-toast-message';
 import { AuthContext } from '../../context/AuthContext';
-import { requestPermission, setupNotificationHandlers } from '../../utils/NotificationService';
+import { requestPermissions, setupNotificationHandlers } from '../../utils/NotificationService';
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 const items = [
     { id: 1, icon: chatColor },
@@ -234,7 +235,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
 
     useEffect(() => {
-        requestPermission()
+        requestPermissions()
         const { therapistId, mode } = route.params;
         // console.log(route?.params?.detailsData, 'vvvvvvv')
         // setProfileDetails(route?.params?.detailsData)
@@ -303,6 +304,81 @@ const TherapistProfile = ({ navigation, route }) => {
         return `ORD-${timestamp}-${randomNum}`;
     }
 
+    const openSettings = () => {
+        Linking.openSettings();
+    };
+
+    const checkAndRequestPermissions = async () => {
+        try {
+            // Notification permission check for iOS and Android 13+
+            let notificationGranted = true;
+
+            if (Platform.OS === 'ios') {
+                const notificationStatus = await check(PERMISSIONS.IOS.NOTIFICATIONS);
+                if (notificationStatus !== RESULTS.GRANTED) {
+                    const notificationRequest = await request(PERMISSIONS.IOS.NOTIFICATIONS);
+                    notificationGranted = notificationRequest === RESULTS.GRANTED;
+                }
+            } else if (Platform.OS === 'android' && Platform.Version >= 33) {
+                const notificationStatus = await check(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+                if (notificationStatus !== RESULTS.GRANTED) {
+                    const notificationRequest = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+                    notificationGranted = notificationRequest === RESULTS.GRANTED;
+                }
+            }
+
+            // Audio and Camera permissions
+            const audioPermission = Platform.select({
+                android: PERMISSIONS.ANDROID.RECORD_AUDIO,
+                ios: PERMISSIONS.IOS.MICROPHONE,
+            });
+
+            const cameraPermission = Platform.select({
+                android: PERMISSIONS.ANDROID.CAMERA,
+                ios: PERMISSIONS.IOS.CAMERA,
+            });
+
+            const audioStatus = await check(audioPermission);
+            const cameraStatus = await check(cameraPermission);
+
+            let audioGranted = audioStatus === RESULTS.GRANTED;
+            let cameraGranted = cameraStatus === RESULTS.GRANTED;
+
+            if (!audioGranted) {
+                const audioRequest = await request(audioPermission);
+                audioGranted = audioRequest === RESULTS.GRANTED;
+            }
+
+            if (!cameraGranted) {
+                const cameraRequest = await request(cameraPermission);
+                cameraGranted = cameraRequest === RESULTS.GRANTED;
+            }
+
+            // Check if all permissions are granted
+            if (notificationGranted && audioGranted && cameraGranted) {
+                // All permissions granted, run the button functionality
+                console.log('All permissions granted. Running button functionality...');
+                // Add your button functionality here
+                isBlockedByAdminCheck()
+            } else {
+                // If any permission is missing, show an alert
+                Alert.alert(
+                    'Permissions Required',
+                    'We need your permission to send notifications for important updates and reminders, as well as access to your camera and microphone for video and audio consultations.',
+                    [{
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                    },
+                    { text: 'OK', onPress: openSettings },
+                    ]
+                );
+            }
+        } catch (error) {
+            console.error('Permission error:', error);
+        }
+    };
+
     const isBlockedByAdminCheck = () => {
         if (selectedByUser.length === 0) {
             Alert.alert('Oops..', 'You need to select at least one slot.', [
@@ -328,7 +404,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 "therapist_id": profileDetails?.user_id,
                 "slot_ids": JSON.stringify(ids),
                 "date": selectedDate,
-                "booking_type" : mode
+                "booking_type": mode
             }
             AsyncStorage.getItem('userToken', (err, usertoken) => {
                 axios.post(`${API_URL}/patient/slot-book-checking`, option, {
@@ -871,7 +947,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 <View style={{ width: responsiveWidth(90), alignSelf: 'center' }}>
                     <CustomButton label={"Book Appointment"}
                         // onPress={() => { login() }}
-                        onPress={() => { isBlockedByAdminCheck() }}
+                        onPress={() => { checkAndRequestPermissions() }}
                     />
                 </View>
             </ScrollView>

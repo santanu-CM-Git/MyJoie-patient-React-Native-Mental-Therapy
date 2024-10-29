@@ -9,7 +9,7 @@ import OfflineNotice from './src/utils/OfflineNotice';
 import Toast from 'react-native-toast-message';
 import SplashScreen from 'react-native-splash-screen';
 import messaging from '@react-native-firebase/messaging';
-import { requestPermission, setupNotificationHandlers } from './src/utils/NotificationService';
+import { requestPermissions, setupNotificationHandlers } from './src/utils/NotificationService';
 import { navigate } from './src/navigation/NavigationService'; // Import the navigation function
 import { requestCameraAndAudioPermissions } from './src/utils/PermissionHandler';
 
@@ -18,15 +18,14 @@ function App() {
   const [notifyStatus, setnotifyStatus] = useState(false);
 
   useEffect(() => {
+    // Hide splash screen
     SplashScreen.hide();
-    requestPermission();
-    requestCameraAndAudioPermissions().then(granted => {
-      if (!granted) {
-        // Handle the case where permissions are not granted
-        return;
-      }
+
+    // Request permissions and set up notifications
+    requestPermissions().then(() => {
       const unsubscribeForeground = setupNotificationHandlers(setNotifications, setnotifyStatus);
 
+      // Handle notification when the app is opened from a background state
       messaging().onNotificationOpenedApp(remoteMessage => {
         if (remoteMessage?.data?.screen === 'ScheduleScreen') {
           navigate('Schedule', { screen: 'ScheduleScreen' });
@@ -35,6 +34,7 @@ function App() {
         }
       });
 
+      // Handle notification when the app is opened from a quit state
       messaging().getInitialNotification().then(remoteMessage => {
         if (remoteMessage?.data?.screen === 'ScheduleScreen') {
           navigate('Schedule', { screen: 'ScheduleScreen' });
@@ -43,6 +43,7 @@ function App() {
         }
       });
 
+      // Clean up foreground listener on unmount
       return () => {
         if (unsubscribeForeground) unsubscribeForeground();
       };
