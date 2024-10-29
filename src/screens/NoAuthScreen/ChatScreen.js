@@ -973,8 +973,8 @@ const ChatScreen = ({ navigation, route }) => {
                   {/* Agora Video Component */}
                   <View style={{ height: responsiveHeight(80), width: '100%' }}>
                     {remoteUid == null ?
-                      <View style={{ flex: 1, justifyContent:'center',alignItems:'center' }}>
-                        <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>waiting for the therapist to join..</Text>
+                      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Waiting for the therapist to join..</Text>
                       </View>
                       : null}
 
@@ -982,14 +982,24 @@ const ChatScreen = ({ navigation, route }) => {
                     {remoteUid !== null && (
                       <RtcSurfaceView
                         canvas={{ uid: remoteUid }}
-                        style={styles.remoteVideo}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          zIndex: 10
+                        }}
                       />
                     )}
 
                     {/* Local Video View */}
                     <RtcSurfaceView
                       canvas={{ uid: 0 }}
-                      style={[styles.localVideo, { zIndex: 1000, elevation: 5 }]}
+                      style={{
+                        width: '30%',
+                        height: 200,
+                        position: 'absolute',
+                        top: 10,
+                        right: 10, zIndex: 1000, elevation: 5
+                      }}
                     />
 
                     {/* Video Control Buttons */}
@@ -1058,7 +1068,7 @@ const styles = StyleSheet.create({
   buttonImage: { height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
   audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
   audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(40), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
-  videoButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(60), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center' },
+  videoButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(60), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center',zIndex:30 },
   iconStyle: { height: 40, width: 40 },
   messageContainer: {
     backgroundColor: 'red',
