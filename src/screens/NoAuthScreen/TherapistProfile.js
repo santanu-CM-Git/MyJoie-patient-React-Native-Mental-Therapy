@@ -235,7 +235,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
 
     useEffect(() => {
-        requestPermissions()
+        //requestPermissions()
         const { therapistId, mode } = route.params;
         // console.log(route?.params?.detailsData, 'vvvvvvv')
         // setProfileDetails(route?.params?.detailsData)
