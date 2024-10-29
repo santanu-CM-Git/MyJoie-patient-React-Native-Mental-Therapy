@@ -654,17 +654,23 @@ const ChatScreen = ({ navigation, route }) => {
       await startAudioCall();
       const agoraEngine = agoraEngineRef.current;
       agoraEngine?.muteLocalAudioStream(false);
+      agoraEngine?.stopPreview(); // Stop the local video preview
+      agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
       setActiveTab('audio');
       setIsVideoEnabled(false);
     } else if (name === 'video') {
       await startVideoCall();
       const agoraEngine = agoraEngineRef.current;
       agoraEngine?.muteLocalAudioStream(false);
+      agoraEngine?.startPreview(); // Start the local video preview
+      agoraEngine?.muteLocalVideoStream(false); // Unmute local video stream
       setActiveTab('video');
       setIsVideoEnabled(true);
     } else if (name === 'chat') {
       const agoraEngine = agoraEngineRef.current;
       agoraEngine?.muteLocalAudioStream(true);
+      agoraEngine?.stopPreview(); // Stop the local video preview
+      agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
       setActiveTab('chat');
       setIsVideoEnabled(false);
     }
