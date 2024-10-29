@@ -68,7 +68,12 @@ export const requestPermissions = async () => {
       Alert.alert(
         'Notification Permission Required',
         'Please enable notifications to stay updated.',
-        [{ text: 'OK', onPress: openSettings }]
+        [{
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: openSettings }]
       );
     }
   }
