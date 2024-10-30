@@ -23,17 +23,17 @@
 	<key>CFBundleVersion</key>
 	<string>10</string>
 	<key>LSRequiresIPhoneOS</key>
-	<true />
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-		<true />
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true />
+				<true/>
 			</dict>
 		</dict>
 	</dict>
@@ -76,6 +76,12 @@
 		<string>Outfit-SemiBold.ttf</string>
 		<string>Outfit-Thin.ttf</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen.storyboard</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -91,6 +97,6 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false />
+	<false/>
 </dict>
 </plist>
