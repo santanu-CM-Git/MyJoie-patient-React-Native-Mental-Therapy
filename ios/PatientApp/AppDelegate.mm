@@ -14,7 +14,7 @@
   [FIRApp configure]; // add for firsebase push notification
   self.moduleName = @"PatientApp";
   // You can add your custom initial props in the dictionary below.
-  [FBSDKApplicationDelegate.sharedInstance initializeSDK]; // add for FB SDK
+  //[FBSDKApplicationDelegate.sharedInstance initializeSDK]; // add for FB SDK
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
 //  [RNSplashScreen show]; //add this line for splash screen
@@ -24,20 +24,20 @@
 }
 
 //for FB SDK
-- (BOOL)application:(UIApplication *)app
-            openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
-{
-  if ([[FBSDKApplicationDelegate sharedInstance] application:app openURL:url options:options]) {
-    return YES;
-  }
+// - (BOOL)application:(UIApplication *)app
+//             openURL:(NSURL *)url
+//             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+// {
+//   if ([[FBSDKApplicationDelegate sharedInstance] application:app openURL:url options:options]) {
+//     return YES;
+//   }
 
-  if ([RCTLinkingManager application:app openURL:url options:options]) {
-    return YES;
-  }
+//   if ([RCTLinkingManager application:app openURL:url options:options]) {
+//     return YES;
+//   }
 
-  return NO;
-}
+//   return NO;
+// }
 
 //- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
 //  return [Orientation getOrientation];
