@@ -85,7 +85,7 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     getFCMToken()
-    if (Platform.OS == 'android') {
+    if (Platform.OS == 'android' || Platform.OS === 'ios') {
       /* this is app foreground notification */
       const unsubscribe = messaging().onMessage(async remoteMessage => {
         // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
