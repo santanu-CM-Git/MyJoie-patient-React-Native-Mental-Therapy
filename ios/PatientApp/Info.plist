@@ -20,8 +20,23 @@
 	<string>1.0.9</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>974564787686868</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>10</string>
+	<key>FacebookAppID</key>
+	<string>974564787686868</string>
+	<key>FacebookClientToken</key>
+	<string>56789</string>
+	<key>FacebookDisplayName</key>
+	<string>MyJoie</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -37,21 +52,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>CFBundleURLTypes</key>
-	<array>
-	<dict>
-	<key>CFBundleURLSchemes</key>
-	<array>
-		<string>974564787686868</string>
-	</array>
-	</dict>
-	</array>
-	<key>FacebookAppID</key>
-	<string>974564787686868</string>
-	<key>FacebookClientToken</key>
-	<string>56789</string>
-	<key>FacebookDisplayName</key>
-	<string>MyJoie</string>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) requires access to the camera to capture photos or videos.</string>
 	<key>NSMicrophoneUsageDescription</key>

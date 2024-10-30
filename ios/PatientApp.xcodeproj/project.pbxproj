@@ -573,7 +573,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.PatientApp.patient;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myjoie.patient;
 				PRODUCT_NAME = PatientApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -609,7 +609,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.PatientApp.patient;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myjoie.patient;
 				PRODUCT_NAME = PatientApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
