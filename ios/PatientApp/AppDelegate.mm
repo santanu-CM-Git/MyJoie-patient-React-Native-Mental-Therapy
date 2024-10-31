@@ -3,8 +3,8 @@
 //#import "Orientation.h" //add this line for orientation
 #import <React/RCTBundleURLProvider.h>
 #import "RNSplashScreen.h" //add this line for splash screen
-#import <FBSDKCoreKit/FBSDKCoreKit.h> // <- Add This for FB SDK
-#import <React/RCTLinkingManager.h> // <- Add This for FB SDK
+// #import <FBSDKCoreKit/FBSDKCoreKit.h> // <- Add This for FB SDK
+// #import <React/RCTLinkingManager.h> // <- Add This for FB SDK
 
 
 @implementation AppDelegate
