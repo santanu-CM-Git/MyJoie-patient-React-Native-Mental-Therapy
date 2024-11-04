@@ -12,7 +12,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [FIRApp configure]; // add for firsebase push notification
-  self.moduleName = @"PatientApp";
+  self.moduleName = @"patientapp";
   // You can add your custom initial props in the dictionary below.
   //[FBSDKApplicationDelegate.sharedInstance initializeSDK]; // add for FB SDK
   // They will be passed down to the ViewController used by React Native.

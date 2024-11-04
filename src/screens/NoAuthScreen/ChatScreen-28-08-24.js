@@ -1012,7 +1012,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.37,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
+    ...Platform.select({
+      android: {
+        elevation: 5, // Only for Android
+      },
+      ios: {
+        shadowColor: '#000', // Only for iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+    }),
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     borderWidth: 1,

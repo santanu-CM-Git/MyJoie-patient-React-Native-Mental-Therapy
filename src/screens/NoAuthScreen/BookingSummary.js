@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect,useCallback,useContext } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, ActivityIndicator, useWindowDimensions, Switch, Alert } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, ActivityIndicator, useWindowDimensions, Switch, Alert, Platform } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -622,7 +622,17 @@ const styles = StyleSheet.create({
         //justifyContent: 'center',
         padding: 15,
         borderRadius: 15,
-        elevation: 5
+        ...Platform.select({
+            android: {
+              elevation: 5, // Only for Android
+            },
+            ios: {
+              shadowColor: '#000', // Only for iOS
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 5,
+            },
+          }),
     },
     totalValue1stSection: { flexDirection: 'row', justifyContent: 'space-between', },
     totalValue1stSectionDetails: { flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), },

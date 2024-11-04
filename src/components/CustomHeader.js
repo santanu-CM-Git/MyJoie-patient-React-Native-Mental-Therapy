@@ -11,6 +11,7 @@ import {
     StyleSheet,
     Image,
     Switch,
+    Platform,
 } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 import { hambargar, userPhoto } from '../utils/Images';
@@ -193,7 +194,17 @@ const styles = StyleSheet.create({
     headerBottomMargin: {
         borderBottomColor: '#FFFFFF',
         borderBottomWidth: StyleSheet.hairlineWidth,
-        elevation: 2
+        ...Platform.select({
+            android: {
+              elevation: 5, // Only for Android
+            },
+            ios: {
+              shadowColor: '#000', // Only for iOS
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 5,
+            },
+          }),
     },
     imageStyle: {
         height: 40,

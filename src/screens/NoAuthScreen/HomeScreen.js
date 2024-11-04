@@ -835,7 +835,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: responsiveHeight(2),
     marginBottom: responsiveHeight(1),
-    elevation: 5
+    ...Platform.select({
+      android: {
+        elevation: 5, // Only for Android
+      },
+      ios: {
+        shadowColor: '#000', // Only for iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+    }),
   },
   nameText: {
     color: '#2D2D2D',
@@ -912,7 +922,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: responsiveHeight(1),
     marginBottom: responsiveHeight(1),
-    elevation: 5
+    ...Platform.select({
+      android: {
+        elevation: 5, // Only for Android
+      },
+      ios: {
+        shadowColor: '#000', // Only for iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+    }),
   },
   cardImg: {
     height: 50,
@@ -980,7 +1000,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: responsiveHeight(2),
     marginBottom: responsiveHeight(1),
-    elevation: 5
+    ...Platform.select({
+      android: {
+        elevation: 5, // Only for Android
+      },
+      ios: {
+        shadowColor: '#000', // Only for iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+    }),
   },
   ratingView: {
     flexDirection: 'row',
@@ -1028,7 +1058,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: responsiveHeight(3),
     marginBottom: responsiveHeight(1),
-    elevation: 5
+    ...Platform.select({
+      android: {
+        elevation: 5, // Only for Android
+      },
+      ios: {
+        shadowColor: '#000', // Only for iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+    }),
   },
   qouteImgView: {
     position: 'absolute',
@@ -1040,7 +1080,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    elevation: 5
+    ...Platform.select({
+      android: {
+        elevation: 5, // Only for Android
+      },
+      ios: {
+        shadowColor: '#000', // Only for iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+    }),
   },
   quoteText: {
     color: '#746868',
@@ -1073,7 +1123,17 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     marginTop: responsiveHeight(2),
-    elevation: 5
+    ...Platform.select({
+      android: {
+        elevation: 5, // Only for Android
+      },
+      ios: {
+        shadowColor: '#000', // Only for iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+    }),
   },
   nodataText: {
     alignSelf: 'center',

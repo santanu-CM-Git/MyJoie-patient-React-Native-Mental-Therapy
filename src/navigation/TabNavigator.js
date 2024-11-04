@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { Text, Image, View } from 'react-native';
+import { Text, Image, View,Platform } from 'react-native';
 
 import HomeScreen from '../screens/NoAuthScreen/HomeScreen';
 import ProfileScreen from '../screens/NoAuthScreen/ProfileScreen';
@@ -204,7 +204,10 @@ const TabNavigator = ({navigation}) => {
             display: getTabBarVisibility(route),
             backgroundColor: '#FFFFFF',
             width: responsiveWidth(100),
-            height: responsiveHeight(8),
+            height: Platform.select({
+              android: responsiveHeight(8),
+              ios: responsiveHeight(11),
+            }),
             alignSelf: 'center',
             //marginTop: -responsiveHeight(10),
             //borderRadius: 30,
@@ -237,7 +240,10 @@ const TabNavigator = ({navigation}) => {
             display: getTabBarVisibility(route),
             backgroundColor: '#FFFFFF',
             width: responsiveWidth(100),
-            height: responsiveHeight(8),
+            height: Platform.select({
+              android: responsiveHeight(8),
+              ios: responsiveHeight(11),
+            }),
             alignSelf: 'center',
             //marginTop: -responsiveHeight(10),
             //borderRadius: 30,
@@ -265,7 +271,10 @@ const TabNavigator = ({navigation}) => {
             display: getTabBarVisibility(route),
             backgroundColor: '#FFFFFF',
             width: responsiveWidth(100),
-            height: responsiveHeight(8),
+            height: Platform.select({
+              android: responsiveHeight(8),
+              ios: responsiveHeight(11),
+            }),
             alignSelf: 'center',
             //marginTop: -responsiveHeight(10),
             //borderRadius: 30,
@@ -292,7 +301,10 @@ const TabNavigator = ({navigation}) => {
             display: getTabBarVisibility(route),
             backgroundColor: '#FFFFFF',
             width: responsiveWidth(100),
-            height: responsiveHeight(8),
+            height: Platform.select({
+              android: responsiveHeight(8),
+              ios: responsiveHeight(11),
+            }),
             alignSelf: 'center',
             //marginTop: -responsiveHeight(10),
             //borderRadius: 30,
