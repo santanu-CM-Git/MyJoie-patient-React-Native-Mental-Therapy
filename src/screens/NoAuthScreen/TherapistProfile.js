@@ -916,6 +916,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             setPermissionError('')
                         }}
                         tintColors={{ true: '#444343', false: '#444343' }}
+                        style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
                     />
                     <Text style={styles.checkboxText}>I give my consent to the app and therapists to access my past medical history available on the platform </Text>
                 </View>
