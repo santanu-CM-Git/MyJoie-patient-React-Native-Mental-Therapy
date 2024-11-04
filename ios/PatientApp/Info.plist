@@ -53,13 +53,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) requires access to the camera to capture photos or videos.</string>
+	<string>Give $(PRODUCT_NAME) permission to access the camera for taking photos or videos.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs access to the microphone for audio recording during calls.</string>
+	<string>Give $(PRODUCT_NAME) permission to access the microphone for audio recording during calls.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs permission to save files to your photo library.</string>
+	<string>Give $(PRODUCT_NAME) permission to access your Photo Library to upload media.</string>
 	<key>NSUserNotificationUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to send you push notifications.</string>
+	<string>Give $(PRODUCT_NAME) would like to send you notifications to keep you updated.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>DMSans-Black.ttf</string>

@@ -21,6 +21,10 @@ function App() {
     // Hide splash screen
     SplashScreen.hide();
 
+    if(Platform.OS === 'ios'){
+      requestUserPermission()
+    }
+
     // Request permissions and set up notifications
     requestPermissions().then(() => {
       const unsubscribeForeground = setupNotificationHandlers(setNotifications, setnotifyStatus);
@@ -49,6 +53,14 @@ function App() {
       };
     });
   }, []);
+
+  async function requestUserPermission() {
+    const authorizationStatus = await messaging().requestPermission();
+  
+    if (authorizationStatus) {
+      console.log('Permission status:', authorizationStatus);
+    }
+  }
 
   return (
     <Provider store={store}>

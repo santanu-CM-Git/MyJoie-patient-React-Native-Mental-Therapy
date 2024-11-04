@@ -6,7 +6,7 @@ import { PERMISSIONS, request, check, RESULTS } from 'react-native-permissions';
 export const requestNotificationPermission = async () => {
   const permission = Platform.OS === 'android'
     ? PERMISSIONS.ANDROID.POST_NOTIFICATIONS
-    : PERMISSIONS.IOS.NOTIFICATIONS;
+    : PERMISSIONS.IOS.POST_NOTIFICATIONS;
   return await request(permission);
 };
 
@@ -14,7 +14,7 @@ export const requestNotificationPermission = async () => {
 export const checkNotificationPermission = async () => {
   const permission = Platform.OS === 'android'
     ? PERMISSIONS.ANDROID.POST_NOTIFICATIONS
-    : PERMISSIONS.IOS.NOTIFICATIONS;
+    : PERMISSIONS.IOS.POST_NOTIFICATIONS;
   return await check(permission);
 };
 
