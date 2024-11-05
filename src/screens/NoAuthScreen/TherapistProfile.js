@@ -314,9 +314,9 @@ const TherapistProfile = ({ navigation, route }) => {
             let notificationGranted = true;
 
             if (Platform.OS === 'ios') {
-                const notificationStatus = await check(PERMISSIONS.IOS.NOTIFICATIONS);
+                const notificationStatus = await check(PERMISSIONS.IOS.POST_NOTIFICATIONS);
                 if (notificationStatus !== RESULTS.GRANTED) {
-                    const notificationRequest = await request(PERMISSIONS.IOS.NOTIFICATIONS);
+                    const notificationRequest = await request(PERMISSIONS.IOS.POST_NOTIFICATIONS);
                     notificationGranted = notificationRequest === RESULTS.GRANTED;
                 }
             } else if (Platform.OS === 'android' && Platform.Version >= 33) {
@@ -353,9 +353,13 @@ const TherapistProfile = ({ navigation, route }) => {
                 const cameraRequest = await request(cameraPermission);
                 cameraGranted = cameraRequest === RESULTS.GRANTED;
             }
+            console.log(notificationGranted, 'notificationGranted')
+            console.log(audioGranted, 'audioGranted')
+            console.log(cameraGranted, 'cameraGranted')
 
             // Check if all permissions are granted
-            if (notificationGranted && audioGranted && cameraGranted) {
+            //if (notificationGranted && audioGranted && cameraGranted) {
+            if ((Platform.OS === 'ios' || notificationGranted) && audioGranted && cameraGranted) {
                 // All permissions granted, run the button functionality
                 console.log('All permissions granted. Running button functionality...');
                 // Add your button functionality here
@@ -978,15 +982,15 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         ...Platform.select({
             android: {
-              elevation: 5, // Only for Android
+                elevation: 5, // Only for Android
             },
             ios: {
-              shadowColor: '#000', // Only for iOS
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 5,
+                shadowColor: '#000', // Only for iOS
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 5,
             },
-          }),
+        }),
     },
     totalValue1stSection: {
         flexDirection: 'row',
@@ -1222,15 +1226,15 @@ const styles = StyleSheet.create({
         marginBottom: responsiveHeight(2),
         ...Platform.select({
             android: {
-              elevation: 5, // Only for Android
+                elevation: 5, // Only for Android
             },
             ios: {
-              shadowColor: '#000', // Only for iOS
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 5,
+                shadowColor: '#000', // Only for iOS
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 5,
             },
-          }),
+        }),
     },
     reviewSection1st: {
         flexDirection: 'row',
