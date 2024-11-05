@@ -320,7 +320,7 @@ const BookingSummary = ({ navigation, route }) => {
                         Toast.show({
                             type: 'error',
                             text1: 'Sorry',
-                            text2: "Coupone code is not valid",
+                            text2: "Coupon code is not valid",
                             position: 'top',
                             topOffset: Platform.OS == 'ios' ? 55 : 20
                         });
