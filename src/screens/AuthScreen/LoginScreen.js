@@ -82,9 +82,9 @@ const LoginScreen = ({ navigation }) => {
 
     const phoneRegex = /^\d{10}$/;
     if (!phone) {
-      setMobileError('Please enter Mobile no')
+      setMobileError('Please enter mobile no.')
     } else if (!countryCode) {
-      setMobileError('Please enter Country Code.')
+      setMobileError('Please enter country code.')
     } else if (!phoneRegex.test(phone)) {
       setMobileError('Please enter a 10-digit number.')
     } else {
@@ -113,7 +113,7 @@ const LoginScreen = ({ navigation }) => {
               Toast.show({
                 type: 'success',
                 text1: 'Hello',
-                text2: "OTP sent to your mobile no",
+                text2: "OTP sent to your mobile no.",
                 position: 'top',
                 topOffset: Platform.OS == 'ios' ? 55 : 20
               });
@@ -124,7 +124,7 @@ const LoginScreen = ({ navigation }) => {
             } else {
               console.log('not okk')
               setIsLoading(false)
-              Alert.alert('Oops..', "Something went wrong", [
+              Alert.alert('Oops..', "Something went wrong.", [
                 {
                   text: 'Cancel',
                   onPress: () => console.log('Cancel Pressed'),

@@ -320,7 +320,7 @@ const BookingSummary = ({ navigation, route }) => {
                         Toast.show({
                             type: 'error',
                             text1: 'Sorry',
-                            text2: "Coupon code is not valid",
+                            text2: "Coupon code is not valid.",
                             position: 'top',
                             topOffset: Platform.OS == 'ios' ? 55 : 20
                         });
@@ -331,7 +331,7 @@ const BookingSummary = ({ navigation, route }) => {
             } catch (error) {
                 setIsCouponLoading(false);
                 console.log(`Coupon apply error ${error}`);
-                Alert.alert('Oops..', error.message || 'Something went wrong', [
+                Alert.alert('Oops..', error.message || 'Something went wrong.', [
                     {
                         text: 'Cancel',
                         onPress: () => console.log('Cancel Pressed'),
@@ -341,7 +341,7 @@ const BookingSummary = ({ navigation, route }) => {
                 ]);
             }
         } else {
-            Alert.alert('Oops..', "Please enter coupon code first", [
+            Alert.alert('Oops..', "Please enter coupon code first.", [
                 {
                     text: 'Cancel',
                     onPress: () => console.log('Cancel Pressed'),

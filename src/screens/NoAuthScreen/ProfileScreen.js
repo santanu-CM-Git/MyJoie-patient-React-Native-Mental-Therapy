@@ -123,7 +123,7 @@ const ProfileScreen = ({ navigation, route }) => {
         Toast.show({
           type: 'success',
           text1: 'Hello',
-          text2: 'Profile picture updated successfully',
+          text2: 'Profile picture updated successfully.',
           position: 'top',
           topOffset: Platform.OS === 'ios' ? 55 : 20,
         });
@@ -209,7 +209,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (text) {
       setFirstNameError('')
     } else {
-      setFirstNameError('Please enter First name')
+      setFirstNameError('Please enter name.')
     }
   }
 
@@ -229,7 +229,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (reg.test(text) === false) {
       console.log("Email is Not Correct");
       setEmail(text)
-      setEmailError('Please enter correct Email Id')
+      setEmailError('Please enter correct email id.')
       return false;
     }
     else {
@@ -243,13 +243,13 @@ const ProfileScreen = ({ navigation, route }) => {
   const submitForm = () => {
     //console.log(selectedItemsType, " type off therapist")
     if (!firstname) {
-      setFirstNameError('Please enter Name')
+      setFirstNameError('Please enter name.')
     } else if (!phoneno) {
-      setphonenoError('Please enter Mobile No')
+      setphonenoError('Please enter mobile no.')
     } else if (!email) {
-      setEmailError('Please enter Email Id')
+      setEmailError('Please enter email id.')
     } else if (date == 'DD - MM  - YYYY') {
-      setdobError('Please enter DOB')
+      setdobError('Please enter DOB.')
     } else {
       setIsLoading(true)
       const option = {
@@ -276,14 +276,14 @@ const ProfileScreen = ({ navigation, route }) => {
               Toast.show({
                 type: 'success',
                 text1: 'Hello',
-                text2: "Profile data updated successfully",
+                text2: "Profile data updated successfully.",
                 position: 'top',
                 topOffset: Platform.OS == 'ios' ? 55 : 20
               });
             } else {
               console.log('not okk')
               setIsLoading(false)
-              Alert.alert('Oops..', "Something went wrong", [
+              Alert.alert('Oops..', "Something went wrong.", [
                 {
                   text: 'Cancel',
                   onPress: () => console.log('Cancel Pressed'),

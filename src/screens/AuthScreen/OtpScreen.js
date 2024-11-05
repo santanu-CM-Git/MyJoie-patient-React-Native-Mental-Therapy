@@ -25,7 +25,7 @@ const OtpScreen = ({ navigation, route }) => {
     const [otp, setOtp] = useState('');
     const [comingOTP, setComingOTP] = useState(route?.params?.otp)
     const [errors, setError] = useState(true)
-    const [errorText, setErrorText] = useState('Please enter OTP')
+    const [errorText, setErrorText] = useState('Please enter OTP.')
     const [isLoading, setIsLoading] = useState(false)
     const [isResendDisabled, setIsResendDisabled] = useState(true);
 
@@ -117,7 +117,7 @@ const OtpScreen = ({ navigation, route }) => {
                     } else {
                         console.log('not okk')
                         setIsLoading(false)
-                        Alert.alert('Oops..', "Something went wrong", [
+                        Alert.alert('Oops..', "Something went wrong.", [
                             {
                                 text: 'Cancel',
                                 onPress: () => console.log('Cancel Pressed'),
@@ -176,7 +176,7 @@ const OtpScreen = ({ navigation, route }) => {
                     Toast.show({
                         type: 'success',
                         text1: 'Hello',
-                        text2: "OTP sent to your mobile no",
+                        text2: "OTP sent to your mobile no.",
                         position: 'top',
                         topOffset: Platform.OS == 'ios' ? 55 : 20
                     });
@@ -187,7 +187,7 @@ const OtpScreen = ({ navigation, route }) => {
                 } else {
                     console.log('not okk')
                     setIsLoading(false)
-                    Alert.alert('Oops..', "Something went wrong", [
+                    Alert.alert('Oops..', "Something went wrong.", [
                         {
                             text: 'Cancel',
                             onPress: () => console.log('Cancel Pressed'),

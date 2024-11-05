@@ -29,7 +29,7 @@ const ReviewScreen = ({ navigation, route }) => {
             Toast.show({
                 type: 'error',
                 text1: 'Hello',
-                text2: "Please write some review",
+                text2: "Please write some review.",
                 position: 'top',
                 topOffset: Platform.OS == 'ios' ? 55 : 20
             });
@@ -54,7 +54,7 @@ const ReviewScreen = ({ navigation, route }) => {
                             Toast.show({
                                 type: 'success',
                                 text1: 'Hello',
-                                text2: "Upload data Successfully",
+                                text2: "Upload data successfully.",
                                 position: 'top',
                                 topOffset: Platform.OS == 'ios' ? 55 : 20
                             });
@@ -62,7 +62,7 @@ const ReviewScreen = ({ navigation, route }) => {
                         } else {
                             console.log('not okk')
                             setIsLoading(false)
-                            Alert.alert('Oops..', "Something went wrong", [
+                            Alert.alert('Oops..', "Something went wrong.", [
                                 {
                                     text: 'Cancel',
                                     onPress: () => console.log('Cancel Pressed'),

@@ -110,7 +110,7 @@ const Bookmarked = ({ navigation }) => {
                             Toast.show({
                                 type: 'success',
                                 text1: 'Hello',
-                                text2: "Successfully remove from wishlist",
+                                text2: "Successfully removed from bookmarked.",
                                 position: 'top',
                                 topOffset: Platform.OS == 'ios' ? 55 : 20
                             });
@@ -118,7 +118,7 @@ const Bookmarked = ({ navigation }) => {
                         } else {
                             console.log('not okk')
                             setIsLoading(false)
-                            Alert.alert('Oops..', "Something went wrong", [
+                            Alert.alert('Oops..', "Something went wrong.", [
                                 {
                                     text: 'Cancel',
                                     onPress: () => console.log('Cancel Pressed'),

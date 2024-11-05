@@ -95,7 +95,7 @@ const PersonalInformation = ({ navigation, route }) => {
     if (text) {
       setFirstNameError('')
     } else {
-      setFirstNameError('Please enter Name')
+      setFirstNameError('Please enter name.')
     }
   }
 
@@ -104,7 +104,7 @@ const PersonalInformation = ({ navigation, route }) => {
     if (reg.test(text) === false) {
       //console.log("Email is Not Correct");
       setEmail(text)
-      setEmailError('Please enter correct Email Id')
+      setEmailError('Please enter correct email id.')
       return false;
     }
     else {
@@ -157,23 +157,23 @@ const PersonalInformation = ({ navigation, route }) => {
 
   const submitForm = () => {
     if (!firstname) {
-      setFirstNameError('Please enter Name');
+      setFirstNameError('Please enter name.');
     } else {
       setFirstNameError('');
     }
 
     if (!email) {
-      setEmailError('Please enter Email Id');
+      setEmailError('Please enter email id.');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setEmailError('Please enter a valid Email Id');
+      setEmailError('Please enter a valid email id.');
     } else {
       setEmailError('');
     }
 
     if (date === 'DD - MM - YYYY') {
-      setdobError('Please enter DOB');
+      setdobError('Please enter DOB.');
     } else if (!validateAge(date)) {
-      setdobError('You must be at least 18 years old');
+      setdobError('You must be at least 18 years old.');
     } else {
       setdobError('');
     }
@@ -203,7 +203,7 @@ const PersonalInformation = ({ navigation, route }) => {
             Toast.show({
               type: 'success',
               text1: 'Hello',
-              text2: "Profile data updated successfully",
+              text2: "Profile data updated successfully.",
               position: 'top',
               topOffset: Platform.OS == 'ios' ? 55 : 20
             });
@@ -211,7 +211,7 @@ const PersonalInformation = ({ navigation, route }) => {
           } else {
             console.log('not okk')
             setIsLoading(false)
-            Alert.alert('Oops..', "Something went wrong", [
+            Alert.alert('Oops..', "Something went wrong.", [
               {
                 text: 'Cancel',
                 onPress: () => console.log('Cancel Pressed'),
