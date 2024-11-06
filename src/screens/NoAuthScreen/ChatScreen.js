@@ -145,7 +145,7 @@ const ChatScreen = ({ navigation, route }) => {
         setEndTime(endTime); // Set the end time
 
         const mode = route?.params?.details?.mode_of_conversation;
-        const agoraEngine = agoraEngineRef.current;
+        //const agoraEngine = agoraEngineRef.current;
         switch (mode) {
           case 'chat':
             // agoraEngine?.muteLocalAudioStream(true);
