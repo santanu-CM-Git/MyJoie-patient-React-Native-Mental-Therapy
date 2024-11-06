@@ -145,12 +145,12 @@ const ChatScreen = ({ navigation, route }) => {
         setEndTime(endTime); // Set the end time
 
         const mode = route?.params?.details?.mode_of_conversation;
-        //const agoraEngine = agoraEngineRef.current;
+        const agoraEngine = agoraEngineRef.current;
         switch (mode) {
           case 'chat':
-            // agoraEngine?.muteLocalAudioStream(true);
-            // agoraEngine?.stopPreview(); // Stop the local video preview
-            // agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
+            agoraEngine?.muteLocalAudioStream(true);
+            agoraEngine?.stopPreview(); // Stop the local video preview
+            agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
             setActiveTab('chat');
             setIsVideoEnabled(false);
             break;

@@ -186,14 +186,14 @@ const BookingSummary = ({ navigation, route }) => {
                 console.log(data, 'data');
                 submitForm(data.razorpay_payment_id);
             }).catch((error) => {
-                console.log(JSON.parse(error.description));
-                const errorMsg = JSON.parse(error.description);
-                console.log(errorMsg.error.description);
-                if(errorMsg.error.description == "undefined"){
-                    navigation.navigate('PaymentFailed', { message: errorMsg.error.reason});
-                }else{
-                    navigation.navigate('PaymentFailed', { message: errorMsg.error.description});
-                }
+                console.log(error.description);
+                const errorMsg = error.description;
+                //console.log(errorMsg.error.description);
+                // if(errorMsg.error.description == "undefined"){
+                    navigation.navigate('PaymentFailed', { message: errorMsg});
+                // }else{
+                //     navigation.navigate('PaymentFailed', { message: errorMsg});
+                // }
                 
             });
         }
@@ -662,7 +662,15 @@ const styles = StyleSheet.create({
     callCouponText: { color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), },
     callCouponText2: { position: 'absolute', right: 25, top: responsiveHeight(7), color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), },
     switchStyle: {
-        transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]  // Adjust scale values as needed
+        
+        ...Platform.select({
+            android: {
+                transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]  // Adjust scale values as needed
+            },
+            ios: {
+                transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }]  // Adjust scale values as needed
+            },
+          }),
     },
     total4Value: {
         width: responsiveWidth(89),

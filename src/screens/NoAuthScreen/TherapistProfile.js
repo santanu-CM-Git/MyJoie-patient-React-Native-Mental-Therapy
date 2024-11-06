@@ -393,6 +393,15 @@ const TherapistProfile = ({ navigation, route }) => {
                 },
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
             ]);
+        } else if (selectedByUser.length > 4) {
+            Alert.alert('Oops..', 'You can select a maximum of 4 slots.', [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
         } else {
             let ids = [];
             let mode = '';
@@ -460,6 +469,15 @@ const TherapistProfile = ({ navigation, route }) => {
             setPermissionError('')
             if (selectedByUser.length === 0) {
                 Alert.alert('Oops..', 'You need to select at least one slot.', [
+                    {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                    },
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ]);
+            } else if (selectedByUser.length > 4) {
+                Alert.alert('Oops..', 'You can select a maximum of 4 slots.', [
                     {
                         text: 'Cancel',
                         onPress: () => console.log('Cancel Pressed'),
