@@ -40,6 +40,8 @@
 		386F5A8F2CD38E91001AC5C5 /* Outfit-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 386F5A732CD38E91001AC5C5 /* Outfit-Medium.ttf */; };
 		386F5A902CD38E91001AC5C5 /* Outfit-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 386F5A742CD38E91001AC5C5 /* Outfit-Light.ttf */; };
 		386F5A912CD38E91001AC5C5 /* DMSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 386F5A752CD38E91001AC5C5 /* DMSans-Light.ttf */; };
+		38A508A32CDBA31300B9ACE2 /* custom_sound_ring.wav in Resources */ = {isa = PBXBuildFile; fileRef = 38A508A12CDBA31300B9ACE2 /* custom_sound_ring.wav */; };
+		38A508A42CDBA31300B9ACE2 /* custom_sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 38A508A22CDBA31300B9ACE2 /* custom_sound.mp3 */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		BD79D4E9911C3A33541991C1 /* Pods_PatientApp_PatientAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29D8AA98B33B2EFC41B86EAE /* Pods_PatientApp_PatientAppTests.framework */; };
 		CE72B8FE2AD7E6BE00AF1BAB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE72B8FD2AD7E6BE00AF1BAB /* GoogleService-Info.plist */; };
@@ -95,6 +97,8 @@
 		386F5A732CD38E91001AC5C5 /* Outfit-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Outfit-Medium.ttf"; path = "../src/assets/fonts/Outfit-Medium.ttf"; sourceTree = "<group>"; };
 		386F5A742CD38E91001AC5C5 /* Outfit-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Outfit-Light.ttf"; path = "../src/assets/fonts/Outfit-Light.ttf"; sourceTree = "<group>"; };
 		386F5A752CD38E91001AC5C5 /* DMSans-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "DMSans-Light.ttf"; path = "../src/assets/fonts/DMSans-Light.ttf"; sourceTree = "<group>"; };
+		38A508A12CDBA31300B9ACE2 /* custom_sound_ring.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = custom_sound_ring.wav; sourceTree = "<group>"; };
+		38A508A22CDBA31300B9ACE2 /* custom_sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = custom_sound.mp3; sourceTree = "<group>"; };
 		38E5A10C2CD8A47000DACCB3 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome5_Solid.ttf; sourceTree = "<group>"; };
 		38E5A10D2CD8A47000DACCB3 /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
 		38E5A10E2CD8A47000DACCB3 /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
@@ -197,6 +201,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				38A508A12CDBA31300B9ACE2 /* custom_sound_ring.wav */,
+				38A508A22CDBA31300B9ACE2 /* custom_sound.mp3 */,
 				13B07FAE1A68108700A75B9A /* PatientApp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* PatientAppTests */,
@@ -381,6 +387,7 @@
 				386F5A792CD38E91001AC5C5 /* DMSans-BlackItalic.ttf in Resources */,
 				386F5A8E2CD38E91001AC5C5 /* DMSans-Medium.ttf in Resources */,
 				386F5A842CD38E91001AC5C5 /* DMSans-Bold.ttf in Resources */,
+				38A508A32CDBA31300B9ACE2 /* custom_sound_ring.wav in Resources */,
 				386F5A782CD38E91001AC5C5 /* Inter-Bold.ttf in Resources */,
 				386F5A812CD38E91001AC5C5 /* DMSans-ExtraLightItalic.ttf in Resources */,
 				386F5A7E2CD38E91001AC5C5 /* Outfit-SemiBold.ttf in Resources */,
@@ -409,6 +416,7 @@
 				CE72B8FE2AD7E6BE00AF1BAB /* GoogleService-Info.plist in Resources */,
 				386F5A8B2CD38E91001AC5C5 /* Outfit-Thin.ttf in Resources */,
 				386F5A892CD38E91001AC5C5 /* Outfit-Black.ttf in Resources */,
+				38A508A42CDBA31300B9ACE2 /* custom_sound.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
