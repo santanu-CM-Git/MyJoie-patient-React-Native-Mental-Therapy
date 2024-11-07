@@ -20,7 +20,7 @@
 	<string>1.0.9</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleURLTypes</key>
+	<!-- <key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
@@ -28,7 +28,7 @@
 				<string>974564787686868</string>
 			</array>
 		</dict>
-	</array>
+	</array> -->
 	<key>CFBundleVersion</key>
 	<string>10</string>
 	<key>FacebookAppID</key>
@@ -114,7 +114,6 @@
 	<array>
 		<string>audio</string>
 		<string>fetch</string>
-		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
