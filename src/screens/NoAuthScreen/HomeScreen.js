@@ -986,9 +986,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   freebannerImg: {
-    height: responsiveHeight(20), // Adjust height based on desired aspect ratio
+    ...Platform.select({
+      android: {
+        height: responsiveHeight(20), // Adjust height based on desired aspect ratio
+        borderRadius: 10,
+      },
+      ios: {
+        height: responsiveHeight(17), // Adjust height based on desired aspect ratio
+        borderRadius: 14,
+      },
+    }),
     width: responsiveWidth(92),   // 92% of the screen width
-    borderRadius: 10,
     resizeMode: 'contain',
   },
   previousTherapistView: {
