@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useContext } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, BackHandler, Image, FlatList, TouchableOpacity, Animated, KeyboardAwareScrollView, Platform, Switch, Alert, PermissionsAndroid, Linking } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, BackHandler, Image, FlatList,RefreshControl, TouchableOpacity, Animated, Platform, Alert, Linking } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
@@ -27,6 +27,7 @@ const items = [
 const TherapistProfile = ({ navigation, route }) => {
 
     const { logout } = useContext(AuthContext);
+    const [refreshing, setRefreshing] = useState(false);
     const [allReview, setAllreview] = React.useState([])
     const [profileDetails, setProfileDetails] = useState([])
     const [therapistAvailability, setTherapistAvailability] = useState([])
@@ -513,21 +514,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     console.log("Razorpay", "gateway_name")
                     console.log(prescription_checked, "prescription_checked")
                     console.log(totalAmount, 'transaction_amount')
-                    // const formData = new FormData();
-                    // formData.append("therapist_id", profileDetails?.user_id);
-                    // formData.append("slot_ids", JSON.stringify(ids));
-                    // formData.append("date", selectedDate);
-                    // formData.append("purpose", 'purpose');
-                    // formData.append("mode_of_conversation", mode);
-                    // formData.append("payment_mode", 'online');
-                    // formData.append("gateway_name", 'Razorpay');
-                    // formData.append("prescription_checked", prescription_checked);
-                    // formData.append("transaction_amount", totalAmount);
-                    // formData.append("payment_status", 'paid');
-                    // formData.append("order_id", '37866876');
-                    //formData.append("transaction_no", transactionId);
-                    //formData.append("wallet_deduction", walletAmount);
-                    //console.log(formData)
+                   
                     const option = {
                         "therapist_id": profileDetails?.user_id,
                         "slot_ids": JSON.stringify(ids),
@@ -541,8 +528,53 @@ const TherapistProfile = ({ navigation, route }) => {
                         "payment_status": 'paid',
                         "order_id": generateUniqueOrderId()
                     }
-                    // navigation.navigate('Summary', { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser })
-                    navigation.navigate('Talk', { screen: 'Summary', params: { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser } })
+
+                    // navigation.navigate('Talk', { screen: 'Summary', params: { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser } })
+                    const formData = new FormData();
+                    formData.append("therapist_id", profileDetails?.user_id);
+                    formData.append("slot_ids", JSON.stringify(ids));
+                    formData.append("date", selectedDate);
+
+                    AsyncStorage.getItem('userToken', (err, usertoken) => {
+                        axios.post(`${API_URL}/patient/slot-hold`, formData, {
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'multipart/form-data',
+                                "Authorization": `Bearer ${usertoken}`,
+                            },
+                        })
+                            .then(res => {
+                                console.log(JSON.stringify(res.data), 'submit form response')
+                                if (res.data.response == true) {
+                                    setIsLoading(false)
+                                    navigation.navigate('Talk', { screen: 'Summary', params: { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser } })
+                                } else {
+                                    console.log('not okk')
+                                    setIsLoading(false)
+                                    Alert.alert('Oops..', "Something went wrong", [
+                                        {
+                                            text: 'Cancel',
+                                            onPress: () => console.log('Cancel Pressed'),
+                                            style: 'cancel',
+                                        },
+                                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                    ]);
+                                }
+                            })
+                            .catch(e => {
+                                setIsLoading(false)
+                                console.log(`slot booking error ${e}`)
+                                console.log(e.response)
+                                Alert.alert('Oops..', e.response?.data?.message, [
+                                    {
+                                        text: 'Cancel',
+                                        onPress: () => console.log('Cancel Pressed'),
+                                        style: 'cancel',
+                                    },
+                                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                ]);
+                            });
+                    });
                 } else {
                     if (selectedByUser.length > 1) {
                         Alert.alert('Sorry..', 'You need to choose only one slot for a free session.', [
@@ -757,10 +789,23 @@ const TherapistProfile = ({ navigation, route }) => {
         return Math.min(rows * itemHeight, maxHeight);
     };
 
+    const onRefresh = async () => {
+        const formattedDate = moment().format('YYYY-MM-DD');
+        const dayOfWeek = moment().format('dddd');
+        const index = 0;
+        console.log(formattedDate);
+        console.log(dayOfWeek)
+        selectedDateChange(index, dayOfWeek, formattedDate)
+        //getAllReviewForTherapist()
+        setSelectedByUser([])
+    }
+
     return (
         <SafeAreaView style={styles.Container}>
             <CustomHeader commingFrom={'Therapist'} onPress={() => handleBackButton()} title={'Therapist'} />
-            <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
+            <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
+            }>
                 <View style={{ alignSelf: 'center', marginTop: responsiveHeight(2) }}>
 
                     <View style={styles.totalValue}>
@@ -870,7 +915,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                 ) : (
                                     therapistAvailability.map((slot, index) => {
                                         const isSelected = selectedByUser.includes(slot);
-                                        const isBooked = slot.booked_status === 1;
+                                        const isBooked = slot.booked_status === 1 || slot.hold_status === 1;
                                         return (
 
                                             <TouchableOpacity
