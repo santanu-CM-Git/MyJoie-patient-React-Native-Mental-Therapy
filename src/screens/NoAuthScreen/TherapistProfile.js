@@ -879,7 +879,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                                 disabled={isBooked}
                                                 style={{
                                                     height: responsiveHeight(5),
-                                                    padding: 10,
+                                                    padding: 5,
                                                     backgroundColor: isBooked ? '#EAECF0' : isSelected ? '#EEF8FF' : '#FFFFFF', // Change background color if selected
                                                     justifyContent: 'center',
                                                     alignItems: 'center',
@@ -1162,7 +1162,7 @@ const styles = StyleSheet.create({
     },
     dayContainer: {
         height: responsiveHeight(10),
-        width: responsiveWidth(14),
+        width: responsiveWidth(15),
         borderRadius: 30,
         marginRight: responsiveWidth(3),
         flexDirection: 'column',
