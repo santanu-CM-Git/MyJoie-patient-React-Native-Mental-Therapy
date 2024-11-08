@@ -168,7 +168,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                         Toast.show({
                             type: 'success',
                             text1: 'Hello',
-                            text2: "Schedule cancel successfully.",
+                            text2: res?.data?.message,
                             position: 'top',
                             topOffset: Platform.OS == 'ios' ? 55 : 20
                         });
@@ -176,7 +176,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                     } else {
                         console.log('not okk')
                         setIsLoading(false)
-                        Alert.alert('Oops..', "Something went wrong.", [
+                        Alert.alert('Oops..', res?.data?.message || "Something went wrong.", [
                             {
                                 text: 'Cancel',
                                 onPress: () => console.log('Cancel Pressed'),
