@@ -649,7 +649,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                     } else {
                                         console.log('not okk')
                                         setIsLoading(false)
-                                        Alert.alert('Oops..', "Something went wrong", [
+                                        Alert.alert('Oops..', res.data.message || "Something went wrong", [
                                             {
                                                 text: 'Cancel',
                                                 onPress: () => console.log('Cancel Pressed'),
