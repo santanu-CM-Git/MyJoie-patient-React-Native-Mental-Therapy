@@ -707,7 +707,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             Toast.show({
                                 type: 'success',
                                 text1: 'Hello',
-                                text2: "Successfully added to wishlist.",
+                                text2: "Successfully added to bookmarks.",
                                 position: 'top',
                                 topOffset: Platform.OS == 'ios' ? 55 : 20
                             });
