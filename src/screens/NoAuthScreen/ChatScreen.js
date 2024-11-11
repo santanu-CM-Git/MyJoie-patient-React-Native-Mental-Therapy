@@ -788,6 +788,11 @@ const ChatScreen = ({ navigation, route }) => {
       const unsubscribe = messaging().onMessage(async remoteMessage => {
         // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
         // console.log('Received background message:', JSON.stringify(remoteMessage));
+        if (remoteMessage?.data?.screen === 'EndCall') {
+          Alert.alert('', "The therapist has disconnected the call. The balance amount (if any) will be refunded to your wallet.", [
+            { text: 'OK', onPress: () => handleTimerEnd() },
+          ]);
+        }
         if (remoteMessage?.data?.screen === 'Cancel') {
           console.log(remoteMessage?.data?.flag, 'ddddddddd')
           goingToactiveTab(remoteMessage?.data?.flag)
@@ -1083,7 +1088,7 @@ const styles = StyleSheet.create({
   buttonImage: { height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
   audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
   audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(40), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
-  videoButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(60), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center',zIndex:30 },
+  videoButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(60), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center', zIndex: 30 },
   iconStyle: { height: 40, width: 40 },
   messageContainer: {
     backgroundColor: 'red',
