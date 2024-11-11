@@ -54,7 +54,7 @@ const ReviewScreen = ({ navigation, route }) => {
                             Toast.show({
                                 type: 'success',
                                 text1: 'Hello',
-                                text2: "Upload data successfully.",
+                                text2: "Review uploaded successfully.",
                                 position: 'top',
                                 topOffset: Platform.OS == 'ios' ? 55 : 20
                             });

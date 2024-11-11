@@ -69,7 +69,7 @@ const AuthStack = () => {
         }}
       />
        <Drawer.Screen
-        name="Bookmarked Therapist"
+        name="Bookmarked Therapists"
         component={Bookmarked}
         options={{
           drawerIcon: ({color}) => (

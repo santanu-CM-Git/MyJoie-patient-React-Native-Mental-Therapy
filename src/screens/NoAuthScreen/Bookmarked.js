@@ -110,7 +110,7 @@ const Bookmarked = ({ navigation }) => {
                             Toast.show({
                                 type: 'success',
                                 text1: 'Hello',
-                                text2: "Successfully removed from bookmarked.",
+                                text2: "Successfully removed from bookmark.",
                                 position: 'top',
                                 topOffset: Platform.OS == 'ios' ? 55 : 20
                             });

@@ -22,7 +22,7 @@ const PaymentFailed = ({ navigation, route }) => {
             </View>
             <View style={styles.thankYouTextWrapper}>
                 <Text style={styles.thankYouText}>Oops</Text>
-                <Text style={styles.appreciationText}>{data}</Text>
+                <Text style={styles.appreciationText}>Payment Failed, please retry.</Text>
             </View>
             <CustomButton label={"Back to Home"}
                 onPress={() => navigation.navigate('Home')}

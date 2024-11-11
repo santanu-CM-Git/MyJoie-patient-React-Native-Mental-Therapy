@@ -137,7 +137,7 @@ const ScheduleScreen = ({ navigation, route }) => {
     };
 
     const confirmationBeforeCancel = (id) => {
-        Alert.alert('Hello', "Are you sure you want to cancel the appointment? Cancellation charges may apply.", [
+        Alert.alert('', "Are you sure you want to cancel the appointment? Cancellation charges may apply.", [
             {
                 text: 'Cancel',
                 onPress: () => { null },
@@ -332,15 +332,15 @@ const ScheduleScreen = ({ navigation, route }) => {
                                     justifyContent: 'center',
                                     ...Platform.select({
                                         android: {
-                                          elevation: 5, // Only for Android
+                                            elevation: 5, // Only for Android
                                         },
                                         ios: {
-                                          shadowColor: '#000', // Only for iOS
-                                          shadowOffset: { width: 0, height: 2 },
-                                          shadowOpacity: 0.3,
-                                          shadowRadius: 5,
+                                            shadowColor: '#000', // Only for iOS
+                                            shadowOffset: { width: 0, height: 2 },
+                                            shadowOpacity: 0.3,
+                                            shadowRadius: 5,
                                         },
-                                      }),
+                                    }),
                                 }}>
                                 <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
                                     <TouchableOpacity onPress={() => confirmationBeforeCancel(item?.id)}>
@@ -351,7 +351,11 @@ const ScheduleScreen = ({ navigation, route }) => {
                                                 fontSize: responsiveFontSize(2),
                                                 marginVertical: responsiveHeight(1)
                                             }}>
-                                            Cancel the appointment
+                                            <Text style={{
+                                                color: '#746868',
+                                                fontFamily: 'DMSans-Bold',
+                                                fontSize: responsiveFontSize(2), textDecorationLine: 'underline'
+                                            }}>Cancel</Text> the appointment
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -564,15 +568,15 @@ const styles = StyleSheet.create({
         marginBottom: responsiveHeight(1),
         ...Platform.select({
             android: {
-              elevation: 5, // Only for Android
+                elevation: 5, // Only for Android
             },
             ios: {
-              shadowColor: '#000', // Only for iOS
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 5,
+                shadowColor: '#000', // Only for iOS
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 5,
             },
-          }),
+        }),
         alignSelf: 'center'
     },
     cardImg: {
@@ -696,7 +700,15 @@ const styles = StyleSheet.create({
     flexStyle: {
         position: 'absolute',
         top: 5,
-        right: 10
+        right: 10,
+        ...Platform.select({
+            android: {
+                zIndex: 0, // Only for Android
+            },
+            ios: {
+                zIndex: 10
+            },
+        }),
     },
     nodataText: {
         alignSelf: 'center',

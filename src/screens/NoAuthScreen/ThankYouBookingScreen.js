@@ -43,16 +43,16 @@ const ThankYouBookingScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.thankYouTextWrapper}>
         <Text style={styles.thankYouText}>Thank You</Text>
-        <Text style={styles.appreciationText}>We really appreciate you for booking!</Text>
+        <Text style={styles.appreciationText}>For booking the appointment with us!</Text>
       </View>
       {data && (
         <View style={styles.totalValue}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Patient Details</Text>
+            <Text style={styles.headerText}>Appointment details</Text>
           </View>
           <View style={styles.detailsWrapper}>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Name</Text>
+              <Text style={styles.detailLabel}>User Name</Text>
               <Text style={styles.detailValue}>{data[0]?.patient.name}</Text>
             </View>
             <View style={styles.detailRow}>
@@ -67,10 +67,10 @@ const ThankYouBookingScreen = ({ navigation, route }) => {
               <Text style={styles.detailLabel}>Schedule Time</Text>
               <Text style={styles.detailValue}>{moment(data[0]?.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(data[0]?.end_time, 'HH:mm:ss').format('h:mm A')}</Text>
             </View>
-            <View style={styles.detailRow}>
+            {/* <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Appointment</Text>
               <Text style={styles.detailValue}>Booked</Text>
-            </View>
+            </View> */}
           </View>
         </View>
       )}

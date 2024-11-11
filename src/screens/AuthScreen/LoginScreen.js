@@ -110,13 +110,13 @@ const LoginScreen = ({ navigation }) => {
             console.log(res.data)
             if (res.data.response == true) {
               setIsLoading(false)
-              Toast.show({
-                type: 'success',
-                text1: 'Hello',
-                text2: "OTP sent to your mobile no.",
-                position: 'top',
-                topOffset: Platform.OS == 'ios' ? 55 : 20
-              });
+              // Toast.show({
+              //   type: 'success',
+              //   text1: 'Hello',
+              //   text2: "OTP sent to your mobile no.",
+              //   position: 'top',
+              //   topOffset: Platform.OS == 'ios' ? 55 : 20
+              // });
               //alert(res.data?.otp)
               // login(res.data.token)
               //navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name })
@@ -174,7 +174,7 @@ const LoginScreen = ({ navigation }) => {
         </View>
         <View style={styles.wrapper}>
           <View style={{ marginBottom: responsiveHeight(2) }}>
-            <Text style={styles.headerText}>Let’s get started! Enter your mobile number</Text>
+            <Text style={styles.headerText}>Transforming lives, one session at a time!!</Text>
           </View>
           {mobileError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular' }}>{mobileError}</Text> : <></>}
           <View style={styles.textinputview}>
@@ -216,7 +216,7 @@ const LoginScreen = ({ navigation }) => {
       </KeyboardAwareScrollView>
 
       <View style={styles.buttonwrapper}>
-        <CustomButton label={"Use OTP"}
+        <CustomButton label={"Send OTP"}
           onPress={() => handleSubmit()}
         //onPress={() => { navigation.push('Otp', { phoneno: phone }) }}
         />

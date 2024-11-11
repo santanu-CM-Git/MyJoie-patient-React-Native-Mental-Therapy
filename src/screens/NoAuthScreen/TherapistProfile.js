@@ -547,6 +547,13 @@ const TherapistProfile = ({ navigation, route }) => {
                                 console.log(JSON.stringify(res.data), 'submit form response')
                                 if (res.data.response == true) {
                                     setIsLoading(false)
+                                    Toast.show({
+                                        type: 'success',
+                                        text1: 'Hello',
+                                        text2: "You have 3 minutes left to complete the payment.",
+                                        position: 'top',
+                                        topOffset: Platform.OS == 'ios' ? 55 : 20
+                                    });
                                     navigation.navigate('Talk', { screen: 'Summary', params: { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser } })
                                 } else {
                                     console.log('not okk')
@@ -638,14 +645,15 @@ const TherapistProfile = ({ navigation, route }) => {
                                     console.log(JSON.stringify(res.data.data), 'submit form response')
                                     if (res.data.response == true) {
                                         setIsLoading(false)
-                                        Alert.alert('Hello..', res.data.message, [
-                                            {
-                                                text: 'Cancel',
-                                                onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }),
-                                                style: 'cancel',
-                                            },
-                                            { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
-                                        ]);
+                                        // Alert.alert('Hello..', res.data.message, [
+                                        //     {
+                                        //         text: 'Cancel',
+                                        //         onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }),
+                                        //         style: 'cancel',
+                                        //     },
+                                        //     { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
+                                        // ]);
+                                        navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) })
                                     } else {
                                         console.log('not okk')
                                         setIsLoading(false)

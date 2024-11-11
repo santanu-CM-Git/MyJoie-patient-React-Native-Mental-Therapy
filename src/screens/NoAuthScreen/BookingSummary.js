@@ -234,14 +234,15 @@ const BookingSummary = ({ navigation, route }) => {
                     console.log(JSON.stringify(res.data.data), 'submit form response');
                     if (res.data.response) {
                         setIsLoading(false);
-                        Alert.alert('Hello..', res.data.message, [
-                            {
-                                text: 'Cancel',
-                                onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }),
-                                style: 'cancel',
-                            },
-                            { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
-                        ]);
+                        // Alert.alert('Hello..', res.data.message, [
+                        //     {
+                        //         text: 'Cancel',
+                        //         onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }),
+                        //         style: 'cancel',
+                        //     },
+                        //     { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
+                        // ]);
+                        navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) })
                     } else {
                         console.log('not ok');
                         setIsLoading(false);
@@ -553,7 +554,7 @@ const BookingSummary = ({ navigation, route }) => {
 
                     <View style={styles.total4Value}>
                         <View style={styles.total4ValueHeader}>
-                            <Text style={styles.total4ValueHeaderText}>Price Details</Text>
+                            <Text style={styles.total4ValueHeaderText}>Bill Details</Text>
                         </View>
                         <View style={{ padding: 10, }}>
                             <View style={styles.total4ValueSection}>
@@ -589,7 +590,7 @@ const BookingSummary = ({ navigation, route }) => {
             </ScrollView>
             <View style={styles.buttonwrapper}>
                 <View style={styles.buttonwrapperSection1}>
-                    <Text style={styles.buttonwrapperText1}>Consult Fees</Text>
+                    <Text style={styles.buttonwrapperText1}>Consultation Fee</Text>
                     <Text style={styles.buttonwrapperText2}>₹ {payableAmount}</Text>
                 </View>
                 <View style={{ marginTop: responsiveHeight(1) }}>

@@ -651,7 +651,7 @@ export default function HomeScreen({ navigation }) {
             </>
             : null}
           <View style={styles.sectionHeaderView}>
-            <Text style={styles.sectionHeaderText}>Therapist</Text>
+            <Text style={styles.sectionHeaderText}>Therapists</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Talk', { screen: 'TherapistList', key: Math.random().toString() })}>
               <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
