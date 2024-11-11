@@ -170,7 +170,7 @@ const OtpScreen = ({ navigation, route }) => {
                     setIsLoading(false)
                     Toast.show({
                         type: 'success',
-                        text1: 'Hello',
+                        text1: '',
                         text2: "OTP sent to your mobile no.",
                         position: 'top',
                         topOffset: Platform.OS == 'ios' ? 55 : 20

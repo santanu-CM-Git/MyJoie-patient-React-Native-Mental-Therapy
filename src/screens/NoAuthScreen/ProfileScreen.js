@@ -122,7 +122,7 @@ const ProfileScreen = ({ navigation, route }) => {
       if (response.data.response) {
         Toast.show({
           type: 'success',
-          text1: 'Hello',
+          text1: '',
           text2: 'Profile picture updated successfully.',
           position: 'top',
           topOffset: Platform.OS === 'ios' ? 55 : 20,
@@ -275,7 +275,7 @@ const ProfileScreen = ({ navigation, route }) => {
               setIsFormChanged(false)
               Toast.show({
                 type: 'success',
-                text1: 'Hello',
+                text1: '',
                 text2: "Profile data updated successfully.",
                 position: 'top',
                 topOffset: Platform.OS == 'ios' ? 55 : 20
