@@ -11,7 +11,7 @@ import { TabActions, useRoute } from '@react-navigation/native';
 import KeepAwake from 'react-native-keep-awake';
 import firestore, { endBefore } from '@react-native-firebase/firestore'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ScreenRecorder from 'react-native-screen-mic-recorder'
+import messaging from '@react-native-firebase/messaging';
 
 import {
   ClientRoleType,
@@ -36,11 +36,11 @@ const ChatScreen = ({ navigation, route }) => {
 
   // For audio call
   const appId = AGORA_APP_ID;
-  //const token = route?.params?.details?.agora_token;
-  // const channelName = route?.params?.details?.agora_channel_id;
+  const token = route?.params?.details?.agora_token;
+  const channelName = route?.params?.details?.agora_channel_id;
   const uid = 0; // Local user UID, no need to modify
-  const token = '007eJxTYDhi6F9zTDfj6wqLJ2d/pO048fby6lV6n0oPfuMLOvD24KqzCgxmpmlGJmmJKcmphkYm5mmWFskWaebJ5uaJRsZGqckWqRd2nEtrCGRkWMXByczIAIEgPidDYnp+UWJJanEJAwMAj1MmkA==';
-  const channelName = 'agoratest';
+  //const token = '007eJxTYKgTufZm7uYZB3m+zpWVPfPUL/nHwS8G/a1Om+QOfOY2duRQYDAzTTMySUtMSU41NDIxT7O0SLZIM082N080MjZKTbZI/RZ0Na0hkJHhuscLJkYGCATxORkS0/OLEktSi0sYGACPbyPx';
+  //const channelName = 'agoratest';
 
   const [messages, setMessages] = useState([])
   const [therapistId, setTherapistId] = useState(route?.params?.details?.therapist?.id)
@@ -60,86 +60,8 @@ const ChatScreen = ({ navigation, route }) => {
   const [endTime, setEndTime] = useState(null);
   const intervalRef = useRef(null);
 
-  // const requestExternalStoragePermission = async () => {
-  //   try {
-  //     const granted = await PermissionsAndroid.request(
-  //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-  //       {
-  //         title: 'External Storage Permission',
-  //         message: 'This app needs access to your storage to read/write files.',
-  //         buttonNeutral: 'Ask Me Later',
-  //         buttonNegative: 'Cancel',
-  //         buttonPositive: 'OK',
-  //       },
-  //     );
-  //     return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //   } catch (err) {
-  //     console.warn(err);
-  //     return false;
-  //   }
-  // };
-
-  // const startRecording = async () => {
-  //   try {
-  //     const recordingStatus = await ScreenRecorder.startRecording().catch((error) => {
-  //       console.warn(error); // handle native error
-  //     });
-  //     if (recordingStatus === 'started') {
-  //       setIsRecording(true);
-  //       console.log('Recording has started...');
-  //     } else if (recordingStatus === 'userDeniedPermission') {
-  //       Alert.alert('Please grant permission in order to record screen');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error starting recording:', error);
-  //   }
-  // };
-
-  // const stopRecording = async () => {
-  //   //console.log('Stopping recording...');
-  //   try {
-  //     if (Platform.OS === 'android') {
-  //       const hasPermission = await requestExternalStoragePermission();
-  //       if (!hasPermission) {
-  //         throw new Error('Storage permission denied');
-  //       }
-  //     }
-  //     const uri = await ScreenRecorder.stopRecording().catch((error) => {
-  //       console.warn(error); // handle native error
-  //     });
-  //     if (uri) {
-  //       setRecordedURL(uri);
-  //       console.log('Recording stopped. URI:', uri);
-  //       const formData = new FormData();
-  //       formData.append('file', {
-  //         uri: Platform.OS === 'android' ? uri : uri.replace('file://', ''),
-  //         name: 'recording.mp4',
-  //         type: 'video/mp4',
-  //       });
-  //       const response = await axios.post('http://162.215.253.89/swastilife/api/file-upload', formData, {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       });
-
-  //       const result = response.data;
-  //       console.log('File uploaded successfully:', result);
-  //     }
-  //     setIsRecording(false);
-  //   } catch (error) {
-  //     console.error('Error stopping recording:', error);
-  //     if (error.response) {
-  //       console.error('Server response:', error.response.data);
-  //     } else if (error.request) {
-  //       console.error('No response received:', error.request);
-  //     } else {
-  //       console.error('Error setting up request:', error.message);
-  //     }
-  //   }
-  // };
-
   useEffect(() => {
-    console.log(routepage.name);
+    // console.log(routepage.name);
     if (routepage.name === 'ChatScreen') {
       const backAction = () => {
         // Prevent the default back button action
@@ -185,7 +107,7 @@ const ChatScreen = ({ navigation, route }) => {
     const initialize = async () => {
       await setupVideoSDKEngine();
       KeepAwake.activate();
-      console.log(route?.params?.details, 'details from home page');
+      // console.log(route?.params?.details, 'details from home page');
       sessionStart();
     };
     initialize();
@@ -202,7 +124,7 @@ const ChatScreen = ({ navigation, route }) => {
       "booked_slot_id": route?.params?.details?.id,
       "time": currentTime,
     };
-    console.log(option);
+    // console.log(option);
 
     try {
       const userToken = await AsyncStorage.getItem('userToken');
@@ -223,19 +145,28 @@ const ChatScreen = ({ navigation, route }) => {
         setEndTime(endTime); // Set the end time
 
         const mode = route?.params?.details?.mode_of_conversation;
-
+        const agoraEngine = agoraEngineRef.current;
         switch (mode) {
           case 'chat':
+            agoraEngine?.muteLocalAudioStream(true);
+            agoraEngine?.stopPreview(); // Stop the local video preview
+            agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
             setActiveTab('chat');
             setIsVideoEnabled(false);
             break;
           case 'audio':
             await startAudioCall();
+            // agoraEngine?.muteLocalAudioStream(false);
+            // agoraEngine?.stopPreview(); // Stop the local video preview
+            // agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
             setActiveTab('audio');
             setIsVideoEnabled(false);
             break;
           case 'video':
             await startVideoCall();
+            // agoraEngine?.muteLocalAudioStream(false);
+            // agoraEngine?.startPreview(); // Start the local video preview
+            // agoraEngine?.muteLocalVideoStream(false); // Unmute local video stream
             setActiveTab('video');
             setIsVideoEnabled(true);
             break;
@@ -243,7 +174,7 @@ const ChatScreen = ({ navigation, route }) => {
 
         setIsLoading(false);
       } else {
-        console.log('not okk');
+        // console.log('not okk');
         Alert.alert('Oops..', "Something went wrong", [
           { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
           { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -252,7 +183,7 @@ const ChatScreen = ({ navigation, route }) => {
       }
     } catch (e) {
       setIsLoading(false);
-      console.log(`Session Start error ${e}`);
+      // console.log(`Session Start error ${e}`);
       //console.log(e.response?.data?.response.records);
       Alert.alert('Oops..', e.response?.data?.message || 'An unexpected error occurred', [
         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
@@ -280,13 +211,13 @@ const ChatScreen = ({ navigation, route }) => {
   };
 
   const handleTimerEnd = async () => {
-    console.log('Timer has ended. Execute your function here.');
+    // console.log('Timer has ended. Execute your function here.');
     const currentTime = moment().format('HH:mm:ss');
     const option = {
       "booked_slot_id": route?.params?.details?.id,
       "time": currentTime
     };
-    console.log(option);
+    // console.log(option);
 
     try {
       // Retrieve user token
@@ -303,11 +234,9 @@ const ChatScreen = ({ navigation, route }) => {
         },
       });
 
-      console.log(res.data);
+      // console.log(res.data);
 
       if (res.data.response === true) {
-        // Uncomment and use if needed
-        // stopRecording();
         setIsVideoEnabled(false);
         await leaveChannel(); // Ensure leave completes before navigating
         navigation.navigate('ReviewScreen', {
@@ -316,7 +245,7 @@ const ChatScreen = ({ navigation, route }) => {
           therapistPic: route?.params?.details?.therapist?.profile_pic
         });
       } else {
-        console.log('Response not OK');
+        // console.log('Response not OK');
         setIsLoading(false);
         Alert.alert('Oops..', "Something went wrong", [
           {
@@ -514,7 +443,7 @@ const ChatScreen = ({ navigation, route }) => {
   }, [])
 
   const onSend = (messageArray) => {
-    console.log(messageArray)
+    // console.log(messageArray)
     const msg = messageArray[0]
     const mymsg = {
       ...msg,
@@ -565,19 +494,19 @@ const ChatScreen = ({ navigation, route }) => {
 
       await agoraEngine.registerEventHandler({
         onJoinChannelSuccess: (connection, localUid, elapsed) => {
-          console.log('Successfully joined the channel: ' + channelName);
-          alert('Successfully joined the channel: ' + channelName)
+          // console.log('Successfully joined the channel: ' + channelName);
+          // alert('Successfully joined the channel: ' + channelName)
           setLocalUid(0);
           setIsJoined(true);
         },
         onUserJoined: (_connection, Uid) => {
-          console.log('Remote user ' + Uid + ' has joined');
-          alert('Remote user ' + Uid + ' has joined')
+          // console.log('Remote user ' + Uid + ' has joined');
+          // alert('Remote user ' + Uid + ' has joined')
           setRemoteUid(Uid);
         },
         onUserOffline: (_connection, Uid) => {
-          console.log('Remote user ' + Uid + ' has left the channel');
-          alert('Remote user ' + Uid + ' has left the channel')
+          // console.log('Remote user ' + Uid + ' has left the channel');
+          // alert('Remote user ' + Uid + ' has left the channel')
           setRemoteUid(null);
         },
       });
@@ -636,7 +565,7 @@ const ChatScreen = ({ navigation, route }) => {
 
       if (cameraOn) {
         agoraEngine.switchCamera(); // Switch between front and rear cameras
-        console.log('Camera switched');
+        // console.log('Camera switched');
       } else {
         console.log('Camera is off, cannot switch');
       }
@@ -657,11 +586,11 @@ const ChatScreen = ({ navigation, route }) => {
       if (cameraOn) {
         agoraEngine.stopPreview(); // Stop the local video preview
         agoraEngine.muteLocalVideoStream(true); // Mute local video stream
-        console.log('Camera turned off');
+        // console.log('Camera turned off');
       } else {
         agoraEngine.startPreview(); // Start the local video preview
         agoraEngine.muteLocalVideoStream(false); // Unmute local video stream
-        console.log('Camera turned on');
+        // console.log('Camera turned on');
       }
 
       setCameraOn(!cameraOn); // Toggle camera state
@@ -675,7 +604,7 @@ const ChatScreen = ({ navigation, route }) => {
     const agoraEngine = agoraEngineRef.current;
 
     if (!agoraEngine) {
-      console.log('Agora engine is not initialized');
+      // console.log('Agora engine is not initialized');
       return;
     }
 
@@ -710,7 +639,7 @@ const ChatScreen = ({ navigation, route }) => {
       setIsVideoEnabled(false);
       setMicOn(true); // Ensure mic is on when leaving the channel
       setSpeakerOn(true); // Ensure speaker is on when leaving the channel
-      console.log('You left the channel');
+      // console.log('You left the channel');
     } catch (e) {
       console.log(e);
     }
@@ -732,17 +661,169 @@ const ChatScreen = ({ navigation, route }) => {
   const goingToactiveTab = async (name) => {
     if (name === 'audio') {
       await startAudioCall();
+      const agoraEngine = agoraEngineRef.current;
+      agoraEngine?.muteLocalAudioStream(false);
+      agoraEngine?.stopPreview(); // Stop the local video preview
+      agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
       setActiveTab('audio');
       setIsVideoEnabled(false);
     } else if (name === 'video') {
       await startVideoCall();
+      const agoraEngine = agoraEngineRef.current;
+      agoraEngine?.muteLocalAudioStream(false);
+      agoraEngine?.startPreview(); // Start the local video preview
+      agoraEngine?.muteLocalVideoStream(false); // Unmute local video stream
       setActiveTab('video');
       setIsVideoEnabled(true);
     } else if (name === 'chat') {
+      const agoraEngine = agoraEngineRef.current;
+      agoraEngine?.muteLocalAudioStream(true);
+      agoraEngine?.stopPreview(); // Stop the local video preview
+      agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
       setActiveTab('chat');
       setIsVideoEnabled(false);
     }
   };
+
+  const requestToTabSwitch = async (name) => {
+    setIsLoading(true);
+    const option = {
+      "booked_slot_id": route?.params?.details?.id,
+      "flag": name
+    };
+    // console.log(option);
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (!userToken) {
+        throw new Error('User token is missing');
+      }
+      const res = await axios.post(`${API_URL}/notification/tab-switch`, option, {
+        headers: {
+          Accept: 'application/json',
+          "Authorization": 'Bearer ' + userToken,
+        },
+      });
+      // console.log(res.data);
+      if (res.data.response === true) {
+        setIsLoading(false);
+        await goingToactiveTab(name);
+      } else {
+        // console.log('Response not OK');
+        setIsLoading(false);
+        Alert.alert('Oops..', "Something went wrong", [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+      }
+    } catch (e) {
+      setIsLoading(false);
+      console.error('Error during handleTimerEnd:', e);
+      const errorMessage = e.response?.data?.message || 'An unexpected error occurred';
+      Alert.alert('Oops..', errorMessage, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+    }
+  }
+
+  const requestToCancel = async () => {
+    const option = {
+      "booked_slot_id": route?.params?.details?.id,
+      "flag": activeTab,
+      "screen": activeTab
+    };
+    // console.log(option);
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (!userToken) {
+        throw new Error('User token is missing');
+      }
+      const res = await axios.post(`${API_URL}/notification/tab-switch-cancel`, option, {
+        headers: {
+          Accept: 'application/json',
+          "Authorization": 'Bearer ' + userToken,
+        },
+      });
+      // console.log(res.data);
+      if (res.data.response === true) {
+        setIsLoading(false);
+      } else {
+        // console.log('Response not OK');
+        setIsLoading(false);
+        Alert.alert('Oops..', "Something went wrong", [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+      }
+    } catch (e) {
+      setIsLoading(false);
+      console.error('Error during handleTimerEnd:', e);
+      const errorMessage = e.response?.data?.message || 'An unexpected error occurred';
+      Alert.alert('Oops..', errorMessage, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+    }
+  }
+
+  useEffect(() => {
+    if (Platform.OS == 'android' || Platform.OS === 'ios') {
+      /* this is app foreground notification */
+      const unsubscribe = messaging().onMessage(async remoteMessage => {
+        // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+        // console.log('Received background message:', JSON.stringify(remoteMessage));
+        if (remoteMessage?.data?.screen === 'EndCall') {
+          Alert.alert('', "The therapist has disconnected the call. The balance amount (if any) will be refunded to your wallet.", [
+            { text: 'OK', onPress: () => handleTimerEnd() },
+          ]);
+        }
+        if (remoteMessage?.data?.screen === 'Cancel') {
+          console.log(remoteMessage?.data?.flag, 'ddddddddd')
+          goingToactiveTab(remoteMessage?.data?.flag)
+        }
+        if (remoteMessage?.data?.screen === 'ChatScreen') {
+          Alert.alert(
+            '',
+            `The therapist wants to switch to ${remoteMessage?.data?.flag}. Do you agree?`,
+            [
+              {
+                text: 'Cancel',
+                onPress: () => requestToCancel(),
+                style: 'cancel',
+              },
+              {
+                text: 'OK',
+                onPress: () => goingToactiveTab(remoteMessage?.data?.flag),
+              },
+            ],
+            {
+              cancelable: true,
+              onDismiss: () =>
+                console.log('cancel')
+            },
+          );
+
+        }
+      });
+      return unsubscribe;
+    }
+  }, [])
 
   if (isLoading) {
     return (
@@ -773,7 +854,7 @@ const ChatScreen = ({ navigation, route }) => {
       <View style={styles.TabSection}>
         {activeTab == 'chat' ?
           <>
-            <TouchableOpacity onPress={() => goingToactiveTab('audio')}>
+            <TouchableOpacity onPress={() => requestToTabSwitch('audio')}>
               <View style={styles.ButtonView}>
                 <Image
                   source={callIcon}
@@ -782,7 +863,7 @@ const ChatScreen = ({ navigation, route }) => {
                 <Text style={styles.ButtonText}>Switch to Audio Call</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => goingToactiveTab('video')}>
+            <TouchableOpacity onPress={() => requestToTabSwitch('video')}>
               <View style={styles.ButtonView}>
                 <Image
                   source={videoIcon}
@@ -794,7 +875,7 @@ const ChatScreen = ({ navigation, route }) => {
           </>
           : activeTab == 'audio' ?
             <>
-              <TouchableOpacity onPress={() => goingToactiveTab('chat')}>
+              <TouchableOpacity onPress={() => requestToTabSwitch('chat')}>
                 <View style={styles.ButtonView}>
                   <Image
                     source={chatImg}
@@ -803,7 +884,7 @@ const ChatScreen = ({ navigation, route }) => {
                   <Text style={styles.ButtonText}>Switch to Chat</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => goingToactiveTab('video')}>
+              <TouchableOpacity onPress={() => requestToTabSwitch('video')}>
                 <View style={styles.ButtonView}>
                   <Image
                     source={videoIcon}
@@ -815,7 +896,7 @@ const ChatScreen = ({ navigation, route }) => {
             </>
             :
             <>
-              <TouchableOpacity onPress={() => goingToactiveTab('chat')}>
+              <TouchableOpacity onPress={() => requestToTabSwitch('chat')}>
                 <View style={styles.ButtonView}>
                   <Image
                     source={chatImg}
@@ -824,7 +905,7 @@ const ChatScreen = ({ navigation, route }) => {
                   <Text style={styles.ButtonText}>Switch to Chat</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => goingToactiveTab('audio')}>
+              <TouchableOpacity onPress={() => requestToTabSwitch('audio')}>
                 <View style={styles.ButtonView}>
                   <Image
                     source={callIcon}
@@ -860,7 +941,7 @@ const ChatScreen = ({ navigation, route }) => {
           />
           : activeTab == 'audio' ?
             <>
-              <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground}>
+              <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground} resizeMode="cover">
                 {route?.params?.details?.therapist?.profile_pic ?
                   <Image
                     source={{ uri: route?.params?.details?.therapist?.profile_pic }}
@@ -911,18 +992,34 @@ const ChatScreen = ({ navigation, route }) => {
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
                   <View style={{ height: responsiveHeight(80), width: '100%' }}>
+                    {remoteUid == null ?
+                      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Waiting for the therapist to join..</Text>
+                      </View>
+                      : null}
+
                     {/* Remote Video View */}
                     {remoteUid !== null && (
                       <RtcSurfaceView
                         canvas={{ uid: remoteUid }}
-                        style={styles.remoteVideo}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          zIndex: 10
+                        }}
                       />
                     )}
 
                     {/* Local Video View */}
                     <RtcSurfaceView
                       canvas={{ uid: 0 }}
-                      style={styles.localVideo}
+                      style={{
+                        width: '30%',
+                        height: 200,
+                        position: 'absolute',
+                        top: 10,
+                        right: 10, zIndex: 1000, elevation: 5
+                      }}
                     />
 
                     {/* Video Control Buttons */}
@@ -987,11 +1084,11 @@ const styles = StyleSheet.create({
   ButtonImg: { height: 20, width: 20, resizeMode: 'contain', marginRight: 5 },
   ButtonText: { color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
   containSection: { height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  AudioBackground: { width: responsiveWidth(100), height: responsiveHeight(80), justifyContent: 'center', alignItems: 'center' },
+  AudioBackground: { flex: 1, width: responsiveWidth(100), height: responsiveHeight(80), justifyContent: 'center', alignItems: 'center' },
   buttonImage: { height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
   audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
   audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(40), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
-  videoButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(60), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center' },
+  videoButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(60), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center', zIndex: 30 },
   iconStyle: { height: 40, width: 40 },
   messageContainer: {
     backgroundColor: 'red',
@@ -1092,7 +1189,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    zIndex: 10,
   },
   remoteVideo: {
     width: '100%',

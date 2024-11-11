@@ -1000,27 +1000,44 @@ const ChatScreen = ({ navigation, route }) => {
 
                     {/* Remote Video View */}
                     {remoteUid !== null && (
-                      <RtcSurfaceView
-                        canvas={{ uid: remoteUid }}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          zIndex: 10
-                        }}
-                      />
-                    )}
+                        <View style={{ position: 'relative', flex: 1 }}>
+                          <RtcSurfaceView
+                            canvas={{ uid: remoteUid }}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              zIndex: 10,
+                            }}
+                          />
+                        </View>
+                      )}
 
                     {/* Local Video View */}
-                    <RtcSurfaceView
-                      canvas={{ uid: 0 }}
-                      style={{
-                        width: '30%',
-                        height: 200,
+                    <View style={{
                         position: 'absolute',
                         top: 10,
-                        right: 10, zIndex: 1000, elevation: 5
-                      }}
-                    />
+                        right: 10,
+                        width: '30%',
+                        height: 200,
+                        zIndex: 100,
+                        ...Platform.select({
+                          android: { elevation: 5 },
+                          ios: {
+                            shadowColor: '#000',
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.3,
+                            shadowRadius: 5,
+                          },
+                        }),
+                      }}>
+                        <RtcSurfaceView
+                          canvas={{ uid: 0 }}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                          }}
+                        />
+                      </View>
 
                     {/* Video Control Buttons */}
                     <View style={styles.videoButtonSection}>
