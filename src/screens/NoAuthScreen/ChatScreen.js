@@ -174,7 +174,7 @@ const ChatScreen = ({ navigation, route }) => {
             setIsVideoEnabled(true);
             break;
         }
-
+        setTimeout(() => toggleSpeakerphone(true), 500);
         setIsLoading(false);
       } else {
         // console.log('not okk');
@@ -665,20 +665,12 @@ const ChatScreen = ({ navigation, route }) => {
   const startVideoCall = async () => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.enableVideo();
-    setTimeout(async () => {
-      await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
-      await agoraEngine?.setEnableSpeakerphone(true);
-    }, 500);
     setIsVideoEnabled(true);
   };
 
   const startAudioCall = async () => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.disableVideo();
-    setTimeout(async () => {
-      await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
-      await agoraEngine?.setEnableSpeakerphone(true);
-    }, 500);
     setIsVideoEnabled(false);
   };
 
