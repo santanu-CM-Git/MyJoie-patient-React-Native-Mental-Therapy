@@ -162,7 +162,7 @@ const ChatScreen = ({ navigation, route }) => {
             // agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
             await toggleSpeakerphone(true);
             setActiveTab('audio');
-            setIsVideoEnabled(false); 
+            setIsVideoEnabled(false);
             break;
           case 'video':
             await startVideoCall();
@@ -653,6 +653,10 @@ const ChatScreen = ({ navigation, route }) => {
     const agoraEngine = agoraEngineRef.current;
     try {
       await agoraEngine?.setEnableSpeakerphone(enable);
+      // Set the default audio route to the speakerphone if `enable` is true
+      if (enable) {
+        await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
+      }
     } catch (error) {
       console.error("Failed to toggle speakerphone:", error);
     }
@@ -662,7 +666,6 @@ const ChatScreen = ({ navigation, route }) => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.enableVideo();
     await toggleSpeakerphone(true);
-    await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
     setIsVideoEnabled(true);
   };
 
@@ -670,7 +673,6 @@ const ChatScreen = ({ navigation, route }) => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.disableVideo();
     await toggleSpeakerphone(true);
-    await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
     setIsVideoEnabled(false);
   };
 
@@ -1016,48 +1018,48 @@ const ChatScreen = ({ navigation, route }) => {
 
                     {/* Remote Video View */}
                     {remoteUid !== null && (
-                        <View style={{ position: 'relative', flex: 1 }}>
-                          <RtcSurfaceView
-                            canvas={{ uid: remoteUid }}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              zIndex: 10,
-                            }}
-                            zOrderMediaOverlay={false}
-                            renderMode={1}
-                          />
-                        </View>
-                      )}
-
-                    {/* Local Video View */}
-                    <View style={{
-                        position: 'absolute',
-                        top: 10,
-                        right: 10,
-                        width: '30%',
-                        height: 200,
-                        zIndex: 100,
-                        ...Platform.select({
-                          android: { elevation: 5 },
-                          ios: {
-                            shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 2 },
-                            shadowOpacity: 0.3,
-                            shadowRadius: 5,
-                          },
-                        }),
-                      }}>
+                      <View style={{ position: 'relative', flex: 1 }}>
                         <RtcSurfaceView
-                          canvas={{ uid: 0 }}
+                          canvas={{ uid: remoteUid }}
                           style={{
                             width: '100%',
                             height: '100%',
+                            zIndex: 10,
                           }}
-                          zOrderMediaOverlay={true}
+                          zOrderMediaOverlay={false}
                           renderMode={1}
                         />
                       </View>
+                    )}
+
+                    {/* Local Video View */}
+                    <View style={{
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                      width: '30%',
+                      height: 200,
+                      zIndex: 100,
+                      ...Platform.select({
+                        android: { elevation: 5 },
+                        ios: {
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.3,
+                          shadowRadius: 5,
+                        },
+                      }),
+                    }}>
+                      <RtcSurfaceView
+                        canvas={{ uid: 0 }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                        }}
+                        zOrderMediaOverlay={true}
+                        renderMode={1}
+                      />
+                    </View>
 
                     {/* Video Control Buttons */}
                     <View style={styles.videoButtonSection}>
