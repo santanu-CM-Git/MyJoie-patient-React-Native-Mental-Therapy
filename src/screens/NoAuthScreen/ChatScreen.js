@@ -646,17 +646,26 @@ const ChatScreen = ({ navigation, route }) => {
 
   };
 
+  const toggleSpeakerphone = async (enable) => {
+    const agoraEngine = agoraEngineRef.current;
+    try {
+      await agoraEngine?.setEnableSpeakerphone(enable);
+    } catch (error) {
+      console.error("Failed to toggle speakerphone:", error);
+    }
+  };
+
   const startVideoCall = async () => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.enableVideo();
-    await agoraEngine?.setEnableSpeakerphone(true);
+    await toggleSpeakerphone(true);
     setIsVideoEnabled(true);
   };
 
   const startAudioCall = async () => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.disableVideo();
-    await agoraEngine?.setEnableSpeakerphone(true);
+    await toggleSpeakerphone(true);
     setIsVideoEnabled(false);
   };
 
