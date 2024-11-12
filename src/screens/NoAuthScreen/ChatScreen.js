@@ -159,14 +159,16 @@ const ChatScreen = ({ navigation, route }) => {
             // agoraEngine?.muteLocalAudioStream(false);
             // agoraEngine?.stopPreview(); // Stop the local video preview
             // agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
+            await toggleSpeakerphone(true);
             setActiveTab('audio');
-            setIsVideoEnabled(false);
+            setIsVideoEnabled(false); 
             break;
           case 'video':
             await startVideoCall();
             // agoraEngine?.muteLocalAudioStream(false);
             // agoraEngine?.startPreview(); // Start the local video preview
             // agoraEngine?.muteLocalVideoStream(false); // Unmute local video stream
+            await toggleSpeakerphone(true);
             setActiveTab('video');
             setIsVideoEnabled(true);
             break;
