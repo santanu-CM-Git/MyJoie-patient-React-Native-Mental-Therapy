@@ -146,7 +146,7 @@ const ChatScreen = ({ navigation, route }) => {
 
         const mode = route?.params?.details?.mode_of_conversation;
         const agoraEngine = agoraEngineRef.current;
-        await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
+        // await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
         switch (mode) {
           case 'chat':
             agoraEngine?.muteLocalAudioStream(true);
@@ -174,6 +174,7 @@ const ChatScreen = ({ navigation, route }) => {
             setIsVideoEnabled(true);
             break;
         }
+        await toggleSpeakerphone(false);
         setTimeout(() => toggleSpeakerphone(true), 500);
         setIsLoading(false);
       } else {
