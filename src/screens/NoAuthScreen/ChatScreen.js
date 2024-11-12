@@ -159,7 +159,6 @@ const ChatScreen = ({ navigation, route }) => {
             // agoraEngine?.muteLocalAudioStream(false);
             // agoraEngine?.stopPreview(); // Stop the local video preview
             // agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
-            agoraEngine?.setEnableSpeakerphone(true);
             setActiveTab('audio');
             setIsVideoEnabled(false);
             break;
@@ -168,7 +167,6 @@ const ChatScreen = ({ navigation, route }) => {
             // agoraEngine?.muteLocalAudioStream(false);
             // agoraEngine?.startPreview(); // Start the local video preview
             // agoraEngine?.muteLocalVideoStream(false); // Unmute local video stream
-            agoraEngine?.setEnableSpeakerphone(true);
             setActiveTab('video');
             setIsVideoEnabled(true);
             break;
@@ -651,12 +649,14 @@ const ChatScreen = ({ navigation, route }) => {
   const startVideoCall = async () => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.enableVideo();
+    await agoraEngine?.setEnableSpeakerphone(true);
     setIsVideoEnabled(true);
   };
 
   const startAudioCall = async () => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.disableVideo();
+    await agoraEngine?.setEnableSpeakerphone(true);
     setIsVideoEnabled(false);
   };
 
