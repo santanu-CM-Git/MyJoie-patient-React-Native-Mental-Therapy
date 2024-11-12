@@ -665,14 +665,20 @@ const ChatScreen = ({ navigation, route }) => {
   const startVideoCall = async () => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.enableVideo();
-    await toggleSpeakerphone(true);
+    setTimeout(async () => {
+      await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
+      await agoraEngine?.setEnableSpeakerphone(true);
+    }, 500);
     setIsVideoEnabled(true);
   };
 
   const startAudioCall = async () => {
     const agoraEngine = agoraEngineRef.current;
     await agoraEngine?.disableVideo();
-    await toggleSpeakerphone(true);
+    setTimeout(async () => {
+      await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
+      await agoraEngine?.setEnableSpeakerphone(true);
+    }, 500);
     setIsVideoEnabled(false);
   };
 
