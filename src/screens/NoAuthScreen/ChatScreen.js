@@ -638,6 +638,7 @@ const ChatScreen = ({ navigation, route }) => {
     try {
       const agoraEngine = agoraEngineRef.current;
       await agoraEngine?.leaveChannel();
+      await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
       setRemoteUid(null);
       setIsJoined(false);
       setIsVideoEnabled(false);
