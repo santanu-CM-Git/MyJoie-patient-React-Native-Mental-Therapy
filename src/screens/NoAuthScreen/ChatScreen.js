@@ -111,9 +111,9 @@ const ChatScreen = ({ navigation, route }) => {
       sessionStart();
     };
     initialize();
-    // return () => {
-    //   agoraEngineRef.current?.destroy();
-    // };
+    return () => {
+      agoraEngineRef.current?.destroy();
+    };
   }, []);
 
   const sessionStart = async () => {
