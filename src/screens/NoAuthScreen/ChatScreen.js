@@ -619,6 +619,7 @@ const ChatScreen = ({ navigation, route }) => {
       // Start video preview
       await agoraEngine.startPreview();
       await agoraEngine.muteLocalVideoStream(false)
+      await agoraEngine?.setDefaultAudioRouteToSpeakerphone(true);
       // Join the channel
       await agoraEngine.joinChannel(token, channelName, uid, {
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
