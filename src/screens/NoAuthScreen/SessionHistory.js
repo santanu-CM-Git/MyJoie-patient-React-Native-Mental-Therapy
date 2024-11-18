@@ -128,7 +128,8 @@ const SessionHistory = ({ navigation }) => {
                 <Text style={styles.summaryValue}>{item?.prescription_content}</Text>
             </View> */}
             <View style={{ marginTop: responsiveHeight(2) }}>
-                <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => { navigation.navigate('TherapistProfile', { therapistId: item?.therapist_id }) }} />
+                <CustomButton buttonColor={'small'} label={"Book Again"} onPress={() => navigation.navigate('Talk', { screen: 'TherapistProfile', params: { therapistId: item?.therapist_id, mode: 'paid' }, key: Math.random().toString() })} />
+                
             </View>
         </View>
     )

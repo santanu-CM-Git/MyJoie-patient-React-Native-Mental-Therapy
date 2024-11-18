@@ -332,7 +332,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                                     justifyContent: 'center',
                                     ...Platform.select({
                                         android: {
-                                            elevation: 5, // Only for Android
+                                            elevation: 5, // Only for Android,
                                         },
                                         ios: {
                                             shadowColor: '#000', // Only for iOS
@@ -703,7 +703,7 @@ const styles = StyleSheet.create({
         right: 10,
         ...Platform.select({
             android: {
-                zIndex: 0, // Only for Android
+                zIndex: 10, // Only for Android
             },
             ios: {
                 zIndex: 10
