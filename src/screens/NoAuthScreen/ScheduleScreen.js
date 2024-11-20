@@ -320,7 +320,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                         {focusedItemId === item.id && (
                             <View
                                 style={{
-                                    width: responsiveWidth(58),
+                                    width: responsiveWidth(60),
                                     backgroundColor: '#fff',
                                     height: responsiveHeight(7),
                                     position: 'absolute',

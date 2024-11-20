@@ -791,20 +791,41 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     marginTop: responsiveHeight(1),
-    marginLeft: -responsiveWidth(1),
+    ...Platform.select({
+      android: {
+        marginLeft: -responsiveWidth(1),
+      },
+      ios: {
+        marginLeft: -responsiveWidth(2),
+      },
+    }),
     marginBottom: -responsiveHeight(1)
   },
   bannerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: responsiveWidth(96),
+    ...Platform.select({
+      android: {
+        width: responsiveWidth(96),
+      },
+      ios: {
+        width: responsiveWidth(100),
+      },
+    }),
     height: BannerHeight,
     //backgroundColor: 'red',
     overflow: 'hidden',
     borderRadius: 10
   },
   bannerImage: {
-    width: '100%',
+    ...Platform.select({
+      android: {
+        width: '100%',
+      },
+      ios: {
+        width: '120%',
+      },
+    }),
     height: '100%',
     //resizeMode: 'contain',
     borderRadius: 10
@@ -986,6 +1007,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    android: {
+      height: responsiveHeight(17.5), // Adjust height based on desired aspect ratio
+      borderRadius: 10,
+      elevation:5
+    },
+    ios: {
+      height: responsiveHeight(17), // Adjust height based on desired aspect ratio
+      borderRadius: 14,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.8,
+      shadowRadius: 2,   
+    },
   },
   freebannerImg: {
     ...Platform.select({
