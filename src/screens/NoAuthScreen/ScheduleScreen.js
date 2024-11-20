@@ -301,7 +301,7 @@ const ScheduleScreen = ({ navigation, route }) => {
 
         const bookingDateTimeIST = moment.tz(`${item.date}T${item.start_time}`, 'Asia/Kolkata');
         const endDateTimeIST = moment.tz(`${item.date}T${item.end_time}`, 'Asia/Kolkata');
-        const currentDateTimeIST = currentDateTime;
+        const currentDateTimeIST = moment.tz(new Date(), 'Asia/Kolkata');
 
         const twoMinutesBefore = bookingDateTimeIST.clone().subtract(2, 'minutes');
         const isButtonEnabled = currentDateTimeIST.isBetween(twoMinutesBefore, endDateTimeIST);
