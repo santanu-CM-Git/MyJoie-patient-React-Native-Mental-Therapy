@@ -20,7 +20,7 @@ import Modal from "react-native-modal";
 import { AuthContext } from '../../context/AuthContext';
 import { getProducts } from '../../store/productSlice'
 import FastImage from 'react-native-fast-image';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import CustomButton from '../../components/CustomButton'
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -67,7 +67,7 @@ export default function HomeScreen({ navigation }) {
   const [bannerData, setBannerData] = useState([])
   const [customerSpeaksData, setCustomerSpeaksData] = useState([])
   const [userInfo, setuserInfo] = useState([])
-  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [currentDateTime, setCurrentDateTime] = useState(moment.tz(new Date(), 'Asia/Kolkata'));
   const [freeBannerImg, setFreeBannerImg] = useState('')
 
   const getFCMToken = async () => {
@@ -89,10 +89,10 @@ export default function HomeScreen({ navigation }) {
       /* this is app foreground notification */
       const unsubscribe = messaging().onMessage(async remoteMessage => {
         // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-         console.log('Received background message:', JSON.stringify(remoteMessage));
-         if(remoteMessage?.notification?.title === 'Slot Cancel'){
+        console.log('Received background message:', JSON.stringify(remoteMessage));
+        if (remoteMessage?.notification?.title === 'Appointment Cancelled') {
           fetchUpcomingBooking()
-         }
+        }
       });
 
       return unsubscribe;
@@ -404,12 +404,16 @@ export default function HomeScreen({ navigation }) {
   // Memoized UpcomingBookingItem component
   const UpcomingBookingItem = memo(({ item }) => {
     // const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
+    // const endDateTime = new Date(`${item.date}T${item.end_time}`);
     // const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
-    // const isButtonEnabled = currentDateTime >= twoMinutesBefore;
-    const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
-    const endDateTime = new Date(`${item.date}T${item.end_time}`);
-    const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
-    const isButtonEnabled = currentDateTime >= twoMinutesBefore && currentDateTime <= endDateTime;
+    // const isButtonEnabled = currentDateTime >= twoMinutesBefore && currentDateTime <= endDateTime;
+
+    const bookingDateTimeIST = moment.tz(`${item.date}T${item.start_time}`, 'Asia/Kolkata');
+    const endDateTimeIST = moment.tz(`${item.date}T${item.end_time}`, 'Asia/Kolkata');
+    const currentDateTimeIST = currentDateTime;
+
+    const twoMinutesBefore = bookingDateTimeIST.clone().subtract(2, 'minutes');
+    const isButtonEnabled = currentDateTimeIST.isBetween(twoMinutesBefore, endDateTimeIST);
     return (
       <View style={styles.upcommingAppointmentView}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -565,7 +569,7 @@ export default function HomeScreen({ navigation }) {
 
     fetchData();
     const timer = setInterval(() => {
-      setCurrentDateTime(new Date());
+      setCurrentDateTime(moment.tz(new Date(), 'Asia/Kolkata'));
     }, 60000); // Update every minute
     return () => clearInterval(timer);
   }, [])
@@ -578,7 +582,7 @@ export default function HomeScreen({ navigation }) {
 
       fetchData();
       const timer = setInterval(() => {
-        setCurrentDateTime(new Date());
+        setCurrentDateTime(moment.tz(new Date(), 'Asia/Kolkata'));
       }, 60000); // Update every minute
       return () => clearInterval(timer);
     }, [])
@@ -676,7 +680,7 @@ export default function HomeScreen({ navigation }) {
               <View style={styles.freebannerContainer}>
                 {freeBannerImg ?
                   <Image
-                    source={{uri: freeBannerImg}}
+                    source={{ uri: freeBannerImg }}
                     style={styles.freebannerImg}
                   /> :
                   <Image
@@ -1010,7 +1014,7 @@ const styles = StyleSheet.create({
     android: {
       height: responsiveHeight(17.5), // Adjust height based on desired aspect ratio
       borderRadius: 10,
-      elevation:5
+      elevation: 5
     },
     ios: {
       height: responsiveHeight(17), // Adjust height based on desired aspect ratio
@@ -1018,7 +1022,7 @@ const styles = StyleSheet.create({
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.8,
-      shadowRadius: 2,   
+      shadowRadius: 2,
     },
   },
   freebannerImg: {
@@ -1026,7 +1030,7 @@ const styles = StyleSheet.create({
       android: {
         height: responsiveHeight(17.5), // Adjust height based on desired aspect ratio
         borderRadius: 10,
-        elevation:5
+        elevation: 5
       },
       ios: {
         height: responsiveHeight(17), // Adjust height based on desired aspect ratio
@@ -1034,7 +1038,7 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.8,
-        shadowRadius: 2,   
+        shadowRadius: 2,
       },
     }),
     width: responsiveWidth(92),   // 92% of the screen width

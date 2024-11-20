@@ -31,7 +31,7 @@ const ScheduleScreen = ({ navigation, route }) => {
     const [previousBooking, setPreviousBooking] = useState([])
     // const [isFocus, setIsFocus] = useState(false);
     const [focusedItemId, setFocusedItemId] = useState(null);
-    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const [currentDateTime, setCurrentDateTime] = useState(moment.tz(new Date(), 'Asia/Kolkata'));
 
     const fetchUpcomingBooking = () => {
         AsyncStorage.getItem('userToken', (err, usertoken) => {
@@ -239,7 +239,7 @@ const ScheduleScreen = ({ navigation, route }) => {
         fetchPreviousBooking();
 
         timerRef.current = setInterval(() => {
-            setCurrentDateTime(new Date());
+            setCurrentDateTime(moment.tz(new Date(), 'Asia/Kolkata'));
             console.log('every minute call');
             fetchUpcomingBooking();
         }, 60000); // Update every minute
@@ -248,7 +248,7 @@ const ScheduleScreen = ({ navigation, route }) => {
             console.log('Component gained focus');
             if (timerRef.current === null) {
                 timerRef.current = setInterval(() => {
-                    setCurrentDateTime(new Date());
+                    setCurrentDateTime(moment.tz(new Date(), 'Asia/Kolkata'));
                     console.log('every minute call');
                     fetchUpcomingBooking();
                 }, 60000);
@@ -295,12 +295,16 @@ const ScheduleScreen = ({ navigation, route }) => {
 
     const renderUpcoming = ({ item }) => {
         // const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
+        // const endDateTime = new Date(`${item.date}T${item.end_time}`);
         // const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
-        // const isButtonEnabled = currentDateTime >= twoMinutesBefore;
-        const bookingDateTime = new Date(`${item.date}T${item.start_time}`);
-        const endDateTime = new Date(`${item.date}T${item.end_time}`);
-        const twoMinutesBefore = new Date(bookingDateTime.getTime() - 2 * 60000); // Two minutes before booking start time
-        const isButtonEnabled = currentDateTime >= twoMinutesBefore && currentDateTime <= endDateTime;
+        // const isButtonEnabled = currentDateTime >= twoMinutesBefore && currentDateTime <= endDateTime;
+
+        const bookingDateTimeIST = moment.tz(`${item.date}T${item.start_time}`, 'Asia/Kolkata');
+        const endDateTimeIST = moment.tz(`${item.date}T${item.end_time}`, 'Asia/Kolkata');
+        const currentDateTimeIST = currentDateTime;
+
+        const twoMinutesBefore = bookingDateTimeIST.clone().subtract(2, 'minutes');
+        const isButtonEnabled = currentDateTimeIST.isBetween(twoMinutesBefore, endDateTimeIST);
 
         return (
             <View style={styles.upcomingView}>
