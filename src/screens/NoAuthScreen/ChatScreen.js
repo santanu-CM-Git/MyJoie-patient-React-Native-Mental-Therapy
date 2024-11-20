@@ -310,6 +310,15 @@ const ChatScreen = ({ navigation, route }) => {
   }, [filePath, imagePath]);
 
   const customtInputToolbar = props => {
+    if (remoteUid == null) {
+      return (
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>
+            Waiting for the therapist to join..
+          </Text>
+        </View>
+      );
+    }
     return (
       <InputToolbar
         {...props}
@@ -962,6 +971,7 @@ const ChatScreen = ({ navigation, route }) => {
           : activeTab == 'audio' ?
             <>
               <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground} resizeMode="cover">
+
                 {route?.params?.details?.therapist?.profile_pic ?
                   <Image
                     source={{ uri: route?.params?.details?.therapist?.profile_pic }}
@@ -973,6 +983,11 @@ const ChatScreen = ({ navigation, route }) => {
                   />
                 }
                 <Text style={styles.audioSectionTherapistName}>{route?.params?.details?.therapist?.name}</Text>
+                {remoteUid == null ?
+                  <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: '#FFFFFF', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Waiting for the therapist to join..</Text>
+                  </View>
+                  : null}
                 <View style={styles.audioButtonSection}>
                   {micOn ?
                     <TouchableOpacity onPress={() => toggleMic()}>
