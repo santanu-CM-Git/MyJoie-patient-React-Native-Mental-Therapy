@@ -747,7 +747,7 @@ const TherapistList = ({ navigation, route }) => {
                         </View>
                     </View>
                 </View>
-                <View style={{ alignSelf: 'center', marginBottom: 10 }}>
+                <View style={{ alignSelf: 'center', marginBottom: responsiveHeight(2),marginTop: -responsiveHeight(2) }}>
                     <TextInput
                         style={styles.editinput}
                         onChangeText={(text) => changeSearchValue(text)}

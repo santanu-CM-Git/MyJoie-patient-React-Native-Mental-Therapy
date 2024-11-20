@@ -353,8 +353,8 @@ const getTabBarVisibility = route => {
     return 'none';
   } else if (routeName == 'WalletScreen') {
     return 'none';
-  } else if (routeName == 'TherapistList') {
-    return 'none';
+  // } else if (routeName == 'TherapistList') {
+  //   return 'none';
   } else if (routeName == 'TherapistProfile') {
     return 'none';
   } else if (routeName == 'FreeTherapistList') {

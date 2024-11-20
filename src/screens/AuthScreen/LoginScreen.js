@@ -199,6 +199,9 @@ const LoginScreen = ({ navigation }) => {
                   dialCode: {
                     color: '#808080'
                   },
+                  countryName: {
+                    color: '#808080'
+                  }
                 }}
               />
             </View>

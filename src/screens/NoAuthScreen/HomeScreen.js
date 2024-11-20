@@ -710,7 +710,7 @@ export default function HomeScreen({ navigation }) {
             />
           </View>
           {customerSpeaksData.length !== 0 ?
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(2), }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: responsiveHeight(1), }}>
               <Text style={styles.sectionHeaderText}>Customer Speaks</Text>
               <Image
                 source={yellowStarImg}
@@ -791,12 +791,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     marginTop: responsiveHeight(1),
-    marginLeft: responsiveWidth(1)
+    marginLeft: -responsiveWidth(1),
+    marginBottom: -responsiveHeight(1)
   },
   bannerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: responsiveWidth(93),
+    width: responsiveWidth(96),
     height: BannerHeight,
     //backgroundColor: 'red',
     overflow: 'hidden',
@@ -981,6 +982,7 @@ const styles = StyleSheet.create({
   },
   freebannerContainer: {
     marginTop: responsiveHeight(1),
+    marginBottom: responsiveHeight(1),
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -988,12 +990,17 @@ const styles = StyleSheet.create({
   freebannerImg: {
     ...Platform.select({
       android: {
-        height: responsiveHeight(20), // Adjust height based on desired aspect ratio
+        height: responsiveHeight(17.5), // Adjust height based on desired aspect ratio
         borderRadius: 10,
+        elevation:5
       },
       ios: {
         height: responsiveHeight(17), // Adjust height based on desired aspect ratio
         borderRadius: 14,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,   
       },
     }),
     width: responsiveWidth(92),   // 92% of the screen width
