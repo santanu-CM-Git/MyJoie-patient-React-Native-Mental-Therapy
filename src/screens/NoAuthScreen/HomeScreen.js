@@ -677,7 +677,7 @@ export default function HomeScreen({ navigation }) {
           </View>
           {(userInfo?.patient_details?.free_session === 'no' && parseInt(userInfo?.offer_for_free) > 0) ? (
             <TouchableOpacity onPress={() => navigation.navigate('FreeTherapistList')}>
-              <View style={styles.freebannerContainer}>
+              {/* <View style={styles.freebannerContainer}> */}
                 {freeBannerImg ?
                   <Image
                     source={{ uri: freeBannerImg }}
@@ -688,7 +688,7 @@ export default function HomeScreen({ navigation }) {
                     style={styles.freebannerImg}
                   />
                 }
-              </View>
+              {/* </View> */}
             </TouchableOpacity>
           ) : null}
           {previousBooking.length !== 0 ?
@@ -803,7 +803,7 @@ const styles = StyleSheet.create({
         marginLeft: -responsiveWidth(2),
       },
     }),
-    marginBottom: -responsiveHeight(1)
+    marginBottom: responsiveHeight(0)
   },
   bannerContainer: {
     justifyContent: 'center',
@@ -832,7 +832,7 @@ const styles = StyleSheet.create({
         height: '105%',
       },
     }),
-    
+
     //resizeMode: 'contain',
     borderRadius: 10
   },
@@ -840,7 +840,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: responsiveHeight(2),
+    marginTop: responsiveHeight(1),
   },
   sectionHeaderText: {
     marginHorizontal: 20,
@@ -968,7 +968,14 @@ const styles = StyleSheet.create({
     borderRadius: 25
   },
   cardImgForTherapist: {
-    height: 90,
+    ...Platform.select({
+      android: {
+        height: 90,
+      },
+      ios: {
+        height: 82,
+      },
+    }),
     width: 70,
     borderRadius: 15,
     resizeMode: 'contain',
@@ -1008,43 +1015,38 @@ const styles = StyleSheet.create({
     marginLeft: responsiveWidth(2)
   },
   freebannerContainer: {
-    marginTop: responsiveHeight(1),
-    marginBottom: responsiveHeight(1),
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    android: {
-      height: responsiveHeight(17.5), // Adjust height based on desired aspect ratio
-      borderRadius: 10,
-      elevation: 5
-    },
-    ios: {
-      height: responsiveHeight(17), // Adjust height based on desired aspect ratio
-      borderRadius: 14,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.8,
-      shadowRadius: 2,
-    },
+    // marginTop: responsiveHeight(1),
+    // marginBottom: responsiveHeight(1),
+    // flex: 1,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // backgroundColor: 'red',
+    height: responsiveHeight(20),
+    backgroundColor:'red'
   },
   freebannerImg: {
     ...Platform.select({
       android: {
         height: responsiveHeight(17.5), // Adjust height based on desired aspect ratio
+        width: responsiveWidth(92),
         borderRadius: 10,
         elevation: 5
       },
       ios: {
-        height: responsiveHeight(17), // Adjust height based on desired aspect ratio
-        borderRadius: 14,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        height: 155, // Adjust height based on desired aspect ratio
+        width: responsiveWidth(92),
+        borderRadius: 10,
+        shadowColor: 'rgba(47, 47, 47, 0.39)',
+        shadowOffset: { width: 0, height: 5 },
         shadowOpacity: 0.8,
         shadowRadius: 2,
       },
     }),
-    width: responsiveWidth(92),   // 92% of the screen width
     resizeMode: 'contain',
+    marginTop: responsiveHeight(1),
+    marginBottom: responsiveHeight(1),
+    flex: 1,
+    alignSelf:'center'
   },
   previousTherapistView: {
     //height: responsiveHeight(30),
@@ -1053,7 +1055,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     padding: 15,
     borderRadius: 10,
-    marginTop: responsiveHeight(2),
+    marginTop: responsiveHeight(1),
     marginBottom: responsiveHeight(1),
     ...Platform.select({
       android: {
@@ -1111,7 +1113,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     marginHorizontal: 15,
     borderRadius: 10,
-    marginTop: responsiveHeight(3),
+    marginTop: responsiveHeight(2),
     marginBottom: responsiveHeight(1),
     ...Platform.select({
       android: {
