@@ -825,12 +825,14 @@ const styles = StyleSheet.create({
     ...Platform.select({
       android: {
         width: '100%',
+        height: '100%',
       },
       ios: {
         width: '120%',
+        height: '105%',
       },
     }),
-    height: '100%',
+    
     //resizeMode: 'contain',
     borderRadius: 10
   },

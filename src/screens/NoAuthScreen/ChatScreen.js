@@ -313,7 +313,7 @@ const ChatScreen = ({ navigation, route }) => {
     if (remoteUid == null) {
       return (
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>
+          <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold',textAlign:'center' }}>
             Waiting for the therapist to join..
           </Text>
         </View>
@@ -985,7 +985,7 @@ const ChatScreen = ({ navigation, route }) => {
                 <Text style={styles.audioSectionTherapistName}>{route?.params?.details?.therapist?.name}</Text>
                 {remoteUid == null ?
                   <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: '#FFFFFF', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Waiting for the therapist to join..</Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold',textAlign:'center' }}>Waiting for the therapist to join..</Text>
                   </View>
                   : null}
                 <View style={styles.audioButtonSection}>
@@ -1029,7 +1029,7 @@ const ChatScreen = ({ navigation, route }) => {
                   <View style={{ height: responsiveHeight(80), width: '100%' }}>
                     {remoteUid == null ?
                       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold' }}>Waiting for the therapist to join..</Text>
+                        <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold',textAlign:'center' }}>Waiting for the therapist to join..</Text>
                       </View>
                       : null}
 
@@ -1140,7 +1140,21 @@ const styles = StyleSheet.create({
   ButtonImg: { height: 20, width: 20, resizeMode: 'contain', marginRight: 5 },
   ButtonText: { color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
   containSection: { height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  AudioBackground: { flex: 1, width: responsiveWidth(100), height: responsiveHeight(80), justifyContent: 'center', alignItems: 'center' },
+  AudioBackground: {
+    flex: 1,
+    width: responsiveWidth(100),
+    ...Platform.select({
+      android: {
+        height: responsiveHeight(80),
+      },
+      ios: { 
+        height: responsiveHeight(78),
+      },
+    }),
+    
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   buttonImage: { height: 150, width: 150, borderRadius: 150 / 2, marginTop: - responsiveHeight(20) },
   audioSectionTherapistName: { color: '#FFF', fontSize: responsiveFontSize(2.6), fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2) },
   audioButtonSection: { backgroundColor: '#000', height: responsiveHeight(8), width: responsiveWidth(40), borderRadius: 50, alignItems: 'center', position: 'absolute', bottom: 40, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
