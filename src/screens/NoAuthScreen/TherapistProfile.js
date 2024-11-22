@@ -117,11 +117,6 @@ const TherapistProfile = ({ navigation, route }) => {
                         console.log('not okk');
                         setIsLoading(false);
                         Alert.alert('Oops..', "Something went wrong", [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                     }
@@ -131,11 +126,6 @@ const TherapistProfile = ({ navigation, route }) => {
                     console.log(`Available slot error ${e}`);
                     console.log(e.response);
                     Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ]);
                 });
@@ -191,11 +181,6 @@ const TherapistProfile = ({ navigation, route }) => {
                         console.log('not okk')
                         setIsLoading(false)
                         Alert.alert('Oops..', "Something went wrong", [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                     }
@@ -274,11 +259,6 @@ const TherapistProfile = ({ navigation, route }) => {
                         console.log('not okk')
                         setIsLoading(false)
                         Alert.alert('Oops..', "Something went wrong", [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                     }
@@ -288,11 +268,6 @@ const TherapistProfile = ({ navigation, route }) => {
                     console.log(`all reviews error ${e}`)
                     console.log(e.response)
                     Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ]);
                 });
@@ -387,20 +362,10 @@ const TherapistProfile = ({ navigation, route }) => {
     const isBlockedByAdminCheck = () => {
         if (selectedByUser.length === 0) {
             Alert.alert('Oops..', 'You need to select at least one slot.', [
-                {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
             ]);
         } else if (selectedByUser.length > 4) {
             Alert.alert('Oops..', 'You can select a maximum of 4 slots.', [
-                {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
             ]);
         } else {
@@ -436,11 +401,6 @@ const TherapistProfile = ({ navigation, route }) => {
                             console.log('not okk')
                             setIsLoading(false)
                             Alert.alert('Oops..', res?.data?.message || "Something went wrong", [
-                                {
-                                    text: 'Cancel',
-                                    onPress: () => console.log('Cancel Pressed'),
-                                    style: 'cancel',
-                                },
                                 { text: 'OK', onPress: () => console.log('OK Pressed') },
                             ]);
                         }
@@ -450,11 +410,6 @@ const TherapistProfile = ({ navigation, route }) => {
                         console.log(`slot booking checking error ${e}`)
                         console.log(e.response)
                         Alert.alert('Oops..', e.response?.data?.message, [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => e.response?.data?.message == 'Unauthorized' ? logout() : console.log('OK Pressed') },
                         ]);
                     });
@@ -470,20 +425,10 @@ const TherapistProfile = ({ navigation, route }) => {
             setPermissionError('')
             if (selectedByUser.length === 0) {
                 Alert.alert('Oops..', 'You need to select at least one slot.', [
-                    {
-                        text: 'Cancel',
-                        onPress: () => console.log('Cancel Pressed'),
-                        style: 'cancel',
-                    },
                     { text: 'OK', onPress: () => console.log('OK Pressed') },
                 ]);
             } else if (selectedByUser.length > 4) {
                 Alert.alert('Oops..', 'You can select a maximum of 4 slots.', [
-                    {
-                        text: 'Cancel',
-                        onPress: () => console.log('Cancel Pressed'),
-                        style: 'cancel',
-                    },
                     { text: 'OK', onPress: () => console.log('OK Pressed') },
                 ]);
             } else {
@@ -559,11 +504,6 @@ const TherapistProfile = ({ navigation, route }) => {
                                     console.log('not okk')
                                     setIsLoading(false)
                                     Alert.alert('Oops..', "Something went wrong", [
-                                        {
-                                            text: 'Cancel',
-                                            onPress: () => console.log('Cancel Pressed'),
-                                            style: 'cancel',
-                                        },
                                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                                     ]);
                                 }
@@ -573,11 +513,6 @@ const TherapistProfile = ({ navigation, route }) => {
                                 console.log(`slot booking error ${e}`)
                                 console.log(e.response)
                                 Alert.alert('Oops..', e.response?.data?.message, [
-                                    {
-                                        text: 'Cancel',
-                                        onPress: () => console.log('Cancel Pressed'),
-                                        style: 'cancel',
-                                    },
                                     { text: 'OK', onPress: () => console.log('OK Pressed') },
                                 ]);
                             });
@@ -585,11 +520,6 @@ const TherapistProfile = ({ navigation, route }) => {
                 } else {
                     if (selectedByUser.length > 1) {
                         Alert.alert('Sorry..', 'You need to choose only one slot for a free session.', [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                     } else {
@@ -658,11 +588,6 @@ const TherapistProfile = ({ navigation, route }) => {
                                         console.log('not okk')
                                         setIsLoading(false)
                                         Alert.alert('Oops..', res.data.message || "Something went wrong", [
-                                            {
-                                                text: 'Cancel',
-                                                onPress: () => console.log('Cancel Pressed'),
-                                                style: 'cancel',
-                                            },
                                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                                         ]);
                                     }
@@ -672,11 +597,6 @@ const TherapistProfile = ({ navigation, route }) => {
                                     console.log(`slot booking error ${e}`)
                                     console.log(e.response)
                                     Alert.alert('Oops..', e.response?.data?.message, [
-                                        {
-                                            text: 'Cancel',
-                                            onPress: () => console.log('Cancel Pressed'),
-                                            style: 'cancel',
-                                        },
                                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                                     ]);
                                 });
@@ -724,11 +644,6 @@ const TherapistProfile = ({ navigation, route }) => {
                             console.log('not okk')
                             setIsLoading(false)
                             Alert.alert('Oops..', "Something went wrong", [
-                                {
-                                    text: 'Cancel',
-                                    onPress: () => console.log('Cancel Pressed'),
-                                    style: 'cancel',
-                                },
                                 { text: 'OK', onPress: () => console.log('OK Pressed') },
                             ]);
                         }
@@ -738,11 +653,6 @@ const TherapistProfile = ({ navigation, route }) => {
                         console.log(`bookmarked error ${e}`)
                         console.log(e.response)
                         Alert.alert('Oops..', e.response?.data?.message, [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                     });
