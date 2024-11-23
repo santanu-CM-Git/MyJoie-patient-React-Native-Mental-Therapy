@@ -62,11 +62,6 @@ const Bookmarked = ({ navigation }) => {
                         console.log('not okk')
                         setIsLoading(false)
                         Alert.alert('Oops..', "Something went wrong", [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                     }
@@ -76,11 +71,6 @@ const Bookmarked = ({ navigation }) => {
                     console.log(`bookmarked therapist fetch error ${e}`)
                     console.log(e.response)
                     Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ]);
                 });
@@ -119,11 +109,6 @@ const Bookmarked = ({ navigation }) => {
                             console.log('not okk')
                             setIsLoading(false)
                             Alert.alert('Oops..', "Something went wrong.", [
-                                {
-                                    text: 'Cancel',
-                                    onPress: () => console.log('Cancel Pressed'),
-                                    style: 'cancel',
-                                },
                                 { text: 'OK', onPress: () => console.log('OK Pressed') },
                             ]);
                         }

@@ -141,11 +141,6 @@ const BookingSummary = ({ navigation, route }) => {
                         console.log('not okk')
                         setIsLoading(false)
                         Alert.alert('Oops..', res?.data?.message || "Something went wrong", [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                     }
@@ -247,11 +242,6 @@ const BookingSummary = ({ navigation, route }) => {
                         console.log('not ok');
                         setIsLoading(false);
                         Alert.alert('Oops..', res.data.message || "Something went wrong", [
-                            {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                            },
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                     }
@@ -261,11 +251,6 @@ const BookingSummary = ({ navigation, route }) => {
                     console.log(`booking submit from booking summary error ${e}`);
                     console.log(e.response);
                     Alert.alert('Oops..', e.response?.data?.message, [
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ]);
                 });
@@ -333,21 +318,11 @@ const BookingSummary = ({ navigation, route }) => {
                 setIsCouponLoading(false);
                 console.log(`Coupon apply error ${error}`);
                 Alert.alert('Oops..', error.message || 'Something went wrong.', [
-                    {
-                        text: 'Cancel',
-                        onPress: () => console.log('Cancel Pressed'),
-                        style: 'cancel',
-                    },
                     { text: 'OK', onPress: () => console.log('OK Pressed') },
                 ]);
             }
         } else {
             Alert.alert('Oops..', "Please enter coupon code first.", [
-                {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
             ]);
         }
