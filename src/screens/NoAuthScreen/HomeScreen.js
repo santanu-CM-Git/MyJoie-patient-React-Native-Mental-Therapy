@@ -1033,8 +1033,8 @@ const styles = StyleSheet.create({
          elevation: 5
       },
       ios: {
-        height: 155, // Adjust height based on desired aspect ratio
-        width: responsiveWidth(92),
+        height: 175, // Adjust height based on desired aspect ratio
+        width: responsiveWidth(97),
         borderRadius: 10,
         shadowColor: 'rgba(47, 47, 47, 0.39)',
         shadowOffset: { width: 0, height: 5 },
@@ -1044,7 +1044,7 @@ const styles = StyleSheet.create({
     }),
     resizeMode: 'contain',
     marginTop: responsiveHeight(0),
-    marginBottom: responsiveHeight(1),
+    marginBottom: responsiveHeight(0),
     flex: 1,
     alignSelf:'center'
   },
