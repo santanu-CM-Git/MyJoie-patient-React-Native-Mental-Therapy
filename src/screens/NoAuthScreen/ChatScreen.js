@@ -153,6 +153,7 @@ const ChatScreen = ({ navigation, route }) => {
             agoraEngine?.stopPreview(); // Stop the local video preview
             agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
             setActiveTab('chat');
+            await AsyncStorage.setItem('activeTab', 'chat');
             setIsVideoEnabled(false);
             break;
           case 'audio':
@@ -162,6 +163,7 @@ const ChatScreen = ({ navigation, route }) => {
             // agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
             await toggleSpeakerphone(true);
             setActiveTab('audio');
+            await AsyncStorage.setItem('activeTab', 'audio');
             setIsVideoEnabled(false);
             break;
           case 'video':
@@ -171,6 +173,7 @@ const ChatScreen = ({ navigation, route }) => {
             // agoraEngine?.muteLocalVideoStream(false); // Unmute local video stream
             await toggleSpeakerphone(true);
             setActiveTab('video');
+            await AsyncStorage.setItem('activeTab', 'video');
             setIsVideoEnabled(true);
             break;
         }
@@ -695,6 +698,7 @@ const ChatScreen = ({ navigation, route }) => {
       agoraEngine?.stopPreview(); // Stop the local video preview
       agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
       setActiveTab('audio');
+      await AsyncStorage.setItem('activeTab', 'audio');
       setIsVideoEnabled(false);
     } else if (name === 'video') {
       await startVideoCall();
@@ -703,6 +707,7 @@ const ChatScreen = ({ navigation, route }) => {
       agoraEngine?.startPreview(); // Start the local video preview
       agoraEngine?.muteLocalVideoStream(false); // Unmute local video stream
       setActiveTab('video');
+      await AsyncStorage.setItem('activeTab', 'video');
       setIsVideoEnabled(true);
     } else if (name === 'chat') {
       const agoraEngine = agoraEngineRef.current;
@@ -710,6 +715,7 @@ const ChatScreen = ({ navigation, route }) => {
       agoraEngine?.stopPreview(); // Stop the local video preview
       agoraEngine?.muteLocalVideoStream(true); // Mute local video stream
       setActiveTab('chat');
+      await AsyncStorage.setItem('activeTab', 'chat');
       setIsVideoEnabled(false);
     }
   };
