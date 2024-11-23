@@ -770,12 +770,13 @@ const ChatScreen = ({ navigation, route }) => {
   }
 
   const requestToCancel = async () => {
+    const storedTab = await AsyncStorage.getItem('activeTab');
     const option = {
       "booked_slot_id": route?.params?.details?.id,
-      "flag": activeTab,
-      "screen": activeTab
+      "flag": storedTab,
+      "screen": storedTab
     };
-    // console.log(option);
+     console.log(option);
     try {
       const userToken = await AsyncStorage.getItem('userToken');
       if (!userToken) {
