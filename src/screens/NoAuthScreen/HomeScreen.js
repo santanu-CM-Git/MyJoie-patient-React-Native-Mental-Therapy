@@ -1027,10 +1027,10 @@ const styles = StyleSheet.create({
   freebannerImg: {
     ...Platform.select({
       android: {
-        height: responsiveHeight(17.5), // Adjust height based on desired aspect ratio
-        width: responsiveWidth(92),
+        height: 155, // Adjust height based on desired aspect ratio
+        width: responsiveWidth(97),
         borderRadius: 10,
-        elevation: 5
+         elevation: 5
       },
       ios: {
         height: 155, // Adjust height based on desired aspect ratio
@@ -1043,7 +1043,7 @@ const styles = StyleSheet.create({
       },
     }),
     resizeMode: 'contain',
-    marginTop: responsiveHeight(1),
+    marginTop: responsiveHeight(0),
     marginBottom: responsiveHeight(1),
     flex: 1,
     alignSelf:'center'
