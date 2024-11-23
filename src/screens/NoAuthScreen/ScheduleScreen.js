@@ -326,7 +326,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                                 style={{
                                     width: responsiveWidth(60),
                                     backgroundColor: '#fff',
-                                    height: responsiveHeight(7),
+                                    height: responsiveHeight(8),
                                     position: 'absolute',
                                     right: 0,
                                     top: 30,
