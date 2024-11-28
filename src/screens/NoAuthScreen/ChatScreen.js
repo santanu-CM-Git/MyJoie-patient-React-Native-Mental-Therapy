@@ -12,7 +12,7 @@ import KeepAwake from 'react-native-keep-awake';
 import firestore, { endBefore } from '@react-native-firebase/firestore'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import messaging from '@react-native-firebase/messaging';
-
+import LinearGradient from 'react-native-linear-gradient';
 import {
   ClientRoleType,
   createAgoraRtcEngine,
@@ -58,7 +58,18 @@ const ChatScreen = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [timer, setTimer] = useState(0);
   const [endTime, setEndTime] = useState(null);
+  const [endButtonVisible, setEndButtonVisible] = useState(false)
   const intervalRef = useRef(null);
+
+  useEffect(() => {
+    // Set a timeout to change the state after 3 minutes
+    const timer = setTimeout(() => {
+      setEndButtonVisible(true);
+    }, 180000); // 180000ms = 3 minutes
+
+    // Cleanup the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     // console.log(routepage.name);
@@ -727,7 +738,7 @@ const ChatScreen = ({ navigation, route }) => {
   const requestToTabSwitch = async (name) => {
     setIsLoading(true);
     const option = {
-      "booked_slot_id": route?.params?.details?.id,
+      "booked_slot_id": route?.params?.details?.id, 
       "flag": name
     };
     // console.log(option);
@@ -883,12 +894,13 @@ const ChatScreen = ({ navigation, route }) => {
           </View>
         </View>
         <View style={styles.HeaderSectionHalf}>
-          <Text style={styles.timerText}>{formatTime(timer)}</Text>
-          <TouchableOpacity onPress={() => confirmEnd()}>
-            <View style={styles.endButtonView}>
-              <Text style={styles.endButtonText}>End</Text>
-            </View>
-          </TouchableOpacity>
+          <Text style={styles.timerText}>{formatTime(timer)}</Text> 
+         {endButtonVisible?
+            <TouchableOpacity onPress={() => confirmEnd()}>
+              <View style={styles.endButtonView}>
+                <Text style={styles.endButtonText}>End</Text> 
+              </View>
+            </TouchableOpacity> :null}
         </View>
       </View>
       <View style={styles.TabSection}>
@@ -981,13 +993,13 @@ const ChatScreen = ({ navigation, route }) => {
           />
           : activeTab == 'audio' ?
             <>
-              <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground} resizeMode="cover">
-
+              {/* <ImageBackground source={audioBgImg} blurRadius={10} style={styles.AudioBackground} resizeMode='stretch'> */}
+              <LinearGradient colors={['#4c669f', '#417AA4', '#192f6a']} style={styles.AudioBackground}>
                 {route?.params?.details?.therapist?.profile_pic ?
                   <Image
                     source={{ uri: route?.params?.details?.therapist?.profile_pic }}
                     style={styles.buttonImage}
-                  /> :
+                  /> : 
                   <Image
                     source={defaultUserImg}
                     style={styles.buttonImage}
@@ -1026,8 +1038,9 @@ const ChatScreen = ({ navigation, route }) => {
                         style={styles.iconStyle}
                       />
                     </TouchableOpacity>}
-                </View>
-              </ImageBackground>
+                </View> 
+                {/* </ImageBackground> */}
+              </LinearGradient>
             </>
 
             :
@@ -1037,7 +1050,7 @@ const ChatScreen = ({ navigation, route }) => {
               ) : isVideoEnabled ? (
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
-                  <View style={{ height: Platform.OS == 'ios' ? responsiveHeight(75) : responsiveHeight(80), width: '100%' }}>
+                  <View style={{ height: Platform.OS == 'ios' ? responsiveHeight(72) : responsiveHeight(80), width: '100%' }}>
                     {remoteUid == null ?
                       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', textAlign: 'center' }}>Waiting for the therapist to join..</Text>
@@ -1147,12 +1160,27 @@ const styles = StyleSheet.create({
   endButtonView: { paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#53A39F', borderRadius: 15, marginLeft: responsiveWidth(2) },
   endButtonText: { color: '#FFF', fontFamily: 'DMSans-Semibold', fontSize: responsiveFontSize(1.5) },
   TabSection: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 },
-  ButtonView: { width: responsiveWidth(45), height: responsiveHeight(6), backgroundColor: '#fff', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  ButtonView: {
+    width: responsiveWidth(45),
+    ...Platform.select({
+      android: {
+        height: responsiveHeight(6),
+      },
+      ios: {
+        height: responsiveHeight(4),
+      },
+    }),
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   ButtonImg: { height: 20, width: 20, resizeMode: 'contain', marginRight: 5 },
   ButtonText: { color: '#2D2D2D', fontFamily: 'DMSans-Medium', fontSize: responsiveFontSize(1.7) },
   containSection: { height: responsiveHeight(80), width: responsiveWidth(100), backgroundColor: '#FFF', position: 'absolute', bottom: 0, paddingBottom: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
   AudioBackground: {
-    flex: 1,
+    //flex: 1, 
     width: responsiveWidth(100),
     ...Platform.select({
       android: {
