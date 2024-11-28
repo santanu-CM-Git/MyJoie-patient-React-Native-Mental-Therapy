@@ -412,7 +412,7 @@ export default function HomeScreen({ navigation }) {
     const endDateTimeIST = moment.tz(`${item.date}T${item.end_time}`, 'Asia/Kolkata');
     const currentDateTimeIST = currentDateTime;
 
-    const twoMinutesBefore = bookingDateTimeIST.clone().subtract(2, 'minutes');
+    const twoMinutesBefore = bookingDateTimeIST.clone().subtract(0, 'minutes');
     const isButtonEnabled = currentDateTimeIST.isBetween(twoMinutesBefore, endDateTimeIST);
     return (
       <View style={styles.upcommingAppointmentView}>
