@@ -1048,15 +1048,15 @@ const ChatScreen = ({ navigation, route }) => {
               {isVideLoading ? (
                 <ActivityIndicator size="large" color="#0000ff" />  // Display loading indicator while joining
               ) : isVideoEnabled ? (
-                <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+                <SafeAreaView style={{ backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
-                  <View style={{ height: Platform.OS == 'ios' ? responsiveHeight(72) : responsiveHeight(80), width: '100%' }}>
+                  <View style={{ height: Platform.OS == 'ios' ? responsiveHeight(80) : responsiveHeight(80), width: '100%' }}>
                     {remoteUid == null ?
                       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', textAlign: 'center' }}>Waiting for the therapist to join..</Text>
                       </View>
                       : null}
-
+  
                     {/* Remote Video View */}
                     {remoteUid !== null && (
                       <View style={{ position: 'relative', flex: 1 }}>
@@ -1187,9 +1187,9 @@ const styles = StyleSheet.create({
         height: responsiveHeight(80),
       },
       ios: {
-        height: responsiveHeight(75),
+        height: responsiveHeight(80),
       },
-    }),
+    }), 
 
     justifyContent: 'center',
     alignItems: 'center'
