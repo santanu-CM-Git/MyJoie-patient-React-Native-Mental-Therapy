@@ -28,6 +28,24 @@
 	<string>46bac1e829d0197f7957c40fe346b6f4</string>
 	<key>FacebookDisplayName</key>
 	<string>MyJoie</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>gpay</string>
+		<string>phonepe</string>
+		<string>paytm</string>
+		<string>bhim</string>
+		<string>mobikwik</string>
+		<string>amazon</string>
+		<string>truecaller</string>
+		<string>airtel</string>
+		<string>mipay</string>
+		<string>slice</string>
+		<string>imobile</string>
+		<string>axis</string>
+		<string>payzapp</string>
+		<string>yonosbi</string>
+		<string>kotak</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true />
 	<key>NSAppTransportSecurity</key>

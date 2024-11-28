@@ -316,7 +316,7 @@ const ChatScreen = ({ navigation, route }) => {
     if (remoteUid == null) {
       return (
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold',textAlign:'center' }}>
+          <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', textAlign: 'center' }}>
             Waiting for the therapist to join..
           </Text>
         </View>
@@ -700,6 +700,8 @@ const ChatScreen = ({ navigation, route }) => {
       setActiveTab('audio');
       await AsyncStorage.setItem('activeTab', 'audio');
       setIsVideoEnabled(false);
+      setSpeakerOn(true)
+      setMicOn(true)
     } else if (name === 'video') {
       await startVideoCall();
       const agoraEngine = agoraEngineRef.current;
@@ -709,6 +711,8 @@ const ChatScreen = ({ navigation, route }) => {
       setActiveTab('video');
       await AsyncStorage.setItem('activeTab', 'video');
       setIsVideoEnabled(true);
+      setSpeakerOn(true)
+      setMicOn(true)
     } else if (name === 'chat') {
       const agoraEngine = agoraEngineRef.current;
       agoraEngine?.muteLocalAudioStream(true);
@@ -776,7 +780,7 @@ const ChatScreen = ({ navigation, route }) => {
       "flag": storedTab,
       "screen": storedTab
     };
-     console.log(option);
+    console.log(option);
     try {
       const userToken = await AsyncStorage.getItem('userToken');
       if (!userToken) {
@@ -992,7 +996,7 @@ const ChatScreen = ({ navigation, route }) => {
                 <Text style={styles.audioSectionTherapistName}>{route?.params?.details?.therapist?.name}</Text>
                 {remoteUid == null ?
                   <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: '#FFFFFF', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold',textAlign:'center' }}>Waiting for the therapist to join..</Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', textAlign: 'center' }}>Waiting for the therapist to join..</Text>
                   </View>
                   : null}
                 <View style={styles.audioButtonSection}>
@@ -1033,10 +1037,10 @@ const ChatScreen = ({ navigation, route }) => {
               ) : isVideoEnabled ? (
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
                   {/* Agora Video Component */}
-                  <View style={{ height: responsiveHeight(80), width: '100%' }}>
+                  <View style={{ height: Platform.OS == 'ios' ? responsiveHeight(75) : responsiveHeight(80), width: '100%' }}>
                     {remoteUid == null ?
                       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold',textAlign:'center' }}>Waiting for the therapist to join..</Text>
+                        <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', textAlign: 'center' }}>Waiting for the therapist to join..</Text>
                       </View>
                       : null}
 
@@ -1154,11 +1158,11 @@ const styles = StyleSheet.create({
       android: {
         height: responsiveHeight(80),
       },
-      ios: { 
-        height: responsiveHeight(78),
+      ios: {
+        height: responsiveHeight(75),
       },
     }),
-    
+
     justifyContent: 'center',
     alignItems: 'center'
   },
