@@ -828,7 +828,7 @@ const styles = StyleSheet.create({
         height: '100%',
       },
       ios: {
-        width: '130%',
+        width: '110%',
         height: '108%',
       },
     }),
