@@ -800,7 +800,7 @@ const styles = StyleSheet.create({
         marginLeft: -responsiveWidth(1),
       },
       ios: {
-        marginLeft: -responsiveWidth(2.5),
+        marginLeft: -responsiveWidth(3),
       },
     }),
     marginBottom: responsiveHeight(0)
@@ -811,12 +811,13 @@ const styles = StyleSheet.create({
     ...Platform.select({
       android: {
         width: responsiveWidth(96),
+        height: BannerHeight,
       },
       ios: {
         width: responsiveWidth(100),
+        height: BannerHeight - responsiveHeight(1),
       },
     }),
-    height: BannerHeight,
     //backgroundColor: 'red',
     overflow: 'hidden',
     borderRadius: 10
@@ -828,7 +829,7 @@ const styles = StyleSheet.create({
         height: '100%',
       },
       ios: {
-        width: '110%',
+        width: '105%',
         height: '107%',
       },
     }),
