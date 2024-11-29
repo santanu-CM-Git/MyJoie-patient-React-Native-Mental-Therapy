@@ -109,13 +109,13 @@ const PersonalInformation = ({ navigation, route }) => {
     }
     else {
       setEmailError('')
-      console.log("Email is Correct");
+      //console.log("Email is Correct");
       setEmail(text)
     }
   }
 
   const validateAge = (date) => {
-    console.log(date, 'given date');
+    //console.log(date, 'given date');
 
     // Ensure date string is split correctly
     const dateParts = date.split('-');
@@ -149,7 +149,7 @@ const PersonalInformation = ({ navigation, route }) => {
       age--;
     }
 
-    console.log(age, 'calculated age');
+    //console.log(age, 'calculated age');
 
     return age >= 18;
   };
@@ -189,7 +189,7 @@ const PersonalInformation = ({ navigation, route }) => {
         "marital_status": monthvalue,
         //"mobile" : "7797599595"
       }
-      console.log(option, 'dhhhdhhd')
+      //console.log(option, 'dhhhdhhd')
       axios.post(`${API_URL}/patient/registration`, option, {
         headers: {
           Accept: 'application/json',
@@ -197,7 +197,7 @@ const PersonalInformation = ({ navigation, route }) => {
         },
       })
         .then(res => {
-          console.log(res.data)
+          //console.log(res.data)
           if (res.data.response == true) {
             setIsLoading(false)
             Toast.show({
@@ -209,7 +209,7 @@ const PersonalInformation = ({ navigation, route }) => {
             });
             login(route?.params?.token)
           } else {
-            console.log('not okk')
+            //console.log('not okk')
             setIsLoading(false)
             Alert.alert('Oops..', "Something went wrong.", [
               {
@@ -315,7 +315,7 @@ const PersonalInformation = ({ navigation, route }) => {
                   //   setDate(formattedDate);
                   if (selectedDate) {
                     const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
-                    console.log(formattedDate);
+                    //console.log(formattedDate);
                     setOpen(false)
                     setSelectedDOB(selectedDate);
                     setDate(formattedDate);

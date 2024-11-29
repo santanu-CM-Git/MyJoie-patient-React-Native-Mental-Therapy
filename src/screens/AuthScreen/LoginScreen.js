@@ -50,7 +50,7 @@ const LoginScreen = ({ navigation }) => {
       // }
       const token = await messaging().getToken();
       AsyncStorage.setItem('fcmToken', token)
-      console.log(token, 'fcm token');
+      //console.log(token, 'fcm token');
     } catch (e) {
       console.log(e);
     }
@@ -89,11 +89,11 @@ const LoginScreen = ({ navigation }) => {
       setMobileError('Please enter a 10-digit number.')
     } else {
       setIsLoading(true)
-      console.log(API_URL);
+      //console.log(API_URL);
       
       AsyncStorage.getItem('fcmToken', (err, fcmToken) => {
-        console.log(fcmToken, 'firebase token')
-        console.log(deviceId, 'device id')
+        //console.log(fcmToken, 'firebase token')
+        //console.log(deviceId, 'device id')
         const option = {
           "country_code": countryCode,
           "mobile": phone,
@@ -107,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
           },
         })
           .then(res => {
-            console.log(res.data)
+            //console.log(res.data)
             if (res.data.response == true) {
               setIsLoading(false)
               // Toast.show({
@@ -122,7 +122,7 @@ const LoginScreen = ({ navigation }) => {
               //navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name })
               navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.data?.otp, fcmToken: fcmToken})
             } else {
-              console.log('not okk')
+              //console.log('not okk')
               setIsLoading(false)
               Alert.alert('Oops..', "Something went wrong.", [
                 { text: 'OK', onPress: () => console.log('OK Pressed') },

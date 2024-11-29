@@ -55,7 +55,7 @@ const TherapistProfile = ({ navigation, route }) => {
     const nextSevenDays = getNextSevenDays();
 
     const selectedDateChange = (index, day, date) => {
-        console.log(index, day, date);
+        //console.log(index, day, date);
         setSelectedDay(index);
         setSelectedDate(date);
         setIsLoading(true);
@@ -93,7 +93,7 @@ const TherapistProfile = ({ navigation, route }) => {
             "therapist_id": route?.params?.therapistId,
             "booking_type": route?.params?.mode
         };
-        console.log(option);
+        //console.log(option);
 
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             axios.post(`${API_URL}/patient/therapist-date-slots`, option, {
@@ -133,7 +133,7 @@ const TherapistProfile = ({ navigation, route }) => {
     };
 
     const handleSlotSelect = (slot) => {
-        console.log(slot, 'selected slot data');
+        //console.log(slot, 'selected slot data');
         if (slot.booked_status === 0) {
             setSelectedByUser((prevSelected) => {
                 const slotIndex = therapistAvailability.indexOf(slot);
@@ -164,7 +164,7 @@ const TherapistProfile = ({ navigation, route }) => {
             const option = {
                 "therapist_id": therapistId
             }
-            console.log(option)
+            //console.log(option)
             axios.post(`${API_URL}/patient/therapist`, option, {
                 headers: {
                     'Accept': 'application/json',
@@ -173,7 +173,7 @@ const TherapistProfile = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'response from therapist data')
+                    //console.log(JSON.stringify(res.data.data), 'response from therapist data')
                     if (res.data.response == true) {
                         setProfileDetails(res.data.data[0])
                         setIsLoading(false);
@@ -229,8 +229,8 @@ const TherapistProfile = ({ navigation, route }) => {
         const formattedDate = moment().format('YYYY-MM-DD');
         const dayOfWeek = moment().format('dddd');
         const index = 0;
-        console.log(formattedDate);
-        console.log(dayOfWeek)
+        //console.log(formattedDate);
+        //console.log(dayOfWeek)
         selectedDateChange(index, dayOfWeek, formattedDate)
         //getAllReviewForTherapist()
         setSelectedByUser([])
@@ -240,7 +240,7 @@ const TherapistProfile = ({ navigation, route }) => {
         const option = {
             "user_id": route?.params?.therapistId
         }
-        console.log(option)
+        //console.log(option)
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             axios.post(`${API_URL}/patient/reviews`, option, {
                 headers: {
@@ -250,13 +250,13 @@ const TherapistProfile = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'fetch all reviews')
+                    //console.log(JSON.stringify(res.data.data), 'fetch all reviews')
                     if (res.data.response == true) {
                         setAllreview(res.data.data);
                         //setIsLoading(false);
 
                     } else {
-                        console.log('not okk')
+                        //console.log('not okk')
                         setIsLoading(false)
                         Alert.alert('Oops..', "Something went wrong", [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -393,12 +393,12 @@ const TherapistProfile = ({ navigation, route }) => {
                     },
                 })
                     .then(res => {
-                        console.log(JSON.stringify(res.data.data), 'submit form response')
+                        //console.log(JSON.stringify(res.data.data), 'submit form response')
                         if (res.data.response == true) {
                             setIsLoading(false)
                             submitForm()
                         } else {
-                            console.log('not okk')
+                            //console.log('not okk')
                             setIsLoading(false)
                             Alert.alert('Oops..', res?.data?.message || "Something went wrong", [
                                 { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -418,9 +418,9 @@ const TherapistProfile = ({ navigation, route }) => {
     }
 
     const submitForm = () => {
-        console.log(selectedByUser.length, 'no of selected slot')
-        console.log(profileDetails?.rate, 'rate of the therapist')
-        console.log(route?.params?.mode, 'type')
+        //console.log(selectedByUser.length, 'no of selected slot')
+        //console.log(profileDetails?.rate, 'rate of the therapist')
+        //console.log(route?.params?.mode, 'type')
         if (toggleCheckBox === true) {
             setPermissionError('')
             if (selectedByUser.length === 0) {
@@ -450,15 +450,15 @@ const TherapistProfile = ({ navigation, route }) => {
                     }
                     const totalAmount = (selectedByUser.length * profileDetails?.rate)
 
-                    console.log(profileDetails?.user_id, "therapist_id")
-                    console.log(ids, 'slot_ids')
-                    console.log(selectedDate, 'date')
-                    console.log('purpose', 'purpose')
-                    console.log(mode, 'mode_of_conversation')
-                    console.log("online", 'payment_mode')
-                    console.log("Razorpay", "gateway_name")
-                    console.log(prescription_checked, "prescription_checked")
-                    console.log(totalAmount, 'transaction_amount')
+                    // console.log(profileDetails?.user_id, "therapist_id")
+                    // console.log(ids, 'slot_ids')
+                    // console.log(selectedDate, 'date')
+                    // console.log('purpose', 'purpose')
+                    // console.log(mode, 'mode_of_conversation')
+                    // console.log("online", 'payment_mode')
+                    // console.log("Razorpay", "gateway_name")
+                    // console.log(prescription_checked, "prescription_checked")
+                    // console.log(totalAmount, 'transaction_amount')
                    
                     const option = {
                         "therapist_id": profileDetails?.user_id,
@@ -489,7 +489,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             },
                         })
                             .then(res => {
-                                console.log(JSON.stringify(res.data), 'submit form response')
+                                //console.log(JSON.stringify(res.data), 'submit form response')
                                 if (res.data.response == true) {
                                     setIsLoading(false)
                                     Toast.show({
@@ -501,7 +501,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                     });
                                     navigation.navigate('Talk', { screen: 'Summary', params: { profileDetails: profileDetails, submitData: option, selectedSlot: selectedByUser } })
                                 } else {
-                                    console.log('not okk')
+                                    //console.log('not okk')
                                     setIsLoading(false)
                                     Alert.alert('Oops..', "Something went wrong", [
                                         { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -524,9 +524,9 @@ const TherapistProfile = ({ navigation, route }) => {
                         ]);
                     } else {
                         setIsLoading(true)
-                        console.log(selectedByUser)
+                        //console.log(selectedByUser)
                         const ids = selectedByUser.flatMap(item => [item.id.toString()]);
-                        console.log(ids)
+                        //console.log(ids)
                         var mode = ''
                         if (selectedItem == 1) {
                             mode = "chat"
@@ -562,7 +562,7 @@ const TherapistProfile = ({ navigation, route }) => {
                         formData.append("gst_amount", "0");
 
 
-                        console.log(formData)
+                        //console.log(formData)
                         AsyncStorage.getItem('userToken', (err, usertoken) => {
                             axios.post(`${API_URL}/patient/slot-book`, formData, {
                                 headers: {
@@ -572,7 +572,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                 },
                             })
                                 .then(res => {
-                                    console.log(JSON.stringify(res.data.data), 'submit form response')
+                                    //console.log(JSON.stringify(res.data.data), 'submit form response')
                                     if (res.data.response == true) {
                                         setIsLoading(false)
                                         // Alert.alert('Hello..', res.data.message, [
@@ -585,7 +585,7 @@ const TherapistProfile = ({ navigation, route }) => {
                                         // ]);
                                         navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) })
                                     } else {
-                                        console.log('not okk')
+                                        //console.log('not okk')
                                         setIsLoading(false)
                                         Alert.alert('Oops..', res.data.message || "Something went wrong", [
                                             { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -629,7 +629,7 @@ const TherapistProfile = ({ navigation, route }) => {
                     },
                 })
                     .then(res => {
-                        console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
+                        //console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
                         if (res.data.response == true) {
                             setIsLoading(false);
                             Toast.show({
@@ -641,7 +641,7 @@ const TherapistProfile = ({ navigation, route }) => {
                             });
                             fetchTherapistData(therapistId)
                         } else {
-                            console.log('not okk')
+                            //console.log('not okk')
                             setIsLoading(false)
                             Alert.alert('Oops..', "Something went wrong", [
                                 { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -711,8 +711,8 @@ const TherapistProfile = ({ navigation, route }) => {
         const formattedDate = moment().format('YYYY-MM-DD');
         const dayOfWeek = moment().format('dddd');
         const index = 0;
-        console.log(formattedDate);
-        console.log(dayOfWeek)
+        //console.log(formattedDate);
+        //console.log(dayOfWeek)
         selectedDateChange(index, dayOfWeek, formattedDate)
         //getAllReviewForTherapist()
         setSelectedByUser([])

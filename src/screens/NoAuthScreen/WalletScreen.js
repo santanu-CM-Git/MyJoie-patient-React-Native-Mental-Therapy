@@ -44,7 +44,7 @@ const WalletScreen = ({ navigation }) => {
                 .then(res => {
                     //console.log(res.data,'user details')
                     let userBalance = res.data.wallet_amount;
-                    console.log(userBalance, 'wallet balance')
+                    //console.log(userBalance, 'wallet balance')
                     setWalletBalance(userBalance)
                     //setIsLoading(false);
                 })
@@ -69,9 +69,9 @@ const WalletScreen = ({ navigation }) => {
                 .then(res => {
                     //console.log(res.data,'user details')
                     let userBalanceTransaction = res.data.data;
-                    console.log(userBalanceTransaction, 'all transaction transaction')
+                    //console.log(userBalanceTransaction, 'all transaction transaction')
                     const filteredTransactions = userBalanceTransaction.filter(transaction => transaction.amount !== 0);
-                    console.log(filteredTransactions, 'wallet transaction')
+                    //console.log(filteredTransactions, 'wallet transaction')
                     setWalletTransaction(filteredTransactions)
                     setIsLoading(false);
                 })

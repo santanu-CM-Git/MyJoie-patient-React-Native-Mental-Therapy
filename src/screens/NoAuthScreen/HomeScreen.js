@@ -77,7 +77,7 @@ export default function HomeScreen({ navigation }) {
       // }
       const token = await messaging().getToken();
       AsyncStorage.setItem('fcmToken', token)
-      console.log(token, 'fcm token');
+      //console.log(token, 'fcm token');
     } catch (e) {
       console.log(e);
     }
@@ -89,7 +89,7 @@ export default function HomeScreen({ navigation }) {
       /* this is app foreground notification */
       const unsubscribe = messaging().onMessage(async remoteMessage => {
         // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-        console.log('Received background message:', JSON.stringify(remoteMessage));
+        //console.log('Received background message:', JSON.stringify(remoteMessage));
         if (remoteMessage?.notification?.title === 'Appointment Cancelled') {
           fetchUpcomingBooking()
         }
@@ -126,7 +126,7 @@ export default function HomeScreen({ navigation }) {
       })
         .then(res => {
           let userInfo = res.data.data;
-          console.log(userInfo, 'user data from contact informmation')
+          //console.log(userInfo, 'user data from contact informmation')
           setuserInfo(userInfo)
         })
         .catch(e => {
@@ -141,9 +141,9 @@ export default function HomeScreen({ navigation }) {
       },
     })
       .then(res => {
-        console.log(res.data, 'all banner details')
+        //console.log(res.data, 'all banner details')
         let banner = res.data.data;
-        console.log(banner, 'banner data')
+        //console.log(banner, 'banner data')
         setBannerData(banner)
         setFreeBannerImg(res.data.free_banner)
         banner.forEach(item => {
@@ -278,7 +278,7 @@ export default function HomeScreen({ navigation }) {
             //setIsLoading(false);
 
           } else {
-            console.log('not okk')
+            //console.log('not okk')
             setIsLoading(false)
             Alert.alert('Oops..', "Something went wrong", [
               {

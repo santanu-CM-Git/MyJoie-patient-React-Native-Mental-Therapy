@@ -791,7 +791,7 @@ const ChatScreen = ({ navigation, route }) => {
       "flag": storedTab,
       "screen": storedTab
     };
-    console.log(option);
+    //console.log(option);
     try {
       const userToken = await AsyncStorage.getItem('userToken');
       if (!userToken) {
@@ -845,7 +845,7 @@ const ChatScreen = ({ navigation, route }) => {
           ]);
         }
         if (remoteMessage?.data?.screen === 'Cancel') {
-          console.log(remoteMessage?.data?.flag, 'ddddddddd')
+          //console.log(remoteMessage?.data?.flag, 'ddddddddd')
           goingToactiveTab(remoteMessage?.data?.flag)
         }
         if (remoteMessage?.data?.screen === 'ChatScreen') {

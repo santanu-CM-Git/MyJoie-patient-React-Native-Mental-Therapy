@@ -158,7 +158,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const fetchUserData = () => {
     setIsLoading(true)
     AsyncStorage.getItem('userToken', (err, usertoken) => {
-      console.log(usertoken, 'usertoken')
+      //console.log(usertoken, 'usertoken')
       axios.post(`${API_URL}/patient/profile`, {}, {
         headers: {
           "Authorization": `Bearer ${usertoken}`,
@@ -167,7 +167,7 @@ const ProfileScreen = ({ navigation, route }) => {
       })
         .then(res => {
           let userInfo = res.data.data;
-          console.log(userInfo, 'user data from profile api ')
+          //console.log(userInfo, 'user data from profile api ')
           setFirstname(userInfo?.name)
           setEmail(userInfo?.email)
           setCountryCode(userInfo?.country_code)
@@ -408,7 +408,7 @@ const ProfileScreen = ({ navigation, route }) => {
                   //   setDate(formattedDate);
                   if (selectedDate) {
                     const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
-                    console.log(formattedDate);
+                    //console.log(formattedDate);
                     setOpen(false)
                     setSelectedDOB(selectedDate);
                     setDate(formattedDate);

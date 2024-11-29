@@ -44,7 +44,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                 .then(res => {
                     //console.log(res.data,'user details')
                     let upcomingBooking = res.data.data;
-                    console.log(upcomingBooking, 'upcomingBooking')
+                    //console.log(upcomingBooking, 'upcomingBooking')
                     upcomingBooking.sort((a, b) => {
                         let dateA = new Date(a.date);
                         let dateB = new Date(b.date);
@@ -113,7 +113,7 @@ const ScheduleScreen = ({ navigation, route }) => {
             );
 
             let previousBooking = response.data.data;
-            console.log(previousBooking, 'previous Booking data');
+            //console.log(previousBooking, 'previous Booking data');
 
             // Sort by date and start_time
             previousBooking.sort((a, b) => {
@@ -148,11 +148,11 @@ const ScheduleScreen = ({ navigation, route }) => {
     }
 
     const cancelSchedule = (id) => {
-        console.log(JSON.stringify(id))
+        //console.log(JSON.stringify(id))
         const option = {
             "booked_slot_id": id
         }
-        console.log(option)
+        //console.log(option)
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             axios.post(`${API_URL}/patient/slot-cancel`, option, {
                 headers: {
@@ -174,7 +174,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                         });
                         fetchUpcomingBooking()
                     } else {
-                        console.log('not okk')
+                        //console.log('not okk')
                         setIsLoading(false)
                         Alert.alert('Oops..', res?.data?.message || "Something went wrong.", [
                             {
@@ -225,7 +225,7 @@ const ScheduleScreen = ({ navigation, route }) => {
     //     return () => clearInterval(timer);
     // }, [])
     useEffect(() => {
-        console.log(route?.params?.activeTab, 'active tabbbbyyy');
+        //console.log(route?.params?.activeTab, 'active tabbbbyyy');
 
         if (route?.params?.activeTab === 'Upcoming' || route?.params?.activeTab === undefined) {
             setActiveTab('Upcoming');
@@ -240,7 +240,7 @@ const ScheduleScreen = ({ navigation, route }) => {
 
         timerRef.current = setInterval(() => {
             setCurrentDateTime(moment.tz(new Date(), 'Asia/Kolkata'));
-            console.log('every minute call');
+            //console.log('every minute call');
             fetchUpcomingBooking();
         }, 60000); // Update every minute
 

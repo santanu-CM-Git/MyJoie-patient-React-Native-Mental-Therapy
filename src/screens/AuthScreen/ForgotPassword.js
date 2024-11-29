@@ -50,7 +50,7 @@ const ForgotPassword = ({ navigation }) => {
             // }
             const token = await messaging().getToken();
             AsyncStorage.setItem('fcmToken', token)
-            console.log(token, 'fcm token');
+            //console.log(token, 'fcm token');
         } catch (e) {
             console.log(e);
         }

@@ -83,8 +83,8 @@ const ScheduleScreen = ({ navigation }) => {
     }
 
     const dateRangeSearch = () => {
-        console.log(startDay)
-        console.log(endDay)
+        //console.log(startDay)
+        //console.log(endDay)
         toggleModal()
     }
 

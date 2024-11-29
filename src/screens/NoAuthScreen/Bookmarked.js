@@ -53,13 +53,13 @@ const Bookmarked = ({ navigation }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'fetch all bookmarked therapist')
+                    //console.log(JSON.stringify(res.data.data), 'fetch all bookmarked therapist')
                     if (res.data.response == true) {
                         setTherapistData(res.data.data);
                         setIsLoading(false);
 
                     } else {
-                        console.log('not okk')
+                        //console.log('not okk')
                         setIsLoading(false)
                         Alert.alert('Oops..', "Something went wrong", [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -85,7 +85,7 @@ const Bookmarked = ({ navigation }) => {
                     "patient_id": userData.patient_details.user_id,
                     "therapist_id": therapistId
                 }
-                console.log(option, 'bbbbbb')
+                //console.log(option, 'bbbbbb')
                 axios.post(`${API_URL}/patient/wishlist-click`, option, {
                     headers: {
                         'Accept': 'application/json',
@@ -94,7 +94,7 @@ const Bookmarked = ({ navigation }) => {
                     },
                 })
                     .then(res => {
-                        console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
+                        //console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
                         if (res.data.response == true) {
                             setIsLoading(false);
                             Toast.show({
@@ -106,7 +106,7 @@ const Bookmarked = ({ navigation }) => {
                             });
                             fetchBookmarkedTherapist()
                         } else {
-                            console.log('not okk')
+                            //console.log('not okk')
                             setIsLoading(false)
                             Alert.alert('Oops..', "Something went wrong.", [
                                 { text: 'OK', onPress: () => console.log('OK Pressed') },

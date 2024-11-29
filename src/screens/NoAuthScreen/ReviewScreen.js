@@ -48,7 +48,7 @@ const ReviewScreen = ({ navigation, route }) => {
                     },
                 })
                     .then(res => {
-                        console.log(res.data)
+                        //console.log(res.data)
                         if (res.data.response == true) {
                             setIsLoading(false)
                             Toast.show({
@@ -60,7 +60,7 @@ const ReviewScreen = ({ navigation, route }) => {
                             });
                             navigation.navigate('Home')
                         } else {
-                            console.log('not okk')
+                            //console.log('not okk')
                             setIsLoading(false)
                             Alert.alert('Oops..', "Something went wrong.", [
                                 {

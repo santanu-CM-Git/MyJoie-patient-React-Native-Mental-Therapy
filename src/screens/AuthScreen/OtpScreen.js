@@ -81,7 +81,7 @@ const OtpScreen = ({ navigation, route }) => {
 
     const goToNextPage = (code) => {
         setIsLoading(true)
-        console.log(comingOTP,'comingOTPcomingOTP');
+        //console.log(comingOTP,'comingOTPcomingOTP');
         
         if (code == comingOTP) {
             const option = {
@@ -90,7 +90,7 @@ const OtpScreen = ({ navigation, route }) => {
                 "firebase_token": route?.params?.fcmToken,
                 //"deviceid": deviceId,
             }
-            console.log(option);
+            //console.log(option);
 
             axios.post(`${API_URL}/patient/login`, option, {
                 headers: {
@@ -99,7 +99,7 @@ const OtpScreen = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(res.data)
+                    //console.log(res.data)
                     if (res.data.response == true) {
                         setIsLoading(false)
                         // Toast.show({
@@ -160,7 +160,7 @@ const OtpScreen = ({ navigation, route }) => {
             },
         })
             .then(res => {
-                console.log(res.data)
+                //console.log(res.data)
                 if (res.data.response == true) {
                     setIsLoading(false)
                     Toast.show({

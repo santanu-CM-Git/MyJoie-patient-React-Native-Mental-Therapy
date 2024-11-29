@@ -102,8 +102,8 @@ const BookingSummary = ({ navigation, route }) => {
             const userBalance = response.data.wallet_amount;
             const fetchedGstPercentage = response.data.gst_percentage;
 
-            console.log(userBalance, 'wallet balance');
-            console.log(fetchedGstPercentage, 'gst percentage');
+            //console.log(userBalance, 'wallet balance');
+            //console.log(fetchedGstPercentage, 'gst percentage');
 
             setWalletBalance(userBalance);
             setGstPercentage(fetchedGstPercentage);
@@ -133,12 +133,12 @@ const BookingSummary = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'submit form response')
+                    //console.log(JSON.stringify(res.data.data), 'submit form response')
                     if (res.data.response == true) {
                         setIsLoading(false)
                         handlePayment()
                     } else {
-                        console.log('not okk')
+                        //console.log('not okk')
                         setIsLoading(false)
                         Alert.alert('Oops..', res?.data?.message || "Something went wrong", [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -178,10 +178,10 @@ const BookingSummary = ({ navigation, route }) => {
                 theme: { color: '#519ED8' }
             };
             RazorpayCheckout.open(options).then((data) => {
-                console.log(data, 'data');
+                //console.log(data, 'data');
                 submitForm(data.razorpay_payment_id);
             }).catch((error) => {
-                console.log(error.description);
+                //console.log(error.description);
                 const errorMsg = error.description;
                 //console.log(errorMsg.error.description);
                 // if(errorMsg.error.description == "undefined"){
@@ -215,7 +215,7 @@ const BookingSummary = ({ navigation, route }) => {
         formData.append("wallet_deduction", isEnabled ? walletDeduction : "0");
         formData.append("transaction_amount", payableAmount);
 
-        console.log(formData);
+        //console.log(formData);
 
         AsyncStorage.getItem('userToken', (err, usertoken) => {
             axios.post(`${API_URL}/patient/slot-book`, formData, {
@@ -226,7 +226,7 @@ const BookingSummary = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'submit form response');
+                    //console.log(JSON.stringify(res.data.data), 'submit form response');
                     if (res.data.response) {
                         setIsLoading(false);
                         // Alert.alert('Hello..', res.data.message, [
@@ -239,7 +239,7 @@ const BookingSummary = ({ navigation, route }) => {
                         // ]);
                         navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) })
                     } else {
-                        console.log('not ok');
+                        //console.log('not ok');
                         setIsLoading(false);
                         Alert.alert('Oops..', res.data.message || "Something went wrong", [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -284,7 +284,7 @@ const BookingSummary = ({ navigation, route }) => {
                     setIsCouponLoading(false);
                     setCouponCode('');
                     const couponData = response.data.data[0];
-                    console.log(couponData, 'response from coupon code');
+                    //console.log(couponData, 'response from coupon code');
                     if (couponData) {
                         setCouponId(couponData.id)
                         // Calculate coupon deduction based on type
@@ -335,15 +335,15 @@ const BookingSummary = ({ navigation, route }) => {
         // Recalculate taxable amount based on original amount and GST percentage
         const originalAmount = route?.params?.submitData?.transaction_amount || 0;
         const calculatedTaxableAmount = ((originalAmount) * gstPercentage) / 100;
-        console.log(calculatedTaxableAmount, 'taxable amount')
+        //console.log(calculatedTaxableAmount, 'taxable amount')
         setTaxableAmount(calculatedTaxableAmount);
 
         // Calculate new payable amount
         let newPayableAmount = originalAmount + calculatedTaxableAmount;
 
         // Deduct wallet balance if the switch is enabled
-        console.log(isEnabled, 'wallet balance check or not')
-        console.log(walletDeduction, 'wallet balance')
+        //console.log(isEnabled, 'wallet balance check or not')
+        //console.log(walletDeduction, 'wallet balance')
         if (isEnabled) {
             newPayableAmount -= walletDeduction;
         }

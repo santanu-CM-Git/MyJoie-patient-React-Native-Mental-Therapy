@@ -30,7 +30,7 @@ const CustomDrawer = props => {
 
   const fetchProfileDetails = () => {
     AsyncStorage.getItem('userToken', (err, usertoken) => {
-      console.log(usertoken, 'usertoken')
+      //console.log(usertoken, 'usertoken')
       axios.post(`${API_URL}/patient/profile`, {}, {
         headers: {
           "Authorization": `Bearer ${usertoken}`,
@@ -39,7 +39,7 @@ const CustomDrawer = props => {
       })
         .then(res => {
           let userInfo = res.data.data;
-          console.log(userInfo, 'user data from contact informmation')
+          //console.log(userInfo, 'user data from contact informmation')
           setuserInfo(userInfo)
         })
         .catch(e => {

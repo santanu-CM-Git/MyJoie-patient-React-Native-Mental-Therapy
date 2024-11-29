@@ -88,7 +88,7 @@ const TherapistList = ({ navigation, route }) => {
     const [selectedType, setSelectedType] = useState([]);
     const onSelectionsChangeType = (selectedType) => {
         // selectedFruits is array of { label, value }
-        console.log(selectedType, 'meeee')
+        //console.log(selectedType, 'meeee')
         setSelectedType(selectedType);
     };
 
@@ -102,12 +102,12 @@ const TherapistList = ({ navigation, route }) => {
         //Keep only the last selected item
         if (selectedRating.length > 0) {
             const selectedValue = selectedRating[selectedRating.length - 1].value;
-            console.log(selectedRating[selectedRating.length - 1], 'mmm');
+            //console.log(selectedRating[selectedRating.length - 1], 'mmm');
 
             // Set the selectedRating to only the last selected value
             setSelectedRating([selectedRating[selectedRating.length - 1]]);
 
-            console.log(selectedValue)
+            //console.log(selectedValue)
             // Update rating based on selection
             if (selectedValue === '3') {
                 setRatingValue([3, 5]);
@@ -135,7 +135,7 @@ const TherapistList = ({ navigation, route }) => {
     const [selectedQualification, setSelectedQualification] = useState([]);
     const onSelectionsChangeQualification = (selectedQualification) => {
         // selectedFruits is array of { label, value }
-        console.log(selectedQualification, 'jjjjjjjjj')
+        //console.log(selectedQualification, 'jjjjjjjjj')
         setSelectedQualification(selectedQualification);
     };
     // Language
@@ -243,13 +243,13 @@ const TherapistList = ({ navigation, route }) => {
                 const storedFilterDataRaw = await AsyncStorage.getItem('filterDataForPaidRaw')
                 const filterData = storedFilterData ? JSON.parse(storedFilterData) : null;
                 const filterDataRaw = storedFilterDataRaw ? JSON.parse(storedFilterDataRaw) : null;
-                console.log(filterData, 'already applied data');
+                //console.log(filterData, 'already applied data');
 
                 if (filterData) {
                     // If filter data exists, call submitForFilter
                     setIsLoading(true)
                     setIsFilterApplied(true)
-                    console.log(filterDataRaw.ratingValue, 'jjjjjj')
+                    //console.log(filterDataRaw.ratingValue, 'jjjjjj')
                     setSelectedExperience(filterDataRaw.selectedExperience)
                     setSelectedType(filterDataRaw.selectedType)
                     const ratingRanges = filterDataRaw.ratingValue;
@@ -386,7 +386,7 @@ const TherapistList = ({ navigation, route }) => {
             const filteredData = therapistData.filter(entry =>
                 entry.therapy_type_list.split(',').includes(item.value)
             );
-            console.log(filteredData, 'filterd data')
+            //console.log(filteredData, 'filterd data')
             setTherapistFilterData(filteredData)
         }
 
@@ -629,7 +629,7 @@ const TherapistList = ({ navigation, route }) => {
             await AsyncStorage.setItem('filterDataForPaid', JSON.stringify(filteredData));
 
             setIsFilterApplied(true)
-            console.log('Filter data saved to AsyncStorage:', filteredData);
+            //console.log('Filter data saved to AsyncStorage:', filteredData);
 
             const userToken = await AsyncStorage.getItem('userToken');
             if (!userToken) {
@@ -644,7 +644,7 @@ const TherapistList = ({ navigation, route }) => {
             });
 
             const data = response.data;
-            console.log(data, 'filterd therapist data');
+            //console.log(data, 'filterd therapist data');
             if (data.response) {
                 setTherapistFilterData(data.therapists);
                 toggleFilterModal()

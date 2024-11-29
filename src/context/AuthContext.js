@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     // }
 
     const login = (token) => {
-        console.log(token)
+        //console.log(token)
         setIsLoading(true);
         axios.post(`${API_URL}/patient/profile`,{}, {
             headers: {
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
             .then(res => {
                 //console.log(res.data,'user details')
                 let userInfo = res.data.data;
-                console.log(userInfo,'userInfo from loginnnnn')
+                //console.log(userInfo,'userInfo from loginnnnn')
                 AsyncStorage.setItem('userToken', token)
                 AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
                 setUserInfo(userInfo)
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
     }
     const isLoggedIn = async () => {
-        console.log('islogin')
+        //console.log('islogin')
         try {
             setIsLoading(true)
             let userInfo = await AsyncStorage.getItem('userInfo')

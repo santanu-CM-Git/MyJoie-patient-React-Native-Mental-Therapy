@@ -117,8 +117,8 @@ const TherapistStack = ({ navigation, route }) => {
   // );
   useFocusEffect(
     React.useCallback(() => {
-      console.log(route?.params?.screen, 'ooooooooooooooooooooo')
-      console.log(route.name, 'ppppppppppppppppppp');
+      //console.log(route?.params?.screen, 'ooooooooooooooooooooo')
+      //console.log(route.name, 'ppppppppppppppppppp');
 
       if (!route?.params?.screen && route.name === 'TherapistStack') {
         navigation.navigate('TherapistList');
@@ -342,7 +342,7 @@ const TabNavigator = ({navigation}) => {
 // };
 const getTabBarVisibility = route => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
-  console.log(routeName)
+  //console.log(routeName)
   if (routeName == 'Summary') {
     return 'none';
   } else if (routeName == 'ThankYouBookingScreen') {

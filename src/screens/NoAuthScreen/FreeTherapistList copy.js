@@ -116,7 +116,7 @@ const FreeTherapistList = ({ navigation, route }) => {
             // Set the selectedRating to only the last selected value
             setSelectedRating([selectedRating[selectedRating.length - 1]]);
 
-            console.log(selectedValue)
+            //console.log(selectedValue)
             // Update rating based on selection
             if (selectedValue === '3') {
                 setRatingValue([3, 5]);
@@ -168,7 +168,7 @@ const FreeTherapistList = ({ navigation, route }) => {
         })
             .then(res => {
                 //console.log(languageInfo, 'bbbbbbb')
-                console.log(res.data.data, 'languageeeeeeee')
+                //console.log(res.data.data, 'languageeeeeeee')
                 const languageInfo = res.data.data.map(item => ({
                     label: item.content,
                     value: item.id,
@@ -291,7 +291,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                 },
             })
                 .then(res => {
-                    console.log(JSON.stringify(res.data.data), 'fetch all therapist')
+                    //console.log(JSON.stringify(res.data.data), 'fetch all therapist')
                     if (res.data.response == true) {
                         setTherapistData(res.data.data);
                         setTherapistFilterData(res.data.data)
@@ -330,7 +330,7 @@ const FreeTherapistList = ({ navigation, route }) => {
             const filteredData = therapistData.filter(entry =>
                 entry.therapy_type_list.split(',').includes(item.value)
             );
-            console.log(filteredData, 'filterd data')
+            //console.log(filteredData, 'filterd data')
             setTherapistFilterData(filteredData)
         }
 
@@ -351,7 +351,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                     },
                 })
                     .then(res => {
-                        console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
+                        //console.log(JSON.stringify(res.data.data), 'response from wishlist submit')
                         if (res.data.response == true) {
                             setIsLoading(false);
                             Toast.show({
@@ -363,7 +363,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                             });
                             fetchAllTherapist()
                         } else {
-                            console.log('not okk')
+                            //console.log('not okk')
                             setIsLoading(false)
                             Alert.alert('Oops..', "Something went wrong", [
                                 {
@@ -558,7 +558,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                 flag: "free"
             };
 
-            console.log(filteredData);
+            //console.log(filteredData);
 
             const userToken = await AsyncStorage.getItem('userToken');
             if (!userToken) {
@@ -573,7 +573,7 @@ const FreeTherapistList = ({ navigation, route }) => {
             });
 
             const data = response.data;
-            console.log(data, 'filterd therapist data');
+            //console.log(data, 'filterd therapist data');
             if (data.response) {
                 setTherapistFilterData(data.therapists);
                 toggleFilterModal()

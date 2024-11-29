@@ -40,7 +40,7 @@ const SessionHistory = ({ navigation }) => {
             );
 
             let previousBooking = response.data.data;
-            console.log(previousBooking, 'previous Booking data');
+            //console.log(previousBooking, 'previous Booking data');
 
             // Sort by date and start_time
             previousBooking.sort((a, b) => {

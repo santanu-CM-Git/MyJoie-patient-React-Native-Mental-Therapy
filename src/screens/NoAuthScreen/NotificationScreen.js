@@ -17,7 +17,7 @@ const NotificationScreen = ({ navigation }) => {
     if (Platform.OS == 'android') {
       const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
         Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-        console.log('Received foreground message:', JSON.stringify(remoteMessage));
+        //console.log('Received foreground message:', JSON.stringify(remoteMessage));
         setNotifications(prevNotifications => {
           const newNotifications = [...prevNotifications, remoteMessage];
           AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
@@ -27,7 +27,7 @@ const NotificationScreen = ({ navigation }) => {
       });
 
       const unsubscribeBackground = messaging().setBackgroundMessageHandler(async remoteMessage => {
-        console.log('Received background message:', remoteMessage);
+        //console.log('Received background message:', remoteMessage);
         setNotifications(prevNotifications => {
           const newNotifications = [...prevNotifications, remoteMessage];
           AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
