@@ -800,7 +800,7 @@ const styles = StyleSheet.create({
         marginLeft: -responsiveWidth(1),
       },
       ios: {
-        marginLeft: -responsiveWidth(2),
+        marginLeft: -responsiveWidth(2.5),
       },
     }),
     marginBottom: responsiveHeight(0)
@@ -829,7 +829,7 @@ const styles = StyleSheet.create({
       },
       ios: {
         width: '110%',
-        height: '108%',
+        height: '107%',
       },
     }),
 
