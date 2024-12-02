@@ -1033,7 +1033,7 @@ const styles = StyleSheet.create({
         width: responsiveWidth(92),
       },
       ios: {
-        width: responsiveWidth(91.2),
+        width: responsiveWidth(93),
       }
     }),
     alignSelf: 'center'
@@ -1046,7 +1046,7 @@ const styles = StyleSheet.create({
       },
       ios: {
         height: responsiveHeight(16.9), // Keep height and width in sync
-        width: responsiveWidth(91.2),
+        width: responsiveWidth(93),
       },
     }),
     borderRadius: 10, // Match with shadowContainer
