@@ -1017,7 +1017,7 @@ const styles = StyleSheet.create({
       },
       ios: {
         shadowColor: 'rgba(47, 47, 47, 0.39)',
-        shadowOffset: { width: 0, height: 5 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.8,
         shadowRadius: 10, // Increase for a softer shadow
         borderRadius: 10,
@@ -1026,12 +1026,12 @@ const styles = StyleSheet.create({
     }),
     marginTop: responsiveHeight(0),
     marginBottom: responsiveHeight(1),
-    width: responsiveWidth(94),
+    width: responsiveWidth(92),
     alignSelf:'center'
   },
   freebannerImg: {
     height: 135, // Keep height and width in sync
-    width: responsiveWidth(94),
+    width: responsiveWidth(92),
     borderRadius: 10, // Match with shadowContainer
     resizeMode: 'contain',
     flex: 1,
