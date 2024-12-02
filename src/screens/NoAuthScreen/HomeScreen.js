@@ -344,7 +344,9 @@ export default function HomeScreen({ navigation }) {
           />
         </View> */}
         <View style={[styles.shadowContainer, { width: itemWidth, height: imageHeight }]}>
-          <Image source={{ uri: item.banner_image }} resizeMode="cover" style={[styles.image, { width: itemWidth, height: imageHeight }]} />
+          <View style={styles.imageWrapper}>
+            <Image source={{ uri: item.banner_image }} resizeMode="cover" style={[styles.image, { width: itemWidth, height: imageHeight }]} />
+          </View>
         </View>
       </Pressable>
     )
@@ -1026,14 +1028,29 @@ const styles = StyleSheet.create({
     }),
     marginTop: responsiveHeight(0),
     marginBottom: responsiveHeight(1),
-    width: responsiveWidth(92),
-    alignSelf:'center'
+    ...Platform.select({
+      android: {
+        width: responsiveWidth(92),
+      },
+      ios: {
+        width: responsiveWidth(91.2),
+      }
+    }),
+    alignSelf: 'center'
   },
   freebannerImg: {
-    height: 135, // Keep height and width in sync
-    width: responsiveWidth(92),
+    ...Platform.select({
+      android: {
+        height: 135, // Keep height and width in sync
+        width: responsiveWidth(92),
+      },
+      ios: {
+        height: responsiveHeight(16.9), // Keep height and width in sync
+        width: responsiveWidth(91.2),
+      },
+    }),
     borderRadius: 10, // Match with shadowContainer
-    resizeMode: 'contain',
+    resizeMode: 'cover',
     flex: 1,
     alignSelf: 'center',
   },
@@ -1197,9 +1214,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 8,
     elevation: 5,
-    overflow: 'hidden', // Ensures borderRadius works properly
+    //overflow: 'hidden', // Ensures borderRadius works properly
     marginTop: responsiveHeight(2),
     marginBottom: responsiveHeight(1)
+  },
+  imageWrapper: {
+    overflow: 'hidden', // Ensures rounded corners without disabling the shadow
+    borderRadius: 10, // Rounded corners
   },
   image: {
     width: '100%',
