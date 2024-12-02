@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState, useEffect, memo, useCallback, useRef } from 'react';
+import React, { useContext, useMemo, useState, useEffect, memo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -38,14 +38,20 @@ import messaging from '@react-native-firebase/messaging';
 import LinearGradient from 'react-native-linear-gradient';
 import StarRating from 'react-native-star-rating';
 
-const { width } = Dimensions.get('window');
-const itemWidth = width * 0.8; // 80% of screen width
-const imageHeight = itemWidth * 0.5; // Maintain a 4:3 aspect ratio
+const data = [
+  { label: 'Today', value: '1' },
+  { label: 'Date Wise', value: '2' },
+];
+const BannerWidth = Dimensions.get('window').width;
+const BannerHeight = 170;
+const { height, width } = Dimensions.get('screen')
+const sliderWidth = Dimensions.get('window').width;
+const paddingHorizontal = 10;
+const itemWidth = sliderWidth - (2 * paddingHorizontal);
 
 
 export default function HomeScreen({ navigation }) {
 
-  const carouselRef = useRef(null);
   const dispatch = useDispatch();
   const { data: products, status } = useSelector(state => state.products)
   const { logout } = useContext(AuthContext);
@@ -333,7 +339,7 @@ export default function HomeScreen({ navigation }) {
     };
     return (
       <Pressable onPress={handleBannerPress}>
-        {/* <View style={styles.bannerContainer}>
+        <View style={styles.bannerContainer}>
           <FastImage
             source={{ uri: item.banner_image }}
             //source={bannerPlaceHolder}
@@ -342,9 +348,6 @@ export default function HomeScreen({ navigation }) {
             style={styles.bannerImage}
             resizeMode={FastImage.resizeMode.contain}
           />
-        </View> */}
-        <View style={[styles.shadowContainer, { width: itemWidth, height: imageHeight }]}>
-          <Image source={{ uri: item.banner_image }} resizeMode="cover" style={[styles.image, { width: itemWidth, height: imageHeight }]} />
         </View>
       </Pressable>
     )
@@ -609,8 +612,8 @@ export default function HomeScreen({ navigation }) {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
       }>
         <View style={{ marginBottom: 10 }}>
-          {/* <View style={styles.carouselView}> */}
-          {/* <Carousel
+          <View style={styles.carouselView}>
+            <Carousel
               data={bannerData}
               renderItem={CarouselCardItem}
               showsPageIndicator={true}
@@ -625,19 +628,6 @@ export default function HomeScreen({ navigation }) {
               //enableSnap={true}
               onSnapToItem={(index) => setActiveSlide(index)}
               activePageIndicatorStyle={{ backgroundColor: 'red' }}
-            /> */}
-          {/* </View> */}
-          <View style={{ marginBottom: responsiveHeight(1) }}>
-            <Carousel
-              ref={carouselRef}
-              data={bannerData}
-              renderItem={CarouselCardItem}
-              sliderWidth={width}
-              itemWidth={width * 0.8}
-              loop={true}
-              autoplay={true}
-              autoplayDelay={1000}
-              autoplayInterval={3000}
             />
           </View>
           {upcomingBooking.length !== 0 ?
@@ -686,8 +676,8 @@ export default function HomeScreen({ navigation }) {
             />
           </View>
           {(userInfo?.patient_details?.free_session === 'no' && parseInt(userInfo?.offer_for_free) > 0) ? (
-            <TouchableWithoutFeedback onPress={() => navigation.navigate('FreeTherapistList')}>
-              <View style={styles.freebannerContainer}>
+            <TouchableOpacity onPress={() => navigation.navigate('FreeTherapistList')}>
+              {/* <View style={styles.freebannerContainer}> */}
                 {freeBannerImg ?
                   <Image
                     source={{ uri: freeBannerImg }}
@@ -698,8 +688,8 @@ export default function HomeScreen({ navigation }) {
                     style={styles.freebannerImg}
                   />
                 }
-              </View>
-            </TouchableWithoutFeedback>
+              {/* </View> */}
+            </TouchableOpacity>
           ) : null}
           {previousBooking.length !== 0 ?
             <View style={styles.sectionHeaderView}>
@@ -814,6 +804,23 @@ const styles = StyleSheet.create({
       },
     }),
     marginBottom: responsiveHeight(0)
+  },
+  bannerContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Platform.select({
+      android: {
+        width: responsiveWidth(96),
+        height: BannerHeight,
+      },
+      ios: {
+        width: responsiveWidth(100),
+        height: BannerHeight - responsiveHeight(1),
+      },
+    }),
+    //backgroundColor: 'red',
+    overflow: 'hidden',
+    borderRadius: 10
   },
   bannerImage: {
     ...Platform.select({
@@ -1009,33 +1016,38 @@ const styles = StyleSheet.create({
     marginLeft: responsiveWidth(2)
   },
   freebannerContainer: {
+    // marginTop: responsiveHeight(1),
+    // marginBottom: responsiveHeight(1),
+    // flex: 1,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // backgroundColor: 'red',
+    height: responsiveHeight(20),
+    backgroundColor:'red'
+  },
+  freebannerImg: {
     ...Platform.select({
       android: {
-        elevation: 5, // Shadow for Android
-        borderRadius: 10, // Match the image borderRadius
-        backgroundColor: '#fff', // Needed for elevation to work
+        height: 155, // Adjust height based on desired aspect ratio
+        width: responsiveWidth(97),
+        borderRadius: 10,
+         elevation: 5
       },
       ios: {
+        height: 178, // Adjust height based on desired aspect ratio
+        width: responsiveWidth(98),
+        borderRadius: 10,
         shadowColor: 'rgba(47, 47, 47, 0.39)',
         shadowOffset: { width: 0, height: 5 },
         shadowOpacity: 0.8,
-        shadowRadius: 10, // Increase for a softer shadow
-        borderRadius: 10,
-        backgroundColor: '#fff', // Required for shadow
+        shadowRadius: 2,
       },
     }),
-    marginTop: responsiveHeight(0),
-    marginBottom: responsiveHeight(1),
-    width: responsiveWidth(94),
-    alignSelf:'center'
-  },
-  freebannerImg: {
-    height: 135, // Keep height and width in sync
-    width: responsiveWidth(94),
-    borderRadius: 10, // Match with shadowContainer
     resizeMode: 'contain',
+    marginTop: responsiveHeight(0),
+    marginBottom: responsiveHeight(0),
     flex: 1,
-    alignSelf: 'center',
+    alignSelf:'center'
   },
   previousTherapistView: {
     //height: responsiveHeight(30),
@@ -1188,22 +1200,4 @@ const styles = StyleSheet.create({
     color: '#746868'
   },
 
-
-  shadowContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 5,
-    overflow: 'hidden', // Ensures borderRadius works properly
-    marginTop: responsiveHeight(2),
-    marginBottom: responsiveHeight(1)
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 10,
-  },
 });
