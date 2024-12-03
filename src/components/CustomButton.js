@@ -6,10 +6,10 @@ export default function CustomButton({ label, onPress, buttonIcon, buttonColor }
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={buttonColor == 'red' ? styles.buttonViewRed : buttonColor == 'gray' ? styles.buttonViewGray : buttonColor == 'small' ? styles.buttonViewSmall : styles.buttonView}>
+      style={buttonColor == 'red' ? styles.buttonViewRed : buttonColor === 'delete' ? styles.buttonViewDelete : buttonColor == 'gray' ? styles.buttonViewGray : buttonColor == 'small' ? styles.buttonViewSmall : styles.buttonView}>
 
       <Text
-        style={buttonColor == 'red' ? styles.buttonTextRed : styles.buttonText}>
+        style={buttonColor == 'red' ? styles.buttonTextRed : buttonColor === 'delete' ? styles.buttonTextDelete : styles.buttonText}>
         {label}
       </Text>
       {buttonIcon ? <Image source={forwordImg} style={styles.iconImage} tintColor={'#FFF'} /> : null}
@@ -58,6 +58,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center'
   },
+  buttonViewDelete: {
+    backgroundColor: '#FFF',
+    borderColor: '#E1293B',
+    borderWidth: 1,
+    padding: 17,
+    borderRadius: 8,
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
   buttonText: {
     fontFamily: 'DMSans-Bold',
     textAlign: 'center',
@@ -71,6 +81,13 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 16,
     color: '#2D2D2D',
+  },
+  buttonTextDelete: {
+    fontFamily: 'DMSans-Bold',
+    textAlign: 'center',
+    fontWeight: '400',
+    fontSize: 16,
+    color: '#E1293B',
   },
   iconImage: {
     width: 23,
