@@ -720,7 +720,7 @@ const TherapistProfile = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Therapist'} onPress={() => handleBackButton()} title={'Therapist'} />
+            <CustomHeader commingFrom={'Therapist'} onPress={() => handleBackButton()} title={'Details'} />
             <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
             }>

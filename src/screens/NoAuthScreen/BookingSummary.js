@@ -17,6 +17,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 import Toast from 'react-native-toast-message';
 import { useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../../context/AuthContext';
+import { AppEventsLogger } from 'react-native-fbsdk-next';
 
 const BookingSummary = ({ navigation, route }) => {
 
@@ -237,6 +238,7 @@ const BookingSummary = ({ navigation, route }) => {
                         //     },
                         //     { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
                         // ]);
+                        logPurchaseEvent(payableAmount)
                         navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) })
                     } else {
                         //console.log('not ok');
@@ -256,6 +258,18 @@ const BookingSummary = ({ navigation, route }) => {
                 });
         });
     };
+
+    const logPurchaseEvent = (finalPayAmount) => {
+        const params = {
+          'fb_currency': 'INR', 
+        };
+      
+        AppEventsLogger.logEvent(
+          'fb_mobile_purchase', 
+          finalPayAmount,       
+          params                
+        );
+      };
 
     const changeCouponCode = (text) => {
         setCouponCode(text);
