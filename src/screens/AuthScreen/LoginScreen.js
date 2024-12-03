@@ -107,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
           },
         })
           .then(res => {
-            //console.log(res.data)
+            console.log(res.data)
             if (res.data.response == true) {
               setIsLoading(false)
               // Toast.show({
@@ -124,7 +124,7 @@ const LoginScreen = ({ navigation }) => {
             } else {
               //console.log('not okk')
               setIsLoading(false)
-              Alert.alert('Oops..', "Something went wrong.", [
+              Alert.alert('Oops..', res.data.message, [
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
               ]);
             }
