@@ -43,9 +43,9 @@
         <meta-data
           android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
           android:value="true" />
-        <!-- <meta-data
+        <meta-data
           android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
-          android:value="true" /> -->
+          android:value="true" />
         <!-- add for truecaller login -->
         <!-- <meta-data android:name="com.truecaller.android.sdk.PartnerKey" android:value="@string/partnerKey"/>  -->
     </application>
