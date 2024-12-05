@@ -26,7 +26,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { orImg } from '../../utils/Images';
+import { orImg, patientLoginImg } from '../../utils/Images';
 import Toast from 'react-native-toast-message';
 
 const BannerWidth = Dimensions.get('window').width;
@@ -158,7 +158,7 @@ const LoginScreen = ({ navigation }) => {
       <KeyboardAwareScrollView>
         <View style={styles.bannaerContainer}>
           <Image
-            source={require('../../assets/images/Rectangle6.png')}
+            source={patientLoginImg}
             style={styles.bannerBg}
           />
         </View>

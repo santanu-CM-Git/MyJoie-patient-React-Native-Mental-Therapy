@@ -69,3 +69,4 @@ export const talkFocusedImg = require("../assets/images/talk-focus.png");
 export const calenderImg = require("../assets/images/calender-notfocus.png");
 export const calenderFocusedImg = require("../assets/images/calender-focus.png");
 export const bookmarkednotFocusedImg = require("../assets/images/bookmarkednotFocuse.png");
+export const patientLoginImg = require("../assets/images/patient-login-img.jpg");
