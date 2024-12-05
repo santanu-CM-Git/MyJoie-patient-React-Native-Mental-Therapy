@@ -2,9 +2,28 @@
   "project_info": {
     "project_number": "217826805877",
     "project_id": "swastilife-fc512",
-    "storage_bucket": "swastilife-fc512.appspot.com"
+    "storage_bucket": "swastilife-fc512.firebasestorage.app"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217826805877:android:a6b6d44c4204da432a503c",
+        "android_client_info": {
+          "package_name": "com.myjoie.patientapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDGA2HfAC-SadeX9ZyE_Oth_caxuVWl_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:217826805877:android:36d3154588502aea2a503c",

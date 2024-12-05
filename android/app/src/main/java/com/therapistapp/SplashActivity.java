@@ -1,4 +1,4 @@
-package com.patientapp; // Change this to your package name.
+package com.myjoie.patientapp; // Change this to your package name.
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.patientapp;
+package com.myjoie.patientapp;
 
 import android.app.NotificationChannel; // notification sound
 import android.app.NotificationManager; // notification sound
