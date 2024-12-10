@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect,useCallback,useContext } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useContext } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, StatusBar, Image, FlatList, TouchableOpacity, Animated, ActivityIndicator, useWindowDimensions, Switch, Alert, Platform } from 'react-native'
 import CustomHeader from '../../components/CustomHeader'
 import Feather from 'react-native-vector-icons/Feather';
@@ -165,7 +165,8 @@ const BookingSummary = ({ navigation, route }) => {
             const options = {
                 description: 'This is the description we need',
                 //image: `${BASE_URL}/public/assets/dist/img/logo.jpg`,
-                image: `https://i.imgur.com/laTNSbz.png`,
+                //image: `https://i.imgur.com/laTNSbz.png`,
+                image: `https://res.cloudinary.com/dzl5v6ndv/image/upload/v1733826925/mtxdsgytrery6npks4qq.png`,
                 currency: 'INR',
                 key: razorpayKeyId,
                 amount: totalAmount * 100,
@@ -186,11 +187,11 @@ const BookingSummary = ({ navigation, route }) => {
                 const errorMsg = error.description;
                 //console.log(errorMsg.error.description);
                 // if(errorMsg.error.description == "undefined"){
-                    navigation.navigate('PaymentFailed', { message: errorMsg});
+                navigation.navigate('PaymentFailed', { message: errorMsg });
                 // }else{
                 //     navigation.navigate('PaymentFailed', { message: errorMsg});
                 // }
-                
+
             });
         }
     };
@@ -261,15 +262,15 @@ const BookingSummary = ({ navigation, route }) => {
 
     const logPurchaseEvent = (finalPayAmount) => {
         const params = {
-          'fb_currency': 'INR', 
+            'fb_currency': 'INR',
         };
-      
+
         AppEventsLogger.logEvent(
-          'fb_mobile_purchase', 
-          finalPayAmount,       
-          params                
+            'fb_mobile_purchase',
+            finalPayAmount,
+            params
         );
-      };
+    };
 
     const changeCouponCode = (text) => {
         setCouponCode(text);
@@ -614,15 +615,15 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         ...Platform.select({
             android: {
-              elevation: 5, // Only for Android
+                elevation: 5, // Only for Android
             },
             ios: {
-              shadowColor: '#000', // Only for iOS
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 5,
+                shadowColor: '#000', // Only for iOS
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 5,
             },
-          }),
+        }),
     },
     totalValue1stSection: { flexDirection: 'row', justifyContent: 'space-between', },
     totalValue1stSectionDetails: { flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width: responsiveWidth(25), },
@@ -652,7 +653,7 @@ const styles = StyleSheet.create({
     callCouponText: { color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), },
     callCouponText2: { position: 'absolute', right: 25, top: responsiveHeight(7), color: '#417AA4', fontFamily: 'DMSans-Bold', fontSize: responsiveFontSize(1.7), },
     switchStyle: {
-        
+
         ...Platform.select({
             android: {
                 transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]  // Adjust scale values as needed
@@ -660,7 +661,7 @@ const styles = StyleSheet.create({
             ios: {
                 transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }]  // Adjust scale values as needed
             },
-          }),
+        }),
     },
     total4Value: {
         width: responsiveWidth(89),
