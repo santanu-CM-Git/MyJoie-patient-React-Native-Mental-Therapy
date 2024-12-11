@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.1.2</string>
+	<string>2.1.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>23</string>
+	<string>24</string>
 	<key>FacebookAppID</key>
 	<string>974564787686868</string>
 	<key>FacebookClientToken</key>
@@ -63,13 +63,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Give $(PRODUCT_NAME) permission to access the camera for taking photos or videos.</string>
+	<string>This App needs access to your camera to enable video calls, allowing you to see and be seen during your call sessions.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Give $(PRODUCT_NAME) permission to access the microphone for audio recording during calls.</string>
+	<string>This App needs access to your microphone to enable audio during video calls so you can hear and be heard.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Give $(PRODUCT_NAME) permission to access your Photo Library to upload media.</string>
+	<string>This App needs to access your Photo Library to upload media.</string>
 	<key>NSUserNotificationUsageDescription</key>
-	<string>Give $(PRODUCT_NAME) would like to send you notifications to keep you updated.</string>
+	<string>This App would like to send you notifications to keep you updated.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>DMSans-Black.ttf</string>

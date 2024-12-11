@@ -529,13 +529,14 @@ const ProfileScreen = ({ navigation, route }) => {
                 }}
               />
             </View>
-          </View>
-          <View style={styles.buttonwrapper}>
+            {/* <View style={styles.buttonwrapper}> */}
             <CustomButton label={"Delete My Account"}
               buttonColor={'delete'}
               onPress={() => { deleteAccount() }}
             />
+          {/* </View> */}
           </View>
+          
         </View>
 
       </KeyboardAwareScrollView>
