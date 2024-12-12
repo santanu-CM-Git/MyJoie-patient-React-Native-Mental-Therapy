@@ -87,7 +87,7 @@ export const requestPermissions = async () => {
     if (cameraRequest !== RESULTS.GRANTED || audioRequest !== RESULTS.GRANTED) {
       Alert.alert(
         'Camera and Audio Permissions Required',
-        'Please enable camera and audio permissions for a full app experience.',
+        'This app needs access to your camera to enable video calls, allowing you to see and be seen during your call sessions. It also requires access to your microphone to enable audio during video calls, so you can hear and be heard. Please enable camera and audio permissions for a full app experience.',
         [
           {
             text: 'Cancel',
