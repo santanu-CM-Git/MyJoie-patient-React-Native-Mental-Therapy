@@ -9,7 +9,8 @@ import {
   Alert,
   Dimensions,
   Image,
-  StatusBar
+  StatusBar,
+  Platform
 } from 'react-native';
 import axios from 'axios';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -90,7 +91,7 @@ const LoginScreen = ({ navigation }) => {
     } else {
       setIsLoading(true)
       //console.log(API_URL);
-      
+
       AsyncStorage.getItem('fcmToken', (err, fcmToken) => {
         //console.log(fcmToken, 'firebase token')
         //console.log(deviceId, 'device id')
@@ -120,7 +121,7 @@ const LoginScreen = ({ navigation }) => {
               //alert(res.data?.otp)
               // login(res.data.token)
               //navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.otp, token: res.data?.token, name: res.data?.data?.name })
-              navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.data?.otp, fcmToken: fcmToken})
+              navigation.navigate('Otp', { countrycode: countryCode, phone: phone, otp: res.data?.data?.otp, fcmToken: fcmToken })
             } else {
               //console.log('not okk')
               setIsLoading(false)
@@ -172,28 +173,30 @@ const LoginScreen = ({ navigation }) => {
               <TouchableOpacity onPress={() => setShow(true)} style={styles.countryInputView}>
                 <Text style={{ color: '#808080', fontSize: responsiveFontSize(2) }}>{countryCode}</Text>
               </TouchableOpacity>
-              <CountryPicker
-                show={show}
-                initialState={''}
-                pickerButtonOnPress={(item) => {
-                  setCountryCode(item.dial_code);
-                  setShow(false);
-                }}
-                style={{
-                  modal: {
-                    height: responsiveHeight(60),
-                  },
-                  textInput: {
-                    color: '#808080'
-                  },
-                  dialCode: {
-                    color: '#808080'
-                  },
-                  countryName: {
-                    color: '#808080'
-                  }
-                }}
-              />
+              {Platform.OS === 'android' && (
+                <CountryPicker
+                  show={show}
+                  initialState={''}
+                  pickerButtonOnPress={(item) => {
+                    setCountryCode(item.dial_code);
+                    setShow(false);
+                  }}
+                  style={{
+                    modal: {
+                      height: responsiveHeight(60),
+                    },
+                    textInput: {
+                      color: '#808080'
+                    },
+                    dialCode: {
+                      color: '#808080'
+                    },
+                    countryName: {
+                      color: '#808080'
+                    }
+                  }}
+                />
+              )}
             </View>
             <InputField
               label={'Mobile Number'}
