@@ -170,23 +170,23 @@ const PersonalInformation = ({ navigation, route }) => {
       setEmailError('');
     }
 
-    if (date === 'DD - MM - YYYY') {
-      setdobError('Please enter DOB.');
-    } else if (!validateAge(date)) {
-      setdobError('You must be at least 18 years old.');
-    } else {
-      setdobError('');
-    }
-
-    if (firstname && email && /\S+@\S+\.\S+/.test(email) && date !== 'DD - MM - YYYY' && validateAge(date)) {
+    // if (date === 'DD - MM - YYYY') {
+    //   setdobError('Please enter DOB.');
+    // } else if (!validateAge(date)) {
+    //   setdobError('You must be at least 18 years old.');
+    // } else {
+    //   setdobError('');
+    // }
+    // if (firstname && email && /\S+@\S+\.\S+/.test(email) && date !== 'DD - MM - YYYY' && validateAge(date)) {
+    if (firstname && email && /\S+@\S+\.\S+/.test(email)) {
       //login()
       setIsLoading(true)
       const option = {
         "name": firstname,
         "email": email,
-        "dob": moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
-        "gender": yearvalue,
-        "marital_status": monthvalue,
+        "dob": date === 'DD - MM  - YYYY' || !date ? null : moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+        "gender": yearvalue ?? null,
+        "marital_status": monthvalue ?? null,
         //"mobile" : "7797599595"
       }
       //console.log(option, 'dhhhdhhd')
@@ -289,7 +289,7 @@ const PersonalInformation = ({ navigation, route }) => {
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.header}>Date of Birth</Text>
-              <Text style={styles.requiredheader}>*</Text>
+              {/* <Text style={styles.requiredheader}>*</Text> */}
             </View>
             {dobError ? <Text style={{ color: 'red', fontFamily: 'DMSans-Regular', marginBottom: responsiveHeight(1) }}>{dobError}</Text> : <></>}
             <TouchableOpacity onPress={() => setOpen(true)}>
@@ -305,7 +305,7 @@ const PersonalInformation = ({ navigation, route }) => {
                 value={selectedDOB}
                 textColor={'#000'}
                 minimumDate={MIN_DATE}
-                 maximumDate={MAX_DATE}
+                maximumDate={MAX_DATE}
                 themeVariant="light"
                 onChange={(event, selectedDate) => {
                   // console.log(moment(selectedDate).format('DD-MM-YYYY'),'jjjjj');
