@@ -30,22 +30,29 @@
 	<string>MyJoie</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>gpay</string>
+		<string>tez</string>
 		<string>phonepe</string>
-		<string>paytm</string>
-		<string>cred</string>
-		<string>bhim</string>
+		<string>paytmmp</string>
+		<string>credpay</string>
 		<string>mobikwik</string>
-		<string>amazon</string>
-		<string>truecaller</string>
-		<string>airtel</string>
-		<string>mipay</string>
-		<string>slice</string>
-		<string>imobile</string>
-		<string>axis</string>
+		<string>freecharge</string>
+		<string>in.fampay.app</string>
+		<string>bhim</string>
+		<string>amazonpay</string>
+		<string>navi</string>
+		<string>kiwi</string>
 		<string>payzapp</string>
-		<string>yonosbi</string>
-		<string>kotak</string>
+		<string>jupiter</string>
+		<string>omnicard</string>
+		<string>icici</string>
+		<string>popclubapp</string>
+		<string>sbiyono</string>
+		<string>myjio</string>
+		<string>slice</string>
+		<string>bobupi</string>
+		<string>shriramone</string>
+		<string>indusmobile</string>
+		<string>whatsapp</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true />

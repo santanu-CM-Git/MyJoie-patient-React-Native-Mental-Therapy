@@ -65,7 +65,7 @@ const ChatScreen = ({ navigation, route }) => {
     // Set a timeout to change the state after 3 minutes
     const timer = setTimeout(() => {
       setEndButtonVisible(true);
-    }, 180000); // 180000ms = 3 minutes
+    }, 600000); // 600000ms = 10 minutes
 
     // Cleanup the timer when the component unmounts
     return () => clearTimeout(timer);
