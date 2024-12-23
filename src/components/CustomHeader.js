@@ -67,15 +67,15 @@ export default function CustomHeader({
                                 />
                                 {/* } */}
                             </TouchableOpacity>
-                            {/* <Image
+                            <Image
                                 source={require('../assets/images/icon.png')}
-                                style={{ height: responsiveHeight(3.5), width: responsiveWidth(25), resizeMode: 'contain', marginLeft: responsiveWidth(2) }}
-                            /> */}
-                            <Logo
-                                width={responsiveWidth(25)}
+                                style={{ height: responsiveHeight(3.5), width: responsiveWidth(25), resizeMode: 'contain', marginLeft: responsiveWidth(0) }}
+                            />
+                            {/* <Logo
+                                width={responsiveWidth(30)}
                                 height={responsiveHeight(3.5)}
                             //style={{transform: [{rotate: '-15deg'}]}}
-                            />
+                            /> */}
                         </View>
                         <View style={styles.secondSection}>
                             <TouchableOpacity onPress={() => navigation.navigate('TherapistList',{comingFrom:'search'})} style={{ marginRight: responsiveWidth(5) }}>
