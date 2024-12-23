@@ -18,6 +18,7 @@ import Toast from 'react-native-toast-message';
 import { useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../../context/AuthContext';
 import { AppEventsLogger } from 'react-native-fbsdk-next';
+// import  analytics  from '@react-native-firebase/analytics';
 
 const BookingSummary = ({ navigation, route }) => {
 
@@ -240,6 +241,7 @@ const BookingSummary = ({ navigation, route }) => {
                         //     { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
                         // ]);
                         logPurchaseEvent(payableAmount)
+                        //logPurchaseEventGoogle(payableAmount, transactionId)
                         navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) })
                     } else {
                         //console.log('not ok');
@@ -260,17 +262,32 @@ const BookingSummary = ({ navigation, route }) => {
         });
     };
 
-    const logPurchaseEvent = (finalPayAmount) => {
+    const logPurchaseEvent = async (finalPayAmount) => {
+        if (typeof finalPayAmount !== 'number' || finalPayAmount <= 0) {
+            console.error("Invalid purchase amount:", finalPayAmount);
+            return false;
+        }
+
         const params = {
-            'fb_currency': 'INR',
+            fb_currency: 'INR',
         };
 
-        AppEventsLogger.logEvent(
-            'fb_mobile_purchase',
-            finalPayAmount,
-            params
-        );
+        try {
+            console.log("Logging purchase on iOS:", finalPayAmount, "INR");
+            AppEventsLogger.logPurchase(finalPayAmount, 'INR', params);
+            return true;
+        } catch (error) {
+            console.error("Error logging purchase event:", error);
+            return false;
+        }
     };
+    // const logPurchaseEventGoogle = async (amount, transactionId) => {
+    //     await analytics().logEvent('purchase', {
+    //         value: amount,
+    //         currency: "INR", // e.g., 'USD'
+    //         transaction_id: transactionId,
+    //     });
+    // };
 
     const changeCouponCode = (text) => {
         setCouponCode(text);

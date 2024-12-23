@@ -367,6 +367,25 @@ const ProfileScreen = ({ navigation, route }) => {
     )
   }
 
+  const handleAndroidChange = (event, selectedDate) => {
+    if (event.type === 'set') { // User clicked OK
+      const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
+      setSelectedDOB(selectedDate);
+      setDate(formattedDate);
+      setdobError('')
+    }
+    setOpen(false); // Close the picker
+  };
+
+  const handleIOSChange = (event, selectedDate) => {
+    if (selectedDate) {
+      const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
+      setSelectedDOB(selectedDate);
+      setDate(formattedDate);
+      setdobError('')
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader commingFrom={'My Profile'} onPress={() => navigation.goBack()} title={'My Profile'} />
@@ -445,36 +464,34 @@ const ProfileScreen = ({ navigation, route }) => {
                 <Entypo name="calendar" size={22} color="#000" />
               </View>
             </TouchableOpacity>
-            {open == true ?
-              <RNDateTimePicker
-                mode="date"
-                display='spinner'
-                value={selectedDOB}
-                textColor={'#000'}
-                minimumDate={MIN_DATE}
-                maximumDate={MAX_DATE}
-                themeVariant="light"
-                onChange={(event, selectedDate) => {
-                  // console.log(moment(selectedDate).format('DD-MM-YYYY'),'jjjjj');
-                  // const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
-                  //   console.log(formattedDate,'nnnnnnnnnn');
-                  //   setSelectedDOB(selectedDate);
-                  //   setDate(formattedDate);
-                  if (selectedDate) {
-                    const formattedDate = moment(selectedDate).format('DD-MM-YYYY');
-                    //console.log(formattedDate);
-                    setOpen(false)
-                    setSelectedDOB(selectedDate);
-                    setDate(formattedDate);
-                    setdobError('')
-                    setIsFormChanged(true);
-                  } else {
-                    // User canceled the picker
-                    setOpen(false)
-                  }
-
-                }}
-              /> : null}
+            {open && (
+              Platform.OS === 'android' ? (
+                <RNDateTimePicker
+                  mode="date"
+                  display='spinner'
+                  value={selectedDOB}
+                  textColor={'#000'}
+                  minimumDate={MIN_DATE}
+                  maximumDate={MAX_DATE}
+                  themeVariant="light"
+                  onChange={(event, selectedDate) => handleAndroidChange(event, selectedDate)}
+                />) : (
+                <View style={styles.iosPickerContainer}>
+                  <RNDateTimePicker
+                    mode="date"
+                    display="spinner" // Spinner for iOS
+                    value={selectedDOB}
+                    textColor={'#000'}
+                    minimumDate={MIN_DATE}
+                    maximumDate={MAX_DATE}
+                    onChange={(event, selectedDate) => handleIOSChange(event, selectedDate)}
+                  />
+                  <TouchableOpacity onPress={() => setOpen(false)} style={styles.doneButton}>
+                    <Text style={styles.doneText}>Done</Text>
+                  </TouchableOpacity>
+                </View>
+              )
+            )}
             <View style={styles.inputFieldHeader}>
               <Text style={styles.header}>Gender</Text>
             </View>
@@ -534,9 +551,9 @@ const ProfileScreen = ({ navigation, route }) => {
               buttonColor={'delete'}
               onPress={() => { deleteAccount() }}
             />
-          {/* </View> */}
+            {/* </View> */}
           </View>
-          
+
         </View>
 
       </KeyboardAwareScrollView>
@@ -708,5 +725,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
+  },
+  doneButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#EEF8FF',
+    borderRadius: 5,
+    justifyContent:'center',
+    alignItems:'center',
+    marginBottom:responsiveHeight(5)
+  },
+  doneText: {
+    color: '#000',
+    fontWeight: 'bold',
   },
 });
