@@ -803,7 +803,10 @@ const TherapistProfile = ({ navigation, route }) => {
                                     styles.dayContainer,
                                     selectedDay === index ? styles.selectedDay : styles.defaultDay,
                                 ]}
-                                onPress={() => selectedDateChange(index, day.format('dddd'), day.format('YYYY-MM-DD'))}
+                                onPress={() => {
+                                    selectedDateChange(index, day.format('dddd'), day.format('YYYY-MM-DD'))
+                                    setSelectedByUser([]) 
+                                }}
                             >
                                 <Text style={styles.weekDay}>
                                     {day.format('ddd')}
