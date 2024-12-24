@@ -18,7 +18,7 @@ import Toast from 'react-native-toast-message';
 import { useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../../context/AuthContext';
 import { AppEventsLogger } from 'react-native-fbsdk-next';
-// import analytics from '@react-native-firebase/analytics';
+import analytics from '@react-native-firebase/analytics';
 
 const BookingSummary = ({ navigation, route }) => {
 
@@ -241,7 +241,7 @@ const BookingSummary = ({ navigation, route }) => {
                         //     { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
                         // ]);
                         logPurchaseEvent(payableAmount)
-                        //logPurchaseEventGoogle(payableAmount, transactionId)
+                        logPurchaseEventGoogle(payableAmount, transactionId)
                         navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) })
                     } else {
                         //console.log('not ok');
@@ -281,14 +281,18 @@ const BookingSummary = ({ navigation, route }) => {
             return false;
         }
     };
-    // const logPurchaseEventGoogle = async (amount, transactionId) => {
-    //     await analytics().logEvent('purchase', {
-    //         value: amount,
-    //         currency: "INR", // e.g., 'USD'
-    //         transaction_id: transactionId,
-    //     });
-    //     console.log('logPurchaseEventGoogle')
-    // };
+    const logPurchaseEventGoogle = async (amount, transactionId) => {
+        try {
+            await analytics().logEvent('purchase', {
+                value: amount,
+                currency: "INR", // e.g., 'USD'
+                transaction_id: transactionId,
+            });
+            console.log('logPurchaseEventGoogle: Event logged successfully');
+        } catch (error) {
+            console.error('logPurchaseEventGoogle: Failed to log event', error);
+        }
+    };
 
     const changeCouponCode = (text) => {
         setCouponCode(text);
