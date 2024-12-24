@@ -241,7 +241,9 @@ const BookingSummary = ({ navigation, route }) => {
                         //     { text: 'OK', onPress: () => navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) }) },
                         // ]);
                         logPurchaseEvent(payableAmount)
-                        logPurchaseEventGoogle(payableAmount, transactionId)
+                        if(Platform.OS === 'ios'){
+                            logPurchaseEventGoogle(payableAmount, transactionId)
+                        }
                         navigation.navigate('ThankYouBookingScreen', { detailsData: JSON.stringify(res.data.data) })
                     } else {
                         //console.log('not ok');
