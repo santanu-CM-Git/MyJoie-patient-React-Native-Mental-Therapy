@@ -164,7 +164,7 @@ const BookingSummary = ({ navigation, route }) => {
             submitForm("");
         } else {
             const options = {
-                description: 'This is the description we need',
+                description: 'MYJOIE',
                 //image: `${BASE_URL}/public/assets/dist/img/logo.jpg`,
                 //image: `https://i.imgur.com/laTNSbz.png`,
                 image: `https://res.cloudinary.com/dzl5v6ndv/image/upload/v1733826925/mtxdsgytrery6npks4qq.png`,
