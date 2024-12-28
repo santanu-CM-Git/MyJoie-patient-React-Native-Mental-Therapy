@@ -265,10 +265,10 @@ const BookingSummary = ({ navigation, route }) => {
     };
 
     const logPurchaseEvent = async (finalPayAmount) => {
-        if (typeof finalPayAmount !== 'number' || finalPayAmount <= 0) {
-            console.error("Invalid purchase amount:", finalPayAmount);
-            return false;
-        }
+        // if (typeof finalPayAmount !== 'number' || finalPayAmount <= 0) {
+        //     console.error("Invalid purchase amount:", finalPayAmount);
+        //     return false;
+        // }
 
         const params = {
             fb_currency: 'INR',
