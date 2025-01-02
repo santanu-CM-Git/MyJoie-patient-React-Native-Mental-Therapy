@@ -47,6 +47,10 @@
         <meta-data
           android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
           android:value="true" />
+      <!-- add for firebase -->
+                <meta-data
+          android:name="firebase_analytics_collection_enabled"
+          android:value="true" />
         <!-- add for truecaller login -->
         <!-- <meta-data android:name="com.truecaller.android.sdk.PartnerKey" android:value="@string/partnerKey"/>  -->
     </application>
