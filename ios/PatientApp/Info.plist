@@ -151,5 +151,9 @@
 	<false />
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<true/>
+	<key>FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED</key>
+	<string>NO</string>
+	<key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
+	<string>YES</string>
 </dict>
 </plist>
