@@ -1021,8 +1021,9 @@ PODS:
     - FBSDKCoreKit (= 17.0.3)
   - Firebase (10.27.0):
     - Firebase/Core (= 10.27.0)
-  - Firebase/Analytics (10.27.0):
-    - Firebase/Core
+  - Firebase/AnalyticsWithoutAdIdSupport (10.27.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics/WithoutAdIdSupport (~> 10.27.0)
   - Firebase/Core (10.27.0):
     - Firebase/CoreOnly
     - FirebaseAnalytics (~> 10.27.0)
@@ -1053,6 +1054,15 @@ PODS:
     - FirebaseCore (~> 10.0)
     - FirebaseInstallations (~> 10.0)
     - GoogleAppMeasurement (= 10.27.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - FirebaseAnalytics/WithoutAdIdSupport (10.27.0):
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 10.27.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
     - GoogleUtilities/MethodSwizzler (~> 7.11)
     - GoogleUtilities/Network (~> 7.11)
@@ -1757,7 +1767,7 @@ PODS:
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
   - RNFBAnalytics (20.1.0):
-    - Firebase/Analytics (= 10.27.0)
+    - Firebase/AnalyticsWithoutAdIdSupport (= 10.27.0)
     - React-Core
     - RNFBApp
   - RNFBApp (20.1.0):
@@ -2218,7 +2228,7 @@ SPEC CHECKSUMS:
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNDateTimePicker: fc2e4f2795877d45e84d85659bebe627eba5c931
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
-  RNFBAnalytics: 3f336502732e51de9f5a5be8b5e3df879bf2eca7
+  RNFBAnalytics: 0918525a3908267fd4cf0f71c231f04f9f9a6dfd
   RNFBApp: 9acbe359ef3559d6f8ca5c350db471f2b352f98a
   RNFBDatabase: 78900cdabc4b87385e052bd3f3c4195690ee6ecd
   RNFBFirestore: a60f00920799fa7bb71a1ecb682e4e6918f6f2b0
@@ -2238,6 +2248,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
 
-PODFILE CHECKSUM: a30a8517cd689e859141d0388d060e4cdffc53c4
+PODFILE CHECKSUM: 58aca0210b49533027e5db121f626a1bff4c8d04
 
 COCOAPODS: 1.15.2
