@@ -207,61 +207,61 @@ const BookingSummary = ({ navigation, route }) => {
                 // Step 1: Retrieve the user token from AsyncStorage
                 AsyncStorage.getItem('userToken', async (err, userToken) => {
                     console.log(userToken)
-                    // if (err || !userToken) {
-                    //     console.error('Error retrieving user token:', err);
-                    //     navigation.navigate('PaymentFailed', { message: 'User authentication failed' });
-                    //     return;
-                    // }
+                    if (err || !userToken) {
+                        console.error('Error retrieving user token:', err);
+                        navigation.navigate('PaymentFailed', { message: 'User authentication failed' });
+                        return;
+                    }
     
-                    // // Step 2: Create an order on the server
-                    // const response = await axios.post(
-                    //     `${BASE_URL}/patient/razorpay-order-create`,
-                    //     {
-                    //         "amount": totalAmount * 100, // Convert to smallest currency unit
-                    //     },
-                    //     {
-                    //         headers: {
-                    //             Accept: 'application/json',
-                    //             Authorization: `Bearer ${userToken}`, // Add token to headers
-                    //         },
-                    //     }
-                    // );
+                    // Step 2: Create an order on the server
+                    const response = await axios.post(
+                        `${API_URL}/patient/razorpay-order-create`,
+                        {
+                            "amount": totalAmount * 100, // Convert to smallest currency unit
+                        },
+                        {
+                            headers: {
+                                Accept: 'application/json',
+                                Authorization: `Bearer ${userToken}`, // Add token to headers
+                            },
+                        }
+                    );
     
-                    // const { order_id } = response.data; // Assuming the response includes { order_id: 'order_xyz' }
+                    const { order_id } = response.data; // Assuming the response includes { order_id: 'order_xyz' }
 
-                    // console.log(order_id)
+                    console.log(order_id)
     
-                    // if (order_id) {
-                    //     // Step 3: Open Razorpay Checkout
-                    //     const options = {
-                    //         description: 'MYJOIE',
-                    //         image: `https://res.cloudinary.com/dzl5v6ndv/image/upload/v1733826925/mtxdsgytrery6npks4qq.png`,
-                    //         currency: 'INR',
-                    //         key: razorpayKeyId,
-                    //         amount: totalAmount * 100, // Amount in smallest currency unit
-                    //         name: patientDetails?.name,
-                    //         order_id: order_id, // Use the order ID from the server
-                    //         prefill: {
-                    //             email: patientDetails?.email,
-                    //             contact: patientDetails?.mobile,
-                    //             name: patientDetails?.name,
-                    //         },
-                    //         theme: { color: '#519ED8' },
-                    //     };
+                    if (order_id) {
+                        // Step 3: Open Razorpay Checkout
+                        const options = {
+                            description: 'MYJOIE',
+                            image: `https://res.cloudinary.com/dzl5v6ndv/image/upload/v1733826925/mtxdsgytrery6npks4qq.png`,
+                            currency: 'INR',
+                            key: razorpayKeyId,
+                            amount: totalAmount * 100, // Amount in smallest currency unit
+                            name: patientDetails?.name,
+                            order_id: order_id, // Use the order ID from the server
+                            prefill: {
+                                email: patientDetails?.email,
+                                contact: patientDetails?.mobile,
+                                name: patientDetails?.name,
+                            },
+                            theme: { color: '#519ED8' },
+                        };
     
-                    //     RazorpayCheckout.open(options)
-                    //         .then((data) => {
-                    //             // Payment successful
-                    //             submitForm(data.razorpay_payment_id);
-                    //         })
-                    //         .catch((error) => {
-                    //             // Payment failed
-                    //             console.error('Payment failed:', error.description);
-                    //             navigation.navigate('PaymentFailed', { message: error.description });
-                    //         });
-                    // } else {
-                    //     navigation.navigate('PaymentFailed', { message: 'Order creation failed' });
-                    // }
+                        RazorpayCheckout.open(options)
+                            .then((data) => {
+                                // Payment successful
+                                submitForm(data.razorpay_payment_id);
+                            })
+                            .catch((error) => {
+                                // Payment failed
+                                console.error('Payment failed:', error.description);
+                                navigation.navigate('PaymentFailed', { message: error.description });
+                            });
+                    } else {
+                        navigation.navigate('PaymentFailed', { message: 'Order creation failed' });
+                    }
                 });
             } catch (error) {
                 console.error('Error creating order:', error);
