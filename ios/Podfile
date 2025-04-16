@@ -11,7 +11,7 @@ node_require('react-native-permissions/scripts/setup.rb')
 # Enable Firebase Analytics without ad IDs support
 $RNFirebaseAnalyticsWithoutAdIdSupport = true
 
-platform :ios, min_ios_version_supported
+platform :ios, '13.0'
 prepare_react_native_project!
 
 # Specify only the permissions you need here
@@ -57,7 +57,7 @@ target 'PatientApp' do
   use_react_native!(
     :path => config[:reactNativePath],
     # Hermes is now enabled by default. Disable by setting this flag to false.
-    :hermes_enabled => flags[:hermes_enabled],
+    :hermes_enabled => false,
     :fabric_enabled => flags[:fabric_enabled],
     # Enables Flipper.
     #
@@ -82,5 +82,41 @@ target 'PatientApp' do
       :mac_catalyst_enabled => false
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    bitcode_strip_path = `xcrun --find bitcode_strip`.chop!
+   def strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
+     framework_path = File.join(Dir.pwd, framework_relative_path)
+     command = "#{bitcode_strip_path} #{framework_path} -r -o #{framework_path}"
+     puts "Stripping bitcode: #{command}"
+     system(command)
+   end
+
+   framework_paths = [
+     "Pods/AgoraRtm_iOS/AgoraRtmKit.xcframework/ios-arm64_armv7/AgoraRtmKit.framework/AgoraRtmKit",
+   ]
+
+   framework_paths.each do |framework_relative_path|
+     strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
+   end
+  # ✅ FIX: Remove invalid '-G' flag for Xcode 16+
+  installer.pods_project.targets.each do |target|
+    if target.name == 'BoringSSL-GRPC'
+      target.source_build_phase.files.each do |file|
+        if file.settings && file.settings['COMPILER_FLAGS']
+          flags = file.settings['COMPILER_FLAGS'].split
+          flags.reject! { |flag| flag == '-GCC_WARN_INHIBIT_ALL_WARNINGS' }
+          file.settings['COMPILER_FLAGS'] = flags.join(' ')
+        end
+      end
+    end
+   # ✅ Fix: Remove libarclite reference (for Xcode 15.3+/16)
+   target.build_configurations.each do |config|
+    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+    config.build_settings['ENABLE_BITCODE'] = 'NO'
+    ld_flags = config.build_settings['OTHER_LDFLAGS']
+    if ld_flags&.include?('libarclite')
+      config.build_settings['OTHER_LDFLAGS'] = ld_flags.gsub(/-l?arclite(_[a-zA-Z0-9]+)?/, '')
+    end
   end
+end
+end
 end
