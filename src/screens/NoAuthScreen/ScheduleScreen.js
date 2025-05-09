@@ -378,7 +378,7 @@ const ScheduleScreen = ({ navigation, route }) => {
                             {item?.therapist?.name}
                         </Text>
                         <Text style={styles.nameSubText2}>
-                            Therapist
+                            Expert
                         </Text>
                     </View>
                     {item?.status === 'scheduled' || item?.status === 'start' ? (

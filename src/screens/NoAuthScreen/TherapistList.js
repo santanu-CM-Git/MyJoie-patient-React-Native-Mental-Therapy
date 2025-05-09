@@ -225,7 +225,7 @@ const TherapistList = ({ navigation, route }) => {
                     label: item.type,
                     value: item.type,
                 }));
-                const allOption = { label: "All therapist", value: "All" };
+                const allOption = { label: "All expert", value: "All" };
                 therapyTypeInfoForDropdown.unshift(allOption);
                 setqualificationitemsTypeForDropdown(therapyTypeInfoForDropdown)
                 //setIsLoading(false);
@@ -691,7 +691,7 @@ const TherapistList = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('HOME', { screen: 'Home' })} title={'Therapist'} />
+            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.navigate('HOME', { screen: 'Home' })} title={'Expert'} />
             <ScrollView style={styles.wrapper} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
             }>
@@ -753,7 +753,7 @@ const TherapistList = ({ navigation, route }) => {
                         onChangeText={(text) => changeSearchValue(text)}
                         value={searchValue}
                         ref={route?.params?.comingFrom === 'search' ? searchInputRef : null}
-                        placeholder={'Search by therapist name'}
+                        placeholder={'Search by expert name'}
                         keyboardType={''}
                         placeholderTextColor="#808080"
                     />
@@ -774,7 +774,7 @@ const TherapistList = ({ navigation, route }) => {
                         />
                         :
                         <View style={[styles.totalValue, { justifyContent: 'center', alignItems: 'center' }]}>
-                            <Text style={[styles.contentStyleName, { marginTop: responsiveHeight(1) }]}>No Therapist Found</Text>
+                            <Text style={[styles.contentStyleName, { marginTop: responsiveHeight(1) }]}>No Expert Found</Text>
                         </View>}
                 </View>
 

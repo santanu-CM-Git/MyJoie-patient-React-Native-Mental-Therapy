@@ -211,7 +211,7 @@ const Bookmarked = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Bookmarked Therapist'} onPress={() => navigation.goBack()} title={'Bookmarked Therapist'} />
+            <CustomHeader commingFrom={'Bookmarked Therapist'} onPress={() => navigation.goBack()} title={'Bookmarked Experts'} />
             <ScrollView style={styles.wrapper} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']}/>
             }>
@@ -229,7 +229,7 @@ const Bookmarked = ({ navigation }) => {
                             )}
                         />
                         :
-                        <Text style={styles.profilebookingText}>No Therapist in your bookmarked list</Text>
+                        <Text style={styles.profilebookingText}>No Expert in your bookmarked list</Text>
                     }
                 </View>
 

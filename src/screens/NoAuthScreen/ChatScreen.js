@@ -328,7 +328,7 @@ const ChatScreen = ({ navigation, route }) => {
       return (
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ color: '#000000', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', textAlign: 'center' }}>
-            Waiting for the therapist to join..
+            Waiting for the expert to join..
           </Text>
         </View>
       );
@@ -840,7 +840,7 @@ const ChatScreen = ({ navigation, route }) => {
         // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
         // console.log('Received background message:', JSON.stringify(remoteMessage));
         if (remoteMessage?.data?.screen === 'EndCall') {
-          Alert.alert('', "The therapist has disconnected the call. The balance amount (if any) will be refunded to your wallet.", [
+          Alert.alert('', "The expert has disconnected the call. The balance amount (if any) will be refunded to your wallet.", [
             { text: 'OK', onPress: () => handleTimerEnd() },
           ]);
         }
@@ -851,7 +851,7 @@ const ChatScreen = ({ navigation, route }) => {
         if (remoteMessage?.data?.screen === 'ChatScreen') {
           Alert.alert(
             '',
-            `The therapist wants to switch to ${remoteMessage?.data?.flag}. Do you agree?`,
+            `The expert wants to switch to ${remoteMessage?.data?.flag}. Do you agree?`,
             [
               {
                 text: 'Cancel',
@@ -1008,7 +1008,7 @@ const ChatScreen = ({ navigation, route }) => {
                 <Text style={styles.audioSectionTherapistName}>{route?.params?.details?.therapist?.name}</Text>
                 {remoteUid == null ?
                   <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: '#FFFFFF', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', textAlign: 'center' }}>Waiting for the therapist to join..</Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: responsiveFontSize(2), fontFamily: 'DMSans-Bold', textAlign: 'center' }}>Waiting for the expert to join..</Text>
                   </View>
                   : null}
                 <View style={styles.audioButtonSection}>

@@ -522,7 +522,7 @@ export default function HomeScreen({ navigation }) {
   const CustomerSpeakItem = memo(({ item }) => {
     const cardHeight = useMemo(() => calculateCardHeight(item?.quote), [item?.quote]);
     return (
-      <View style={[styles.customerSpeaksView, { height: cardHeight }]}>
+      <View style={[styles.customerSpeaksView, { height: cardHeight +responsiveHeight(2.5) }]}>
         <View style={styles.qouteImgView}>
           <Image
             source={qouteImg}
@@ -667,7 +667,7 @@ export default function HomeScreen({ navigation }) {
             </>
             : null}
           <View style={styles.sectionHeaderView}>
-            <Text style={styles.sectionHeaderText}>Therapists</Text>
+            <Text style={styles.sectionHeaderText}>Experts</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Talk', { screen: 'TherapistList', key: Math.random().toString() })}>
               <Text style={styles.seeallText}>See All</Text>
             </TouchableOpacity>
@@ -705,7 +705,7 @@ export default function HomeScreen({ navigation }) {
           ) : null}
           {previousBooking.length !== 0 ?
             <View style={styles.sectionHeaderView}>
-              <Text style={styles.sectionHeaderText}>Previous Therapists</Text>
+              <Text style={styles.sectionHeaderText}>Previous Experts</Text>
               <TouchableOpacity onPress={() => navigation.navigate('ScheduleScreen', { activeTab: 'Previous' })}>
                 <Text style={styles.seeallText}>See All</Text>
               </TouchableOpacity>
@@ -1176,7 +1176,8 @@ const styles = StyleSheet.create({
     color: '#444343',
     fontFamily: 'DMSans-Medium',
     fontSize: responsiveFontSize(1.7),
-    marginLeft: 5
+    marginLeft: 5,
+    width: responsiveWidth(30),
   },
   upcomingView: {
     height: responsiveHeight(20),

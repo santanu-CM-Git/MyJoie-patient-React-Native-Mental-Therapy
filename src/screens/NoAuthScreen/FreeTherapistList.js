@@ -215,7 +215,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                     label: item.type,
                     value: item.type,
                 }));
-                const allOption = { label: "All therapist", value: "All" };
+                const allOption = { label: "All expert", value: "All" };
                 therapyTypeInfoForDropdown.unshift(allOption);
                 setqualificationitemsTypeForDropdown(therapyTypeInfoForDropdown)
                 //setIsLoading(false);
@@ -703,7 +703,7 @@ const FreeTherapistList = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.goBack()} title={'Therapist'} />
+            <CustomHeader commingFrom={'Therapist'} onPress={() => navigation.goBack()} title={'Expert'} />
             <ScrollView style={styles.wrapper} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#417AA4" colors={['#417AA4']} />
             }>
@@ -761,7 +761,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                 </View>
                 <View style={{ alignSelf: 'center' }}>
                     <InputField
-                        label={'Search by therapist name'}
+                        label={'Search by expert name'}
                         keyboardType=" "
                         value={searchValue}
                         //helperText={'Please enter lastname'}
@@ -785,7 +785,7 @@ const FreeTherapistList = ({ navigation, route }) => {
                         />
                         :
                         <View style={[styles.totalValue, { justifyContent: 'center', alignItems: 'center' }]}>
-                            <Text style={[styles.contentStyleName, { marginTop: responsiveHeight(1) }]}>No Therapist Found</Text>
+                            <Text style={[styles.contentStyleName, { marginTop: responsiveHeight(1) }]}>No Expert Found</Text>
                         </View>}
                 </View>
 
