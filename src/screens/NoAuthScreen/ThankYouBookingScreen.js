@@ -56,7 +56,7 @@ const ThankYouBookingScreen = ({ navigation, route }) => {
               <Text style={styles.detailValue}>{data[0]?.patient.name}</Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Therapist Name</Text>
+              <Text style={styles.detailLabel}>Expert Name</Text>
               <Text style={styles.detailValue}>{data[0]?.therapist.name}</Text>
             </View>
             <View style={styles.detailRow}>

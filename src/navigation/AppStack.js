@@ -59,7 +59,7 @@ const AuthStack = () => {
         }}
       />
        <Drawer.Screen
-        name="Talk to Therapist"
+        name="Talk to Expert"
         component={TherapistList}
         options={{
           drawerIcon: ({color}) => (
@@ -69,7 +69,7 @@ const AuthStack = () => {
         }}
       />
        <Drawer.Screen
-        name="Bookmarked Therapists"
+        name="Bookmarked Experts"
         component={Bookmarked}
         options={{
           drawerIcon: ({color}) => (

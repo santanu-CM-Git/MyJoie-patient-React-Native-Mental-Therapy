@@ -157,7 +157,7 @@ const Bookmarked = ({ navigation }) => {
                 </View>
                 <View style={styles.totalValuedetailsView}>
                     <Text style={styles.totalValueDetailsName}>{item?.user?.name}</Text>
-                    <Text style={styles.totalValueDetails}>Therapist</Text>
+                    <Text style={styles.totalValueDetails}>Expert</Text>
                     <Text style={styles.totalValueDetails}>{item?.qualification_list.replace(/,/g, ', ')}</Text>
                     <Text style={styles.totalValueDetails}>{item?.experience} Years Experience</Text>
                     <Text style={styles.totalValueDetails}>Language : <Text style={styles.totalValueDetailsLan}>{item?.languages_list.replace(/,/g, ', ')}</Text></Text>

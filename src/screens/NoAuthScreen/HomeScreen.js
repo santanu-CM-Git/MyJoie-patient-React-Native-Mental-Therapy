@@ -365,7 +365,7 @@ export default function HomeScreen({ navigation }) {
               {item?.user?.name}
             </Text>
             <Text style={styles.nameSubText2}>
-              Therapist
+              Expert
             </Text>
             <View style={{ marginBottom: 5, width: responsiveWidth(25) }}>
               <StarRating
@@ -422,7 +422,7 @@ export default function HomeScreen({ navigation }) {
           />
           <View style={{ flexDirection: 'column', marginLeft: responsiveWidth(3), width: responsiveWidth(45) }}>
             <Text style={styles.nameText}>{item?.therapist?.name}</Text>
-            <Text style={styles.namesubText}> Therapist</Text>
+            <Text style={styles.namesubText}> Expert</Text>
           </View>
           <TouchableOpacity style={[styles.joinNowButton, { opacity: isButtonEnabled ? 1 : 0.5 }]}
             onPress={() => isButtonEnabled && navigation.navigate('ChatScreen', { details: item })}

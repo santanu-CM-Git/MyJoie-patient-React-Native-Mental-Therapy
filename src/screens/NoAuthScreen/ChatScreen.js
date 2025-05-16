@@ -890,7 +890,7 @@ const ChatScreen = ({ navigation, route }) => {
           <Ionicons name="chevron-back" size={25} color="#000" />
           <View style={{ flexDirection: 'column', marginLeft: 10 }}>
             <Text style={styles.therapistName}>{route?.params?.details?.therapist?.name}</Text>
-            <Text style={styles.therapistDesc}>Therapist</Text>
+            <Text style={styles.therapistDesc}>Expert</Text>
           </View>
         </View>
         <View style={styles.HeaderSectionHalf}>

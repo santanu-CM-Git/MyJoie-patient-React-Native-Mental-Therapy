@@ -109,7 +109,7 @@ const ReviewScreen = ({ navigation, route }) => {
                             style={{ height: 90, width: 90, borderRadius: 90 / 2, resizeMode: 'contain' }}
                         />
                         <Text style={{ fontSize: responsiveFontSize(2.5), color: '#2D2D2D', fontFamily: 'DMSans-Bold', marginTop: responsiveHeight(2) }}>{route?.params?.therapistName}</Text>
-                        <Text style={{ fontSize: responsiveFontSize(2), color: '#746868', fontFamily: 'DMSans-Medium', marginTop: responsiveHeight(2) }}>Therapist</Text>
+                        <Text style={{ fontSize: responsiveFontSize(2), color: '#746868', fontFamily: 'DMSans-Medium', marginTop: responsiveHeight(2) }}>Expert</Text>
                     </View>
                     <Text style={{ fontSize: responsiveFontSize(2), color: '#746868', fontFamily: 'DMSans-Regular', textAlign: 'center', marginTop: responsiveHeight(2) }}>How was your experience?</Text>
                     <View style={{ alignSelf: 'center', width: responsiveWidth(50), marginTop: responsiveHeight(2) }}>
