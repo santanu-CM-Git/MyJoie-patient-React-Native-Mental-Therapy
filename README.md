@@ -1,79 +1,304 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Patient App
 
-# Getting Started
+A comprehensive React Native mobile application for patients to connect with healthcare professionals, book appointments, manage schedules, and access various healthcare services.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Overview
 
-## Step 1: Start the Metro Server
+Patient App is a full-featured healthcare application that enables patients to:
+- Register and manage their personal information
+- Browse and book appointments with therapists/experts
+- Engage in real-time chat and video consultations
+- Manage appointments and schedules
+- Handle payments and wallet transactions
+- Receive push notifications
+- Review and rate healthcare providers
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## Features
 
-To start Metro, run the following command from the _root_ of your React Native project:
+### Authentication
+- User registration with phone number verification
+- OTP-based authentication
+- Password reset functionality
+- Personal information management
+- Terms & Conditions and Privacy Policy
+
+### Core Functionality
+- **Home Screen**: Browse available therapists and services
+- **Therapist Booking**: Search, filter, and book appointments with healthcare experts
+- **Schedule Management**: View and manage upcoming appointments
+- **Real-time Chat**: Communicate with therapists via in-app messaging
+- **Video Consultations**: Integrated video calling using Agora SDK
+- **Wallet**: Manage payments and transactions
+- **Notifications**: Push notifications for appointments and updates
+- **Profile Management**: Update personal information and preferences
+- **Bookmarks**: Save favorite therapists for quick access
+- **Reviews**: Rate and review healthcare providers
+
+### Technical Features
+- Offline support with network status detection
+- Firebase integration for backend services
+- Payment gateway integration (Razorpay)
+- File sharing and document management
+- Responsive design for various screen sizes
+- Cross-platform support (iOS and Android)
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** (version 16 or higher)
+- **npm** or **yarn**
+- **React Native CLI**
+- **Xcode** (for iOS development on macOS)
+- **Android Studio** (for Android development)
+- **CocoaPods** (for iOS dependencies)
+- **Java Development Kit (JDK)**
+
+## Installation
+
+### 1. Clone the repository
 
 ```bash
-# using npm
-npm start
+git clone <repository-url>
+cd PatientApp
+```
 
-# OR using Yarn
+### 2. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. iOS Setup
+
+Navigate to the iOS directory and install CocoaPods dependencies:
+
+```bash
+cd ios
+pod install
+cd ..
+```
+
+### 4. Environment Configuration
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+API_URL=your_api_url_here
+```
+
+### 5. Firebase Configuration
+
+#### Android
+- Place your `google-services.json` file in `android/app/`
+
+#### iOS
+- Place your `GoogleService-Info.plist` file in `ios/PatientApp/`
+
+## Running the Application
+
+### Start Metro Bundler
+
+```bash
+npm start
+# or
 yarn start
 ```
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
+### Run on Android
 
 ```bash
-# using npm
 npm run android
-
-# OR using Yarn
+# or
 yarn android
 ```
 
-### For iOS
+### Run on iOS
 
 ```bash
-# using npm
 npm run ios
-
-# OR using Yarn
+# or
 yarn ios
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## Project Structure
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+```
+PatientApp/
+├── android/                 # Android native code
+├── ios/                     # iOS native code
+├── src/
+│   ├── assets/             # Images, fonts, and other assets
+│   ├── components/         # Reusable UI components
+│   ├── context/           # React Context providers
+│   ├── model/             # Data models
+│   ├── navigation/        # Navigation configuration
+│   ├── screens/           # Screen components
+│   │   ├── AuthScreen/   # Authentication screens
+│   │   └── NoAuthScreen/ # Main app screens
+│   ├── store/             # Redux store configuration
+│   └── utils/             # Utility functions and services
+├── App.js                 # Main application entry point
+├── package.json           # Dependencies and scripts
+└── README.md             # This file
+```
 
-## Step 3: Modifying your App
+## Key Dependencies
 
-Now that you have successfully run the app, let's modify it.
+### Core
+- React Native 0.72.4
+- React 18.2.0
+- React Navigation 6.x
+- Redux Toolkit
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+### Firebase
+- @react-native-firebase/app
+- @react-native-firebase/messaging
+- @react-native-firebase/firestore
+- @react-native-firebase/storage
+- @react-native-firebase/database
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+### UI & Navigation
+- react-native-vector-icons
+- react-native-responsive-dimensions
+- react-native-element-dropdown
+- react-native-keyboard-aware-scroll-view
+- react-native-toast-message
 
-## Congratulations! :tada:
+### Features
+- react-native-agora (Video calling)
+- react-native-razorpay (Payments)
+- react-native-gifted-chat (Chat)
+- react-native-document-picker (File handling)
+- @react-native-community/datetimepicker (Date picker)
 
-You've successfully run and modified your React Native App. :partying_face:
+## Configuration
 
-### Now what?
+### Android
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+1. Update `android/app/build.gradle` with your package name and version
+2. Configure signing keys in `android/app/build.gradle`
+3. Update `AndroidManifest.xml` with required permissions
 
-# Troubleshooting
+### iOS
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+1. Update bundle identifier in Xcode project
+2. Configure signing certificates in Xcode
+3. Update `Info.plist` with required permissions and URL schemes
 
-# Learn More
+## Building for Production
 
-To learn more about React Native, take a look at the following resources:
+### Android
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+```bash
+cd android
+./gradlew assembleRelease
+```
+
+The APK will be generated in `android/app/build/outputs/apk/release/`
+
+### iOS
+
+1. Open `ios/PatientApp.xcworkspace` in Xcode
+2. Select your target device/simulator
+3. Product > Archive
+4. Follow the App Store submission process
+
+## Testing
+
+Run the test suite:
+
+```bash
+npm test
+# or
+yarn test
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Metro bundler issues:**
+```bash
+npm start --reset-cache
+```
+
+**iOS build issues:**
+```bash
+cd ios
+pod deintegrate
+pod install
+cd ..
+```
+
+**Android build issues:**
+```bash
+cd android
+./gradlew clean
+cd ..
+```
+
+**Node modules issues:**
+```bash
+rm -rf node_modules
+npm install
+```
+
+## Permissions
+
+The app requires the following permissions:
+
+- Camera (for video consultations)
+- Microphone (for video consultations)
+- Storage (for file uploads)
+- Notifications (for push notifications)
+- Network access (for API calls)
+
+## API Integration
+
+The app communicates with a backend API. Ensure you have:
+- Valid API endpoint configured in `.env`
+- Authentication tokens properly handled
+- API endpoints for:
+  - User registration and authentication
+  - Therapist listing and booking
+  - Chat and messaging
+  - Payment processing
+  - Schedule management
+
+## Security Notes
+
+- Never commit sensitive credentials to version control
+- Keep API keys and secrets in environment variables
+- Use secure storage for authentication tokens
+- Validate all user inputs
+- Implement proper error handling
+
+## Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Test thoroughly on both iOS and Android
+4. Submit a pull request
+
+## License
+
+[Specify your license here]
+
+## Support
+
+For issues and questions, please contact the development team or open an issue in the repository.
+
+## Version
+
+Current version: 2.1.15
+
+## Additional Notes
+
+- The app uses Firebase for backend services including messaging, storage, and database
+- Video calling is powered by Agora SDK
+- Payment processing is handled through Razorpay
+- The app supports both authenticated and unauthenticated states
+- Offline functionality is available for certain features
